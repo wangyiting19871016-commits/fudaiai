@@ -1,0 +1,803 @@
+/* 全局重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #FFFFFF;
+    color: #000000;
+    overflow: visible;
+    overflow-x: hidden;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* 应用容器 */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    min-height: 100vh;
+    overflow: auto;
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+/* 顶部Header */
+.header-axis {
+    height: 60px;
+    background-color: #FFFFFF;
+    color: #000000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid #EEEEEE;
+    font-size: 16px;
+}
+
+/* 核心三战区布局 */
+.main-layout {
+    flex: 1;
+    display: flex; /* 重新建立flex三栏底座 */
+    overflow: hidden;
+    background-color: #FFFFFF;
+}
+
+/* 左侧侧边栏 */
+.sidebar-power {
+    width: 240px; /* 左侧菜单240px */
+    position: fixed;
+    left: 0;
+    top: 60px;
+    bottom: 0;
+    background-color: #FFFFFF;
+    color: #000000;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #000000;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+/* 主菜单 */
+.main-menus {
+    padding: 15px 0;
+}
+
+/* 菜单项文本 */
+.menu-item-text {
+    color: #000000;
+    font-size: 15px;
+}
+
+/* 好友头像流 */
+.friend-avatars {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 12px;
+    border-top: 1px solid #000000;
+}
+
+/* 头像占位符 */
+.avatar-placeholder {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #000000;
+    border: none;
+}
+
+/* 预留缓冲区 */
+.buffer-zone {
+    margin-top: auto;
+    padding: 12px;
+    border-top: 1px solid #000000;
+    background-color: #FFFFFF;
+    text-align: center;
+    color: #000000;
+    font-size: 12px;
+}
+
+/* 中间核心区 */
+.center-core {
+    width: calc(100% - 540px);
+    margin-left: 240px;
+    margin-right: 300px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color: #FFFFFF;
+}
+
+/* 视频矩阵 */
+.video-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* 展示舱 */
+.showcase-pod {/* 仅仅替换这一个容器，不FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 2px;
+    overflow: hidden;
+    max-width: 820px !important; /* 最大宽度锁定为820px */
+    margin: 0 auto !important; /* 水平居中 */
+    width: 100% !important; /* 确保在小屏幕上自适应 */
+}
+
+
+
+/* 珍珠线 */
+.moment-strip {
+    height: 80px;
+    background-color: #FFFFFF;
+    border-top: 1px solid #EEEEEE;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* 瞬间项 */
+.moment-item {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    border: 1px solid #EEEEEE;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* 课程时间表 */
+.course-schedule {
+    padding: 20px;
+    border-top: 1px solid #EEEEEE;
+}
+
+/* 课程卡片容器 */
+.course-cards {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+/* 课程卡片 */
+.course-card {
+    min-width: 250px;
+    background-color: #FFFFFF;
+    border: 1px solid #EEEEEE;
+    border-radius: 2px;
+    padding: 15px;
+}
+
+/* 课程卡片标题 */
+.course-card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #000000;
+}
+
+/* 课程卡片信息 */
+.course-card-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #000000;
+}
+
+/* 接取任务固定栏 */
+.task-fix-bar {
+    height: 50px;
+    background-color: #FFFFFF;
+    color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid #EEEEEE;
+    border-bottom: 1px solid #EEEEEE;
+    font-weight: bold;
+}
+
+/* 任务卡片容器 */
+.task-cards {
+    width: 100%;
+    margin: 0 auto;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 18px;
+    margin-top: auto;
+}
+
+/* 任务卡片 */
+.task-card {
+    background-color: #FFFFFF;
+    border: 1px solid #EEEEEE;
+    border-radius: 2px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    height: auto;
+    min-height: 100px;
+}
+
+/* 任务卡片展开状态 */
+.task-card.expanded {
+    background-color: #3498DB;
+    color: #FFFFFF;
+}
+
+/* 任务卡片名称 */
+.task-card-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* 任务卡片信息 */
+.task-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 14px;
+}
+
+/* 右侧展示区 */
+.right-witness {
+    width: 300px; /* 右侧LIVE见证墙300px */
+    position: fixed;
+    right: 0;
+    top: 60px;
+    bottom: 0;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 100;
+}
+
+/* LIVE流 */
+.live-stream {
+    flex: 1;
+    overflow: hidden;
+}
+
+/* LIVE滚动容器 */
+.live-scroll-container {
+    height: 100%;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #FFFFFF;
+}
+
+/* LIVE项 */
+.live-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+}
+
+/* LIVE指示器 */
+.live-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: 50px;
+}
+
+/* LIVE点 */
+.live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #000000;
+    animation: pulse 1s infinite alternate;
+}
+
+/* LIVE同频信息 */
+.live-sync {
+    font-size: 11px;
+    color: #000000;
+    text-align: center;
+    font-weight: normal;
+}
+
+/* LIVE观察者 */
+.live-observer {
+    flex: 1;
+    height: 30px;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+/* 底部页脚 */
+.footer-foundation {
+    height: 40px;
+    background-color: #FFFFFF;
+    border-top: 1px solid #EEEEEE;
+    color: #000000;
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 工业级布局容器 */
+.industrial-layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 左侧边栏 */
+.sidebar {
+    width: 250px;
+    background-color: #2C3E50;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #000000;
+}
+
+/* Logo样式 */
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #3498DB;
+    text-align: center;
+    border-radius: 2px;
+}
+
+/* 侧边栏头部 */
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #34495E;
+    text-align: center;
+}
+
+.sidebar-header h2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+/* 侧边栏底部 */
+.sidebar-footer {
+    padding: 15px;
+    border-top: 1px solid #34495E;
+    background-color: #1A252F;
+    margin-top: auto;
+}
+
+/* 用户ID样式 */
+.user-id {
+    color: #FFFFFF;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* 侧边栏菜单 */
+.sidebar-menu {
+    flex: 1;
+    padding: 10px 0;
+}
+
+/* 菜单项目 */
+.menu-item {
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-bottom: 1px solid #EEEEEE;
+}
+
+.menu-item:hover {
+    background-color: #F0F0F0;
+}
+
+.menu-item.active {
+    background-color: #F0F0F0;
+    border-left: 4px solid #000000;
+}
+
+
+
+/* 数据列表区 - 左侧30% */
+.data-list {
+    width: 30%;
+    background-color: #FFFFFF;
+    border-right: 1px solid #000000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 数据列表头部 */
+.data-list-header {
+    padding: 20px;
+    border-bottom: 1px solid #000000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ECF0F1;
+}
+
+.data-list-header h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2C3E50;
+}
+
+/* 刷新按钮 */
+.refresh-btn {
+    padding: 6px 12px;
+    background-color: #3498DB;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.refresh-btn:hover {
+    background-color: #2980B9;
+}
+
+/* 数据项容器 */
+.data-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* 数据项 */
+.data-item {
+    padding: 15px;
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 2px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.data-item:hover {
+    background-color: #ECF0F1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.data-item.active {
+    background-color: #3498DB;
+    color: #FFFFFF;
+    border-color: #2980B9;
+}
+
+/* 数据项背景图 */
+.data-item-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.1;
+    z-index: 0;
+}
+
+/* 数据项内容 */
+.data-item-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* 数据项标题 */
+.data-item-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+/* 数据项元信息 */
+.data-item-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 8px;
+}
+
+/* 数据项成果展示 */
+.data-item-achievement {
+    font-size: 12px;
+    color: #555555;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* 激活状态下的成果展示颜色 */
+.data-item.active .data-item-achievement {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* 视频内容区 - 右侧70% */
+.video-content {
+    width: 70%;
+    overflow-y: auto;
+    background-color: #F5F5F5;
+    padding: 20px;
+}
+
+/* 主容器 - 限制最大宽度并居中 */
+.trinity-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    border: 1px solid #000000;
+    min-height: 100vh;
+    background-color: #FFFFFF;
+}
+
+
+
+
+
+/* 视频元素样式 */
+.main-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 保持视频比例 */
+}
+
+
+
+/* 2. 全屏覆盖层 (Studio Overlay) */
+.tm-studio-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #FFFFFF;
+    z-index: 10000;
+    display: none; /* 默认隐藏 */
+    flex-direction: column;
+}
+
+.tm-studio-overlay.active {
+    display: flex;
+}
+
+/* 副屏非对称双窗布局 */
+.tm-studio-screens {
+    flex: 1;
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* 左窗 - 参考区 */
+.tm-reference-window {
+    width: 35%;
+    border: 1px solid #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000000;
+    position: relative;
+}
+
+/* 右窗 - 实操区 */
+.tm-practice-window {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #222222;
+    color: #FFFFFF;
+    font-size: 20px;
+    position: relative;
+}
+
+/* 分屏标注 */
+.tm-reference-window::before,
+.tm-practice-window::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 12px;
+    padding: 4px 8px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #FFFFFF;
+    border-radius: 2px;
+}
+
+/* 参考区标注 */
+.tm-reference-window::before {
+    content: 'REFERENCE';
+}
+
+/* 实操区标注 */
+.tm-practice-window::before {
+    content: 'RECORDING';
+}
+
+/* 参考区视频 */
+.tm-reference-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 副屏控制台 - 固定80px高度，元素垂直居中 */
+.tm-studio-console {
+    height: 80px; /* 固定高度 */
+    border-top: 1px solid #000000;
+    display: flex;
+    justify-content: space-between; /* 两端对齐 */
+    align-items: center; /* 垂直居中 */
+    padding: 0 40px;
+    background-color: #FFFFFF;
+}
+
+/* 录制按钮 - 雷达扫描动画 */
+.tm-record-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #000000;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    position: relative;
+}
+
+/* 录制按钮动画 - border-dash旋转 */
+.tm-record-btn.recording {
+    animation: radar-scan 2s linear infinite;
+    box-shadow: 0 0 0 2px transparent;
+    border: 2px dashed #000000;
+    background-color: transparent;
+}
+
+/* 雷达扫描动画 */
+@keyframes radar-scan {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.tm-record-btn:active {
+    transform: scale(0.9);
+}
+
+/* 失败次数统计 */
+.tm-failure-count {
+    font-size: 16px;
+}
+
+/* 退出按钮 */
+.tm-exit-btn {
+    background-color: #000000;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* 副屏珍珠导航 */
+.tm-studio-pearl-nav {
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-top: 1px solid #000000;
+}
+
+.tm-studio-pearl-line {
+    width: 100%;
+    height: 1px;
+    background-color: #000000;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 副屏珍珠节点 */
+.tm-studio-pearl {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+    top: -5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 副屏当前选中的珍珠 */
+.tm-studio-pearl.active {
+    width: 14px;
+    height: 14px;
+    background-color: #FFFFFF;
+    border: 2px solid #000000;
+    box-shadow: 0 0 0 1px #1A1A1A;
+}
+
+/* 副屏珍珠内部克莱因蓝点 */
+.tm-studio-pearl.active::before {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #002FA7; /* 克莱因蓝 */
+}
+
+/* 副屏珍珠悬停气泡 */
+.tm-studio-pearl::after {
+    content: attr(data-title);
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+    padding: 5px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+}
+
+/* 副屏珍珠悬停显示气泡 */
+.tm-studio-pearl:hover::after {
+    opacity: 1;
+}

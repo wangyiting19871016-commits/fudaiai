@@ -1,0 +1,106 @@
+import styles from './MainStage.module.css';
+import React, { useState } from 'react';
+import HeroStage from './HeroStage/HeroStage';
+import TaskSection from './TaskSection/TaskSection';
+import CourseSection from './CourseSection/CourseSection';
+import MainStageWidgets from './MainStageWidgets';
+import GlobalStats from '../Widgets/GlobalStats';
+import { useCreditSystem } from '../../hooks/useCreditSystem';
+import { Step, Course, Task } from '../../types/index';
+
+interface MainStageProps {
+  steps: Step[];
+  onChallengeClick: () => void;
+  onStepChange?: (index: number) => void;
+}
+
+const MainStage: React.FC<MainStageProps> = ({ steps, onChallengeClick, onStepChange }) => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [contentTitle, setContentTitle] = useState(steps[0].title);
+  const [contentDesc, setContentDesc] = useState(steps[0].desc);
+  const { credit, level, addCredit } = useCreditSystem();
+  
+  // 1. 模拟数据：教学区
+  const courses: Course[] = [
+    { id: 1, title: "Python核心编程入门", difficulty: "★★☆", duration: "30min", videoUrl: "https://picsum.photos/seed/course1/800/450" },
+    { id: 2, title: "React前端框架实战", difficulty: "★★★", duration: "45min", videoUrl: "https://picsum.photos/seed/course2/800/450" },
+    { id: 3, title: "数据可视化与分析", difficulty: "★★★☆", duration: "60min", videoUrl: "https://picsum.photos/seed/course3/800/450" },
+    { id: 4, title: "机器学习基础应用", difficulty: "★★★★", duration: "90min", videoUrl: "https://picsum.photos/seed/course4/800/450" },
+    { id: 5, title: "产品设计思维训练", difficulty: "★★☆", duration: "30min", videoUrl: "https://picsum.photos/seed/course5/800/450" },
+    { id: 6, title: "高效沟通表达技巧", difficulty: "★★", duration: "20min", videoUrl: "https://picsum.photos/seed/course6/800/450" }
+  ];
+  
+  // 2. 模拟数据：任务区 (确保 8 个格子)
+  const tasks: Task[] = [
+    { id: 1, name: "Python基础编程挑战", difficulty: "★★☆", duration: "30min", users: 128, rewards: 25, videoUrl: "https://picsum.photos/seed/python/800/450" },
+    { id: 2, name: "React前端开发实战", difficulty: "★★★", duration: "45min", users: 96, rewards: 35, videoUrl: "https://picsum.photos/seed/react/800/450" },
+    { id: 3, name: "数据可视化分析", difficulty: "★★★☆", duration: "60min", users: 72, rewards: 45, videoUrl: "https://picsum.photos/seed/data/800/450" },
+    { id: 4, name: "机器学习入门", difficulty: "★★★★", duration: "90min", users: 48, rewards: 60, videoUrl: "https://picsum.photos/seed/ml/800/450" },
+    { id: 5, name: "UI/UX设计思维", difficulty: "★★☆", duration: "30min", users: 84, rewards: 25, videoUrl: "https://picsum.photos/seed/design/800/450" },
+    { id: 6, name: "技术文档写作", difficulty: "★★", duration: "20min", users: 156, rewards: 20, videoUrl: "https://picsum.photos/seed/writing/800/450" },
+    { id: 7, name: "敏捷项目管理", difficulty: "★★★", duration: "40min", users: 68, rewards: 30, videoUrl: "https://picsum.photos/seed/agile/800/450" },
+    { id: 8, name: "网络安全防护", difficulty: "★★★★☆", duration: "120min", users: 32, rewards: 80, videoUrl: "https://picsum.photos/seed/security/800/450" }
+  ];
+
+  const handleStepChange = (index: number) => {
+    if (index < 0 || index >= steps.length) return;
+    setActiveStep(index);
+    setContentTitle(steps[index].title);
+    setContentDesc(steps[index].desc);
+    if (onStepChange) onStepChange(index);
+  };
+
+  return (
+    <div style={{ position: 'relative', minHeight: '100vh', width: '100vw', overflowX: 'hidden' }}>
+      
+      {/* 外部固定挂件 */}
+      <MainStageWidgets />
+      
+      {/* 核心中轴：所有内容统一 marginLeft: '12vw'，宽度固定 '65vw' */}
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: '60px', 
+        paddingTop: '20px',
+        paddingBottom: '100px'
+      }}>
+        
+        {/* 1. 大屏区 */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', marginLeft: '12vw' }}>
+          {/* HeroStage 保持原宽度 */}
+          <div style={{ width: '65vw', minWidth: '800px' }}>
+            <HeroStage
+              steps={steps}
+              activeStep={activeStep}
+              contentTitle={contentTitle}
+              contentDesc={contentDesc}
+              onStepChange={handleStepChange}
+              onChallengeClick={() => {
+                onChallengeClick();
+                addCredit(100);
+              }}
+            />
+          </div>
+          
+          {/* 信用大树 - 右侧邻居模式 */}
+          <div style={{ marginLeft: '-12vw',marginTop: '400px', }}>
+            <GlobalStats credit={credit} level={level} />
+          </div>
+        </div>
+
+        {/* 2. 任务区 */}
+        <div style={{ width: '65vw', marginLeft: '12vw' }}>
+          <TaskSection tasks={tasks} />
+        </div>
+
+        {/* 3. 教学区 */}
+        <div style={{ width: '65vw', marginLeft: '12vw' }}>
+          <CourseSection courses={courses} />
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default MainStage;

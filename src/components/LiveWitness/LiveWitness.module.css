@@ -1,11 +1,11 @@
 .rightWitness {
-    width: 380px; /* 维持大尺寸，更有冲击力 */
-    position: fixed;
-    right: 30px;
-    top: 90px;
-    bottom: 20px;
-    z-index: 100;
-    overflow: hidden;
+    width: 100%; /* 宽度由父容器控制 */
+    position: relative; /* 改为相对定位，成为流式布局的一部分 */
+    height: auto; /* 高度自适应 */
+    background: rgba(255, 255, 255, 0.8); /* 半透明白色背景 */
+    z-index: 1; /* 降低层级 */
+    overflow-y: auto; /* 允许滚动 */
+    border-radius: 15px;
 }
 
 .liveScrollContainer {

@@ -5,12 +5,12 @@ import styles from './LiveWitness.module.css';
 const LiveWitness: React.FC = () => {
   // 1. 精确配置 6 个不同的视频源，模拟真实全球见证流
   const [observers, setObservers] = useState([
-    { id: 1, sync: 87.2, video: "https://www.w3schools.com/html/mov_bbb.mp4" },
-    { id: 2, sync: 64.5, video: "https://media.w3.org/2010/05/sintel/trailer.mp4" },
-    { id: 3, sync: 92.1, video: "https://www.w3schools.com/html/movie.mp4" },
-    { id: 4, sync: 78.8, video: "https://media.w3.org/2010/05/video/movie_300.mp4" },
-    { id: 5, sync: 53.4, video: "https://www.w3schools.com/html/mov_bbb.mp4" },
-    { id: 6, sync: 96.0, video: "https://media.w3.org/2010/05/sintel/trailer.mp4" }
+    { id: 1, sync: 87.2, video: "https://picsum.photos/1200/675" },
+    { id: 2, sync: 64.5, video: "https://picsum.photos/1200/675" },
+    { id: 3, sync: 92.1, video: "https://picsum.photos/1200/675" },
+    { id: 4, sync: 78.8, video: "https://picsum.photos/1200/675" },
+    { id: 5, sync: 53.4, video: "https://picsum.photos/1200/675" },
+    { id: 6, sync: 96.0, video: "https://picsum.photos/1200/675" }
   ]);
 
   // 2. 实时同频数据跳动逻辑
@@ -24,7 +24,7 @@ const LiveWitness: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // 3. 封装渲染函数，确保“第一遍”和“第二遍”完全一致，实现无缝滚动
+  // 3. 封装渲染函数，确保"第一遍"和"第二遍"完全一致，实现无缝滚动
   const renderList = (suffix: string) => (
     observers.map((obs) => (
       <div className={styles.liveItem} key={`${suffix}-${obs.id}`}>

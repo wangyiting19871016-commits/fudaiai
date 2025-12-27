@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2019",
+    "lib": ["dom", "dom.iterable", "es2019"],
     "module": "commonjs",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "strict": false,
     "noImplicitAny": false,
     "esModuleInterop": true,
@@ -13,6 +14,6 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["TruthLayout.tsx", "src/**/*"],
-  "exclude": ["TruthLayout_OBSOLETE.bak"]
+  "include": ["src/**/*"],
+  "exclude": ["src/_legacy_archive_20251226/**"]
 }

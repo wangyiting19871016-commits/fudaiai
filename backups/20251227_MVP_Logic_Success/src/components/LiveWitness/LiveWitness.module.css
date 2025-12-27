@@ -1,0 +1,84 @@
+.rightWitness {
+    width: 100%; /* 宽度由父容器控制 */
+    position: relative; /* 改为相对定位，成为流式布局的一部分 */
+    height: auto; /* 高度自适应 */
+    background: rgba(255, 255, 255, 0.8); /* 半透明白色背景 */
+    z-index: 1; /* 降低层级 */
+    overflow-y: auto; /* 允许滚动 */
+    border-radius: 15px;
+}
+
+.liveScrollContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: scrollUp 40s linear infinite;
+}
+
+.liveItem {
+    background: transparent; /* 彻底去掉背景色块 */
+    position: relative;
+    overflow: visible; /* 让红圈可以稍微溢出一点点增加立体感 */
+}
+
+.videoWrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+}
+
+.miniVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 核心：仿抖音直播红圈 */
+.liveAvatar {
+    width: 36px;
+    height: 36px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    z-index: 5;
+    /* 抖音经典的粉红渐变边框 */
+    border: 2px solid #fe2c55; 
+    box-shadow: 0 0 10px rgba(254, 44, 85, 0.4);
+    animation: borderPulse 1.5s infinite;
+}
+
+/* 呼吸动效 */
+@keyframes borderPulse {
+    0% { transform: scale(1); box-shadow: 0 0 5px rgba(254, 44, 85, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(254, 44, 85, 0.8); }
+    100% { transform: scale(1); box-shadow: 0 0 5px rgba(254, 44, 85, 0.4); }
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+/* 数据叠化：白色半透明等宽字体 */
+.syncText {
+    position: absolute;
+    bottom: 14px;
+    left: 58px; /* 避开头像，紧跟其后 */
+    color: rgba(255, 255, 255, 0.9);
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    font-size: 14px;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* 保证在亮色画面下也能看清 */
+}
+
+@keyframes scrollUp {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+}

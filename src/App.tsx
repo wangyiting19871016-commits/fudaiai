@@ -1,21 +1,40 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { MissionProvider } from './stores/MissionContext';
 
-import HallPage from './pages/Home';
+// 强制引用 src/pages 下的新文件
+import Home from './pages/Home';
 import PathPage from './pages/PathPage';
 import LabPage from './pages/LabPage';
+import EditorPage from './pages/EditorPage';
+import LabVisualTest from './pages/LabVisualTest';
 
-function App() {
+// 这是一个全新的 App 组件
+const App: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HallPage />} />
-        {/* 注意：这里的路径必须包含参数，且命名要统一 */}
-        <Route path="/path/:missionId" element={<PathPage />} />
-        <Route path="/lab/:slotId" element={<LabPage />} />
-      </Routes>
-    </Router>
+    <MissionProvider>
+      <Router>
+        <div style={{ width: '100vw', minHeight: '100vh', background: '#222' }}>
+          <Routes>
+            {/* 首页 */}
+            <Route path="/" element={<Home />} />
+            
+            {/* 战备区：新架构 (PathPage) */}
+            <Route path="/path/:taskId" element={<PathPage />} />
+            
+            {/* 实验室：新架构 (LabPage) */}
+            <Route path="/lab/:stepId" element={<LabPage />} />
+            
+            {/* 编辑页：新架构 (EditorPage) */}
+            <Route path="/editor" element={<EditorPage />} />
+            
+            {/* 视觉测试页：临时测试通道 */}
+            <Route path="/test" element={<LabVisualTest />} />
+          </Routes>
+        </div>
+      </Router>
+    </MissionProvider>
   );
-}
+};
 
 export default App;

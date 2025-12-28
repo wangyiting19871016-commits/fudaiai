@@ -1,15 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-// 👇 关键修改：我们要引入刚才新建的那个 NEW 文件！
-// 以前是 import App from './App'
-import App_NEW from './App_NEW' 
+// 👇 入口修正：强制归位到标准 App.tsx
+import App from './App'
 
 import './index.css'
 
+// 日志锚点 [LOGIC_TRACE]
+console.log('[LOGIC_TRACE] 回撤完成。架构已复原。当前版本：MVP_Stable_Base');
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    {/* 👇 渲染新组件 */}
-    <App_NEW />
+    <App />
   </React.StrictMode>,
 )

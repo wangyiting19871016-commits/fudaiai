@@ -5,7 +5,7 @@ export const useCreditSystem = (initialCredit = 896) => {
   const [credit, setCredit] = useState(() => {
     // 这里的 typeof window 检查是防止在某些环境下报错，非常稳
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('user_credit_score');
+      const saved = localStorage.getItem('user_points');
       return saved ? parseInt(saved, 10) : initialCredit;
     }
     return initialCredit;
@@ -19,7 +19,7 @@ export const useCreditSystem = (initialCredit = 896) => {
 
   // 4. 存档逻辑：只要 credit 变了，就自动存进硬盘
   useEffect(() => {
-    localStorage.setItem('user_credit_score', credit.toString());
+    localStorage.setItem('user_points', credit.toString());
   }, [credit]);
 
   // 5. 加分动作

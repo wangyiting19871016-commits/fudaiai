@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2019",
-    "lib": ["dom", "dom.iterable", "es2019"],
-    "module": "commonjs",
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "es2020"],
+    "module": "es2020",
     "jsx": "react-jsx",
     "strict": false,
     "noImplicitAny": false,
@@ -12,7 +12,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": ["vite/client"]
   },
   "include": ["src/**/*"],
   "exclude": ["src/_legacy_archive_20251226/**"]

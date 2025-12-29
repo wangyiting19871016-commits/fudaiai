@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Mic, CheckCircle, Monitor, Activity, Zap, FileText, Headphones, Play, Square, Settings, BookOpen, Heart } from 'lucide-react';
+import ReferenceCard from '../components/ReferenceCard';
+import VerifyPanel from '../components/VerifyPanel';
+
+// 解决浏览器环境下对 NodeJS 命名空间的误报
+declare global {
+  namespace NodeJS {
+    interface Timeout {}
+  }
+}
 
 // --- 1. 官方静态库 (保留这 5 关作为默认体验) ---
 const STATIC_MISSIONS = [
@@ -79,13 +88,17 @@ const LabPage = () => {
     }
     return 0;
   });
-  const [isVerified, setIsVerified] = useState(false);
-  const [inputText, setInputText] = useState('');
+  
+  // 【物理级止血】强制刷新 Key，确保组件完全重建
+  const [instanceKey, setInstanceKey] = useState(0);
   
   // F. 页面内容（视频、标题、心法描述）必须实时指向 mission.steps[currentSubStep]
   const hasSubSteps = targetMission && targetMission.steps && Array.isArray(targetMission.steps) && targetMission.steps.length > 0;
   const steps = targetMission?.steps || [];
   const currentStep = hasSubSteps ? targetMission.steps[currentSubStep] : targetMission;
+  
+  // === 🔗 强制物理约束：定义当前激活的参考资料 ===
+  const activeReference = steps[currentSubStep]?.reference_material;
 
   // 监听 URL 变化，仅在任务真正切换时重置子步骤状态
   useEffect(() => {
@@ -101,142 +114,78 @@ const LabPage = () => {
     // 【状态锁定】仅在任务 ID 真正变化时才重置子步骤索引
     if (newTargetMission.id !== targetMission?.id) {
       setCurrentSubStep(0);
-      setIsVerified(false);
-      setInputText('');
-      setAudioData(null);
-      setIsRecording(false);
-      console.log("【状态锁定】任务切换，重置所有状态为初始值");
+      console.log("【状态锁定】任务切换，重置子步骤索引为初始值");
     }
   }, [stepId, localMissions, targetMission?.id]);
+
+  // 【状态回显】保存和恢复输入文本状态
+
+
+  // 【状态回显】加载当前步骤的输入状态
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedState = sessionStorage.getItem(`input_state_${stepId}_${currentSubStep}`);
+      if (savedState) {
+        // 状态恢复由VerifyPanel组件内部管理
+      }
+    }
+  }, [stepId, currentSubStep]);
 
   // 【状态锁定】监听 currentSubStep 变化，保存到 sessionStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem(`current_step_index_${stepId}`, currentSubStep.toString());
-      console.log("【状态锁定】保存步骤索引到 sessionStorage:", currentSubStep);
+      // 防止死循环：仅在有效步骤时保存
+      if (currentSubStep >= 0) {
+        sessionStorage.setItem(`current_step_index_${stepId}`, currentSubStep.toString());
+        console.log("【状态锁定】保存步骤索引到 sessionStorage:", currentSubStep);
+      }
     }
   }, [currentSubStep, stepId]);
 
-  // --- 3. 自动流转 ---
-  useEffect(() => {
-    let timer: any;
-    if (isVerified) {
-      timer = setTimeout(() => {
-        handleNextStep(undefined);
-      }, 1500);
-    }
-    return () => clearTimeout(timer);
-  }, [isVerified]);
 
-  const handleNextStep = (e?: React.MouseEvent) => {
-    // 【状态锁定】防止表单默认行为和事件冒泡
-    e?.preventDefault();
-    e?.stopPropagation();
-    
-    // 1. 获取当前任务包
-    const mission = targetMission;
-    const steps = mission?.steps || [];
-    
-    // 调试日志：显示当前进度
-    console.log("【状态锁定】当前步骤:", currentSubStep, "/ 总步骤:", steps.length);
-    
+
+
+
+  const handleNextStep = () => {
+    // 核心逻辑：只管切步骤，不管重置状态
     if (currentSubStep < steps.length - 1) {
-      // 【关键】强行推进到下一子步骤
-      setCurrentSubStep(prev => {
-        const nextStep = prev + 1;
-        console.log("【逻辑锁定】推进到下一步:", nextStep);
-        return nextStep;
-      });
-      
-      // 重置所有状态
-      setIsVerified(false);
-      setInputText('');
-      setAudioData(null);
-      setIsRecording(false);
-      
-      // 原子任务积分：每个子步骤完成后给 100 分
-      const oldScore = parseInt(localStorage.getItem('user_points') || '0');
-      const newScore = oldScore + 100;
-      localStorage.setItem('user_points', newScore.toString());
-      console.log("【逻辑锁定】原子任务完成，积分 +100，当前总分:", newScore);
-       
-     } else {
-       // 【关键】所有子步骤完成，结算积分
-       const oldScore = parseInt(localStorage.getItem('user_points') || '0');
-       const newScore = oldScore + 500; // 整个任务包完成给500分
-       localStorage.setItem('user_points', newScore.toString());
-      
-      console.log("【逻辑锁定】任务包完成，积分 +500，当前总分:", newScore);
-      
-      // 记录任务完成状态
-      localStorage.setItem(`completed_step_${mission.id}`, 'true');
-      
-      alert("真迹协议全流程达成！获得 500 积分");
-      // 强行刷新回首页，触发大树重载
-      window.location.href = '/';
+      setCurrentSubStep(prev => prev + 1);
+    } else {
+      // 整个任务结束的逻辑（可选）
+      console.log("Mission Accomplished");
     }
   };
 
   // --- 智能工具箱状态 ---
   const [isToolboxExpanded, setIsToolboxExpanded] = useState(true);
-  const [audioData, setAudioData] = useState<Blob | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
 
   // --- 逻辑适配：根据type字段动态渲染组件 ---
-  const handleVerify = () => {
-    // TEXT任务：检查输入框内容
-    if (currentStep.type === 'TEXT' && !inputText.trim()) {
-      return;
-    }
-    // VOICE任务：检查录音数据
-    if (currentStep.type === 'VOICE' && !audioData) {
-      return;
-    }
-    setIsVerified(true);
+  const displayType = currentStep.type === 'SCREEN_SHOT' ? 'SCREEN' : currentStep.type;
+
+  // --- 空杯重置功能 (物理级止血) ---
+  const handleReset = () => {
+    // 【空杯重置】强制执行物理级重置，任何残留缓存都必须死
+    
+    // A. 物理清空所有缓存
+    sessionStorage.clear();
+    localStorage.removeItem(`completed_step_${stepId}`);
+    
+    // B. 物理触发组件重连
+    setInstanceKey(prev => prev + 1);
+    
+    // C. 物理跳转（可选，确保路由刷新）
+    console.log("【物理重置】所有状态已强制初始化");
   };
 
-  // --- 录音功能 ---
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      chunksRef.current = [];
 
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          chunksRef.current.push(e.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/wav' });
-        setAudioData(audioBlob);
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (error) {
-      console.error('录音启动失败:', error);
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
-  };
 
   const themeColor = currentStep.color || "#06b6d4";
-  const displayType = (currentStep.type || 'TEXT').toUpperCase();
+  // 类型映射：将P4生成的三种标准类型映射到对应的渲染组件
+
 
   // --- 4. 视觉渲染 (完全保留刚才满意的内联样式) ---
   return (
-    <div style={{
+    <div key={instanceKey} style={{
       position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
       backgroundColor: '#050505', color: '#fff', 
       display: 'flex', flexDirection: 'row', overflow: 'hidden',
@@ -275,7 +224,8 @@ const LabPage = () => {
         width: '45%', height: '100%', borderRight: '1px solid rgba(255,255,255,0.05)',
         background: `linear-gradient(180deg, rgba(10,10,10,1) 0%, rgba(5,5,5,1) 100%)`,
         display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 60px',
-        position: 'relative'
+        position: 'relative',
+        overflowY: 'auto' // 👈 核心修改：允许左侧面板内容滚动
       }}>
         {/* 背景光晕 */}
         <div style={{ 
@@ -289,7 +239,7 @@ const LabPage = () => {
             padding: '4px 12px', background: `${themeColor}1a`, border: `1px solid ${themeColor}4d`, 
             color: themeColor, fontSize: 12, borderRadius: 4, letterSpacing: 2, fontWeight: 'bold'
           }}>
-            PROTOCOL {String(currentStep.id).padStart(2, '0')}
+            PROTOCOL {String(currentStep.id || currentSubStep + 1).padStart(2, '0')}
           </span>
           <span style={{ color: '#666', fontSize: 12, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 5 }}>
             <Activity size={14} /> {displayType} MODE
@@ -317,145 +267,43 @@ const LabPage = () => {
             {steps[currentSubStep]?.desc || steps[currentSubStep]?.description}
           </p>
         </div>
+
+        {/* === 🔗 强制物理约束：锁定代码框尺寸 === */}
+        {activeReference && (
+          <ReferenceCard 
+            content={activeReference.content}
+            title="📦 核心情报 / 咒语"
+          />
+        )}
+
+        {/* 2. 渲染当前步骤的动作指令 (最重要！) */}
+        {steps[currentSubStep]?.action_instruction && (
+          <div style={{ marginTop: 30, fontSize: 16, lineHeight: 1.6, color: '#ccc', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div style={{ color: '#10b981', fontSize: 12, fontWeight: 'bold', marginBottom: '8px' }}>🎯 动作指令</div>
+            {steps[currentSubStep]?.action_instruction}
+          </div>
+        )}
+
+        {/* 2. 渲染全局情报卡 (代码/咒语) */}
+        {targetMission?.reference_material && (
+          <div style={{ marginTop: 30, padding: '15px', background: '#111', border: '1px solid #333', borderRadius: '8px' }}>
+            <div style={{ color: '#06b6d4', fontSize: 12, fontWeight: 'bold', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              📂 核心情报 / 咒语 (点击复制)
+            </div>
+            <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '13px', color: '#a6e3a1', overflowY: 'auto',maxHeight: '260px', margin: 0, lineHeight: '1.4' }}>
+              {targetMission.reference_material.content}
+            </pre>
+          </div>
+        )}
       </div>
 
-      {/* === 右舱 (55%) === */}
-      <div key={`right-panel-${currentSubStep}`} style={{ 
-        width: '55%', height: '100%', position: 'relative',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: '#000'
-      }}>
-        {/* 网格背景 */}
-        <div style={{ 
-          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0.15,
-          backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
-        }}></div>
-
-        <div style={{ zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: 400 }}>
-          
-          {/* 动态渲染：根据type字段显示不同组件 */}
-          {displayType === 'TEXT' ? (
-            // TEXT模式：黑金风格文本输入框
-            <div style={{ width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 15, color: '#666' }}>
-                <FileText size={16} /> <span style={{ fontSize: 12, fontWeight: 'bold' }}>TEXT INPUT REQUIRED</span>
-              </div>
-              <textarea 
-                value={inputText} onChange={e => setInputText(e.target.value)}
-                placeholder={`验证核心参数: ${currentStep.key}`}
-                style={{ 
-                  width: '100%', height: 160, background: 'linear-gradient(135deg, #0a0a0a 0%, #111 100%)', 
-                  border: '1px solid #333', borderRadius: 16, padding: 20, color: '#fff', fontSize: 18, 
-                  outline: 'none', resize: 'none', fontFamily: 'sans-serif',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
-                  borderImage: 'linear-gradient(45deg, #ffd700, #b8860b) 1'
-                }}
-              />
-              <button 
-                onClick={handleVerify} disabled={!inputText.trim() || isVerified}
-                style={{ 
-                  width: '100%', marginTop: 25, padding: 18, 
-                  background: isVerified ? '#10b981' : 'linear-gradient(135deg, #ffd700, #b8860b)', 
-                  color: isVerified ? '#fff' : '#000', 
-                  border: 'none', borderRadius: 16, 
-                  fontWeight: 'bold', fontSize: 16, cursor: 'pointer', transition: 'all 0.2s',
-                  opacity: !inputText.trim() && !isVerified ? 0.5 : 1,
-                  boxShadow: isVerified ? '0 0 20px rgba(16,185,129,0.5)' : '0 0 20px rgba(255,215,0,0.3)'
-                }}
-              >
-                {isVerified ? 'VERIFIED' : '确认提交'}
-              </button>
-            </div>
-          ) : displayType === 'VOICE' ? (
-            // VOICE模式：录音组件（保持呼吸灯样式）
-            <div style={{ width: '100%', textAlign: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 15, color: '#666', justifyContent: 'center' }}>
-                <Mic size={16} /> <span style={{ fontSize: 12, fontWeight: 'bold' }}>VOICE RECORDING REQUIRED</span>
-              </div>
-              
-              {/* 录音按钮 */}
-              <div 
-                onClick={isRecording ? stopRecording : startRecording}
-                style={{ 
-                  width: 180, height: 180, borderRadius: '50%', cursor: 'pointer',
-                  background: isRecording ? '#ef4444' : audioData ? '#10b981' : '#0a0a0a',
-                  border: `1px solid ${isRecording ? '#ef4444' : audioData ? '#10b981' : '#333'}`,
-                  boxShadow: isRecording ? '0 0 80px rgba(239,68,68,0.5)' : audioData ? '0 0 80px rgba(16,185,129,0.5)' : `0 0 40px ${themeColor}1a`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                  position: 'relative', margin: '0 auto'
-                }}
-              >
-                {!isRecording && !audioData && <div style={{ position: 'absolute', inset: -4, borderRadius: '50%', border: `1px solid ${themeColor}`, opacity: 0.3, animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' }}></div>}
-                {isRecording ? (
-                  <Square size={60} color="#fff" />
-                ) : audioData ? (
-                  <Play size={60} color="#fff" />
-                ) : (
-                  <Mic size={60} color="#666" />
-                )}
-              </div>
-              
-              {/* 录音状态显示 */}
-              <div style={{ marginTop: 20, color: '#666', fontSize: 14 }}>
-                {isRecording ? '录音中...' : audioData ? '录音完成' : '点击开始录音'}
-              </div>
-              
-              <button 
-                onClick={handleVerify} disabled={!audioData || isVerified}
-                style={{ 
-                  width: '100%', marginTop: 25, padding: 18, 
-                  background: isVerified ? '#10b981' : 'linear-gradient(135deg, #ffd700, #b8860b)', 
-                  color: isVerified ? '#fff' : '#000', 
-                  border: 'none', borderRadius: 16, 
-                  fontWeight: 'bold', fontSize: 16, cursor: 'pointer', transition: 'all 0.2s',
-                  opacity: (!audioData && !isVerified) ? 0.5 : 1,
-                  boxShadow: isVerified ? '0 0 20px rgba(16,185,129,0.5)' : '0 0 20px rgba(255,215,0,0.3)'
-                }}
-              >
-                {isVerified ? 'VERIFIED' : '确认提交'}
-              </button>
-            </div>
-          ) : (
-            // 其他模式（SCREEN等）
-            <>
-              <div 
-                onClick={() => setIsVerified(true)}
-                style={{ 
-                  width: 180, height: 180, borderRadius: '50%', cursor: 'pointer',
-                  background: isVerified ? '#10b981' : '#0a0a0a',
-                  border: `1px solid ${isVerified ? '#10b981' : '#333'}`,
-                  boxShadow: isVerified ? '0 0 80px rgba(16,185,129,0.5)' : `0 0 40px ${themeColor}1a`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                  position: 'relative'
-                }}
-              >
-                {!isVerified && <div style={{ position: 'absolute', inset: -4, borderRadius: '50%', border: `1px solid ${themeColor}`, opacity: 0.3, animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' }}></div>}
-                {isVerified ? (
-                  <CheckCircle size={80} color="#fff" />
-                ) : (
-                  <Monitor size={60} color="#666" />
-                )}
-              </div>
-              <div style={{ marginTop: 50, textAlign: 'center' }}>
-                <p style={{ fontSize: 12, color: '#555', letterSpacing: 3, marginBottom: 10 }}>TARGET KEY</p>
-                <h2 style={{ fontSize: 32, fontWeight: 'bold', color: '#fff' }}>"{currentStep.key}"</h2>
-              </div>
-            </>
-          )}
-
-          {/* 验证成功印章 */}
-          {isVerified && (
-             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 100 }}>
-               <div style={{ border: '6px solid #ef4444', color: '#ef4444', padding: '15px 50px', fontSize: 60, fontWeight: 900, transform: 'rotate(-15deg)', opacity: 1, textShadow: '0 0 20px rgba(239,68,68,0.5)', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)', boxShadow: '0 0 50px rgba(0,0,0,0.8)' }}>
-                 验证成功
-               </div>
-             </div>
-          )}
-
-        </div>
+      {/* 右侧面板 */}
+      <div style={{ flex: 1, background: '#000', position: 'relative' }}>
+        <VerifyPanel 
+          step={steps[currentSubStep]}
+          onVerified={handleNextStep}
+          themeColor={themeColor || '#06b6d4'}
+        />
       </div>
 
       {/* === 可收缩工具箱 === */}
@@ -526,6 +374,25 @@ const LabPage = () => {
                 <div style={{ color: '#aaa', fontSize: 10, marginTop: 4 }}>{displayType} 模式激活中</div>
               </div>
 
+              {/* 验证关键词 */}
+              <div style={{
+                background: 'rgba(6,182,212,0.1)',
+                border: '1px solid rgba(6,182,212,0.3)',
+                borderRadius: 8,
+                padding: 12,
+                transition: 'all 0.2s'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <FileText size={14} color="#06b6d4" />
+                  <span style={{ color: '#06b6d4', fontSize: 12, fontWeight: 'bold' }}>验证关键词</span>
+                </div>
+                <div style={{ color: '#fff', fontSize: 10, lineHeight: 1.4, fontFamily: 'monospace' }}>
+                  {Array.isArray(currentStep.verify_key) ? 
+                   currentStep.verify_key.join(' 或 ') : 
+                   currentStep.key || '无验证关键词'}
+                </div>
+              </div>
+
               {/* 参考物料查看 */}
               <div style={{
                 background: 'rgba(139, 69, 19, 0.1)',
@@ -546,6 +413,30 @@ const LabPage = () => {
                   <span style={{ color: '#8b4513', fontSize: 12, fontWeight: 'bold' }}>参考物料查看</span>
                 </div>
                 <div style={{ color: '#aaa', fontSize: 10, marginTop: 4 }}>查看任务相关参考资料</div>
+              </div>
+
+              {/* 一键重置 */}
+              <div 
+                onClick={handleReset}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: 8,
+                  padding: 12,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }} onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+                  e.currentTarget.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.3)';
+                }} onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Square size={14} color="#ef4444" />
+                  <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 'bold' }}>一键重置</span>
+                </div>
+                <div style={{ color: '#aaa', fontSize: 10, marginTop: 4 }}>清空用户内容，保持任务描述</div>
               </div>
 
               {/* 心法回顾 */}
@@ -597,6 +488,11 @@ const LabPage = () => {
 
       <style>{`
         @keyframes ping { 75%, 100% { transform: scale(1.4); opacity: 0; } }
+        @keyframes pulse {
+          0% { transform: scale(1); opacity: 0.6; }
+          50% { transform: scale(1.1); opacity: 0.3; }
+          100% { transform: scale(1); opacity: 0.6; }
+        }
         @keyframes toolboxSlideIn {
           from { transform: translateX(100%); opacity: 0; }
           to { transform: translateX(0); opacity: 1; }
@@ -604,6 +500,14 @@ const LabPage = () => {
         @keyframes toolboxSlideOut {
           from { transform: translateX(0); opacity: 1; }
           to { transform: translateX(100%); opacity: 0; }
+        }
+        @keyframes confetti {
+          0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes zoomIn {
+          0% { transform: rotate(-15deg) scale(0.5); opacity: 0; }
+          100% { transform: rotate(-15deg) scale(1); opacity: 1; }
         }
       `}</style>
     </div>

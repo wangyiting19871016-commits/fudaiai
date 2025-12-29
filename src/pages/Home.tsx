@@ -5,10 +5,13 @@ import MainStage from '../components/MainStage/MainStage';
 const Home: React.FC = () => {
   const navigate = useNavigate();
   
-  // 清理所有数据
+  // 【逻辑收口】屏幕1一键重启：清除所有数据，包括AI任务
   const clearAllData = () => {
-    localStorage.clear();
-    window.location.reload();
+    if (window.confirm('⚠️ 确定要清空所有数据吗？\n\n❌ 所有AI生成的任务将被删除\n❌ 所有进度将被重置\n❌ 所有积分将被清空\n\n此操作不可撤销！')) {
+      // 清除 custom_missions 和所有其他数据
+      localStorage.clear();
+      window.location.reload();
+    }
   };
 
   const handleHeroChallenge = () => {

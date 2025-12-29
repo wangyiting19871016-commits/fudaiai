@@ -7,7 +7,6 @@ import Home from './pages/Home';
 import PathPage from './pages/PathPage';
 import LabPage from './pages/LabPage';
 import EditorPage from './pages/EditorPage';
-import LabVisualTest from './pages/LabVisualTest';
 
 // 这是一个全新的 App 组件
 const App: React.FC = () => {
@@ -27,9 +26,6 @@ const App: React.FC = () => {
             
             {/* 编辑页：新架构 (EditorPage) */}
             <Route path="/editor" element={<EditorPage />} />
-            
-            {/* 视觉测试页：临时测试通道 */}
-            <Route path="/test" element={<LabVisualTest />} />
           </Routes>
         </div>
       </Router>

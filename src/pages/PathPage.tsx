@@ -191,13 +191,15 @@ const PathPage: React.FC = () => {
         <div style={{ marginTop: '20px' }}>
           <button 
             onClick={() => {
-              // 重置进度逻辑
-              Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('completed_')) {
-                  localStorage.removeItem(key);
-                }
-              });
-              window.location.reload();
+              // 【逻辑收口】屏幕2重置进度：只清除任务完成状态，保留任务本身
+              if (window.confirm('确定要重置所有任务进度吗？\n\n✅ 任务包将保留\n❌ 完成状态将被清空\n\n用户可以重新开始玩，但不会丢失AI生成的任务。')) {
+                Object.keys(localStorage).forEach(key => {
+                  if (key.startsWith('completed_step_')) {
+                    localStorage.removeItem(key);
+                  }
+                });
+                window.location.reload();
+              }
             }}
             style={{
               background: 'transparent',

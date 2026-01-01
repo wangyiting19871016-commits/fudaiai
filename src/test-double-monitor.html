@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双层监视器布局测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 双层监视器布局容器 */
+        .double-monitor {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+        
+        /* 视频播放器区域（60%高度） */
+        .video-container {
+            height: 60%;
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        /* P3实时镜像区域（40%高度） */
+        .p3-container {
+            height: 40%;
+            background-color: #222;
+            padding: 20px;
+            overflow: auto;
+        }
+        
+        /* 模拟视频播放器 */
+        .video-player {
+            width: 80%;
+            height: 80%;
+            background-color: #000;
+            border: 1px solid #444;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        /* 模拟文本预览 */
+        .text-preview {
+            width: 100%;
+            height: 100%;
+            background-color: #111;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* 模拟SCREEN/CODE预览 */
+        .screen-preview {
+            width: 100%;
+            height: 100%;
+            background-color: #111;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        
+        /* 切换按钮 */
+        .toggle-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .toggle-btn {
+            padding: 8px 16px;
+            background-color: #06b6d4;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .toggle-btn.active {
+            background-color: #10b981;
+        }
+    </style>
+</head>
+<body>
+    <!-- 切换按钮 -->
+    <div class="toggle-buttons">
+        <button class="toggle-btn active" data-type="TEXT">TEXT 模式</button>
+        <button class="toggle-btn" data-type="SCREEN">SCREEN 模式</button>
+        <button class="toggle-btn" data-type="CODE">CODE 模式</button>
+    </div>
+    
+    <!-- 双层监视器布局 -->
+    <div class="double-monitor">
+        <!-- 上半部分：视频播放器 -->
+        <div class="video-container">
+            <div class="video-player">
+                📹 视频播放器（始终可见）
+            </div>
+        </div>
+        
+        <!-- 下半部分：P3实时镜像区 -->
+        <div class="p3-container">
+            <!-- 初始显示TEXT模式 -->
+            <div id="text-preview" class="text-preview">
+                <h3>文本预览</h3>
+                <p>这是一个示例文本预览，在TEXT模式下显示。</p>
+                <p>视频始终显示在上方，文本预览显示在下方。</p>
+            </div>
+            
+            <!-- SCREEN模式预览 -->
+            <div id="screen-preview" class="screen-preview" style="display: none;">
+                <h3>屏幕预览</h3>
+                <div style="width: 100%; height: 80%; background-color: #000; border: 1px solid #333; border-radius: 4px; display: flex; justify-content: center; align-items: center; color: #666;">
+                    🖥️ 屏幕内容预览
+                </div>
+            </div>
+            
+            <!-- CODE模式预览 -->
+            <div id="code-preview" class="screen-preview" style="display: none; font-family: monospace;">
+                <h3>代码预览</h3>
+                <pre style="background-color: #000; padding: 10px; border-radius: 4px; overflow: auto; height: 80%;">
+function example() {
+    console.log("Hello, World!");
+    return true;
+}
+                </pre>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 模拟切换不同模式
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有按钮的active类
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                // 添加当前按钮的active类
+                btn.classList.add('active');
+                
+                // 获取要切换的模式
+                const type = btn.getAttribute('data-type');
+                
+                // 隐藏所有预览区域
+                document.getElementById('text-preview').style.display = 'none';
+                document.getElementById('screen-preview').style.display = 'none';
+                document.getElementById('code-preview').style.display = 'none';
+                
+                // 显示对应的预览区域
+                if (type === 'TEXT') {
+                    document.getElementById('text-preview').style.display = 'block';
+                } else if (type === 'SCREEN') {
+                    document.getElementById('screen-preview').style.display = 'block';
+                } else if (type === 'CODE') {
+                    document.getElementById('code-preview').style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

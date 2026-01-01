@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface ReferenceCardProps {
   content: string;
@@ -6,9 +6,21 @@ interface ReferenceCardProps {
 }
 
 const ReferenceCard: React.FC<ReferenceCardProps> = ({ content, title = '📦 核心情报 / 咒语' }) => {
-  const handleCopy = () => {
-    navigator.clipboard.writeText(content);
-    alert('代码已复制！');
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setIsCopied(true);
+      
+      // 2秒后恢复按钮文字
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    } catch (error) {
+      console.error('复制失败:', error);
+      alert('复制失败，请手动复制代码');
+    }
   };
 
   return (
@@ -38,16 +50,17 @@ const ReferenceCard: React.FC<ReferenceCardProps> = ({ content, title = '📦 �
         <button 
           onClick={handleCopy}
           style={{ 
-            background: '#06b6d4', 
+            background: isCopied ? '#10b981' : '#06b6d4', 
             color: '#000', 
             padding: '4px 10px', 
             borderRadius: 4, 
             fontWeight: 'bold', 
             fontSize: 11, 
-            cursor: 'pointer' 
+            cursor: 'pointer',
+            transition: 'all 0.3s'
           }} 
         > 
-          COPY CODE 
+          {isCopied ? 'Copied!' : 'COPY CODE'}
         </button> 
       </div> 
 

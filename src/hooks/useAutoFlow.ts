@@ -56,7 +56,7 @@ export const useAutoFlow = ({
 
   // 状态流转逻辑
   useEffect(() => {
-    let timer: number;
+    let timer: ReturnType<typeof setTimeout>;
 
     switch (flowState) {
       case 'success':
@@ -82,7 +82,7 @@ export const useAutoFlow = ({
     }
 
     return () => {
-      if (timer) clearTimeout(timer);
+      if (timer) clearTimeout(timer as unknown as number);
     };
   }, [flowState, missionTitle, delay, onNext]);
 

@@ -59,7 +59,7 @@ const ScreenCapturer: React.FC<ScreenCapturerProps> = ({ onCapture, onClose, ver
       } else {
         // 桌面端：使用屏幕共享
         const stream = await navigator.mediaDevices.getDisplayMedia({
-          video: { cursor: 'always' },
+          video: true,
           audio: false
         });
         streamRef.current = stream;
@@ -137,6 +137,8 @@ const ScreenCapturer: React.FC<ScreenCapturerProps> = ({ onCapture, onClose, ver
     }
     
     setIsCapturing(false);
+  };
+
   // 确认使用捕获的图像
   const confirmCapture = () => {
     if (capturedBlob && capturedImage) {

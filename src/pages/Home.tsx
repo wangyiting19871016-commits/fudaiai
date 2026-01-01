@@ -60,6 +60,36 @@ const Home: React.FC = () => {
 
   return (
     <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
+      {/* 一键重置系统按钮 - 页面最上方 */}
+      <div style={{ position: 'fixed', top: 20, left: 20, zIndex: 9999 }}>
+        <button 
+          onClick={clearAllData}
+          style={{ 
+            background: 'red', 
+            border: 'none', 
+            color: 'white', 
+            padding: '8px 16px', 
+            cursor: 'pointer', 
+            fontSize: '12px', 
+            fontWeight: 'bold', 
+            letterSpacing: '0.5px', 
+            transition: 'all 0.3s ease',
+            borderRadius: '4px',
+            boxShadow: '0 2px 8px rgba(255, 0, 0, 0.5)'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 0, 0, 0.7)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 0, 0, 0.5)';
+          }}
+        >
+          🔄 一键重置系统
+        </button>
+      </div>
+      
       {/* Clear Data Button */}
       <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 9999 }}>
         <button 

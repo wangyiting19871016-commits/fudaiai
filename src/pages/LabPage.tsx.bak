@@ -1,0 +1,1267 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Mic, CheckCircle, Monitor, Activity, Zap, FileText, Headphones, Play, Square, Settings, BookOpen, Heart, Eye, Code } from 'lucide-react';
+import ReferenceCard from '../components/ReferenceCard';
+import VerifyPanel from '../components/VerifyPanel';
+import ErrorBoundary from '../components/ErrorBoundary';
+import FruitProgressMap from '../components/FruitProgressMap';
+import { useMissionContext } from '../stores/MissionContext';
+
+// 解决浏览器环境下对 NodeJS 命名空间的误报
+declare global {
+  namespace NodeJS {
+    interface Timeout {}
+  }
+}
+
+const LabPage = () => {
+  const { stepId } = useParams();
+  const navigate = useNavigate();
+  const { state: missionState } = useMissionContext();
+
+  // --- 2. P3 数据解析逻辑：多步接管 ---
+  
+  // 任务列表状态，只从 localStorage 或 MissionContext 获取数据
+  const [missions, setMissions] = useState<any[]>([]);
+  
+  // E. 状态维护：定义 currentSubStep (当前子步骤索引，默认从 sessionStorage 读取)
+  const [currentSubStep, setCurrentSubStep] = useState(() => {
+    // 【状态锁定】终极兜底：从 sessionStorage 读取暂存的步骤索引
+    if (typeof window !== 'undefined') {
+      const savedStep = sessionStorage.getItem(`current_step_index_${stepId}`);
+      return savedStep ? parseInt(savedStep, 10) : 0;
+    }
+    return 0;
+  });
+  
+  // 【物理级止血】强制刷新 Key，确保组件完全重建
+  const [instanceKey, setInstanceKey] = useState(0);
+  
+  // === 沉浸式对照架构新增状态 ===
+  const [lockedReference, setLockedReference] = useState<string | null>(null); // 锁定的参考帧
+  const [isVerifyPanelOpen, setIsVerifyPanelOpen] = useState(true); // 验证面板开关状态
+  
+  // === Qwen-VL 视觉审计状态 ===
+  const [isQwenVLAnalyzing, setIsQwenVLAnalyzing] = useState(false);
+  const [qwenVLResult, setQwenVLResult] = useState<string | null>(null);
+  
+  // === 素材加载鲁棒性状态 ===
+  const [currentReferenceUrl, setCurrentReferenceUrl] = useState<string | null>(null);
+  const [isLoadingReference, setIsLoadingReference] = useState(false);
+  
+  // === P3 进度果实化状态 ===
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  
+  // === P3 方案类型读取 ===
+  const [schemeType, setSchemeType] = useState<string>('A'); // 默认原味方案
+  
+  // === P3 微步数量同步 ===
+  const [microStepsCount, setMicroStepsCount] = useState<number>(0);
+  
+  // === 即时代码运行功能状态 ===
+  const [editorContent, setEditorContent] = useState<string>('');
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const codeEditorRef = useRef<HTMLTextAreaElement>(null);
+  const runnerIframeRef = useRef<HTMLIFrameElement>(null);
+  
+  // 运行代码的核心函数
+  const handleRunCode = () => {
+    try {
+      // 获取编辑器中的代码
+      const code = editorContent;
+      if (!code.trim()) {
+        alert('代码不能为空，请先编辑代码');
+        return;
+      }
+      
+      // 设置运行状态
+      setIsRunning(true);
+      
+      // 获取 iframe 并注入代码
+      const iframe = runnerIframeRef.current;
+      if (iframe) {
+        // 将代码作为 srcDoc 注入 iframe
+        iframe.srcdoc = code;
+      }
+    } catch (error) {
+      console.error('运行代码出错:', error);
+      alert('运行代码出错，请检查代码语法');
+    }
+  };
+  
+  // 从 localStorage 或 MissionContext 读取任务数据
+  useEffect(() => {
+    // 注入吴恩达真迹任务
+    const ngMission = {
+      id: "ng_real_01",
+      title: "第一课：分隔符的魔法",
+      verifyType: "TEXT",
+      source_url: "https://www.youtube.com/embed/jC4v5AS4RIM", // 真实视频
+      desc: "【观看】请看左侧视频前 2 分钟。\n【原料】复制这段文字：'孔乙己是站着喝酒而穿长衫的唯一的人...'\n【动作】在下方输入 Prompt，用 ``` 将这段文字包裹，要求 AI 提取主角特征。\n【验证】将你写好的 Prompt 粘贴在下方。",
+      verify_key: "```" // 简单的物理验证：检查有没有用反引号
+    };
+    
+    // 优先从 localStorage 获取当前任务协议
+    const currentMissionProtocol = localStorage.getItem('current_mission_protocol');
+    if (currentMissionProtocol) {
+      try {
+        const parsedMissions = JSON.parse(currentMissionProtocol);
+        // 检查是否已存在该任务，如果不存在则添加
+        const missionExists = parsedMissions.some((m: any) => m.id === ngMission.id);
+        if (!missionExists) {
+          parsedMissions.push(ngMission);
+        }
+        setMissions(parsedMissions);
+        console.log('🔗 从 localStorage 加载任务协议并注入真迹任务');
+      } catch (error) {
+        console.error('解析current_mission_protocol失败:', error);
+        setMissions([ngMission]);
+      }
+    } else if (missionState.missions && missionState.missions.length > 0) {
+      // 如果 localStorage 中没有，则从 MissionContext 获取
+      // 检查是否已存在该任务，如果不存在则添加
+      const missionExists = missionState.missions.some((m: any) => m.id === ngMission.id);
+      if (!missionExists) {
+        setMissions([...missionState.missions, ngMission]);
+      } else {
+        setMissions(missionState.missions);
+      }
+      console.log('🔗 从 MissionContext 加载任务数据并注入真迹任务');
+    } else {
+      // 兜底：直接使用真迹任务
+      setMissions([ngMission]);
+      console.log('🔗 注入真迹任务作为兜底数据');
+    }
+  }, [missionState.missions]);
+  
+  // A. 寻址升级：先在 localStorage 的 custom_missions 中寻找匹配该 ID 的任务包
+  const localMissions = JSON.parse(localStorage.getItem('custom_missions') || '[]');
+  
+  // B. 从activeMission中寻找匹配该ID的任务包
+  const activeMission = JSON.parse(localStorage.getItem('activeMission') || 'null');
+  
+  // C. 优先从本地任务中查找，确保 P4 生成的任务优先处理
+  let targetMission = localMissions.find((m: any) => String(m.id) === String(stepId));
+  
+  // D. 如果本地任务中找不到，从activeMission中查找
+  if (!targetMission && activeMission && String(activeMission.id) === String(stepId)) {
+    targetMission = activeMission;
+  }
+  
+  // E. 如果都找不到，使用默认任务（防崩溃保护）
+  if (!targetMission) {
+    targetMission = {
+      id: 'default',
+      title: '等待同步协议',
+      type: 'TEXT',
+      desc: '请从 P4 编辑器生成并同步任务协议',
+      key: 'SYNC_NEEDED',
+      color: '#666'
+    };
+  }
+  
+  // F. 适配 P4 新数据结构：处理 asset, material, instruction, validation
+  const [p4MissionData, setP4MissionData] = useState<any>(null);
+  
+  // 监听 P4 传过来的新数据结构
+  useEffect(() => {
+    // 从 localStorage 监听 P4 数据变化
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'p4MissionData') {
+        try {
+          const data = JSON.parse(event.newValue || 'null');
+          if (data) {
+            setP4MissionData(data);
+            console.log('🔗 从 localStorage 加载 P4 新数据结构:', data);
+          }
+        } catch (error) {
+          console.error('❌ 解析 P4 数据失败:', error);
+        }
+      }
+    };
+    
+    // 初始加载
+    const initialP4Data = localStorage.getItem('p4MissionData');
+    if (initialP4Data) {
+      try {
+        const data = JSON.parse(initialP4Data);
+        setP4MissionData(data);
+        console.log('🔗 初始加载 P4 新数据结构:', data);
+      } catch (error) {
+        console.error('❌ 初始解析 P4 数据失败:', error);
+      }
+    }
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+  
+  // 微步数量设置：从localStorage读取
+  useEffect(() => {
+    // 正常情况：从localStorage读取微步数量
+    const savedMicroStepsCount = localStorage.getItem('microStepsCount');
+    if (savedMicroStepsCount) {
+      setMicroStepsCount(parseInt(savedMicroStepsCount, 10));
+    }
+  }, []);
+  
+  // Qwen-VL 视觉审计函数 - 极简实现
+  const handleQwenVLAudit = async () => {
+    setIsQwenVLAnalyzing(true);
+    setQwenVLResult(null);
+    
+    try {
+      console.log('🔍 Qwen-VL视觉审计开始...');
+      
+      // 1. 捕获工作区截图
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        throw new Error('无法获取Canvas上下文');
+      }
+      
+      // 设置Canvas尺寸为工作区尺寸
+      const workArea = document.querySelector('[data-work-area]') as HTMLElement;
+      if (!workArea) {
+        throw new Error('未找到工作区元素');
+      }
+      
+      const rect = workArea.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      
+      // 绘制工作区内容到Canvas
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // 这里应该实现实际的截图逻辑
+      // 暂时使用模拟数据
+      
+      // 2. 调用Qwen-VL API（模拟实现）
+      const qwenVLResponse = await callQwenVLAPI(canvas.toDataURL('image/png'));
+      
+      // 3. 解析并显示结果（8岁小孩能懂的中文）
+      setQwenVLResult(qwenVLResponse);
+      console.log('✅ Qwen-VL视觉审计完成');
+      
+    } catch (error) {
+      console.error('❌ Qwen-VL视觉审计失败:', error);
+      setQwenVLResult('视觉审计失败，请检查网络连接或重试。');
+    } finally {
+      setIsQwenVLAnalyzing(false);
+    }
+  };
+
+  // Qwen-VL API调用函数（模拟实现）
+  const callQwenVLAPI = async (imageData: string): Promise<string> => {
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // 模拟Qwen-VL返回结果（8岁小孩能懂的中文）
+    return `
+🎯 视觉审计结果：
+
+✅ 做得好的地方：
+- 颜色基本一致，都是黑白风格
+- 布局位置差不多
+
+❌ 需要改进的地方：
+- 左边的按钮比参考图小了一点点
+- 文字大小可以再大一些
+- 图片位置稍微偏右了
+
+💡 建议：
+把按钮调大一点，文字也调大，图片往左移动一点点就完美啦！
+    `;
+  };
+
+  // 素材加载鲁棒性函数 - 优先本地存储
+  const loadReferenceMaterial = async (url: string): Promise<string> => {
+    setIsLoadingReference(true);
+    
+    try {
+      // 1. 首先尝试从本地存储加载
+      const cachedUrl = localStorage.getItem(`cached_reference_${btoa(url)}`);
+      if (cachedUrl) {
+        console.log('✅ 从本地缓存加载参考素材');
+        setCurrentReferenceUrl(cachedUrl);
+        return cachedUrl;
+      }
+      
+      // 2. 如果本地没有，尝试加载远程资源
+      console.log('🌐 从远程加载参考素材');
+      
+      // 模拟网络请求延迟
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // 检查资源是否可访问
+      const response = await fetch(url, { method: 'HEAD' });
+      if (!response.ok) {
+        throw new Error('远程资源不可访问');
+      }
+      
+      // 3. 成功加载后缓存到本地
+      localStorage.setItem(`cached_reference_${btoa(url)}`, url);
+      setCurrentReferenceUrl(url);
+      return url;
+      
+    } catch (error) {
+      console.error('❌ 素材加载失败:', error);
+      
+      // 4. 加载失败时显示本地默认素材
+      const defaultMaterial = localStorage.getItem('default_reference_material');
+      if (defaultMaterial) {
+        console.log('🔄 使用本地默认素材');
+        setCurrentReferenceUrl(defaultMaterial);
+        return defaultMaterial;
+      }
+      
+      // 5. 连默认素材都没有，抛出错误触发Error Boundary
+      throw new Error('本地真迹库缺失');
+      
+    } finally {
+      setIsLoadingReference(false);
+    }
+  };
+
+  // F. 适配 P4 新数据结构：单页原子任务渲染
+  // 修复：重新定义 steps 和 hasSubSteps 变量，确保它们在所有地方都能正确访问
+  const steps = targetMission?.steps || [];
+  const hasSubSteps = targetMission && targetMission.steps && Array.isArray(targetMission.steps) && targetMission.steps.length > 0;
+  
+  // 废弃旧的 steps 遍历逻辑，改为直接使用 P4 传过来的新数据结构
+  const isP4Mission = p4MissionData?.asset && p4MissionData?.material;
+  
+  // 合并数据：优先使用 P4 新数据结构，否则使用旧结构
+  const currentStep = isP4Mission ? {
+    ...targetMission,
+    ...p4MissionData,
+    type: 'TEXT', // 默认使用文本验证类型
+    source_url: p4MissionData.asset?.url, // 修复：添加空值保护
+    desc: p4MissionData.instruction || '', // 修复：添加空值保护
+    key: p4MissionData.validation?.keyword // 修复：添加空值保护
+  } : (hasSubSteps ? targetMission.steps[currentSubStep] : targetMission);
+  
+  // 初始化编辑器内容，预填 P4 传过来的原料代码
+  useEffect(() => {
+    // 放宽判断逻辑，兼容多种代码字段名
+    const rawCode = p4MissionData?.material || targetMission?.materialLayer?.content || targetMission?.material;
+    
+    if (rawCode) {
+      setEditorContent(rawCode || '');
+    }
+  }, [p4MissionData, targetMission]);
+  
+  // 监听任务变化和当前步骤变化，自动加载参考素材
+  useEffect(() => {
+    // 升级：放宽判断逻辑，兼容多种字段名
+    const referenceUrl = lockedReference || 
+      currentStep?.mediaUrl || // 新增：支持 mediaUrl
+      currentStep?.asset?.url || // 支持 asset.url
+      currentStep?.assetLayer?.mediaUrl || // 支持 assetLayer.mediaUrl
+      currentStep?.source_url;
+    
+    // 只要有任何视频URL，就尝试加载
+    if (referenceUrl) {
+      loadReferenceMaterial(referenceUrl).catch(error => {
+        console.error('参考素材加载失败:', error);
+      });
+    } else {
+      setCurrentReferenceUrl(null);
+    }
+  }, [lockedReference, currentStep?.source_url, currentStep?.assetLayer?.mediaUrl, currentStep?.asset?.url, currentStep?.mediaUrl, p4MissionData]);
+  
+  // 获取验证类型图标函数
+  const getStepIcon = (type: string) => {
+    switch (type) {
+      case 'SCREEN_SHOT':
+      case 'SCREEN':
+        return <Monitor size={14} />;
+      case 'TEXT':
+        return <FileText size={14} />;
+      case 'VOICE':
+        return <Mic size={14} />;
+      default:
+        return <Activity size={14} />;
+    }
+  };
+  
+  // 监听 URL 变化，仅在任务真正切换时重置子步骤状态
+  useEffect(() => {
+    // 重新查找任务对象
+    let newTargetMission = localMissions.find((m: any) => String(m.id) === String(stepId));
+    
+    // 如果本地任务中找不到，从activeMission中查找
+    if (!newTargetMission && activeMission && String(activeMission.id) === String(stepId)) {
+      newTargetMission = activeMission;
+    }
+    
+    // 如果都找不到，使用默认任务（防崩溃保护）
+    if (!newTargetMission) {
+      newTargetMission = {
+        id: 'default',
+        title: '等待同步协议',
+        type: 'TEXT',
+        desc: '请从 P4 编辑器生成并同步任务协议',
+        key: 'SYNC_NEEDED',
+        color: '#666'
+      };
+    }
+    
+    // 【状态锁定】仅在任务 ID 真正变化时才重置子步骤索引
+    if (newTargetMission.id !== targetMission?.id) {
+      setCurrentSubStep(0);
+      console.log("【状态锁定】任务切换，重置子步骤索引为初始值");
+    }
+  }, [stepId, localMissions, activeMission, targetMission?.id]);
+
+  // 【状态回显】保存和恢复输入文本状态
+
+
+  // 【状态回显】加载当前步骤的输入状态
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedState = sessionStorage.getItem(`input_state_${stepId}_${currentSubStep}`);
+      if (savedState) {
+        // 状态恢复由VerifyPanel组件内部管理
+      }
+    }
+  }, [stepId, currentSubStep]);
+
+  // 【状态锁定】监听 currentSubStep 变化，保存到 sessionStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // 防止死循环：仅在有效步骤时保存
+      if (currentSubStep >= 0) {
+        sessionStorage.setItem(`current_step_index_${stepId}`, currentSubStep.toString());
+        console.log("【状态锁定】保存步骤索引到 sessionStorage:", currentSubStep);
+      }
+    }
+  }, [currentSubStep, stepId]);
+  
+  // 【方案类型读取】从activeMission中读取方案类型
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const activeMission = localStorage.getItem('activeMission');
+      if (activeMission) {
+        try {
+          const missionData = JSON.parse(activeMission);
+          if (missionData.schemeType) {
+            setSchemeType(missionData.schemeType);
+            console.log("【方案类型读取】检测到方案类型:", missionData.schemeType);
+          }
+        } catch (error) {
+          console.warn("【方案类型读取】解析activeMission失败:", error);
+        }
+      }
+    }
+  }, [stepId]);
+
+  // 【协议同步监听】监听 P4 同步事件，触发重新渲染
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'lastSyncTimestamp' || event.key === 'activeMission') {
+        console.log('🔗 检测到协议同步，触发 P3 重新渲染');
+        
+        // 强制刷新组件实例
+        setInstanceKey(prev => prev + 1);
+        
+        // 重新加载任务数据
+        const newLocalMissions = JSON.parse(localStorage.getItem('custom_missions') || '[]');
+        const newTargetMission = newLocalMissions.find((m: any) => String(m.id) === String(stepId));
+        
+        // 如果本地任务中找不到，尝试从 activeMission 加载
+        let finalMission = newTargetMission;
+        if (!finalMission) {
+          const activeMission = JSON.parse(localStorage.getItem('activeMission') || 'null');
+          if (activeMission && String(activeMission.id) === String(stepId)) {
+            finalMission = activeMission;
+            console.log('🔗 从 activeMission 加载任务数据');
+          }
+        }
+        
+        if (finalMission) {
+          console.log('🔗 已加载同步后的任务数据:', finalMission);
+          
+          // 如果新任务有素材URL，自动解锁参考窗口
+          if (finalMission.source_url) {
+            console.log('🔗 检测到新素材URL，自动加载参考素材');
+          }
+        }
+      }
+    };
+
+    // 监听 localStorage 变化
+    window.addEventListener('storage', handleStorageChange);
+    
+    // 清理监听器
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [stepId]);
+
+  // 手动同步检查（用于当前页面内触发）
+  const checkForSync = () => {
+    console.log('🔄 手动检查协议同步状态');
+    
+    // 强制刷新组件实例
+    setInstanceKey(prev => prev + 1);
+    
+    // 重新加载任务数据
+    const newLocalMissions = JSON.parse(localStorage.getItem('custom_missions') || '[]');
+    const newTargetMission = newLocalMissions.find((m: any) => String(m.id) === String(stepId));
+    
+    // 如果本地任务中找不到，尝试从 activeMission 加载
+    let finalMission = newTargetMission;
+    if (!finalMission) {
+      const activeMission = JSON.parse(localStorage.getItem('activeMission') || 'null');
+      if (activeMission && String(activeMission.id) === String(stepId)) {
+        finalMission = activeMission;
+        console.log('🔗 从 activeMission 加载任务数据');
+      }
+    }
+    
+    if (finalMission) {
+      console.log('🔗 手动同步成功，加载任务数据:', finalMission);
+      alert('✅ 协议同步成功！');
+    } else {
+      console.log('🔗 未找到同步的任务数据');
+      alert('❌ 未找到同步的任务数据');
+    }
+  };
+
+
+
+
+  // 添加过渡状态
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // 重写为 handleVerify，确保任务物理跳转的链路闭环
+  const handleNextStep = () => {
+    // 1. 立即更新当前子步骤的完成状态
+    setCompletedSteps(prev => [...prev, currentSubStep]);
+    
+    console.log("信号已收到，强制跳转至:", currentSubStep + 1);
+    
+    // 2. 强制索引步进
+    // 修复：添加空值保护，确保 steps 是有效的数组
+    if (steps && steps.length > 0 && currentSubStep < steps.length - 1) {
+      setCurrentSubStep(prev => prev + 1);
+    } else {
+      // 防御性检查：如果是最后一个步骤或单页任务，弹出全局提示
+      alert("协议已圆满签署");
+      console.log("Mission Accomplished");
+    }
+    
+    // 3. 确保滚动到顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // --- 智能工具箱状态 ---
+  const [isToolboxExpanded, setIsToolboxExpanded] = useState(true);
+
+  // --- 逻辑适配：根据type字段动态渲染组件 ---
+  // 修复：添加空值保护，防止 currentStep 为空时出错
+  const displayType = currentStep?.type === 'SCREEN_SHOT' ? 'SCREEN' : currentStep?.type;
+
+  // --- 空杯重置功能 (物理级止血) ---
+  const handleReset = () => {
+    // 【空杯重置】强制执行物理级重置，任何残留缓存都必须死
+    
+    // A. 物理清空所有缓存
+    sessionStorage.clear();
+    localStorage.removeItem(`completed_step_${stepId}`);
+    
+    // B. 物理触发组件重连
+    setInstanceKey(prev => prev + 1);
+    
+    // C. 物理跳转（可选，确保路由刷新）
+    console.log("【物理重置】所有状态已强制初始化");
+  };
+
+
+
+  const themeColor = currentStep.color || "#06b6d4";
+  // 类型映射：将P4生成的三种标准类型映射到对应的渲染组件
+
+
+  // 控制台埋点：显示组件挂载状态和 missions 数据
+  console.log('LabPage Mounted, missions:', missions);
+  
+  // --- 🐍 贪食蛇沙盒逻辑 Start ---
+  // 万能适配：不管 P4 发什么格式，都转成标准格式
+  const snakeData = {
+    video: targetMission?.mediaUrl || targetMission?.assetLayer?.mediaUrl || targetMission?.videoUrl || targetMission?.asset?.url,
+    code: targetMission?.rawMaterial || targetMission?.materialLayer?.content || targetMission?.rawCode || targetMission?.material,
+    instruction: targetMission?.instruction || targetMission?.desc || "请参考左侧素材，修改代码。"
+  };
+  
+  const [sandboxCode, setSandboxCode] = useState("");
+  const [sandboxRunning, setSandboxRunning] = useState(false);
+  const [sandboxKey, setSandboxKey] = useState(0);
+
+  // 监听任务切换，更新代码
+  useEffect(() => {
+     if (snakeData.code) setSandboxCode(snakeData.code);
+  }, [snakeData.code]);
+  // --- 🐍 贪食蛇沙盒逻辑 End ---
+  
+  // 调试神器：打印出来看看到底有没有拿到
+  console.log("【P3 强制渲染数据】", snakeData);
+  
+  // 致命检查：如果没有找到任务，显示待机页面
+  if (!targetMission) {
+    return (
+      <div style={{
+        display: 'flex',
+        height: '100vh',
+        width: '100vw',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'black',
+        color: 'white'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>实验室待机中...</h2>
+          <p style={{ color: '#666', marginBottom: '16px' }}>请前往 P4 铸造并发布新任务</p>
+          <button
+            onClick={() => navigate('/editor')}
+            style={{
+              background: '#000',
+              border: '1px solid #333',
+              borderRadius: '0',
+              padding: '12px 24px',
+              cursor: 'pointer',
+              color: '#fff',
+              fontSize: '14px'
+            }}
+          >
+            返回 P4 编辑器
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  // 再次检查：确保 targetMission 存在，防止空指针崩溃
+  if (!targetMission) {
+    return (
+      <div style={{
+        display: 'flex',
+        height: '100vh',
+        width: '100vw',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'black',
+        color: 'white',
+        padding: '40px'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>正在等待任务数据同步...</h2>
+          <p style={{ color: '#666' }}>请确保 P4 已发布任务，数据正在同步中...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // --- 4. 视觉渲染 (重构为沉浸式对照架构) ---
+  return (
+    <div key={instanceKey} style={{
+      position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+      backgroundColor: '#050505', color: '#fff', 
+      display: 'flex', flexDirection: 'row', overflow: 'hidden',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      // 添加过渡动效：模拟任务切换的物理感
+      opacity: isTransitioning ? 0.5 : 1,
+      transition: 'opacity 0.5s ease-in-out'
+    }}>
+      
+      {/* 顶部进度条 */}
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: '#222', zIndex: 200 }}>
+          <div style={{ 
+            // 适配 P4 单页原子任务：进度条始终显示100%
+            width: isP4Mission ? '100%' : hasSubSteps 
+              ? `${((currentSubStep + 1) / targetMission.steps.length) * 100}%`
+              : '100%', 
+            maxWidth: '100%',
+            height: '100%', background: themeColor, 
+            transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}></div>
+        </div>
+        
+        {/* P3 进度果实化地图 */}
+        {/* 适配 P4 单页原子任务：隐藏进度果实图 */}
+        {!isP4Mission && ((hasSubSteps && targetMission.steps.length > 1) || microStepsCount > 0) && (
+          <div style={{
+            position: 'absolute',
+            top: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 199
+          }}>
+            <FruitProgressMap 
+              totalSteps={microStepsCount > 0 ? microStepsCount : targetMission.steps.length}
+              currentStep={currentSubStep}
+              completedSteps={completedSteps}
+            />
+          </div>
+        )}
+      
+      {/* 返回按钮 - 极简设计 */}
+      <button 
+        onClick={() => navigate('/')}
+        style={{ 
+          position: 'absolute', top: 24, left: 24, zIndex: 100,
+          background: '#000', border: '1px solid #333', borderRadius: '0',
+          padding: 12, cursor: 'pointer', color: '#fff',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}
+      >
+        <ArrowLeft size={20} />
+      </button>
+
+      {/* === SideGuide (25%) - 左侧任务栏 === */}
+      <div style={{
+        width: '25%', height: '100%', borderRight: '1px solid #333',
+        background: '#000',
+        display: 'flex', flexDirection: 'column',
+        position: 'relative',
+        overflowY: 'auto',
+        padding: '20px 0'
+      }}>
+        
+        {/* 任务标题栏 */}
+        <div style={{
+          padding: '0 20px 20px', 
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          marginBottom: '20px'
+        }}>
+          <div style={{
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 10, 
+            marginBottom: 10 
+          }}>
+            <span style={{
+              padding: '4px 12px', 
+              background: '#000', 
+              border: `1px solid ${themeColor}`, 
+              color: themeColor, 
+              fontSize: 12, 
+              borderRadius: '0', 
+              letterSpacing: 2, 
+              fontWeight: 'bold'
+            }}>
+              MISSION
+            </span>
+            <span style={{
+              color: '#666', 
+              fontSize: 12, 
+              fontWeight: 'bold', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 5 
+            }}>
+              <Activity size={14} /> {targetMission?.type || 'MIXED'}
+            </span>
+          </div>
+          <h3 style={{
+            fontSize: 18, 
+            fontWeight: 'bold', 
+            color: '#fff', 
+            margin: 0,
+            lineHeight: 1.3
+          }}>
+            {targetMission?.title || '未命名任务'}
+          </h3>
+        </div>
+
+        {/* 同步按钮 */}
+        <div style={{
+          padding: '0 20px 15px', 
+          borderBottom: '1px solid #333' 
+        }}>
+          <button
+            onClick={checkForSync}
+            style={{
+              width: '100%',
+              background: '#000',
+              border: '1px solid #333',
+              color: '#fff',
+              padding: '10px 16px',
+              borderRadius: '0',
+              fontSize: 13,
+              fontWeight: 'normal',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8
+            }}
+          >
+            <Activity size={14} />
+            手动同步协议
+          </button>
+        </div>
+
+        {/* 任务节点列表 - 极简Timeline */}
+        <div style={{
+          padding: '0 10px',
+          position: 'relative'
+        }}>
+          {/* Timeline 连线 */}
+          {!isP4Mission && hasSubSteps && (
+            <div style={{
+              position: 'absolute',
+              left: 20,
+              top: 0,
+              bottom: 0,
+              width: 1,
+              background: '#333',
+              zIndex: 1
+            }} />
+          )}
+          
+          {/* 适配 P4 单页原子任务 */}
+          {isP4Mission ? (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              padding: '8px 16px',
+              cursor: 'pointer',
+              background: 'transparent',
+              border: 'none',
+              transition: 'all 0.2s ease',
+              position: 'relative',
+              zIndex: 2
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}>
+              <div style={{
+                width: 12,
+                height: 12,
+                borderRadius: '0',
+                background: '#fff',
+                border: '2px solid #fff',
+                position: 'relative',
+                zIndex: 3
+              }} />
+              <div style={{ 
+                color: '#fff',
+                opacity: 1
+              }}>
+                {getStepIcon('TEXT')}
+              </div>
+              <div style={{
+                flex: 1,
+                fontSize: 14,
+                fontWeight: 'normal',
+                color: '#fff',
+                lineHeight: 1.2,
+                opacity: 1
+              }}>
+                {p4MissionData.validation?.description || '验证规则'}
+              </div>
+              <div style={{
+                fontSize: 11,
+                color: '#fff',
+                fontWeight: 'normal',
+                opacity: 0.6
+              }}>
+                1
+              </div>
+            </div>
+          ) : hasSubSteps ? (
+            targetMission.steps.map((step: any, index: number) => {
+              const isActive = index === currentSubStep;
+              const isCompleted = index < currentSubStep;
+              const isLocked = index > currentSubStep;
+              
+              return (
+                <div
+                  key={step.id || index}
+                  onClick={() => !isLocked && setCurrentSubStep(index)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '8px 16px',
+                    marginBottom: 0,
+                    cursor: isLocked ? 'not-allowed' : 'pointer',
+                    background: 'transparent',
+                    border: 'none',
+                    transition: 'all 0.2s ease',
+                    opacity: isLocked ? 0.3 : 1,
+                    position: 'relative',
+                    zIndex: 2
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isLocked) {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isLocked) {
+                      e.currentTarget.style.background = 'transparent';
+                    }
+                  }}>
+                  {/* 状态指示器 - 方形 */}
+                  <div style={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: '0',
+                    background: isActive ? '#fff' : isCompleted ? '#fff' : '#666',
+                    border: isActive ? '2px solid #fff' : '1px solid #666',
+                    position: 'relative',
+                    zIndex: 3
+                  }} />
+                  
+                  {/* 极简图标 */}
+                  <div style={{
+                    color: isActive ? '#fff' : isCompleted ? '#fff' : '#666',
+                    opacity: isActive ? 1 : 0.7
+                  }}>
+                    {getStepIcon(step.verifyType || step.type)}
+                  </div>
+                  
+                  {/* 步骤标题 - 统一字号，取消加粗 */}
+                  <div style={{
+                    flex: 1,
+                    fontSize: 14,
+                    fontWeight: 'normal',
+                    color: isActive ? '#fff' : isCompleted ? '#fff' : '#aaa',
+                    lineHeight: 1.2,
+                    opacity: isActive ? 1 : 0.8
+                  }}>
+                    {step.title || `步骤 ${index + 1}`}
+                  </div>
+                  
+                  {/* 步骤编号 - 极简显示 */}
+                  <div style={{
+                    fontSize: 11,
+                    color: isActive ? '#fff' : '#666',
+                    fontWeight: 'normal',
+                    opacity: 0.6
+                  }}>
+                    {index + 1}
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              padding: '8px 16px',
+              cursor: 'pointer',
+              background: 'transparent',
+              border: 'none',
+              transition: 'all 0.2s ease',
+              position: 'relative',
+              zIndex: 2
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}>
+              <div style={{
+                width: 12,
+                height: 12,
+                borderRadius: '0',
+                background: '#fff',
+                border: '2px solid #fff',
+                position: 'relative',
+                zIndex: 3
+              }} />
+              <div style={{ 
+                color: '#fff',
+                opacity: 1
+              }}>
+                {getStepIcon(displayType)}
+              </div>
+              <div style={{
+                flex: 1,
+                fontSize: 14,
+                fontWeight: 'normal',
+                color: '#fff',
+                lineHeight: 1.2,
+                opacity: 1
+              }}>
+                {targetMission?.title || '当前任务'}
+              </div>
+              <div style={{
+                fontSize: 11,
+                color: '#fff',
+                fontWeight: 'normal',
+                opacity: 0.6
+              }}>
+                1
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* === MasterCanvas (75%) - 右侧主画布 === */}
+      <div style={{
+        width: '75%', height: '100%', 
+        background: '#000', 
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'row'
+      }}>
+        
+        {/* 左侧参考窗口 (50%) - 暴力替换 */}
+        <div className="flex-1 bg-black h-full relative">
+          {/* 只要有视频链接，就强制渲染 iframe，忽略其他所有条件 */}
+          {snakeData.video ? (
+            <iframe
+              src={snakeData.video}
+              className="w-full h-full border-0"
+              allow="autoplay; encrypted-media"
+            />
+          ) : (
+            /* 只有没视频时，才显示旧的占位符 */
+            <div className="text-gray-500 text-center mt-20">暂无参考素材 (Debug: No Video URL)</div>
+          )}
+        </div>
+        
+        {/* 右侧工作窗口 (50%) - 暴力替换 */}
+        <div className="flex-1 flex flex-col h-full bg-[#1e1e1e]">
+          {/* 工作窗口标题栏 - 极简风格 */}
+          <div style={{
+            padding: '8px 12px',
+            background: '#000',
+            borderBottom: '1px solid #333',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <div style={{
+                width: '6px',
+                height: '6px',
+                background: '#fff'
+              }}></div>
+              <span style={{ color: '#fff', fontSize: '12px' }}>
+                {currentStep?.title || '选择任务开始'}
+              </span>
+            </div>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              {/* Qwen-VL 视觉审计常驻按钮 - 极简设计 */}
+              <button 
+                onClick={handleQwenVLAudit}
+                disabled={isQwenVLAnalyzing}
+                style={{
+                  background: '#000',
+                  border: '1px solid #333',
+                  color: isQwenVLAnalyzing ? '#666' : '#fff',
+                  padding: '4px 8px',
+                  fontSize: '10px',
+                  cursor: isQwenVLAnalyzing ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  borderRadius: '0'
+                }}
+              >
+                <Eye size={10} />
+                {isQwenVLAnalyzing ? '分析中...' : '视觉审计'}
+              </button>
+              
+              <button 
+                onClick={() => setIsVerifyPanelOpen(!isVerifyPanelOpen)}
+                style={{
+                  background: '#000',
+                  border: '1px solid #333',
+                  color: '#fff',
+                  padding: '4px 8px',
+                  fontSize: '10px',
+                  cursor: 'pointer',
+                  borderRadius: '0'
+                }}
+              >
+                {isVerifyPanelOpen ? '隐藏验证' : '显示验证'}
+              </button>
+            </div>
+          </div>
+          
+          { snakeData.code ? (
+             <div className="flex flex-col h-full bg-[#111] p-4">
+                <div className="text-yellow-400 mb-2 font-bold">💡 {snakeData.instruction}</div>
+                <textarea 
+                  className="flex-1 bg-black text-green-400 font-mono p-4 mb-4 border border-gray-700 resize-none" 
+                  value={sandboxCode} 
+                  onChange={(e) => setSandboxCode(e.target.value)} 
+                />
+                <div className="flex justify-end gap-2">
+                   <button 
+                     onClick={() => { setSandboxRunning(true); setSandboxKey(k => k+1); }} 
+                     className="bg-green-600 text-white px-4 py-2 rounded flex items-center gap-2" 
+                   >
+                     <Play size={16} /> 运行
+                   </button>
+                </div>
+                {sandboxRunning && (
+                  <div className="h-64 mt-4 bg-white border border-gray-600">
+                    <iframe key={sandboxKey} srcDoc={sandboxCode} className="w-full h-full border-0" sandbox="allow-scripts allow-modals" />
+                  </div>
+                )}
+             </div>
+          ) : (
+            /* 保留原有的 VerifyPanel 组件 */
+            <VerifyPanel 
+              step={isP4Mission ? p4MissionData : (steps[currentSubStep] || targetMission)}
+              onVerified={handleNextStep}
+              themeColor={'#fff'}
+            />
+          )}
+        </div>
+        
+        {/* === 可收缩工具箱 === */}
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          zIndex: 10000, // 提高层级，确保不被遮挡
+          pointerEvents: 'auto'
+        }}>
+          {isToolboxExpanded ? (
+            // 展开状态
+            <div style={{
+              background: 'rgba(0, 0, 0, 0.9)',
+              border: '1px solid #333',
+              borderRadius: '0',
+              padding: 20,
+              width: 280,
+              backdropFilter: 'blur(4px)'
+            }}>
+              {/* 工具箱标题栏 */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 15,
+                paddingBottom: 10,
+                borderBottom: '1px solid #333'
+              }}>
+                <span style={{ color: '#ffd700', fontSize: 14, fontWeight: 'bold' }}>智能工具箱</span>
+                <button 
+                  onClick={() => setIsToolboxExpanded(false)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#666',
+                    cursor: 'pointer',
+                    padding: 5
+                  }}
+                >
+                  <Settings size={16} />
+                </button>
+              </div>
+
+              {/* 当前验证插件 - 根据方案类型显示引导语 */}
+              <div style={{
+                background: '#000',
+                border: '1px solid #333',
+                borderRadius: '0',
+                padding: 12,
+                cursor: 'pointer'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Zap size={14} color="#fff" />
+                  <span style={{ color: '#fff', fontSize: 12, fontWeight: 'normal' }}>方案引导</span>
+                </div>
+                <div style={{ color: '#aaa', fontSize: 10, marginTop: 4, lineHeight: '1.3' }}>
+                  {schemeType === 'A' && '原味方案：专注文本逻辑验证'}
+                  {schemeType === 'B' && '平行方案：侧重坐标物理比对'}
+                </div>
+              </div>
+              
+              {/* 心法回顾 */}
+              <div style={{
+                background: '#000',
+                border: '1px solid #333',
+                borderRadius: '0',
+                padding: 12,
+                cursor: 'pointer',
+                marginTop: 12
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Heart size={14} color="#fff" />
+                  <span style={{ color: '#fff', fontSize: 12, fontWeight: 'normal' }}>心法回顾</span>
+                </div>
+                <div style={{ color: '#aaa', fontSize: 10, marginTop: 4 }}>回顾当前任务的核心要点</div>
+              </div>
+            </div>
+          ) : (
+            // 收缩状态
+            <button
+              onClick={() => setIsToolboxExpanded(true)}
+              style={{
+                width: 50,
+                height: 50,
+                background: 'rgba(0, 0, 0, 0.9)',
+                border: '1px solid #333',
+                borderRadius: '0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#fff',
+                backdropFilter: 'blur(4px)'
+              }}
+            >
+              <Settings size={20} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes ping { 75%, 100% { transform: scale(1.4); opacity: 0; } }
+        @keyframes pulse {
+          0% { transform: scale(1); opacity: 0.6; }
+          50% { transform: scale(1.1); opacity: 0.3; }
+          100% { transform: scale(1); opacity: 0.6; }
+        }
+        @keyframes toolboxSlideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes toolboxSlideOut {
+          from { transform: translateX(0); opacity: 1; }
+          to { transform: translateX(100%); opacity: 0; }
+        }
+        @keyframes confetti {
+          0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes zoomIn {
+          0% { transform: rotate(-15deg) scale(0.5); opacity: 0; }
+          100% { transform: rotate(-15deg) scale(1); opacity: 1; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default LabPage;

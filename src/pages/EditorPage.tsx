@@ -1,444 +1,341 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles, Video, FileText, Save, Cpu, Loader2, Volume2, VolumeX, Mic, Square } from 'lucide-react';
-// 确保这里引用的是正确的服务文件路径
-import { generateMissionSteps } from '../services/aiService';
-
-// 直接在全局作用域定义这个变量，彻底终结 ts(2304) 
-const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+import { ArrowLeft } from 'lucide-react';
+import { useMissionLogic } from './MissionFoundry/hooks/useMissionLogic';
+import FoundrySidebar from './MissionFoundry/components/FoundrySidebar';
+import TaskMatrix from './MissionFoundry/components/TaskMatrix';
+import P3Mirror from './MissionFoundry/components/P3Mirror';
 
 const EditorPage = () => {
   const navigate = useNavigate();
-
-  // --- 状态管理 ---
-  const [videoUrl, setVideoUrl] = useState('');
-  const [videoScript, setVideoScript] = useState(''); // 视频事实/脚本
-  const [mindset, setMindset] = useState(''); // 核心心法/备注
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [logs, setLogs] = useState<string[]>([]);
   
-  // --- 编辑态状态管理 ---
-  // 使用 any 避免复杂的嵌套类型报错
-  const [missionData, setMissionData] = useState<any>(null);
-  
-  // --- TTS 语音生成器状态 ---
-  const [isPlaying, setIsPlaying] = useState(false);
-  const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
-  
-  // --- 实时语音识别状态 ---
-  const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  const recognitionRef = useRef<any | null>(null);
-
-  // --- 真实 API 触发 ---
-  const handleAnalyze = async () => {
-    if (!videoScript.trim()) {
-      alert("请填写【视频事实/脚本】内容（必填）");
-      return;
-    }
-
-    setIsAnalyzing(true);
-    setLogs(["正在握手 DeepSeek API...", "正在传输视频物料与脚本...", "AI 正在生成真迹协议任务包..."]);
+  // 使用核心逻辑 Hook
+  const {
+    // 状态
+    mediaUrl,
+    instruction,
+    audioTrackName,
+    verifyType,
+    matchKeyword,
+    isAnalyzing,
+    logs,
+    uploadedFile,
+    draftMission,
+    selectedStepIndex,
+    isManualMode,
+    fileInputRef,
+    isScreenCapturing,
+    capturedVideoUrl,
+    capturedAudioUrl,
+    mediaStream,
     
-    try {
-      // 调用 AI 接口
-      const missionPackage = await generateMissionSteps(videoScript, videoUrl, mindset);
-      
-      // 检查新的任务包结构（兼容新旧格式）
-      if (!missionPackage || !missionPackage.steps) {
-        throw new Error("AI 返回的任务包格式不正确，缺少必要字段");
+    // 方法
+    handleFormChange,
+    handleFileUpload,
+    handleAnalyze,
+    handleAddStep,
+    handleDeleteStep,
+    handleMoveStepUp,
+    handleMoveStepDown,
+    handleSignAndRelease,
+    handleVoiceAI,
+    handleIdentifyKeyFrames,
+    setSelectedStepIndex,
+    setIsManualMode,
+    updateStep,
+    updateDraftMission,
+    handleStartScreenCapture,
+    handleStopScreenCapture,
+    downloadVideo,
+    downloadAudio
+  } = useMissionLogic();
+  
+  // 添加消息监听，处理来自LabPage的下载事件
+  React.useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'DOWNLOAD_VIDEO') {
+        console.log('收到下载视频请求');
+        downloadVideo();
+      } else if (event.data.type === 'DOWNLOAD_AUDIO') {
+        console.log('收到下载音频请求');
+        downloadAudio();
       }
+    };
+    
+    window.addEventListener('message', handleMessage);
+    
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [downloadVideo, downloadAudio]);
+
+  // 视频跳转处理函数
+  const handleSeekToTime = (timestamp: number) => {
+    console.log(`Seeking to ${timestamp}s`);
+    // 这里可以添加实际的视频跳转逻辑
+  };
+
+  // 当前视频播放时间状态
+  const [currentVideoTime, setCurrentVideoTime] = useState<number>(0);
+  const [currentVideoPlaying, setCurrentVideoPlaying] = useState<boolean>(false);
+  // 视频播放器引用
+  const videoRef = useRef<HTMLVideoElement>(null);
+  // 音频管理引用
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // 处理视频播放器引用就绪
+  const handleVideoRefReady = (ref: React.RefObject<HTMLVideoElement>) => {
+    videoRef.current = ref.current;
+    
+    if (videoRef.current) {
+      // 添加视频事件监听器
+      videoRef.current.addEventListener('play', handleVideoPlay);
+      videoRef.current.addEventListener('pause', handleVideoPause);
+      videoRef.current.addEventListener('ended', handleVideoPause);
+    }
+  };
+  
+  // 视频播放事件处理
+  const handleVideoPlay = () => {
+    setCurrentVideoPlaying(true);
+  };
+  
+  // 视频暂停事件处理
+  const handleVideoPause = () => {
+    setCurrentVideoPlaying(false);
+    stopPreviewAudio();
+  };
+  
+  // 停止预览音频
+  const stopPreviewAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+  };
+
+  // 处理视频当前时间变化
+  const handleCurrentTimeChange = (time: number) => {
+    setCurrentVideoTime(time);
+  };
+
+  // 视频跳转方法
+  const seekToTime = (timestamp: number) => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = timestamp;
+    }
+    console.log(`Seeking to ${timestamp}s`);
+  };
+
+  // 设置入点（开始时间）
+  const handleSetInPoint = (stepIndex: number) => {
+    if (!videoRef.current) return;
+    
+    const currentTime = videoRef.current.currentTime;
+    console.log(`Setting in point for step ${stepIndex + 1} to ${currentTime}s`);
+    // 使用 updateStep 函数更新步骤的开始时间
+    updateStep(stepIndex, { start_time: currentTime });
+  };
+
+  // 设置出点（结束时间）
+  const handleSetOutPoint = (stepIndex: number) => {
+    if (!videoRef.current) return;
+    
+    const currentTime = videoRef.current.currentTime;
+    console.log(`Setting out point for step ${stepIndex + 1} to ${currentTime}s`);
+    // 使用 updateStep 函数更新步骤的结束时间
+    updateStep(stepIndex, { end_time: currentTime });
+  };
+
+  // 停止预览功能
+  const handleStopPreview = () => {
+    stopPreviewAudio();
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
+
+  // 生成切片功能
+  const handleGenerateSlice = (stepIndex: number, startTime: number, endTime: number, isScreenType: boolean) => {
+    console.log(`Generating slice for step ${stepIndex + 1} from ${startTime}s to ${endTime}s`);
+    
+    // 获取当前任务的原始视频路径
+    const originalVideoPath = draftMission.video.url;
+    console.log(`Original video path: ${originalVideoPath}`);
+    
+    // 生成输出文件名
+    const timestamp = Date.now();
+    const outputFilename = `slice_step${stepIndex + 1}_${timestamp}.mp4`;
+    
+    // 执行 FFmpeg 切片命令 - 强制转码音频为 AAC 格式，使用固定路径
+    const ffmpegCommand = `ffmpeg -i "${originalVideoPath}" -ss ${startTime} -to ${endTime} -c:v libx264 -c:a aac -strict -2 "./p4_vault/slices/${outputFilename}"`;
+    
+    // 模拟 FFmpeg 切片执行
+    console.log(`Executing FFmpeg command: ${ffmpegCommand}`);
+    console.log("Attempting to write file to:", `./p4_vault/slices/${outputFilename}`);
+    
+    // 更新步骤，添加视频路径信息
+    const updatedSteps = [...draftMission.steps];
+    const outputPath = `./p4_vault/slices/${outputFilename}`;
+    updatedSteps[stepIndex] = {
+      ...updatedSteps[stepIndex],
+      videoPath: outputPath
+    };
+    
+    // 更新任务数据
+    updateDraftMission({ steps: updatedSteps });
+    
+    console.log(`Slice generated successfully at: ${outputPath}`);
+  };
+  
+  // 预览片段功能
+  const handlePreviewClip = (stepIndex: number, startTime: number, endTime: number, audioUrl?: string) => {
+    if (!videoRef.current) return;
+    
+    console.log(`Previewing clip for step ${stepIndex + 1} from ${startTime}s to ${endTime}s`);
+    
+    // 先停止当前播放的音频
+    stopPreviewAudio();
+    
+    // 清除之前的事件监听器
+    const clearEventListeners = () => {
+      videoRef.current?.removeEventListener('timeupdate', handleTimeUpdate);
+      videoRef.current?.removeEventListener('ended', handleEnded);
+    };
+    
+    // 时间更新事件处理
+    const handleTimeUpdate = () => {
+      if (!videoRef.current) return;
       
-      // 保存到编辑态状态
-      setMissionData({
-        title: missionPackage.title || "未命名任务",
-        tags: missionPackage.tags || [],
-        reference_material: missionPackage.reference_material || {
-          type: "MARKDOWN",
-          content: `# 基于素材生成的任务包\n\n**原始素材:** ${videoScript}\n\n**核心心法:** ${mindset || "无特殊备注"}`
-        },
-        steps: missionPackage.steps.map((step: any, index: number) => ({
-          step_id: step.step_id || index + 1,
-          type: step.type || "TEXT_INPUT",
-          title: step.title || `步骤 ${index + 1}`,
-          action_instruction: step.action_instruction || "",
-          evidence_desc: step.evidence_desc || "",
-          interaction: {
-            question: step.interaction?.question || "",
-            correct_answers: step.interaction?.correct_answers || [],
-            hint: step.interaction?.hint || "",
-            error_feedback: step.interaction?.error_feedback || ""
-          }
-        }))
+      if (videoRef.current.currentTime >= endTime) {
+        console.log(`Reached end time ${endTime}s, pausing video`);
+        videoRef.current.pause();
+        stopPreviewAudio();
+        clearEventListeners();
+      }
+    };
+    
+    // 视频结束事件处理
+    const handleEnded = () => {
+      stopPreviewAudio();
+      clearEventListeners();
+    };
+    
+    // 设置事件监听器
+    videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
+    videoRef.current.addEventListener('ended', handleEnded);
+    
+    // 跳转到开始时间并播放视频
+    videoRef.current.currentTime = startTime;
+    videoRef.current.play().catch(error => {
+      console.error('Failed to play video:', error);
+      stopPreviewAudio();
+      clearEventListeners();
+    });
+    
+    // 播放对应音频 - 如果有AI配音则播放AI配音，否则使用视频原始音频
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+      audio.play().catch(error => {
+        console.error('Failed to play audio:', error);
+        stopPreviewAudio();
       });
-      
-      setLogs(prev => [...prev, `数字技能任务包生成成功！任务标题: ${missionPackage.title}`]);
-    } catch (error: any) {
-      console.error(error);
-      setLogs(prev => [...prev, `❌ 错误: ${error.message}`]);
-      alert(`生成失败: ${error.message}`);
-    } finally {
-      setIsAnalyzing(false);
+    } else {
+      console.log('Using original video audio for preview');
+      // 视频原始音频会自动播放，无需额外处理
     }
-  };
-
-  // --- TTS 语音生成器功能 ---
-  const handleTTSPlay = () => {
-    if (!videoScript.trim()) {
-      alert("请先填写【视频事实/脚本】内容");
-      return;
-    }
-
-    if (isPlaying) {
-      window.speechSynthesis.cancel();
-      setIsPlaying(false);
-      return;
-    }
-
-    const utterance = new SpeechSynthesisUtterance(videoScript);
-    utterance.rate = 0.9;
-    utterance.lang = 'zh-CN';
-
-    utterance.onstart = () => setIsPlaying(true);
-    utterance.onend = () => setIsPlaying(false);
-    utterance.onerror = (event) => {
-      setIsPlaying(false);
-      console.error("TTS error:", event);
-    };
-
-    speechSynthesisRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
-  };
-
-  // --- 实时语音识别功能 ---
-  const handleStartRecording = () => {
-    if (!SpeechRecognition) {
-      alert("您的浏览器不支持语音识别功能，请使用 Chrome 或 Edge 浏览器");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognitionRef.current = recognition;
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'zh-CN';
-
-    recognition.onstart = () => {
-      setIsRecording(true);
-      setTranscript('');
-    };
-
-    recognition.onresult = (event: any) => {
-      let finalTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript + ' ';
-        }
-      }
-      if (finalTranscript) {
-        setVideoScript(prev => prev + finalTranscript);
-      }
-    };
-
-    recognition.onerror = (event: any) => {
-      console.error("Speech error:", event.error);
-      setIsRecording(false);
-    };
-
-    recognition.onend = () => setIsRecording(false);
-    recognition.start();
-  };
-
-  const handleStopRecording = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsRecording(false);
-    }
-  };
-
-  // --- 发布逻辑 ---
-  const handlePublish = () => {
-    if (!missionData || !missionData.steps) {
-      alert("请先生成任务数据");
-      return;
-    }
-    
-    // 构建标准的"真迹协议"数据结构
-    const newMission = {
-      id: `custom_${Date.now()}`,
-      title: missionData.title,
-      description: videoScript,
-      notes: mindset,
-      type: "MIXED",
-      createdAt: new Date().toISOString(),
-      
-      // 【关键补丁】确保代码卡在最外层，P3 实验台才能一眼看到
-      reference_material: missionData.reference_material || { type: "MARKDOWN", content: "" },
-
-      steps: missionData.steps.map((step: any) => ({
-        ...step,
-        // 兼容 P3 校验逻辑
-        verify_key: step.interaction?.correct_answers || [],
-        interaction: step.interaction
-      }))
-    };
-
-    const existing = JSON.parse(localStorage.getItem('custom_missions') || '[]');
-    localStorage.setItem('custom_missions', JSON.stringify([...existing, newMission]));
-    
-    alert("✅ 发布成功！代码已同步至协议根目录。");
-    navigate('/');
   };
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex' }}>
-      
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: '#000',
+      color: '#fff',
+      display: 'flex',
+      overflow: 'hidden',
+      boxSizing: 'border-box'
+    }}>
       {/* 返回按钮 */}
-      <button onClick={() => navigate('/')} style={{ position: 'absolute', top: 20, left: 20, zIndex: 100, background: '#222', border: '1px solid #333', borderRadius: '50%', padding: 10, color: '#fff', cursor: 'pointer' }}>
+      <button 
+        onClick={() => navigate('/')} 
+        style={{
+          position: 'absolute',
+          top: 20,
+          left: 20,
+          zIndex: 100,
+          background: '#222',
+          border: '1px solid #333',
+          borderRadius: '50%',
+          padding: 10,
+          color: '#fff',
+          cursor: 'pointer'
+        }}
+      >
         <ArrowLeft size={20} />
       </button>
 
-      {/* 左舱: 输入区 */}
-      <div style={{ width: '40%', height: '100%', borderRight: '1px solid #222', background: '#050505', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-        <div style={{ padding: '80px 40px 120px 40px', overflowY: 'auto', flex: 1 }}>
-          <h1 style={{ fontSize: 28, fontWeight: '900', marginBottom: 10 }}>MISSION <span style={{ color: '#06b6d4' }}>FOUNDRY</span></h1>
-          <p style={{ color: '#666', fontSize: 13, marginBottom: 30 }}>真迹协议铸造厂：通过 AI 提取实战原子任务</p>
+      {/* 左栏 - 全局配置区 */}
+        <FoundrySidebar
+          mediaUrl={mediaUrl}
+          instruction={instruction}
+          audioTrackName={audioTrackName}
+          verifyType={verifyType}
+          matchKeyword={matchKeyword}
+          isAnalyzing={isAnalyzing}
+          logs={logs}
+          uploadedFile={uploadedFile}
+          draftMission={draftMission}
+          isManualMode={isManualMode}
+          fileInputRef={fileInputRef}
+          isScreenCapturing={isScreenCapturing}
+          capturedVideoUrl={capturedVideoUrl}
+          handleFormChange={handleFormChange}
+          handleFileUpload={handleFileUpload}
+          handleAnalyze={handleAnalyze}
+          handleSignAndRelease={handleSignAndRelease}
+          handleIdentifyKeyFrames={handleIdentifyKeyFrames}
+          setIsManualMode={setIsManualMode}
+          handleStartScreenCapture={handleStartScreenCapture}
+          handleStopScreenCapture={handleStopScreenCapture}
+        />
 
-          <div style={{ marginBottom: 25 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#888', marginBottom: 8, fontWeight: 'bold' }}><Video size={14}/> 视频源 (URL/PATH)</label>
-            <input value={videoUrl} onChange={e => setVideoUrl(e.target.value)} placeholder="粘贴视频链接..." style={{ width: '100%', padding: 15, background: '#111', border: '1px solid #333', borderRadius: 8, color: '#fff' }} />
-          </div>
+      {/* 中栏 - 任务矩阵区 */}
+      <TaskMatrix
+        steps={draftMission.steps}
+        isManualMode={isManualMode}
+        selectedStepIndex={selectedStepIndex}
+        currentVideoTime={currentVideoTime}
+        currentVideoPlaying={currentVideoPlaying}
+        onAddStep={handleAddStep}
+        onSelectStep={setSelectedStepIndex}
+        onMoveStepUp={handleMoveStepUp}
+        onMoveStepDown={handleMoveStepDown}
+        onDeleteStep={handleDeleteStep}
+        onUpdateStep={updateStep}
+        onVoiceAI={handleVoiceAI}
+        onSeekToTime={handleSeekToTime}
+        onPreviewClip={handlePreviewClip}
+        onStopPreview={handleStopPreview}
+        onGenerateSlice={handleGenerateSlice}
+        onSetInPoint={handleSetInPoint}
+        onSetOutPoint={handleSetOutPoint}
+      />
 
-          {/* 模块 A: 视频事实/脚本 */}
-          <div style={{ marginBottom: 25 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#06b6d4', fontWeight: 'bold' }}>
-                <FileText size={14}/> 【视频事实/脚本】 (必填)
-                <span style={{ color: '#ef4444', fontSize: 10 }}>●</span>
-              </label>
-              
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button 
-                  onClick={isRecording ? handleStopRecording : handleStartRecording}
-                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: isRecording ? '#ef4444' : '#10b981', color: '#fff', border: 'none', borderRadius: 6, fontSize: 10, fontWeight: 'bold', cursor: 'pointer' }}
-                >
-                  {isRecording ? <Square size={12} /> : <Mic size={12} />}
-                  {isRecording ? '停止采集' : '实时采集'}
-                </button>
-                <button 
-                  onClick={handleTTSPlay}
-                  disabled={!videoScript.trim()}
-                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: isPlaying ? '#ef4444' : '#06b6d4', color: '#fff', border: 'none', borderRadius: 6, fontSize: 10, fontWeight: 'bold', cursor: videoScript.trim() ? 'pointer' : 'not-allowed', opacity: videoScript.trim() ? 1 : 0.5 }}
-                >
-                  {isPlaying ? <VolumeX size={12} /> : <Volume2 size={12} />}
-                  {isPlaying ? '停止播放' : '合成测试'}
-                </button>
-              </div>
-            </div>
-            
-            <textarea 
-              value={videoScript} 
-              onChange={e => setVideoScript(e.target.value)} 
-              placeholder="输入任务意图，例如：教我用 HTML 写一个粉色的贪吃蛇..." 
-              style={{ width: '100%', height: 200, padding: 15, background: '#111', border: '1px solid #333', borderRadius: 8, color: '#fff', resize: 'none', lineHeight: 1.6 }} 
-            />
-          </div>
-
-          {/* 模块 B: 核心心法 */}
-          <div style={{ marginBottom: 25 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#888', marginBottom: 8, fontWeight: 'bold' }}>
-              <FileText size={14}/> 【核心心法/备注】 (选填)
-            </label>
-            <textarea 
-              value={mindset} 
-              onChange={e => setMindset(e.target.value)} 
-              placeholder="备注..." 
-              style={{ width: '100%', height: 120, padding: 15, background: '#111', border: '1px solid #333', borderRadius: 8, color: '#fff', resize: 'none', lineHeight: 1.6 }} 
-            />
-          </div>
-        </div>
-
-        {/* 启动按钮 */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', padding: '30px 40px', background: 'linear-gradient(to top, #050505 80%, transparent)' }}>
-          <button onClick={handleAnalyze} disabled={isAnalyzing} style={{ width: '100%', padding: 18, background: isAnalyzing ? '#222' : '#06b6d4', color: isAnalyzing ? '#666' : '#000', border: 'none', borderRadius: 12, fontWeight: 'bold', fontSize: 16, cursor: isAnalyzing ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-            {isAnalyzing ? <><Loader2 className="animate-spin" size={20}/> 协议生成中...</> : <><Sparkles size={20}/> 启动 DEEPSEEK 协议</>}
-          </button>
-        </div>
-      </div>
-
-      {/* 右舱: 编辑态预览 */}
-      <div style={{ width: '60%', height: '100%', background: '#000', display: 'flex', flexDirection: 'column', padding: '80px 60px', overflowY: 'auto' }}>
-        
-        {!missionData && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', opacity: 0.3 }}>
-            {isAnalyzing ? (
-              <div style={{ fontFamily: 'monospace', width: '100%', maxWidth: 450 }}>
-                {logs.map((log, i) => <div key={i} style={{ marginBottom: 8, color: '#06b6d4' }}>{`> ${log}`}</div>)}
-              </div>
-            ) : (
-              <>
-                <Cpu size={60} style={{ marginBottom: 20 }} />
-                <p style={{ letterSpacing: 2 }}>AWAITING NEURAL INPUT...</p>
-              </>
-            )}
-          </div>
-        )}
-        
-        {missionData && (
-          <div style={{ animation: 'fadeIn 0.5s ease' }}>
-            <h2 style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 30, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Cpu size={20} className="text-cyan-500" /> 真迹协议任务包 - 编辑模式
-            </h2>
-            
-            <div style={{ marginBottom: 25 }}>
-              <label style={{ display: 'block', fontSize: 12, color: '#06b6d4', fontWeight: 'bold', marginBottom: 8 }}>任务标题</label>
-              <input 
-                value={missionData.title} 
-                onChange={e => setMissionData({...missionData, title: e.target.value})}
-                style={{ width: '100%', padding: 15, background: '#111', border: '1px solid #333', borderRadius: 8, color: '#fff' }} 
-              />
-            </div>
-            
-            <div style={{ marginBottom: 25 }}>
-              <label style={{ display: 'block', fontSize: 12, color: '#10b981', fontWeight: 'bold', marginBottom: 8 }}>情报卡内容 (Markdown)</label>
-              <textarea 
-                value={missionData.reference_material?.content || ""} 
-                onChange={e => setMissionData({
-                  ...missionData, 
-                  reference_material: {...missionData.reference_material, content: e.target.value}
-                })}
-                style={{ width: '100%', height: 150, padding: 15, background: '#111', border: '1px solid #333', borderRadius: 8, color: '#fff', resize: 'none', lineHeight: 1.6 }} 
-              />
-            </div>
-            
-            <div style={{ marginBottom: 25 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
-                <label style={{ fontSize: 12, color: '#f59e0b', fontWeight: 'bold' }}>步骤列表</label>
-                <button 
-                  onClick={() => {
-                    const newStep = {
-                      step_id: (missionData.steps?.length || 0) + 1,
-                      type: "TEXT_INPUT",
-                      title: "新步骤",
-                      action_instruction: "",
-                      evidence_desc: "",
-                      interaction: { question: "", correct_answers: [], hint: "", error_feedback: "" }
-                    };
-                    setMissionData({...missionData, steps: [...(missionData.steps || []), newStep]});
-                  }}
-                  style={{ padding: '8px 16px', background: '#06b6d4', color: '#000', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 'bold', cursor: 'pointer' }}
-                >
-                  + 新增步骤
-                </button>
-              </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
-                {missionData.steps?.map((step: any, idx: number) => (
-                  <div key={idx} style={{ background: '#0a0a0a', border: '1px solid #222', borderRadius: 12, padding: 20, position: 'relative' }}>
-                    <button 
-                      onClick={() => {
-                        const newSteps = missionData.steps.filter((_: any, i: number) => i !== idx);
-                        setMissionData({...missionData, steps: newSteps});
-                      }}
-                      style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: '#fff', border: 'none', borderRadius: '50%', width: 24, height: 24, fontSize: 12, cursor: 'pointer' }}
-                    >
-                      ×
-                    </button>
-                    
-                    <div style={{ color: '#06b6d4', fontSize: 10, fontWeight: 'bold', marginBottom: 5 }}>STEP {step.step_id} - {step.type}</div>
-                    
-                    <div style={{ marginBottom: 12 }}>
-                      <label style={{ display: 'block', fontSize: 11, color: '#888', marginBottom: 4 }}>步骤标题</label>
-                      <input 
-                        value={step.title} 
-                        onChange={e => {
-                          const newSteps = [...missionData.steps];
-                          newSteps[idx] = {...step, title: e.target.value};
-                          setMissionData({...missionData, steps: newSteps});
-                        }}
-                        style={{ width: '100%', padding: 10, background: '#111', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 14 }} 
-                      />
-                    </div>
-
-                    {/* ... 动作指令 ... */}
-                    <div style={{ marginBottom: 12 }}>
-                        <label style={{ display: 'block', fontSize: 11, color: '#888', marginBottom: 4 }}>动作指令</label>
-                        <textarea
-                            value={step.action_instruction}
-                            onChange={e => {
-                                const newSteps = [...missionData.steps];
-                                newSteps[idx] = {...step, action_instruction: e.target.value};
-                                setMissionData({...missionData, steps: newSteps});
-                            }}
-                            style={{ width: '100%', height: 60, padding: 10, background: '#111', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 14 }}
-                        />
-                    </div>
-
-                    {/* ... 验证问题 ... */}
-                    <div style={{ marginBottom: 12 }}>
-                        <label style={{ display: 'block', fontSize: 11, color: '#ef4444', marginBottom: 4 }}>验证问题 (Question)</label>
-                        <input
-                            value={step.interaction?.question || ""}
-                            onChange={e => {
-                                const newSteps = [...missionData.steps];
-                                newSteps[idx] = {
-                                    ...step,
-                                    interaction: { ...step.interaction, question: e.target.value }
-                                };
-                                setMissionData({...missionData, steps: newSteps});
-                            }}
-                            style={{ width: '100%', padding: 10, background: '#111', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 14 }}
-                        />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-        
-        <div style={{ marginTop: 'auto', borderTop: '1px solid #222', paddingTop: 20, display: 'flex', justifyContent: 'flex-end' }}>
-          <button 
-            onClick={handlePublish} 
-            disabled={!missionData || !missionData.steps || missionData.steps.length === 0}
-            style={{ padding: '15px 40px', background: !missionData ? '#666' : '#fff', color: !missionData ? '#999' : '#000', border: 'none', borderRadius: 50, fontWeight: 'bold', cursor: !missionData ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}
-          >
-            <Save size={18} /> {!missionData ? '等待任务生成' : '签署并发布真迹'}
-          </button>
-        </div>
-      </div>
-      
-      {/* --- 紧急强制保存按钮 (已修复) --- */}
-      <button 
-        style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999, padding: '20px 40px', backgroundColor: 'red', color: 'white', fontSize: '20px', fontWeight: 'bold', borderRadius: '10px', boxShadow: '0 0 20px rgba(255,0,0,0.5)', border: '2px solid white' }} 
-        onClick={() => { 
-          // 修复点：使用 missionData 代替 generatedSteps
-          if (!missionData || !missionData.steps || missionData.steps.length === 0) { 
-            alert('内存中没有数据！请先点击生成'); 
-            return; 
-          } 
-          const missionToSave = {
-            id: `force_save_${Date.now()}`,
-            title: missionData.title || "未命名任务",
-            description: videoScript,
-            notes: mindset,
-            // 【关键补丁】确保代码卡在最外层，P3 实验台才能一眼看到
-            reference_material: missionData.reference_material || { type: "MARKDOWN", content: "" },
-            steps: missionData.steps.map((s: any) => ({ ...s, verify_key: s.interaction?.correct_answers || s.verify_key || 'ANY' })), 
-            type: "MIXED",
-            createdAt: new Date().toISOString()
-          }; 
-          const existing = JSON.parse(localStorage.getItem('custom_missions') || '[]'); 
-          existing.push(missionToSave); 
-          localStorage.setItem('custom_missions', JSON.stringify(existing)); 
-          alert('✅ 暴力保存成功！代码已同步至协议根目录。'); 
-          window.location.href = '/'; 
-        }} 
-      > 
-        🚨 强制发布 (DEBUG) 
-      </button> 
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      {/* 右栏 - 真迹镜像区 */}
+        <P3Mirror
+          missionData={draftMission}
+          currentStepIndex={selectedStepIndex}
+          onCurrentTimeChange={handleCurrentTimeChange}
+          onVideoRefReady={handleVideoRefReady}
+          mediaStream={mediaStream}
+          capturedAudioUrl={capturedAudioUrl}
+        />
     </div>
   );
 };

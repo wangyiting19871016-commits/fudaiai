@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useTaskManager from '../hooks/useTaskManager';
+import MissionManager from '../missionManager';
+import MissionController from '../MissionController';
 
 const PathPage: React.FC = () => {
   const { missionId } = useParams();
@@ -8,77 +10,95 @@ const PathPage: React.FC = () => {
   const { taskStatus, credit, level, isStepFinished } = useTaskManager();
 
   // 1. 本地任务 (唯一数据源)
-  const customMissions = JSON.parse(localStorage.getItem('custom_missions') || '[]');
+  const [customMissions, setCustomMissions] = useState<any[]>(() => {
+    return JSON.parse(localStorage.getItem('custom_missions') || '[]');
+  });
 
   // 2. 数据平铺逻辑：将所有 mission.steps 展开为原子任务
   const allSteps = customMissions.flatMap(m => 
     m.steps?.map((step, index) => ({
       ...step,
-      parentMissionId: m.id,
+      parentMissionId: m.id || '',
       stepIndex: index,
-      parentTitle: m.title
+      parentTitle: m.title || '未知任务'
     })) || []
-  );
+  ).filter(step => step.id || step.parentMissionId); // 过滤掉无效任务
 
   // 日志锚点 [LOGIC_TRACE]
   console.log(`[LOGIC_TRACE] 原子任务列表已平铺，当前总数: ${allSteps.length}`);
 
-  // 空状态处理
-  if (allSteps.length === 0) {
-    return (
-      <div style={{ 
-        background: '#000', 
-        minHeight: '100vh', 
-        color: '#fff', 
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px'
-      }}>
-        <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px', color: '#9ca3af' }}>
-          等待铸造厂发布协议...
-        </div>
-        <div style={{ fontSize: '14px', color: '#6b7280', textAlign: 'center', maxWidth: '400px' }}>
-          目前还没有可用的训练任务。请前往编辑器创建新的训练协议。
-        </div>
-        <button 
-          onClick={() => navigate('/editor')}
-          style={{
-            marginTop: '24px',
-            padding: '12px 24px',
-            background: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)',
-            border: 'none',
-            color: '#000',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(245, 158, 11, 0.4)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          🚀 前往编辑器
-        </button>
-      </div>
-    );
-  }
+  // 检查是否存在活跃任务
+  const [activeMission, setActiveMission] = useState<any>(null);
+  // 所有任务列表
+  const [missions, setMissions] = useState<any[]>([]);
+  
+  useEffect(() => {
+    // 使用 MissionController 订阅任务队列
+    const unsubscribe = MissionController.subscribe((missionQueue) => {
+      console.log('🔄 从 MissionController 接收任务队列更新:', missionQueue);
+      // 过滤掉缺少必要字段的任务
+      const validMissions = (missionQueue.missions || []).filter((mission: any) => 
+        mission?.missionId && mission?.title
+      );
+      setMissions(validMissions);
+      
+      // 设置活跃任务
+      if (missionQueue.currentMissionId) {
+        const currentMission = validMissions.find(
+          (mission: any) => mission.missionId === missionQueue.currentMissionId
+        );
+        if (currentMission) {
+          setActiveMission(currentMission);
+        }
+      } else if (validMissions.length > 0) {
+        // 如果没有当前任务ID，设置第一个任务为活跃任务
+        setActiveMission(validMissions[0]);
+      } else {
+        setActiveMission(null);
+      }
+    });
+    
+    return () => unsubscribe();
+  }, []);
+  
+  // 监听 custom_missions 变化
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'custom_missions') {
+        setCustomMissions(JSON.parse(e.newValue || '[]'));
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+  
+  // 合并动态任务，显示所有真迹任务
+  const allTasks = [
+    // 动态轨道：所有真迹任务
+    ...missions.map((mission) => ({
+      id: `mission-${mission.missionId}`,
+      title: mission.title || '真迹任务',
+      desc: mission.description || 'P4 发布的实时任务，点击开始执行',
+      type: 'real-time',
+      color: '#8b5cf6',
+      parentMissionId: mission.missionId,
+      stepIndex: 0,
+      parentTitle: '真迹任务',
+      missionId: mission.missionId
+    })),
+    // 动态轨道：自定义任务
+    ...allSteps
+  ].filter(task => task.id || task.parentMissionId); // 过滤掉无效任务
 
   // 判断是否为本地任务（现在所有任务都是本地的）
   const isLocalStep = (step: any) => {
-    return customMissions.some((mission: any) => mission.id === step.parentMissionId);
+    return customMissions.some((mission: any) => mission?.id === step?.parentMissionId);
   };
 
   // 获取原子任务完成状态
   const isStepCompleted = (step: any) => {
-    return localStorage.getItem(`completed_step_${step.parentMissionId}_${step.stepIndex}`) === 'true';
+    return localStorage.getItem(`completed_step_${step?.parentMissionId || ''}_${step?.stepIndex || 0}`) === 'true';
   };
 
   return (
@@ -157,7 +177,7 @@ const PathPage: React.FC = () => {
           <div style={{ fontSize: '12px', color: '#06b6d4', marginBottom: '10px' }}>原子任务进度</div>
           <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#fff' }}>
             {allSteps.filter(step => 
-              localStorage.getItem(`completed_step_${step.parentMissionId}_${step.stepIndex}`) === 'true'
+              localStorage.getItem(`completed_step_${step?.parentMissionId || ''}_${step?.stepIndex || 0}`) === 'true'
             ).length} / {allSteps.length}
           </div>
           <div style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>已完成原子任务</div>
@@ -194,7 +214,7 @@ const PathPage: React.FC = () => {
               // 【逻辑收口】屏幕2重置进度：只清除任务完成状态，保留任务本身
               if (window.confirm('确定要重置所有任务进度吗？\n\n✅ 任务包将保留\n❌ 完成状态将被清空\n\n用户可以重新开始玩，但不会丢失AI生成的任务。')) {
                 Object.keys(localStorage).forEach(key => {
-                  if (key.startsWith('completed_step_')) {
+                  if ((key || '').startsWith('completed_step_')) {
                     localStorage.removeItem(key);
                   }
                 });
@@ -265,9 +285,19 @@ const PathPage: React.FC = () => {
             <p style={{
               fontSize: '14px',
               color: '#9ca3af',
-              lineHeight: '1.4'
+              lineHeight: '1.4',
+              marginBottom: '8px'
             }}>
               共 {allSteps.length} 个原子任务 • {customMissions.length} 个任务包
+            </p>
+            {/* 显示真迹任务总数 */}
+            <p style={{
+              fontSize: '16px',
+              color: '#8b5cf6',
+              fontWeight: 'bold',
+              lineHeight: '1.4'
+            }}>
+              当前任务总数: {missions.length}
             </p>
           </div>
 
@@ -358,42 +388,87 @@ const PathPage: React.FC = () => {
           margin: '0 auto', // 整体居中
           width: '100%'
         }}>
-          {/* 渲染所有原子任务卡片 */}
-          {allSteps.map((step) => {
-            const isCompleted = isStepCompleted(step);
-            const isLocal = isLocalStep(step);
+          {/* 渲染所有任务卡片 */}
+          {allTasks.map((step) => {
+            // 处理真迹实时任务
+            const isRealTimeMission = (step?.id || '') === 'real-time-mission';
+            const isNoRealTime = (step?.id || '') === 'no-real-time';
+            const isStaticDemo = (step?.id || '').startsWith('demo-');
+            
+            const isCompleted = isRealTimeMission ? false : isStepCompleted(step);
+            const isLocal = isRealTimeMission ? false : isLocalStep(step);
             
             return (
               <div 
-                key={`${step.parentMissionId}-${step.stepIndex}`}
+                key={isRealTimeMission || isNoRealTime ? (step?.id || Math.random()) : `${step?.parentMissionId || ''}-${step?.stepIndex || 0}`}
                 style={{
                   width: '100%',
                   minHeight: '180px', // 适当的高度
-                  background: isCompleted ? 
+                  background: isRealTimeMission ? 
+                    'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.3) 100%)' :
+                    isNoRealTime ? 
+                    'linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(107, 114, 128, 0.3) 100%)' :
+                    isStaticDemo ?
+                    'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.3) 100%)' :
+                    isCompleted ? 
                     'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.3) 100%)' : 
                     'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.3) 100%)',
                   borderRadius: '16px',
-                  border: isCompleted ? '2px solid rgba(16, 185, 129, 0.5)' : '2px solid rgba(6, 182, 212, 0.5)',
-                  cursor: 'pointer',
+                  border: isRealTimeMission ? 
+                    '2px solid rgba(139, 92, 246, 0.5)' :
+                    isNoRealTime ? 
+                    '2px solid rgba(107, 114, 128, 0.5)' :
+                    isStaticDemo ?
+                    '2px solid rgba(245, 158, 11, 0.5)' :
+                    isCompleted ? 
+                    '2px solid rgba(16, 185, 129, 0.5)' : 
+                    '2px solid rgba(6, 182, 212, 0.5)',
+                  cursor: isNoRealTime ? 'not-allowed' : 'pointer',
                   transition: 'all 0.3s ease',
                   position: 'relative',
                   overflow: 'hidden',
-                  boxShadow: isCompleted ? 
+                  boxShadow: isRealTimeMission ? 
+                    '0 8px 32px rgba(139, 92, 246, 0.2)' :
+                    isNoRealTime ? 
+                    '0 8px 32px rgba(107, 114, 128, 0.2)' :
+                    isStaticDemo ?
+                    '0 8px 32px rgba(245, 158, 11, 0.2)' :
+                    isCompleted ? 
                     '0 8px 32px rgba(16, 185, 129, 0.2)' : 
                     '0 8px 32px rgba(6, 182, 212, 0.2)'
                 }}
-                onClick={() => navigate(`/lab/${step.parentMissionId}?step=${step.stepIndex}`)}
+                onClick={() => {
+                  if (isRealTimeMission && step?.missionId) {
+                    // 设置当前任务ID，然后跳转到实验室页面
+                    MissionController.setCurrentMissionId(step.missionId);
+                    window.location.href = `/lab/${step.missionId}`;
+                  } else if (!isNoRealTime && step?.parentMissionId) {
+                    navigate(`/lab/${step.parentMissionId}`);
+                  }
+                }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                  e.currentTarget.style.boxShadow = isCompleted ? 
-                    '0 12px 40px rgba(16, 185, 129, 0.3)' : 
-                    '0 12px 40px rgba(6, 182, 212, 0.3)';
+                  if (!isNoRealTime) {
+                    e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                    e.currentTarget.style.boxShadow = isRealTimeMission ? 
+                      '0 12px 40px rgba(139, 92, 246, 0.3)' :
+                      isStaticDemo ?
+                      '0 12px 40px rgba(245, 158, 11, 0.3)' :
+                      isCompleted ? 
+                      '0 12px 40px rgba(16, 185, 129, 0.3)' : 
+                      '0 12px 40px rgba(6, 182, 212, 0.3)';
+                  }
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                  e.currentTarget.style.boxShadow = isCompleted ? 
-                    '0 8px 32px rgba(16, 185, 129, 0.2)' : 
-                    '0 8px 32px rgba(6, 182, 212, 0.2)';
+                  if (!isNoRealTime) {
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.boxShadow = isRealTimeMission ? 
+                      '0 8px 32px rgba(139, 92, 246, 0.2)' :
+                      isStaticDemo ?
+                      '0 8px 32px rgba(245, 158, 11, 0.2)' :
+                      isCompleted ? 
+                      '0 8px 32px rgba(16, 185, 129, 0.2)' : 
+                      '0 8px 32px rgba(6, 182, 212, 0.2)';
+                  }
                 }}
               >
                 {/* 原子任务步骤标识 */}
@@ -409,7 +484,7 @@ const PathPage: React.FC = () => {
                   fontWeight: 'bold',
                   zIndex: 2
                 }}>
-                  步骤 {step.stepIndex + 1}
+                  步骤 {step?.stepIndex + 1 || 1}
                 </div>
                 
                 {/* 完成状态标识 */}
@@ -435,7 +510,7 @@ const PathPage: React.FC = () => {
                   position: 'absolute',
                   top: '12px',
                   left: isCompleted ? '60px' : '12px',
-                  background: step.color ? 
+                  background: step?.color ? 
                     `linear-gradient(135deg, ${step.color} 0%, ${step.color}99 100%)` : 
                     'linear-gradient(135deg, #6b7280 0%, #9ca3af 100%)',
                   color: '#fff',
@@ -445,7 +520,7 @@ const PathPage: React.FC = () => {
                   fontWeight: 'bold',
                   zIndex: 2
                 }}>
-                  {step.type}
+                  {step?.type || 'unknown'}
                 </div>
                 
                 {/* 卡片内容 */}
@@ -464,7 +539,7 @@ const PathPage: React.FC = () => {
                     marginBottom: '8px',
                     lineHeight: '1.3'
                   }}>
-                    {step.parentTitle} - {step.title}
+                    {step?.parentTitle || '未知任务'} - {step?.title || '未知步骤'}
                   </div>
                   
                   {/* 原子任务描述 */}
@@ -474,7 +549,7 @@ const PathPage: React.FC = () => {
                     lineHeight: '1.4',
                     flex: 1
                   }}>
-                    {step.desc || step.description}
+                    {step?.desc || step?.description || '无描述'}
                   </div>
                   
                   {/* 点击提示 */}

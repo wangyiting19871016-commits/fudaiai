@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../MainStage.module.css';
 import { useTaskSystem } from '../../../hooks/useTaskSystem';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,21 @@ const TaskSection: React.FC = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState('');
   const [currentTask, setCurrentTask] = useState<AtomTask | null>(null);
+  
+  // 检查是否存在活跃任务
+  const [activeMission, setActiveMission] = useState<any>(null);
+  
+  useEffect(() => {
+    try {
+      const storedMission = localStorage.getItem('MISSION_STORAGE_V1');
+      if (storedMission) {
+        const parsedMission = JSON.parse(storedMission);
+        setActiveMission(parsedMission);
+      }
+    } catch (error) {
+      console.error('解析 MISSION_STORAGE_V1 失败:', error);
+    }
+  }, []);
 
   // 处理预览按钮点击
   const handlePreview = (task: AtomTask) => {
@@ -101,6 +116,61 @@ const TaskSection: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* 当前进行中：真迹任务卡片 */}
+          {activeMission && (
+            <div 
+              className={styles.taskCard} 
+              onClick={() => navigate('/lab/direct-fire')}
+              style={{ 
+                cursor: 'pointer',
+                background: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)',
+                color: 'white',
+                position: 'relative',
+                overflow: 'hidden',
+                border: '2px solid #2ecc71',
+                boxShadow: '0 8px 32px rgba(46, 204, 113, 0.4)'
+              }}
+            >
+              <div className={styles.taskCardVideoContainer}>
+                <div className={styles.taskCardVideo} style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  fontSize: '48px',
+                  background: 'rgba(46, 204, 113, 0.2)',
+                  borderRadius: '12px'
+                }}>
+                  📋
+                </div>
+              </div>
+              <div className={styles.taskCardName} style={{ fontWeight: 'bold', fontSize: '18px' }}>
+                当前进行中：真迹任务
+              </div>
+              <div className={styles.taskCardInfo}>
+                <div className={styles.taskCardStatus} style={{ 
+                  color: '#2ecc71',
+                  fontWeight: 'bold',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{
+                    display: 'inline-block',
+                    width: '8px',
+                    height: '8px',
+                    backgroundColor: '#2ecc71',
+                    borderRadius: '50%',
+                    animation: 'pulse 2s infinite'
+                  }}></span>
+                  IN PROGRESS
+                </div>
+                <div className={styles.taskCardReward} style={{ color: '#ecf0f1', fontSize: '14px' }}>
+                  点击继续任务
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 新的三位一体任务卡片 */}
           {tasks.slice(0, 2).map((task) => {

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import { Mission, AtomicSlot } from '../data/schema';
 import { missions as initialMissions } from '../data/missions';
 
@@ -8,6 +8,9 @@ type MissionAction = {
   missionId: string;
   slotId: string;
   solutionData: NonNullable<AtomicSlot['currentBenchmark']>;
+} | {
+  type: 'UPDATE_MISSIONS';
+  missions: Mission[];
 };
 
 // 定义状态类型
@@ -44,6 +47,11 @@ function missionReducer(state: MissionState, action: MissionAction): MissionStat
           return mission;
         })
       };
+    case 'UPDATE_MISSIONS':
+      return {
+        ...state,
+        missions: action.missions
+      };
     default:
       return state;
   }
@@ -59,8 +67,17 @@ const MissionContext = createContext<{
 });
 
 // 创建 Provider 组件
-export function MissionProvider({ children }: { children: ReactNode }) {
+export function MissionProvider({ children, formData }: { children: ReactNode; formData?: any }) {
   const [state, dispatch] = useReducer(missionReducer, initialState);
+
+  // 当 formData 变化时，更新 missions
+  useEffect(() => {
+    if (formData) {
+      // 如果 formData 是单个任务，转换为数组
+      const missions: Mission[] = Array.isArray(formData) ? formData : [formData as Mission];
+      dispatch({ type: 'UPDATE_MISSIONS', missions });
+    }
+  }, [formData]);
 
   return (
     <MissionContext.Provider value={{ state, dispatch }}>

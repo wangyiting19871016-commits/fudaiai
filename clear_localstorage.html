@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear LocalStorage</title>
+</head>
+<body>
+    <script>
+        // 执行 localStorage.clear()
+        localStorage.clear();
+        console.log('localStorage 已清除');
+        document.write('<h1>localStorage 已成功清除</h1>');
+        // 5秒后自动关闭页面
+        setTimeout(() => {
+            window.close();
+        }, 5000);
+    </script>
+</body>
+</html>

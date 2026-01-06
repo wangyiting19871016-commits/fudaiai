@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import StepCard from './StepCard';
+import { useMissionLogic } from '../hooks/useMissionLogic';
 
 // 定义 Step 类型
 interface Step {
@@ -7,17 +8,6 @@ interface Step {
   title: string;
   desc?: string;
   action_instruction?: string;
-  verifyType: string;
-  verify_key: string[];
-  verify_logic?: {
-    type: string;
-    check_value: string;
-    volume?: {
-      vocal?: number;
-      bgm?: number;
-      ambient?: number;
-    };
-  };
   isCompleted: boolean;
   visionData?: any;
   evidence_desc?: string;
@@ -27,11 +17,24 @@ interface Step {
   startTime?: number;
   start_time?: number; // 视频切片开始时间（秒）
   end_time?: number; // 视频切片结束时间（秒）
-  demonstration?: string; // 视频截图或缩略图 URL/Base64
+  assets: string[]; // 支持多图素材预览，升级自 demonstration
   status?: 'idle' | 'generating' | 'ready'; // AI 生成状态
+  originalAudioUrl?: string; // 原始视频提取的音频URL
+  videoPath?: string; // 切片视频的本地路径
+  audioPath?: string; // 音频文件的本地路径
   // TrueTrack Protocol 字段
   template_id: string;
   logic_anchor: string;
+  activeControls?: string[] | any;
+  // 新字段 - 取代旧的 verification 字段
+  promptSnippet?: string;
+  controls?: any;
+  mediaAssets: any[];
+  privateAccess: string;
+  fingerprintWeights: any;
+  fingerprintImpact?: number; // 灵魂匹配度影响权重
+  // 决策节点配置器字段
+  options: { label: string; assetIndex: number; fragment: string }[];
 }
 
 // 定义 TaskMatrixProps 类型
@@ -49,6 +52,8 @@ interface TaskMatrixProps {
   onUpdateStep: (index: number, updates: Partial<Step>) => void;
   onVisionAI?: (index: number) => void;
   onVoiceAI: (index: number) => void;
+  onAutoFill: (index: number) => void; // AI 自动填充回调
+  analyzeStepAssets?: (index: number) => void; // AI 视觉分析函数
   onSeekToTime?: (timestamp: number) => void; // 视频跳转回调
   onPreviewClip?: (index: number, startTime: number, endTime: number, audioUrl?: string) => void; // 预览片段回调
   onStopPreview?: () => void; // 停止预览回调
@@ -56,6 +61,7 @@ interface TaskMatrixProps {
   onSetInPoint?: (index: number) => void; // 设置入点回调
   onSetOutPoint?: (index: number) => void; // 设置出点回调
   capturedAudioUrl?: string; // 从视频中提取的原始音频URL
+  isEntryView?: boolean; // 是否为入口视图，控制协议载入按钮显示
 }
 
 const TaskMatrix: React.FC<TaskMatrixProps> = ({
@@ -72,13 +78,91 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
   onUpdateStep,
   onVisionAI,
   onVoiceAI,
+  onAutoFill,
+  analyzeStepAssets,
   onSeekToTime,
   onPreviewClip,
   onStopPreview,
   onGenerateSlice,
   onSetInPoint,
-  onSetOutPoint
+  onSetOutPoint,
+  isEntryView = false
 }) => {
+  // 获取核心逻辑钩子
+  const { loadProtocolToMission } = useMissionLogic();
+  
+  // 协议载入相关状态
+  const [showProtocolModal, setShowProtocolModal] = useState(false);
+  const [protocolJson, setProtocolJson] = useState('');
+  const [parseError, setParseError] = useState('');
+
+  // 调试标记：按钮渲染成功后打印日志
+  useEffect(() => {
+    console.log('[UI_READY] P1 协议载入入口已在顶部就绪');
+  }, []);
+
+  // 处理载入协议按钮点击
+  const handleLoadProtocol = () => {
+    // 直接显示模态框，禁止直接读取剪贴板
+    setShowProtocolModal(true);
+    setProtocolJson('');
+    setParseError('');
+  };
+
+  // 处理协议JSON
+  const processProtocolJson = (jsonStr: string) => {
+    let cleanedJson = jsonStr.trim();
+    
+    if (!cleanedJson) {
+      setParseError('解析失败：协议JSON不能为空');
+      return;
+    }
+    
+    try {
+      // 检查是否以 { 开头
+      if (!cleanedJson.startsWith('{')) {
+        const errorChar = cleanedJson.charAt(0);
+        setParseError(`解析失败：请确保内容以 { 开头。检测到非法字符: ${errorChar}`);
+        return;
+      }
+      
+      // 解析JSON
+      const protocol = JSON.parse(cleanedJson);
+      
+      // 清除错误信息
+      setParseError('');
+      
+      // 直接调用核心逻辑函数加载协议
+      const success = loadProtocolToMission(protocol);
+      
+      if (success) {
+        // 调试日志
+        console.log('[CLOSED_LOOP] 协议载入成功，P2 状态已补全，正在强跳 P3 复现视觉效果。');
+        
+        // 关闭模态框
+        setShowProtocolModal(false);
+        setProtocolJson('');
+      } else {
+        setParseError('协议加载失败：请检查协议格式是否正确');
+      }
+      
+    } catch (error) {
+      // 解析失败，显示详细错误
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      let detailedError = '解析失败：';
+      
+      if (!cleanedJson.startsWith('{')) {
+        const errorChar = cleanedJson.charAt(0);
+        detailedError += `请确保内容以 { 开头。检测到非法字符: ${errorChar}`;
+      } else {
+        detailedError += errorMsg;
+      }
+      
+      setParseError(detailedError);
+      console.error('[PROTOCOL_RELOAD] 协议解析失败:', error);
+    }
+  };
+
   return (
     <div style={{
       flex: '0 0 45%',
@@ -92,7 +176,36 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
       padding: '20px',
       boxSizing: 'border-box'
     }}>
-      <h2 style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 20, color: '#06b6d4' }}>任务矩阵</h2>
+      {/* 顶部操作栏：标题 + 协议载入按钮 */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20
+      }}>
+        <h2 style={{ fontSize: 18, fontWeight: 'bold', color: '#06b6d4', margin: 0 }}>Visual Blueprint 演示</h2>
+        {isEntryView && (
+          <button
+            onClick={handleLoadProtocol}
+            style={{
+              backgroundColor: '#06b6d4', // 青色背景色
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            📥 载入已签署协议验证
+          </button>
+        )}
+      </div>
       
       {/* 手动模式 - 新增步骤按钮 */}
       {isManualMode && (
@@ -154,18 +267,15 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
                 onMoveDown={onMoveStepDown}
                 onDelete={onDeleteStep}
                 onUpdateStep={onUpdateStep}
-                onVisionAI={onVisionAI}
                 onVoiceAI={onVoiceAI}
-                onSeekToTime={onSeekToTime}
+                onAutoFill={onAutoFill}
+                analyzeStepAssets={analyzeStepAssets}
                 onPreviewClip={(startTime, endTime, audioUrl) => {
                   if (onPreviewClip) {
                     onPreviewClip(index, startTime, endTime, audioUrl);
                   }
                 }}
-                onStopPreview={onStopPreview}
                 onGenerateSlice={onGenerateSlice}
-                currentVideoTime={currentVideoTime}
-                currentVideoPlaying={currentVideoPlaying}
                 onSetInPoint={onSetInPoint}
                 onSetOutPoint={onSetOutPoint}
               />
@@ -194,6 +304,103 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
               <div style={{ fontSize: 12, marginTop: 10 }}>点击左侧「启动 3-10 步 DeepSeek」按钮生成任务</div>
             </>
           )}
+        </div>
+      )}
+      
+      {/* 协议载入模态框 */}
+      {showProtocolModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#1a1a1a',
+            padding: '20px',
+            borderRadius: '8px',
+            border: '2px solid #00CFE8',
+            width: '80%',
+            maxWidth: '600px',
+            maxHeight: '80%',
+            overflow: 'auto'
+          }}>
+            <h2 style={{ color: '#00CFE8', marginBottom: '20px' }}>📋 粘贴协议JSON</h2>
+            <textarea
+              value={protocolJson}
+              onChange={(e) => {
+                setProtocolJson(e.target.value);
+                setParseError('');
+              }}
+              style={{
+                width: '100%',
+                height: '200px',
+                backgroundColor: '#2a2a2a',
+                color: 'white',
+                border: `1px solid ${parseError ? '#ff4444' : '#444'}`,
+                borderRadius: '4px',
+                padding: '10px',
+                fontSize: '14px',
+                fontFamily: 'monospace',
+                resize: 'vertical',
+                outline: 'none'
+              }}
+              placeholder='请在此粘贴已签署的协议JSON...'
+            />
+            {parseError && (
+              <div style={{
+                color: '#ff4444',
+                marginTop: '8px',
+                fontSize: '14px',
+                backgroundColor: 'rgba(255, 68, 68, 0.1)',
+                padding: '8px',
+                borderRadius: '4px',
+                borderLeft: '4px solid #ff4444'
+              }}>
+                {parseError}
+              </div>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '15px', gap: '10px' }}>
+              <button
+                onClick={() => {
+                  setShowProtocolModal(false);
+                  setProtocolJson('');
+                  setParseError('');
+                }}
+                style={{
+                  backgroundColor: '#666',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s ease'
+                }}
+              >
+                取消
+              </button>
+              <button
+                onClick={() => processProtocolJson(protocolJson)}
+                style={{
+                  backgroundColor: '#00CFE8',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s ease'
+                }}
+              >
+                确认解析
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

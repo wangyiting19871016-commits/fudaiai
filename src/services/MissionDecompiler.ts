@@ -192,7 +192,11 @@ export class MissionDecompiler {
       status: {
         isVerified: false,
         isRecorded: false
-      }
+      },
+      instruction: '',
+      mediaUrl: `/assets/${missionId}-video-1.mp4`,
+      audioTrackName: 'default',
+      verification: ''
     };
   }
 

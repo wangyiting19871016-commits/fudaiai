@@ -459,67 +459,6 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
               + 新建
             </button>
             
-            {/* 载入吴恩达-分隔符策略案例按钮 */}
-            <button 
-              onClick={() => {
-                // 向任务列表中添加吴恩达-分隔符策略案例的微步数据
-                const ngCaseTasks = [
-                  {
-                    id: `task_${Date.now()}_1`,
-                    title: '分隔符策略',
-                    description: '使用分隔符（如###）来明确区分输入的不同部分，帮助模型理解任务边界。',
-                    verificationType: 'SCREEN' as const,
-                    verifyParam: '#06b6d4',
-                    isPinned: false,
-                    forcePause: false
-                  },
-                  {
-                    id: `task_${Date.now()}_2`,
-                    title: '结构化输出',
-                    description: '要求模型输出结构化数据（如JSON、XML），便于后续处理。',
-                    verificationType: 'TEXT' as const,
-                    verifyParam: 'JSON,结构化,格式',
-                    isPinned: false,
-                    forcePause: false
-                  },
-                  {
-                    id: `task_${Date.now()}_3`,
-                    title: '迭代思维',
-                    description: '通过多次迭代优化prompt，逐步提高输出质量。',
-                    verificationType: 'VOICE' as const,
-                    verifyParam: '',
-                    isPinned: false,
-                    forcePause: false
-                  }
-                ];
-                
-                setTasks(prev => [...prev, ...ngCaseTasks]);
-                alert('✅ 已载入吴恩达-分隔符策略案例！');
-              }}
-              disabled={isReleased}
-              style={{
-                padding: '8px 12px',
-                height: '36px',
-                background: isReleased ? '#666' : '#8b5cf6',
-                color: isReleased ? '#999' : '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                fontSize: '11px',
-                cursor: isReleased ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => !isReleased && (e.currentTarget.style.transform = 'translateY(-1px)')}
-              onMouseLeave={(e) => !isReleased && (e.currentTarget.style.transform = 'translateY(0)')}
-            >
-              <Upload size={12} />
-              吴恩达案例
-            </button>
-            
             {/* 红色按钮 - 稳定发布 */}
             <button 
               onClick={isReleased ? handleReenterEditMode : handleForceRelease}

@@ -9,6 +9,86 @@ export interface Step {
   thumbnail?: string;
   duration?: string;
   reward?: number;
+  activeControls?: string[] | any;
+  controls?: any;
+  promptSnippet?: string;
+  mediaAssets: any[];
+  privateAccess: string;
+  fingerprintWeights: any;
+}
+
+export interface MissionStep {
+  step_id: number;
+  title: string;
+  desc?: string;
+  action_instruction?: string;
+  isCompleted: boolean;
+  visionData?: any;
+  evidence_desc?: string;
+  audioUrl?: string;
+  originalAudioUrl?: string;
+  audioDuration?: number;
+  keyFrame?: any;
+  startTime?: number;
+  start_time?: number;
+  end_time?: number;
+  assets: string[];
+  status?: 'idle' | 'generating' | 'ready';
+  videoPath?: string;
+  audioPath?: string;
+  template_id: string;
+  logic_anchor: string;
+  activeControls?: string[] | any;
+  promptSnippet?: string;
+  controls?: ControlItem[];
+  mediaAssets: any[];
+  privateAccess: string;
+  fingerprintWeights: any;
+  fingerprintImpact?: number;
+  options: { label: string; assetIndex: number; fragment: string }[];
+  stepMode?: 'view' | 'tweak' | 'select' | 'code'; // 用于定义 P3 交互逻辑
+}
+
+export interface MissionStepUpdate {
+  step_id?: number;
+  title?: string;
+  desc?: string;
+  action_instruction?: string;
+  isCompleted?: boolean;
+  visionData?: any;
+  evidence_desc?: string;
+  audioUrl?: string;
+  originalAudioUrl?: string;
+  audioDuration?: number;
+  keyFrame?: any;
+  startTime?: number;
+  start_time?: number;
+  end_time?: number;
+  assets?: string[];
+  status?: 'idle' | 'generating' | 'ready';
+  videoPath?: string;
+  audioPath?: string;
+  template_id?: string;
+  logic_anchor?: string;
+  activeControls?: string[] | any;
+  promptSnippet?: string;
+  controls?: ControlItem[];
+  mediaAssets?: any[];
+  privateAccess?: string;
+  fingerprintWeights?: any;
+  fingerprintImpact?: number;
+  options?: { label: string; assetIndex: number; fragment: string }[];
+  stepMode?: 'view' | 'tweak' | 'select' | 'code';
+}
+
+export interface ControlItem {
+  id: string;
+  label: string;      // 参数名 (如 "曝光")
+  target: string;     // 绑定目标 (如 "css:brightness")
+  value: number;      // 默认值 (如 1.2)
+  min?: number;
+  max?: number;
+  insight?: string;   // 认知胶囊文案 (如 "增加曝光可提升神圣感")
 }
 
 export interface Course {
@@ -42,29 +122,27 @@ export interface EvidenceTask {
   details: { time: string; trust: string };
 }
 
-// 原子任务接口
 export interface AtomTask {
   id: string;
-  title: string; // 任务标题
-  pre_id?: string; // 前置任务ID
-  prompt: string; // 提示词口令
-  content: string; // 任务目标
-  status: 'inactive' | 'certified'; // 未激活/已存证
-  difficulty: number; // 难度等级 1-5
-  category: string; // 任务分类
-  estimatedTime: number; // 预估时间(分钟)
-  rewards: number; // 信用分奖励
-  dependencies?: string[]; // 依赖的任务ID数组
-  nextTasks?: string[]; // 后续任务ID数组
-  failureRate?: number; // 失败率(0-1)
-  lastAttempt?: Date; // 最后尝试时间
-  previewUrl?: string; // 预览视频URL
+  title: string;
+  pre_id?: string;
+  prompt: string;
+  content: string;
+  status: 'inactive' | 'certified';
+  difficulty: number;
+  category: string;
+  estimatedTime: number;
+  rewards: number;
+  dependencies?: string[];
+  nextTasks?: string[];
+  failureRate?: number;
+  lastAttempt?: Date;
+  previewUrl?: string;
 }
 
-// 任务路径数据结构
 export interface TaskPath {
   taskId: string;
-  sequence: AtomTask[]; // 任务序列
-  currentIndex: number; // 当前进度
-  totalProgress: number; // 总体进度 0-1
+  sequence: AtomTask[];
+  currentIndex: number;
+  totalProgress: number;
 }

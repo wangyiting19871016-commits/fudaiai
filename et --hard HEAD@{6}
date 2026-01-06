@@ -1,0 +1,9 @@
+[33m2289b76[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{0}: reset: moving to 2289b76
+[33m37ab6cd[m HEAD@{1}: reset: moving to 37ab6cd
+[33m2289b76[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{2}: reset: moving to HEAD
+[33m2289b76[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{3}: commit: P4实验室-封存存档：FFmpeg Full Build已就绪，三轨分离代码待后续API调优
+[33m36227bb[m[33m ([m[1;33mtag: [m[1;33mv1.1.0-stable[m[33m)[m HEAD@{4}: commit: feat: P3实验台结构化重构完成 - 实现LabPage瘦身与组件解耦
+[33m37ab6cd[m HEAD@{5}: commit: BASE: P4像素级拆解调通 + 实时素材采集Ready + TS报错修复
+[33mef726ec[m[33m ([m[1;33mtag: [m[1;33mv1.0-stable[m[33m)[m HEAD@{6}: commit: feat: MVP逻辑全线贯通 - 15卡片精准点亮 & 分数同步完成
+[33m1983947[m HEAD@{7}: commit: feat: save current src structure as baseline
+[33m1d6f701[m HEAD@{8}: commit: chore: add gitignore to exclude build and dependencies

@@ -16,6 +16,7 @@ interface FoundrySidebarProps {
   fileInputRef: React.RefObject<HTMLInputElement>;
   isScreenCapturing: boolean;
   capturedVideoUrl: string;
+  verification: { type: string; keyword: string } | any;
   
   // 方法
   handleFormChange: (field: string, value: any) => void;
@@ -312,24 +313,61 @@ const FoundrySidebar: React.FC<FoundrySidebarProps> = ({
             <input 
               ref={fileInputRef}
               type="file" 
-              accept="audio/mp3,video/mp4" 
+              accept="audio/mp3,video/mp4,image/jpg,image/jpeg,image/png,image/webp" 
               onChange={handleFileUpload} 
               style={{ display: 'none' }} 
             />
             {uploadedFile && (
               <div style={{
                 flex: 1,
-                padding: 15,
+                padding: 10,
                 background: '#000',
                 border: '1px solid #444',
                 borderRadius: 8,
                 color: '#06b6d4',
                 fontSize: 12,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10
               }}>
-                {uploadedFile.name}
+                {/* 如果是图片文件，显示缩略图 */}
+                {uploadedFile.type.startsWith('image/') ? (
+                  <img 
+                    src={URL.createObjectURL(uploadedFile)} 
+                    alt={uploadedFile.name} 
+                    style={{
+                      width: 60,
+                      height: 60,
+                      objectFit: 'cover',
+                      borderRadius: 4,
+                      border: '1px solid #444'
+                    }} 
+                  />
+                ) : (
+                  <div style={{
+                    width: 60,
+                    height: 60,
+                    background: '#111',
+                    borderRadius: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid #444'
+                  }}>
+                    {uploadedFile.type.startsWith('audio/') ? (
+                      <audio style={{ width: 40 }} controls />
+                    ) : (
+                      <video style={{ width: 40 }} controls />
+                    )}
+                  </div>
+                )}
+                <span style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}>
+                  {uploadedFile.name}
+                </span>
               </div>
             )}
           </div>

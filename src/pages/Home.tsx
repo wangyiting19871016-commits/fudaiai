@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainStage from '../components/MainStage/MainStage';
+import TaskMatrix from './MissionFoundry/components/TaskMatrix';
+import { Step } from '../types/index';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -19,18 +21,7 @@ const Home: React.FC = () => {
   };
 
   // 👇 修正后的数据：补全了所有缺少的字段
-  const mockSteps: Array<{
-    id: string;
-    title: string;
-    desc: string;
-    description: string;
-    videoUrl: string;
-    status: 'active' | 'locked' | 'completed';
-    isLocked: boolean;
-    thumbnail: string;
-    duration: string;
-    reward: number;
-  }> = [
+const mockSteps: Step[] = [
     {
       id: 'step-01',
       title: 'Visual Blueprint 演示',
@@ -42,7 +33,10 @@ const Home: React.FC = () => {
       // 👇 再多补几个常见字段，防止它还报缺胳膊少腿
       thumbnail: '', 
       duration: '5 min',
-      reward: 100
+      reward: 100,
+      mediaAssets: [],
+      privateAccess: 'public',
+      fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 }
     },
     {
       id: 'step-02',
@@ -54,7 +48,10 @@ const Home: React.FC = () => {
       isLocked: true,
       thumbnail: '',
       duration: '0 min',
-      reward: 0
+      reward: 0,
+      mediaAssets: [],
+      privateAccess: 'public',
+      fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 }
     }
   ];
 
@@ -120,6 +117,24 @@ const Home: React.FC = () => {
         </button>
       </div>
 
+      {/* 协议载入入口 */}
+      <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 9999 }}>
+        <TaskMatrix 
+          isEntryView={true} 
+          steps={[]} 
+          isManualMode={false} 
+          selectedStepIndex={0} 
+          onAddStep={() => {}} 
+          onSelectStep={() => {}} 
+          onMoveStepUp={() => {}} 
+          onMoveStepDown={() => {}} 
+          onDeleteStep={() => {}} 
+          onUpdateStep={() => {}} 
+          onVoiceAI={() => {}} 
+          onAutoFill={() => {}} 
+        />
+      </div>
+      
       <MainStage 
         steps={mockSteps} 
         onChallengeClick={handleHeroChallenge} 

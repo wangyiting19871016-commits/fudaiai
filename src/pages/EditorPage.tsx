@@ -4,11 +4,15 @@ import { ArrowLeft } from 'lucide-react';
 import { useMissionLogic } from './MissionFoundry/hooks/useMissionLogic';
 import FoundrySidebar from './MissionFoundry/components/FoundrySidebar';
 import TaskMatrix from './MissionFoundry/components/TaskMatrix';
+import MissionFacade from './MissionFoundry/components/MissionFacade';
 import P3Mirror from './MissionFoundry/components/P3Mirror';
 
 const EditorPage = () => {
   const navigate = useNavigate();
   
+  
+  
+
   // 使用核心逻辑 Hook
   const {
     // 状态
@@ -40,6 +44,8 @@ const EditorPage = () => {
     handleSignAndRelease,
     handleVoiceAI,
     handleIdentifyKeyFrames,
+    analyzeStepAssets,
+    handleAutoFill,
     setSelectedStepIndex,
     setIsManualMode,
     updateStep,
@@ -49,6 +55,11 @@ const EditorPage = () => {
     downloadVideo,
     downloadAudio
   } = useMissionLogic();
+
+  // 默认进入手动模式，确保任务列表是空的
+  React.useEffect(() => {
+    setIsManualMode(true);
+  }, [setIsManualMode]);
   
   // 添加消息监听，处理来自LabPage的下载事件
   React.useEffect(() => {
@@ -68,6 +79,28 @@ const EditorPage = () => {
       window.removeEventListener('message', handleMessage);
     };
   }, [downloadVideo, downloadAudio]);
+  
+  // 添加协议加载事件监听，实现强制跳转P3
+  React.useEffect(() => {
+    const handleForceNavigateToP3 = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      console.log('[FORCE_NAVIGATE] 收到强制跳转到P3的事件:', customEvent.detail);
+      
+      // 强制切换到P3预览区
+      setSelectedStepIndex(0);
+      
+      // 确保P3镜像引擎读取到新注入的协议
+      window.dispatchEvent(new CustomEvent('p3EngineIgnite', {
+        detail: customEvent.detail.missionData
+      }));
+    };
+    
+    window.addEventListener('forceNavigateToP3', handleForceNavigateToP3);
+    
+    return () => {
+      window.removeEventListener('forceNavigateToP3', handleForceNavigateToP3);
+    };
+  }, [setSelectedStepIndex]);
 
   // 视频跳转处理函数
   const handleSeekToTime = (timestamp: number) => {
@@ -249,18 +282,7 @@ const EditorPage = () => {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100vw',
-      height: '100vh',
-      backgroundColor: '#000',
-      color: '#fff',
-      display: 'flex',
-      overflow: 'hidden',
-      boxSizing: 'border-box'
-    }}>
+    <div className="foundry-container" style={{ display: 'grid', gridTemplateColumns: '25% 50% 25%', height: '100vh', width: '100vw' }}>
       {/* 返回按钮 */}
       <button 
         onClick={() => navigate('/')} 
@@ -295,6 +317,10 @@ const EditorPage = () => {
           fileInputRef={fileInputRef}
           isScreenCapturing={isScreenCapturing}
           capturedVideoUrl={capturedVideoUrl}
+          verification={{
+            type: draftMission.verifyType,
+            keyword: draftMission.matchKeyword
+          }}
           handleFormChange={handleFormChange}
           handleFileUpload={handleFileUpload}
           handleAnalyze={handleAnalyze}
@@ -306,36 +332,84 @@ const EditorPage = () => {
         />
 
       {/* 中栏 - 任务矩阵区 */}
-      <TaskMatrix
-        steps={draftMission.steps}
-        isManualMode={isManualMode}
-        selectedStepIndex={selectedStepIndex}
-        currentVideoTime={currentVideoTime}
-        currentVideoPlaying={currentVideoPlaying}
-        onAddStep={handleAddStep}
-        onSelectStep={setSelectedStepIndex}
-        onMoveStepUp={handleMoveStepUp}
-        onMoveStepDown={handleMoveStepDown}
-        onDeleteStep={handleDeleteStep}
-        onUpdateStep={updateStep}
-        onVoiceAI={handleVoiceAI}
-        onSeekToTime={handleSeekToTime}
-        onPreviewClip={handlePreviewClip}
-        onStopPreview={handleStopPreview}
-        onGenerateSlice={handleGenerateSlice}
-        onSetInPoint={handleSetInPoint}
-        onSetOutPoint={handleSetOutPoint}
-      />
+      <div style={{ height: '100%', overflowY: 'auto', padding: '20px', boxSizing: 'border-box' }}>
+        {/* 任务门面配置 */}
+        <MissionFacade
+          difficulty={draftMission.difficulty || 1}
+          creditScore={draftMission.creditScore || 0}
+          title={draftMission.title}
+          onDifficultyChange={(difficulty) => updateDraftMission({ difficulty })}
+          onCreditScoreChange={(creditScore) => updateDraftMission({ creditScore })}
+          onTitleChange={(title) => updateDraftMission({ title })}
+        />
+        
+        <TaskMatrix
+          steps={draftMission.steps}
+          isManualMode={isManualMode}
+          selectedStepIndex={selectedStepIndex}
+          currentVideoTime={currentVideoTime}
+          currentVideoPlaying={currentVideoPlaying}
+          onAddStep={handleAddStep}
+          onSelectStep={setSelectedStepIndex}
+          onMoveStepUp={handleMoveStepUp}
+          onMoveStepDown={handleMoveStepDown}
+          onDeleteStep={handleDeleteStep}
+          onUpdateStep={updateStep}
+          onVoiceAI={handleVoiceAI}
+          onAutoFill={handleAutoFill}
+          analyzeStepAssets={analyzeStepAssets}
+          onSeekToTime={handleSeekToTime}
+          onPreviewClip={handlePreviewClip}
+          onStopPreview={handleStopPreview}
+          onGenerateSlice={handleGenerateSlice}
+          onSetInPoint={handleSetInPoint}
+          onSetOutPoint={handleSetOutPoint}
+          isEntryView={false}
+        />
+      </div>
 
       {/* 右栏 - 真迹镜像区 */}
-        <P3Mirror
-          missionData={draftMission}
-          currentStepIndex={selectedStepIndex}
-          onCurrentTimeChange={handleCurrentTimeChange}
-          onVideoRefReady={handleVideoRefReady}
-          mediaStream={mediaStream}
-          capturedAudioUrl={capturedAudioUrl}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <P3Mirror
+            missionData={draftMission}
+            currentStepIndex={selectedStepIndex}
+            onCurrentTimeChange={handleCurrentTimeChange}
+            onVideoRefReady={handleVideoRefReady}
+            mediaStream={mediaStream}
+            capturedAudioUrl={capturedAudioUrl}
+            style={{ flex: 1 }}
+          />
+          <div style={{ padding: '10px', display: 'flex', gap: '10px', justifyContent: 'center', borderTop: '1px solid #222', marginBottom: 0, marginTop: 'auto' }}>
+            <button
+              onClick={downloadVideo}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#06b6d4',
+                color: '#000',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              导出纯净视频
+            </button>
+            <button
+              onClick={downloadAudio}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#06b6d4',
+                color: '#000',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              导出纯净音频
+            </button>
+          </div>
+        </div>
     </div>
   );
 };

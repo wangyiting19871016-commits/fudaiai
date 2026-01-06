@@ -1,0 +1,7 @@
+[33m2289b76[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m P4实验室-封存存档：FFmpeg Full Build已就绪，三轨分离代码待后续API调优
+[33m36227bb[m[33m ([m[1;33mtag: [m[1;33mv1.1.0-stable[m[33m)[m feat: P3实验台结构化重构完成 - 实现LabPage瘦身与组件解耦
+[33m37ab6cd[m BASE: P4像素级拆解调通 + 实时素材采集Ready + TS报错修复
+[33mef726ec[m[33m ([m[1;33mtag: [m[1;33mv1.0-stable[m[33m)[m feat: MVP逻辑全线贯通 - 15卡片精准点亮 & 分数同步完成
+[33m1983947[m feat: save current src structure as baseline
+[33m1d6f701[m chore: add gitignore to exclude build and dependencies
+[33mc78c2cb[m feat: 锁定58%比例与教材赛道布局

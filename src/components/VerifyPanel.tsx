@@ -11,6 +11,9 @@ interface Step {
     keyword: string;
     description: string;
   };
+  activeControls?: string[] | any;
+  controls?: any;
+  promptSnippet?: string;
 }
 
 interface VerifyPanelProps {

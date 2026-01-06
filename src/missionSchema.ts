@@ -27,7 +27,7 @@ export interface Mission {
   video: Video;
   code: Code;
   status: MissionStatus;
-  instruction?: string;
+  instruction: string;
   title?: string;
   description?: string;
   type?: string;
@@ -35,6 +35,9 @@ export interface Mission {
     audio: string[];
   };
   results?: MissionResults;
+  mediaUrl: string;
+  audioTrackName: string;
+  verification: string;
 }
 
 export const DEFAULT_MISSION: Mission = {
@@ -55,7 +58,10 @@ export const DEFAULT_MISSION: Mission = {
   instruction: '',
   title: '',
   description: '',
-  type: ''
+  type: '',
+  mediaUrl: '',
+  audioTrackName: '',
+  verification: ''
 };
 
 // 任务队列存储结构

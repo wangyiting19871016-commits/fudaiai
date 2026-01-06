@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LabPage from './LabPage';
 import { missionDecompiler } from '../services/MissionDecompiler';
 import { MissionProvider } from '../stores/MissionContext';
+import P3Mirror from './MissionFoundry/components/P3Mirror';
 
 // 左侧配置面板组件 - 核心配置面板
 const ConfigurationPanel = ({ 
@@ -324,18 +325,7 @@ const ConfigurationPanel = ({
 };
 
 // 右侧P3镜像组件 - 嵌入式P3实验室
-const P3Mirror = ({ draftMission }: { draftMission: any }) => (
-  <div style={{
-    flex: 1,
-    height: '100vh',
-    backgroundColor: '#111',
-    overflow: 'hidden'
-  }}>
-    <MissionProvider formData={draftMission}>
-      <LabPage />
-    </MissionProvider>
-  </div>
-);
+
 
 const StudioPage: React.FC = () => {
   // 草稿任务状态 - 实时同步到右侧镜像
@@ -344,6 +334,7 @@ const StudioPage: React.FC = () => {
     title: '草稿任务',
     type: 'audio',
     description: '草稿任务描述',
+    steps: [], // 初始化为空数组，确保 P3Mirror 能正确处理
     video: {
       url: '',
       type: 'mp4'
@@ -362,6 +353,9 @@ const StudioPage: React.FC = () => {
       isRecorded: false
     }
   });
+  
+  // 当前步骤索引，默认为0
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
   // AI生成相关状态
   const [generatedJson, setGeneratedJson] = useState<any>(null);
@@ -480,7 +474,7 @@ const StudioPage: React.FC = () => {
       />
       
       {/* 右侧P3镜像 */}
-      <P3Mirror draftMission={draftMission} />
+      <P3Mirror missionData={draftMission} currentStepIndex={currentStepIndex} />
     </div>
   );
 };

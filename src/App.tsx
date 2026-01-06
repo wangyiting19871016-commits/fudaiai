@@ -17,8 +17,9 @@ const App: React.FC = () => {
         <div style={{ width: '100vw', minHeight: '100vh', background: '#222' }}>
           <Routes>
             {/* 首页 */}
-            <Route path="/" element={<Home />} />
-            
+            <Route path="/" element={<Home />} />            
+            {/* P1 任务工厂 */}
+            <Route path="/p1" element={<Home />} />            
             {/* 战备区：新架构 (PathPage) */}
             <Route path="/path/:taskId" element={<PathPage />} />
             

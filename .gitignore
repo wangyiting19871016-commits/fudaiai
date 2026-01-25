@@ -24,3 +24,56 @@ _ARCHIVE_*/
 
 # 本地开发文件
 *.local
+# --- 保留你原有的前端配置 ---
+node_modules/
+dist/
+.env
+.env.local
+.DS_Store
+# ... 其他你原有的内容 ...
+
+# --- 新增：MISSION HUNTER & Python 隔离区 ---
+# 忽略 Python 虚拟环境（这是那 5000+ 个报错文件的源头）
+.venv/
+venv/
+ENV/
+
+# 忽略 Python 运行缓存
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# 忽略 MISSION HUNTER 产生的临时报告（只在 Git 中保留代码，不保留抓下来的垃圾）
+mission-hunter/reports/
+**/mission-hunter/reports/
+
+# 忽略编辑器与本地配置
+.vscode/
+.idea/
+
+# === Git容量修复：添加媒体文件忽略规则 ===
+# 临时处理文件
+temp_processing/
+downloads/
+
+# 媒体文件
+*.webm
+*.mp3
+*.mp4
+*.avi
+*.mov
+*.wav
+*.flac
+*.ogg
+*.m4a
+
+# Python虚拟环境
+Lib/
+Scripts/
+Include/
+mission-hunter/Lib/
+
+# 备份目录
+backups/
+*.bak
+*.backup

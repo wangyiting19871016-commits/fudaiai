@@ -1,0 +1,244 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Lead Object",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "lead_id": {
+      "type": "string",
+      "description": "Unique identifier for the lead",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": ["rss", "web_api", "webhook", "file", "manual", "stream"]
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "request": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+            },
+            "headers": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "body": {
+              "type": ["object", "string", "null"]
+            }
+          },
+          "required": ["method"]
+        }
+      },
+      "required": ["source_type", "provider"]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "raw_payload": {
+          "oneOf": [
+            { "type": "object" },
+            { "type": "string" }
+          ]
+        },
+        "content_type": {
+          "type": "string"
+        },
+        "content_hash": {
+          "type": "string"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["raw_payload"]
+    },
+    "protocol_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "io_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "inputType": {
+              "type": "string",
+              "enum": ["text", "image", "audio", "video", "file", "url"]
+            },
+            "outputType": {
+              "type": "string",
+              "enum": ["json", "text", "image", "audio", "video"]
+            }
+          },
+          "required": ["inputType", "outputType"]
+        },
+        "params_schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "defaultValue": {},
+              "required": { "type": "boolean" },
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "step": { "type": "number" },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "label": { "type": "string" },
+                    "value": {}
+                  },
+                  "required": ["label", "value"]
+                }
+              }
+            },
+            "required": ["id", "name", "type"]
+          }
+        }
+      },
+      "required": ["io_schema"]
+    },
+    "input_params": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "scoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "freshness": { "type": "number", "minimum": 0, "maximum": 1 },
+        "uniqueness": { "type": "number", "minimum": 0, "maximum": 1 },
+        "actionability": { "type": "number", "minimum": 0, "maximum": 1 },
+        "verifiability": { "type": "number", "minimum": 0, "maximum": 1 },
+        "protocol_fit": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "required": ["freshness", "verifiability", "protocol_fit"]
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string", "enum": ["image", "audio", "video", "text", "file"] },
+          "uri": { "type": "string" },
+          "size": { "type": "integer", "minimum": 0 },
+          "checksum": { "type": "string" },
+          "metadata": { "type": "object" }
+        },
+        "required": ["id", "type", "uri"]
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["new", "scored", "accepted", "rejected", "published", "archived"]
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "timestamp": { "type": "string", "format": "date-time" },
+              "action": { "type": "string" },
+              "by": { "type": "string" },
+              "notes": { "type": "string" }
+            },
+            "required": ["timestamp", "action"]
+          }
+        }
+      },
+      "required": ["status"]
+    },
+    "compliance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "auth_type": { "type": "string", "enum": ["none", "api_key", "oauth", "custom"] },
+        "rate_limit": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "limit": { "type": "integer", "minimum": 0 },
+            "window_seconds": { "type": "integer", "minimum": 1 },
+            "remaining": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "legal_flags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": { "type": "string" },
+          "value": {}
+        },
+        "required": ["key", "value"]
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "required": ["lead_id", "created_at", "origin", "protocol_snapshot", "evidence", "scoring", "lifecycle"]
+}

@@ -20,7 +20,7 @@ const EvidenceCardFlow: React.FC<EvidenceCardFlowProps> = ({ viewMode, setViewMo
     switch(status) {
       case 'pending': return '#888';
       case 'failed': return '#ef4444';
-      case 'success': return '#22c55e';
+      case 'success': return '#a3a3a3';
       default: return '#888';
     }
   };

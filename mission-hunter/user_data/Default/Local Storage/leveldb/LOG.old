@@ -1,0 +1,6 @@
+2026/01/08-20:54:50.381 5ffc Reusing MANIFEST C:\Users\Administrator\Documents\trae_projects\project_kuajing\mission-hunter\user_data\Default\Local Storage\leveldb/MANIFEST-000001
+2026/01/08-20:54:50.387 5ffc Recovering log #25
+2026/01/08-20:54:50.389 5ffc Reusing old log C:\Users\Administrator\Documents\trae_projects\project_kuajing\mission-hunter\user_data\Default\Local Storage\leveldb/000025.log 
+2026/01/08-20:55:50.406 27ec Level-0 table #29: started
+2026/01/08-20:55:50.409 27ec Level-0 table #29: 14729 bytes OK
+2026/01/08-20:55:50.410 27ec Delete type=0 #25

@@ -91,8 +91,8 @@ const ProtocolDetail: React.FC<ProtocolDetailProps> = ({ step, index, onUpdateSt
             style={{
               padding: '2px 6px',
               background: '#000',
-              border: '1px solid #10b981',
-              color: '#10b981',
+              border: '1px solid #a3a3a3',
+              color: '#a3a3a3',
               borderRadius: 3,
               fontSize: 8,
               cursor: 'pointer',
@@ -230,13 +230,19 @@ const ProtocolDetail: React.FC<ProtocolDetailProps> = ({ step, index, onUpdateSt
               }}>
                 <input
                   type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={control.value || 0.5}
+                  // 物理锁定：必须使用数字而非字符串，确保浏览器内核不截断
+                  min={control.target === 'artifact:brilliance' ? -1.0 : 0}
+                  max={control.target === 'artifact:brilliance' ? 1.0 : 100}
+                  step={control.target === 'artifact:brilliance' ? 0.01 : 1}
+                  value={control.value ?? 0}
                   onChange={(e) => {
-                    const newControls = [...(step.controls || [])];
-                    newControls[controlIndex] = { ...newControls[controlIndex], value: parseFloat(e.target.value) };
+                    const val = parseFloat(e.target.value);
+                    console.log('!!! UI CAPTURING:', val); // 确认捕获到了负数
+                    
+                    // 立即执行更新
+                    const newControls = (step.controls || []).map(c => 
+                      c.target === control.target ? { ...c, value: val } : c
+                    );
                     onUpdateStep(index, { controls: newControls });
                   }}
                   style={{
@@ -247,19 +253,19 @@ const ProtocolDetail: React.FC<ProtocolDetailProps> = ({ step, index, onUpdateSt
                     borderRadius: 2,
                     outline: 'none',
                     cursor: 'pointer',
-                    background: 'linear-gradient(to right, #06b6d4 0%, #06b6d4 ' + 
-                              `${(control.value || 0.5) * 100}%, ` +
-                              '#333 ' +
-                              `${(control.value || 0.5) * 100}%, #333 100%)`
+                    // 修正进度条背景，适应 -1 到 1 的量程
+                    background: control.target === 'artifact:brilliance'
+                      ? `linear-gradient(to right, #a3a3a3 0%, #a3a3a3 ${((control.value ?? 0) + 1) / 2 * 100}%, #333 ${((control.value ?? 0) + 1) / 2 * 100}%, #333 100%)`
+                      : `linear-gradient(to right, #a3a3a3 0%, #a3a3a3 ${(control.value ?? 0)}%, #333 ${(control.value ?? 0)}%, #333 100%)`
                   }}
                 />
                 <span style={{ 
                   fontSize: 8, 
-                  color: '#06b6d4',
+                  color: '#a3a3a3',
                   width: 30,
                   textAlign: 'right'
                 }}>
-                  {Math.round((control.value || 0.5) * 100)}%
+                  {Math.round((control.value || 0) * 100)}%
                 </span>
               </div>
             </div>
@@ -302,8 +308,8 @@ const ProtocolDetail: React.FC<ProtocolDetailProps> = ({ step, index, onUpdateSt
               style={{
                 padding: '2px 6px',
                 background: '#000',
-                border: '1px solid #10b981',
-                color: '#10b981',
+                border: '1px solid #a3a3a3',
+                color: '#a3a3a3',
                 borderRadius: 3,
                 fontSize: 8,
                 cursor: 'pointer',

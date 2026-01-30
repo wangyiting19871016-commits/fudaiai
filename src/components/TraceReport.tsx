@@ -44,7 +44,7 @@ const TraceReport: React.FC<TraceReportProps> = ({ isVisible, volumes, logicHash
       style={{
         backgroundColor: '#1A1A1A',
         borderRadius: '8px',
-        border: '1px solid #06b6d4',
+        border: '1px solid #a3a3a3',
         padding: '20px',
         marginBottom: '16px',
         animation: isVisible ? 'slideIn 0.5s ease-out' : 'none',
@@ -58,7 +58,7 @@ const TraceReport: React.FC<TraceReportProps> = ({ isVisible, volumes, logicHash
       }}>
         <div style={{
           display: 'inline-block',
-          backgroundColor: '#06b6d4',
+          backgroundColor: '#a3a3a3',
           color: '#ffffff',
           fontSize: '12px',
           fontWeight: 'bold',
@@ -107,7 +107,7 @@ const TraceReport: React.FC<TraceReportProps> = ({ isVisible, volumes, logicHash
               fontSize: '12px'
             }}>人声</span>
             <span style={{
-              color: '#06b6d4',
+              color: '#a3a3a3',
               fontSize: '14px',
               fontWeight: 'bold'
             }}>{Math.round(volumes[0] * 100)}%</span>
@@ -123,7 +123,7 @@ const TraceReport: React.FC<TraceReportProps> = ({ isVisible, volumes, logicHash
               fontSize: '12px'
             }}>伴奏</span>
             <span style={{
-              color: '#06b6d4',
+              color: '#a3a3a3',
               fontSize: '14px',
               fontWeight: 'bold'
             }}>{Math.round(volumes[1] * 100)}%</span>
@@ -139,7 +139,7 @@ const TraceReport: React.FC<TraceReportProps> = ({ isVisible, volumes, logicHash
               fontSize: '12px'
             }}>环境音</span>
             <span style={{
-              color: '#06b6d4',
+              color: '#a3a3a3',
               fontSize: '14px',
               fontWeight: 'bold'
             }}>{Math.round(volumes[2] * 100)}%</span>

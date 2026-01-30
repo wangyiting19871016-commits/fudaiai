@@ -36,7 +36,8 @@ const mockSteps: Step[] = [
       reward: 100,
       mediaAssets: [],
       privateAccess: 'public',
-      fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 }
+      fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 },
+      assets: []
     },
     {
       id: 'step-02',
@@ -51,7 +52,8 @@ const mockSteps: Step[] = [
       reward: 0,
       mediaAssets: [],
       privateAccess: 'public',
-      fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 }
+      fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 },
+      assets: []
     }
   ];
 

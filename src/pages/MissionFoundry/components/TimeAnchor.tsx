@@ -52,8 +52,8 @@ const TimeAnchor: React.FC<TimeAnchorProps> = ({
           }}
           style={{
             background: '#000',
-            border: '1px solid #06b6d4',
-            color: '#06b6d4',
+            border: '1px solid #a3a3a3',
+            color: '#a3a3a3',
             borderRadius: 2,
             padding: '1px 3px',
             fontSize: 8,
@@ -105,8 +105,8 @@ const TimeAnchor: React.FC<TimeAnchorProps> = ({
           }}
           style={{
             background: '#000',
-            border: '1px solid #06b6d4',
-            color: '#06b6d4',
+            border: '1px solid #a3a3a3',
+            color: '#a3a3a3',
             borderRadius: 2,
             padding: '1px 3px',
             fontSize: 8,
@@ -154,8 +154,8 @@ const TimeAnchor: React.FC<TimeAnchorProps> = ({
         style={{
           marginTop: 2,
           background: '#000',
-          border: '1px solid #10b981',
-          color: '#10b981',
+          border: '1px solid #a3a3a3',
+          color: '#a3a3a3',
           borderRadius: 2,
           padding: '2px 4px',
           fontSize: 8,

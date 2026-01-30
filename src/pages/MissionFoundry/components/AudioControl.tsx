@@ -28,8 +28,8 @@ const AudioControl: React.FC<AudioControlProps> = ({
           flex: 1,
           padding: 4,
           background: isVoiceGenerating ? '#1a1a1a' : '#000',
-          color: isVoiceGenerating ? '#666' : '#10b981',
-          border: `1px solid ${isVoiceGenerating ? '#444' : '#10b981'}`,
+          color: isVoiceGenerating ? '#666' : '#a3a3a3',
+          border: `1px solid ${isVoiceGenerating ? '#444' : '#a3a3a3'}`,
           borderRadius: 3,
           fontWeight: 'bold',
           fontSize: 9,
@@ -72,8 +72,8 @@ const AudioControl: React.FC<AudioControlProps> = ({
             height: 24,
             padding: 4,
             background: '#000',
-            color: isPlaying ? '#ef4444' : '#06b6d4',
-            border: `1px solid ${isPlaying ? '#ef4444' : '#06b6d4'}`,
+            color: isPlaying ? '#ef4444' : '#a3a3a3',
+            border: `1px solid ${isPlaying ? '#ef4444' : '#a3a3a3'}`,
             borderRadius: 3,
             fontWeight: 'bold',
             fontSize: 11,
@@ -123,7 +123,7 @@ const AudioControl: React.FC<AudioControlProps> = ({
           <div style={{
             width: `${volume * 100}%`,
             height: '100%',
-            background: '#06b6d4',
+            background: '#a3a3a3',
             borderRadius: 1,
             transition: 'width 0.3s ease'
           }}></div>

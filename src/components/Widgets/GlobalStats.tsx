@@ -42,9 +42,9 @@ const GlobalStats: React.FC<GlobalStatsProps> = ({ credit, level }) => {
       <div style={{
         fontSize: '14px',
         fontFamily: 'Monospace',
-        color: '#00ff88',
+        color: '#a3a3a3',
         marginBottom: '30px',
-        textShadow: '0 0 5px #00ff88'
+        textShadow: '0 0 5px #a3a3a3'
       }}>
         ID: TRUTH_USER_001
       </div>
@@ -72,7 +72,7 @@ const GlobalStats: React.FC<GlobalStatsProps> = ({ credit, level }) => {
         {/* 树苗图标 (使用Unicode字符作为示例) */}
         <div style={{
           filter: credit > 1000 
-  ? 'drop-shadow(0 0 15px #4ade80) drop-shadow(0 0 5px #22c55e)' // 叠加两层阴影，增加厚度
+  ? 'drop-shadow(0 0 15px #4ade80) drop-shadow(0 0 5px #a3a3a3)' // 叠加两层阴影，增加厚度
   : 'none',
           fontSize: '40px',
           color: '#4ade80',
@@ -175,7 +175,7 @@ const GlobalStats: React.FC<GlobalStatsProps> = ({ credit, level }) => {
       }}>
         <div style={{
           height: '8px',
-          backgroundColor: 'rgba(0, 255, 136, 0.2)',
+          backgroundColor: 'rgba(163, 163, 163, 0.2)',
           borderRadius: '4px',
           overflow: 'hidden'
         }}>

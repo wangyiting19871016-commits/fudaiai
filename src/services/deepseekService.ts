@@ -238,56 +238,72 @@ const mainFunction = async (userInput: string, ...args: any[]): Promise<any> => 
       
       // 降级提示词：使用简化的系统提示词，停用 MICRO_STEPS_SYSTEM_PROMPT
       const simplifiedSystemPrompt = `
+[STRICT MODE] 你必须严格遵守 JSON 结构，禁止返回任何旧字段（如 title, mappingKey, portraitImpact）。
+
 # Role
-P4 (Mission Foundry) 任务生成器 - 自动填表模式
+P4 (Mission Foundry) API 抓取器 - SiliconFlow 风格
 
 # Core Philosophy
 1. 只输出 JSON 对象，严禁输出步骤列表或教程
 2. 严格遵循 JSON 结构规范
 3. 内容必须与输入高度相关
-4. 必须使用标准协议字典中的target值
+4. 必须返回真实的 SiliconFlow API 配置
 
-# 标准协议字典 (P4_PROTOCOL_DICTIONARY)
-你必须从以下协议中选择最匹配的2-3个target，严禁自定义target字段：
-
-## VISUAL (视觉)
-- fx:brightness (亮度调节)
-- fx:contrast (对比度调节)
-- fx:hue (色相调节)
-- fx:saturation (饱和度调节)
-
-## TEMPORAL (时间)
-- time:speed (播放速度调节)
-- time:duration (持续时间调节)
-- time:fps (帧率调节)
-
-## AUDIO (音频)
-- snd:volume (音量调节)
-- snd:pitch (音调调节)
-
-## LOGIC (逻辑)
-- meta:intensity (通用强度)
-- meta:threshold (判定阈值)
-
-# 强制 JSON 结构 (P4 协议规范)
+# 强制 JSON 结构 (SiliconFlow API 抓取器协议)
+你必须返回且仅返回以下五个 Key：
 {
-  "title": "中文标题",
-  "mappingKey": "英文映射键",
-  "sliderLabel": "中文语义化滑块名称",
+  "api_endpoint": "API 地址",
+  "model_id": "模型 ID",
+  "params_schema": ["参数结构"],
+  "input_params": {"初始值"},
+  "io_schema": { "inputType": "image", "outputType": "image" } // 必须包含输入输出类型
+}
+
+# 反向示例（Negative Example）- 严禁返回以下格式
+{
+  "title": "生成失败",
+  "mappingKey": "error",
+  "sliderLabel": "生成失败",
   "portraitImpact": 0.5,
-  "controls": [{ "label": "参数名", "target": "协议target", "value": 默认数值, "insight": "解释" }]
+  "controls": [],
+  "error": "返回的JSON缺少必需字段"
+}
+
+# 正确示例（Positive Example）- 必须返回以下格式
+{
+  "api_endpoint": "https://api.siliconflow.cn/v1/image/generate",
+  "model_id": "stabilityai/stable-diffusion-xl-base-1.0",
+  "params_schema": [
+    {
+      "id": "prompt",
+      "name": "提示词",
+      "type": "string",
+      "defaultValue": "A beautiful landscape",
+      "required": true
+    },
+    {
+      "id": "negative_prompt",
+      "name": "负面提示词",
+      "type": "string",
+      "defaultValue": "low quality, blurry, distorted",
+      "required": false
+    }
+  ],
+  "input_params": {
+    "prompt": "A beautiful landscape",
+    "negative_prompt": "low quality, blurry, distorted"
+  },
+  "io_schema": { "inputType": "image", "outputType": "image" }
 }
 
 # 强制约束逻辑
-1. 必须根据视觉描述从协议字典中选择最匹配的2-3个target
-2. 严禁自行发明target字段（如禁止使用css:brightness，必须使用fx:brightness）
-3. 必须使用字典中的前缀（fx:, time:, snd:, meta:）
-4. 语义映射规则：
-   - 若视觉描述提到"职场冲突"：映射到fx:contrast或time:speed
-   - 若视觉描述提到"氛围"：映射到fx:saturation或fx:brightness
-   - 若视觉描述提到"动态"：映射到time:speed或time:fps
-   - 若视觉描述提到"声音"：映射到snd:volume或snd:pitch
-   - 若视觉描述提到"强度"：映射到meta:intensity或fx:brightness
+1. api_endpoint：必须是完整的 API 地址，如 https://api.siliconflow.cn/v1/image/generate
+2. model_id：必须是真实的 SiliconFlow 模型 ID，如 stabilityai/stable-diffusion-xl-base-1.0
+3. params_schema：必须是包含参数定义的数组，每个参数包含 id, name, type, defaultValue, min, max, step 等字段
+4. input_params：必须是包含初始参数值的对象
+5. io_schema：必须包含 inputType 和 outputType 字段，例如 { "inputType": "image", "outputType": "image" }
+6. 严禁返回任何旧字段（如 title, mappingKey, portraitImpact, controls, error, schemeType, steps 等）
+7. 必须返回且仅返回以下五个 Key：api_endpoint, model_id, params_schema, input_params, io_schema
 
 # 强制要求
 1. 必须输出严格符合RFC8259规范的JSON格式
@@ -297,13 +313,8 @@ P4 (Mission Foundry) 任务生成器 - 自动填表模式
 5. 必须确保JSON可以被标准JSON解析器正确解析
 6. 输出必须是单个JSON对象，不能是数组或其他类型
 7. 严禁输出"步骤列表"或"教程"内容
-8. 看到壁炉就描述壁炉，看到职场就描述职场，禁止使用'通用'、'A方案'等占位符
-9. title 必须是中文，包含核心关键词
-10. mappingKey 必须是英文，符合编程规范
-11. sliderLabel 必须是中文，语义化描述
-12. portraitImpact 必须是0-1之间的数值
-13. controls数组必须包含2-3个控制项，每个控制项的target必须来自协议字典
-14. 禁止使用css:前缀的target，必须使用fx:前缀
+8. 必须返回真实的 SiliconFlow API 配置
+9. 必须严格遵循 SiliconFlow API 风格
 `;
       
       let systemPrompt = simplifiedSystemPrompt;
@@ -427,41 +438,9 @@ P4 (Mission Foundry) 任务生成器 - 自动填表模式
         missionData = content;
       }
       
-      // 验证JSON结构：检查是否包含所有必需字段
-      const requiredFields = ['title', 'mappingKey', 'sliderLabel', 'portraitImpact'];
-      const missingFields = requiredFields.filter(field => !(field in missionData));
-      
-      if (missingFields.length > 0) {
-        console.error(`❌ AI返回的JSON缺少必需字段: ${missingFields.join(', ')}`, missionData);
-        
-        // 反短路机制：如果还有重试次数，进行重试
-        retryCount++;
-        if (retryCount <= maxRetries) {
-          console.log(`🔄 返回的JSON缺少必需字段，正在进行第 ${retryCount} 次重试...`);
-          continue;
-        }
-        
-        // 重试次数耗尽，返回预设的错误骨架
-        return {
-          title: "生成失败",
-          mappingKey: "error",
-          sliderLabel: "生成失败",
-          portraitImpact: 0.5,
-          controls: [],
-          error: `返回的JSON缺少必需字段: ${missingFields.join(', ')}`
-        };
-      }
-      
-      // 返回所有字段，包括生成的controls
-      const result = {
-        title: missionData.title,
-        mappingKey: missionData.mappingKey,
-        sliderLabel: missionData.sliderLabel,
-        portraitImpact: missionData.portraitImpact,
-        controls: missionData.controls || []
-      };
-      
-      return result;
+      // 彻底拆除数据关卡：只要返回的是合法JSON对象，就立即返回结果
+      // 不再进行任何复杂的字段比对或Schema校验
+      return missionData;
 
     } catch (error: any) {
       console.error("🚨 DeepSeek服务错误详情:");

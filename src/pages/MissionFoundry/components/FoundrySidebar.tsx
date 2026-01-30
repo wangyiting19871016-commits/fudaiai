@@ -1,57 +1,76 @@
 import React from 'react';
-import { Sparkles, Video, FileText, Cpu, Loader2, Upload, Save, Monitor, Square } from 'lucide-react';
+import { Sparkles, Cpu, Loader2, ArrowRight } from 'lucide-react';
+import { useProtocolContext } from '../../../stores/ActiveProtocolStore';
+import { useMissionContext } from '../../../stores/MissionContext';
+import { useNavigate } from 'react-router-dom';
 
 interface FoundrySidebarProps {
   // 状态
-  mediaUrl: string;
-  instruction: string;
-  audioTrackName: string;
-  verifyType: string;
-  matchKeyword: string;
   isAnalyzing: boolean;
-  logs: string[];
-  uploadedFile: File | null;
   draftMission: any;
-  isManualMode: boolean;
-  fileInputRef: React.RefObject<HTMLInputElement>;
-  isScreenCapturing: boolean;
-  capturedVideoUrl: string;
-  verification: { type: string; keyword: string } | any;
+  selectedStepIndex: number;
   
   // 方法
-  handleFormChange: (field: string, value: any) => void;
-  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleAnalyze: () => Promise<void>;
+  handleAnalyze: (instruction?: string) => Promise<void>;
   handleSignAndRelease: () => void;
-  handleIdentifyKeyFrames: () => Promise<void>;
-  setIsManualMode: (isManual: boolean) => void;
-  handleStartScreenCapture: () => Promise<void>;
-  handleStopScreenCapture: () => Promise<void>;
 }
 
 const FoundrySidebar: React.FC<FoundrySidebarProps> = ({
-  mediaUrl,
-  instruction,
-  audioTrackName,
-  verifyType,
-  matchKeyword,
   isAnalyzing,
-  logs,
-  uploadedFile,
   draftMission,
-  isManualMode,
-  fileInputRef,
-  isScreenCapturing,
-  capturedVideoUrl,
-  handleFormChange,
-  handleFileUpload,
+  selectedStepIndex,
+  
   handleAnalyze,
-  handleSignAndRelease,
-  handleIdentifyKeyFrames,
-  setIsManualMode,
-  handleStartScreenCapture,
-  handleStopScreenCapture
+  handleSignAndRelease
 }) => {
+  // 智能指令状态管理
+  const [smartInstruction, setSmartInstruction] = React.useState<string>('');
+  const { state: protocolState } = useProtocolContext();
+  const { dispatch } = useMissionContext();
+  const navigate = useNavigate();
+
+  // [RECIPE_OVERRIDE] 动态计算显示的协议数据
+  const displayProtocol = React.useMemo(() => {
+    const baseProtocol = protocolState.activeProtocol;
+    if (!baseProtocol) return null;
+
+    const currentStep = draftMission?.steps?.[selectedStepIndex];
+    // 检查是否已挂载配方 (通过 isRecipeMode 或 modelId+parameters 判断)
+    const isRecipeMode = currentStep?.isRecipeMode || (currentStep?.modelId && currentStep?.parameters);
+
+    if (isRecipeMode) {
+      return {
+        ...baseProtocol,
+        model_id: currentStep.modelId, // 覆盖模型 ID
+        recipeParams: currentStep.recipeParams || currentStep.parameters, // 优先使用 recipeParams
+        isRecipeMode: true // 标记为配方模式
+      };
+    }
+    return { ...baseProtocol, isRecipeMode: false };
+  }, [protocolState.activeProtocol, draftMission, selectedStepIndex]);
+  
+  // 进入P4LAB验证
+  const handleEnterP4Lab = () => {
+    if (protocolState.activeProtocol) {
+      // 将当前抓到的JSON协议存入全局ActiveMissionContext
+      dispatch({ 
+        type: 'UPDATE_PROTOCOL', 
+        protocol: protocolState.activeProtocol 
+      });
+      
+      navigate('/p4-lab', {
+        state: {
+          stepIndex: selectedStepIndex,
+          toolType: 'github-plugin',
+          protocol: protocolState.activeProtocol // 同时传递给URL状态，确保P4Lab能获取到协议
+        }
+      });
+    }
+  };
+  
+  // 强制显影控制台数据
+  console.log("【当前协议状态】:", protocolState.activeProtocol);
+  
   return (
     <div style={{
         flex: '0 0 25%',
@@ -64,395 +83,254 @@ const FoundrySidebar: React.FC<FoundrySidebarProps> = ({
         overflowY: 'auto',
         boxSizing: 'border-box'
       }}>
-      <h1 style={{ fontSize: 28, fontWeight: '900', marginBottom: 10 }}>MISSION <span style={{ color: '#06b6d4' }}>FOUNDRY</span></h1>
-      <p style={{ color: '#666', fontSize: 13, marginBottom: 30 }}>真迹协议铸造厂：通过 AI 提取实战原子任务</p>
-      
-      {/* 双模切换控制台 */}
-      <div style={{
-        marginBottom: 30,
-        background: '#111',
-        border: '1px solid #333',
-        borderRadius: 8,
-        padding: 20
-      }}>
-        <h3 style={{ fontSize: 14, fontWeight: 'bold', color: '#06b6d4', marginBottom: 15, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Cpu size={16}/> 任务生成模式
+      <h1 style={{ fontSize: 28, fontWeight: '900', marginBottom: 10 }}>GitHub 逻辑提取器 <span style={{ color: '#a3a3a3' }}>(Powered by DeepSeek)</span></h1>
+      <p style={{ color: '#666', fontSize: 13, marginBottom: 30 }}>粘贴 GitHub README 或链接，我将为您自动生成 P2 路径与 API 协议。</p>
+
+      {/* 智能指令输入框 - DeepSeek输入与执行区 */}
+      <div style={{ marginBottom: 30, background: '#111', border: '1px solid #333', borderRadius: 8, padding: 20 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 'bold', color: '#a3a3a3', marginBottom: 15, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Sparkles size={16}/> 智能指令调参
         </h3>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button 
-            onClick={() => setIsManualMode(false)} 
+        <div style={{ display: 'flex', gap: 10, marginBottom: 15, alignItems: 'flex-start' }}>
+          <input
+            type="text"
+            placeholder="粘贴 GitHub README 或链接，我将为您自动生成 P2 路径与 API 协议。"
+            value={smartInstruction}
+            onChange={(e) => setSmartInstruction(e.target.value)}
             style={{
               flex: 1,
-              padding: 12,
-              background: !isManualMode ? '#06b6d4' : '#000',
-              color: !isManualMode ? '#000' : '#fff',
-              border: '1px solid #444',
-              borderRadius: 6,
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }} 
-          >
-            🤖 AI 智能拆解
-          </button>
-          <button 
-            onClick={() => setIsManualMode(true)} 
-            style={{
-              flex: 1,
-              padding: 12,
-              background: isManualMode ? '#06b6d4' : '#000',
-              color: isManualMode ? '#000' : '#fff',
-              border: '1px solid #444',
-              borderRadius: 6,
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }} 
-          >
-            ✏️ 手动自由创建
-          </button>
-        </div>
-      </div>
-
-      {/* 启动 DeepSeek 入口 */}
-      <div style={{ marginBottom: 30 }}>
-        <button 
-          onClick={handleAnalyze} 
-          disabled={isAnalyzing} 
-          style={{
-            width: '100%',
-            padding: '12px 20px',
-            height: '42px',
-            background: isAnalyzing ? '#222' : '#06b6d4',
-            color: isAnalyzing ? '#666' : '#000',
-            border: 'none',
-            borderRadius: 8,
-            fontWeight: 'bold',
-            fontSize: 14,
-            cursor: isAnalyzing ? 'wait' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-            boxShadow: '0 2px 8px rgba(6, 182, 212, 0.3)',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          {isAnalyzing ? <><Loader2 className="animate-spin" size={16}/> 生成中...</> : <><Sparkles size={16}/> 启动 3-10 步 DeepSeek</>}
-        </button>
-      </div>
-
-      {/* 任务配置面板 */}
-      <div style={{ marginBottom: 25, background: '#111', border: '1px solid #333', borderRadius: 8, padding: 20 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 'bold', color: '#06b6d4', marginBottom: 15, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Cpu size={16}/> 任务配置面板
-        </h3>
-        
-        {/* Media URL */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#fff', marginBottom: 8, fontWeight: 'bold' }}>
-            <Video size={14}/> Media URL
-            <span style={{ color: '#ef4444', fontSize: 10 }}>●</span>
-          </label>
-          <input 
-            value={mediaUrl} 
-            onChange={e => handleFormChange('mediaUrl', e.target.value)} 
-            placeholder="粘贴 YouTube/Bilibili 链接..." 
-            style={{ width: '100%', padding: 15, background: '#000', border: '1px solid #444', borderRadius: 8, color: '#fff', marginBottom: 10 }} 
-          />
-        </div>
-        
-        {/* 任务指令 */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#fff', marginBottom: 8, fontWeight: 'bold' }}>
-            <FileText size={14}/> 任务指令
-            <span style={{ color: '#ef4444', fontSize: 10 }}>●</span>
-          </label>
-          <textarea 
-            value={instruction} 
-            onChange={e => handleFormChange('instruction', e.target.value)} 
-            placeholder="例如：请观看视频第 2 分钟，将代码中的 speed 变量修改为 50..." 
-            style={{ width: '100%', height: 120, padding: 15, background: '#000', border: '1px solid #444', borderRadius: 8, color: '#fff', resize: 'none', lineHeight: 1.6 }} 
-          />
-        </div>
-        
-        {/* 音轨名 */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#fff', marginBottom: 8, fontWeight: 'bold' }}>
-            <FileText size={14}/> 音轨名
-          </label>
-          <input 
-            value={audioTrackName} 
-            onChange={e => handleFormChange('audioTrackName', e.target.value)} 
-            placeholder="例如：主声道、背景音乐..." 
-            style={{ width: '100%', padding: 15, background: '#000', border: '1px solid #444', borderRadius: 8, color: '#fff' }} 
-          />
-        </div>
-        
-        {/* 验证逻辑 */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#fff', marginBottom: 8, fontWeight: 'bold' }}>
-            <FileText size={14}/> 验证逻辑
-            <span style={{ color: '#ef4444', fontSize: 10 }}>●</span>
-          </label>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <select 
-              value={verifyType} 
-              onChange={e => handleFormChange('verifyType', e.target.value)} 
-              style={{ padding: 15, background: '#000', border: '1px solid #444', borderRadius: 8, color: '#fff', width: 150 }} 
-            >
-              <option value="TEXT">TEXT (文本验证)</option>
-              <option value="SCREEN">SCREEN (屏幕验证)</option>
-              <option value="VOICE">VOICE (语音验证)</option>
-            </select>
-            <input 
-              value={matchKeyword} 
-              onChange={e => handleFormChange('matchKeyword', e.target.value)} 
-              placeholder="匹配关键词..." 
-              style={{ flex: 1, padding: 15, background: '#000', border: '1px solid #444', borderRadius: 8, color: '#fff' }} 
-            />
-          </div>
-        </div>
-        
-          {/* 吞噬站 - 全窗捕捉功能 */}
-          <div style={{ marginBottom: 20, background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, padding: 20 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#fff', marginBottom: 12, fontWeight: 'bold' }}>
-            <Monitor size={14}/> 吞噬站 (Feeder) - 全窗捕捉
-            <span style={{ color: isScreenCapturing ? '#ef4444' : '#06b6d4', fontSize: 10 }}>●</span>
-          </label>
-          
-          {/* 音频捕捉提示 */}
-          <div style={{ marginBottom: 15, padding: 10, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', borderRadius: 6, color: '#ef4444', fontSize: 12 }}>
-            ⚠️ 请务必勾选弹出框左下角的「分享系统音频」，否则将无法获取声音。
-          </div>
-          
-          <div style={{ display: 'flex', gap: 10, marginBottom: 15 }}>
-            <button 
-              onClick={handleStartScreenCapture} 
-              disabled={isScreenCapturing}
-              style={{
-                flex: 1,
-                padding: 15,
-                background: !isScreenCapturing ? '#06b6d4' : '#333',
-                color: !isScreenCapturing ? '#000' : '#666',
-                border: '1px solid #444',
-                borderRadius: 8,
-                cursor: isScreenCapturing ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8
-              }} 
-            >
-              <Monitor size={14}/> {isScreenCapturing ? '捕捉中...' : '开启捕捉'}
-            </button>
-            <button 
-              onClick={handleStopScreenCapture} 
-              disabled={!isScreenCapturing}
-              style={{
-                flex: 1,
-                padding: 15,
-                background: isScreenCapturing ? '#ef4444' : '#333',
-                color: isScreenCapturing ? '#fff' : '#666',
-                border: '1px solid #444',
-                borderRadius: 8,
-                cursor: !isScreenCapturing ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8
-              }} 
-            >
-              <Square size={14}/> 停止捕捉
-            </button>
-          </div>
-          
-          {capturedVideoUrl && (
-            <div style={{
-              padding: 12,
+              padding: '12px 16px',
               background: '#000',
+              color: '#fff',
               border: '1px solid #444',
               borderRadius: 8,
-              color: '#06b6d4',
-              fontSize: 12,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8
-            }}>
-              <Video size={14}/> 已捕获视频素材
-            </div>
-          )}
-        </div>
-        
-        {/* 文件上传区 */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#fff', marginBottom: 8, fontWeight: 'bold' }}>
-            <Upload size={14}/> 本地上传补给站
-            <span style={{ color: '#f59e0b', fontSize: 10 }}>●</span>
-          </label>
-          <div style={{ display: 'flex', gap: 10 }}>
+              fontSize: 14,
+              outline: 'none',
+              transition: 'all 0.2s ease'
+            }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleAnalyze(smartInstruction);
+              }
+            }}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '120px' }}>
             <button 
-              onClick={() => fileInputRef.current?.click()} 
+              onClick={() => handleAnalyze(smartInstruction)}
+              disabled={isAnalyzing}
               style={{
-                padding: 15,
-                background: '#000',
-                border: '1px solid #444',
-                borderRadius: 8,
-                color: '#fff',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8
-              }} 
-            >
-              <Upload size={14}/> 选择文件
-            </button>
-            <input 
-              ref={fileInputRef}
-              type="file" 
-              accept="audio/mp3,video/mp4,image/jpg,image/jpeg,image/png,image/webp" 
-              onChange={handleFileUpload} 
-              style={{ display: 'none' }} 
-            />
-            {uploadedFile && (
-              <div style={{
-                flex: 1,
-                padding: 10,
-                background: '#000',
-                border: '1px solid #444',
-                borderRadius: 8,
-                color: '#06b6d4',
-                fontSize: 12,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10
-              }}>
-                {/* 如果是图片文件，显示缩略图 */}
-                {uploadedFile.type.startsWith('image/') ? (
-                  <img 
-                    src={URL.createObjectURL(uploadedFile)} 
-                    alt={uploadedFile.name} 
-                    style={{
-                      width: 60,
-                      height: 60,
-                      objectFit: 'cover',
-                      borderRadius: 4,
-                      border: '1px solid #444'
-                    }} 
-                  />
-                ) : (
-                  <div style={{
-                    width: 60,
-                    height: 60,
-                    background: '#111',
-                    borderRadius: 4,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid #444'
-                  }}>
-                    {uploadedFile.type.startsWith('audio/') ? (
-                      <audio style={{ width: 40 }} controls />
-                    ) : (
-                      <video style={{ width: 40 }} controls />
-                    )}
-                  </div>
-                )}
-                <span style={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
-                }}>
-                  {uploadedFile.name}
-                </span>
-              </div>
-            )}
-          </div>
-          
-          {/* AI 识别关键帧按钮 - 仅当有媒体 URL 或已上传文件时显示 */}
-          {(mediaUrl.trim() || uploadedFile || capturedVideoUrl) && (
-            <button 
-              onClick={handleIdentifyKeyFrames} 
-              style={{
-                width: '100%',
-                marginTop: 15,
-                padding: 15,
-                background: '#000',
-                color: '#f59e0b',
-                border: '1px solid #f59e0b',
+                padding: '12px 20px',
+                height: '42px',
+                background: isAnalyzing ? '#222' : '#a3a3a3',
+                color: isAnalyzing ? '#666' : '#000',
+                border: 'none',
                 borderRadius: 8,
                 fontWeight: 'bold',
-                cursor: 'pointer',
+                fontSize: 14,
+                cursor: isAnalyzing ? 'wait' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 8,
-                fontSize: 14
+                boxShadow: '0 2px 8px rgba(6, 182, 212, 0.3)',
+                transition: 'all 0.2s ease'
               }}
             >
-              <Sparkles size={16}/> AI 识别关键帧
+              {isAnalyzing ? <><Loader2 className="animate-spin" size={16}/> 生成中...</> : '执行'}
             </button>
-          )}
+            
+            {/* 信号显影 - 唯一留下的调试灯 */}
+            <div style={{
+              backgroundColor: protocolState.activeProtocol ? '#0f422d' : '#421212',
+              color: protocolState.activeProtocol ? '#a3a3a3' : '#ef4444',
+              padding: '8px 12px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
+            }}>
+              {protocolState.activeProtocol ? "🟢 协议已就绪" : "🔴 协议为空"}
+            </div>
+          </div>
         </div>
         
-        {/* 日志区 */}
-        <div style={{ background: '#111', border: '1px solid #333', borderRadius: 8, padding: 20, maxHeight: '200px', overflowY: 'auto', marginBottom: 20 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 'bold', color: '#06b6d4', marginBottom: 15 }}>操作日志</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {logs.map((log, index) => (
-              <div key={index} style={{ fontSize: 12, color: '#fff', lineHeight: 1.5 }}>
-                {log}
+        {/* 快速操作按钮 */}
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button 
+            onClick={() => handleAnalyze(smartInstruction)}
+            disabled={isAnalyzing}
+            style={{
+              flex: 1,
+              padding: '10px 16px',
+              background: '#000',
+              color: '#a3a3a3',
+              border: '1px solid #a3a3a3',
+              borderRadius: 8,
+              fontWeight: 'bold',
+              fontSize: 13,
+              cursor: isAnalyzing ? 'wait' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <Cpu size={14}/> 解析原子任务
+          </button>
+          {/* 签署并发布按钮 */}
+          <button 
+            onClick={handleSignAndRelease}
+            disabled={!protocolState.activeProtocol?.verified}
+            style={{
+              flex: 1,
+              padding: '10px 16px',
+              background: protocolState.activeProtocol?.verified ? '#a3a3a3' : '#333',
+              color: protocolState.activeProtocol?.verified ? '#000' : '#666',
+              border: '1px solid #a3a3a3',
+              borderRadius: 8,
+              fontWeight: 'bold',
+              fontSize: 13,
+              cursor: protocolState.activeProtocol?.verified ? 'pointer' : 'not-allowed',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              transition: 'all 0.2s ease'
+            }}
+          >
+            📦 签署并发布
+          </button>
+        </div>
+      </div>
+
+      {/* ProtocolPreviewCard - 当DeepSeek解析成功后显示 (支持配方动态覆盖) */}
+      {displayProtocol && (
+        <div style={{ marginBottom: 30, background: '#111', border: '1px solid #333', borderRadius: 8, padding: 20 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 'bold', color: '#a3a3a3', marginBottom: 15, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Sparkles size={16}/> 
+            {displayProtocol.isRecipeMode ? 'API 协议 (已挂载配方)' : 'API 协议已生成'}
+            {displayProtocol.isRecipeMode && <span style={{ fontSize: 10, backgroundColor: '#a3a3a3', color: '#000', padding: '2px 6px', borderRadius: 4 }}>RECIPE ACTIVE</span>}
+          </h3>
+          
+          <div style={{ backgroundColor: '#000', borderRadius: 8, padding: 15, marginBottom: 15, fontSize: 13, lineHeight: 1.6 }}>
+            <div style={{ marginBottom: 12 }}>
+              <span style={{ color: '#a3a3a3', fontWeight: 'bold' }}>模型ID:</span> 
+              <span style={{ marginLeft: 8, color: displayProtocol.isRecipeMode ? '#a3a3a3' : '#fff', fontWeight: displayProtocol.isRecipeMode ? 'bold' : 'normal' }}>
+                {displayProtocol.model_id || '无'}
+              </span>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <span style={{ color: '#a3a3a3', fontWeight: 'bold' }}>API地址:</span> 
+              <span style={{ color: '#fff', wordBreak: 'break-all', display: 'block', marginTop: 5 }}>
+                {displayProtocol.endpoint || '无'}
+              </span>
+            </div>
+            
+            {/* 动态参数列表 */}
+            <div style={{ marginTop: 15 }}>
+              <span style={{ color: '#a3a3a3', fontWeight: 'bold', display: 'block', marginBottom: 8 }}>
+                参数列表:
+              </span>
+              <div style={{ backgroundColor: '#111', borderRadius: 6, padding: 12, maxHeight: 200, overflowY: 'auto' }}>
+                {displayProtocol.params_schema && displayProtocol.params_schema.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {displayProtocol.params_schema.map((param: any, index: number) => {
+                      // 检查该参数是否被配方覆盖或有输入值
+                      const recipeValue = displayProtocol.recipeParams?.[param.id];
+                      const inputValue = displayProtocol.input_params?.[param.id];
+                      
+                      // 优先级：配方 > 输入 > 默认
+                      let finalValue = param.defaultValue;
+                      let source = 'default'; // default, input, recipe
+                      
+                      if (recipeValue !== undefined) {
+                        finalValue = recipeValue;
+                        source = 'recipe';
+                      } else if (inputValue !== undefined) {
+                        finalValue = inputValue;
+                        source = 'input';
+                      }
+
+                      const isOverridden = source === 'recipe';
+                      
+                      return (
+                        <div key={index} style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          padding: '8px 0',
+                          borderBottom: index < displayProtocol.params_schema.length - 1 ? '1px solid #333' : 'none'
+                        }}>
+                          <div>
+                            <div style={{ color: '#fff', fontWeight: 'bold', fontSize: 12 }}>
+                              {param.name}
+                            </div>
+                            <div style={{ color: '#666', fontSize: 11, marginTop: 2 }}>
+                              {param.type} {param.required ? '(必填)' : '(可选)'}
+                            </div>
+                          </div>
+                          <div style={{ 
+                            color: source === 'recipe' ? '#a3a3a3' : (source === 'input' ? '#fff' : '#f59e0b'), 
+                            fontSize: 11,
+                            fontWeight: source !== 'default' ? 'bold' : 'normal',
+                            textAlign: 'right',
+                            maxWidth: '120px',
+                            wordBreak: 'break-all'
+                          }}>
+                            {source === 'recipe' ? (
+                              <>
+                                <span>{JSON.stringify(finalValue)}</span>
+                                <div style={{ fontSize: 9, opacity: 0.7 }}>✨ [配方覆盖]</div>
+                              </>
+                            ) : (
+                              source === 'input' ? (
+                                <span>{JSON.stringify(finalValue)}</span>
+                              ) : (
+                                `默认值: ${finalValue !== undefined ? JSON.stringify(finalValue) : '无'}`
+                              )
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div style={{ color: '#666', textAlign: 'center', fontSize: 12 }}>
+                    暂无参数
+                  </div>
+                )}
               </div>
-            ))}
+            </div>
           </div>
+          
+          <button 
+            onClick={handleEnterP4Lab}
+            style={{
+              width: '100%',
+              padding: '12px 20px',
+              background: '#a3a3a3',
+              color: '#000',
+              border: 'none',
+              borderRadius: 8,
+              fontWeight: 'bold',
+              fontSize: 14,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              boxShadow: '0 2px 8px rgba(6, 182, 212, 0.3)',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            ⚡ 进入 P4LAB 实测 <ArrowRight size={16}/>
+          </button>
         </div>
-        
-      </div>
-      
-      {/* 固定在左栏底部的【签署并发布真迹】按钮 */}
-      <div style={{
-        marginTop: 'auto',
-        paddingTop: 20,
-        borderTop: '1px solid #222'
-      }}>
-        <button 
-          onClick={handleSignAndRelease} 
-          style={{
-            width: '100%',
-            padding: '15px 20px',
-            background: '#06b6d4',
-            color: '#000',
-            border: 'none',
-            borderRadius: 8,
-            fontWeight: 'bold',
-            fontSize: 16,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 10,
-            boxShadow: '0 0 20px rgba(6, 182, 212, 0.3)',
-            transition: 'all 0.2s ease'
-          }}
-          disabled={draftMission.steps.length === 0}
-        >
-          <Save size={20} />
-          签署并发布真迹
-        </button>
-        {draftMission.steps.length === 0 && (
-          <div style={{
-            textAlign: 'center',
-            color: '#666',
-            fontSize: 12,
-            marginTop: 10
-          }}>
-            请至少添加一个任务步骤
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 };

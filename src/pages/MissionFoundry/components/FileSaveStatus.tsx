@@ -10,11 +10,11 @@ const FileSaveStatus: React.FC<FileSaveStatusProps> = ({ step }) => {
       marginTop: 8,
       padding: 8,
       background: '#000',
-      border: '1px solid #06b6d4',
+      border: '1px solid #a3a3a3',
       borderRadius: 4,
       fontSize: 10
     }}>
-      <div style={{ marginBottom: 4, color: '#06b6d4', fontWeight: 'bold' }}>📁 保存成功</div>
+      <div style={{ marginBottom: 4, color: '#a3a3a3', fontWeight: 'bold' }}>📁 保存成功</div>
       
       {/* 视频文件路径 */}
       {step.videoPath && (
@@ -34,7 +34,7 @@ const FileSaveStatus: React.FC<FileSaveStatusProps> = ({ step }) => {
             style={{
               background: 'none',
               border: 'none',
-              color: '#06b6d4',
+              color: '#a3a3a3',
               fontSize: 9,
               cursor: 'pointer',
               padding: 0
@@ -63,7 +63,7 @@ const FileSaveStatus: React.FC<FileSaveStatusProps> = ({ step }) => {
             style={{
               background: 'none',
               border: 'none',
-              color: '#06b6d4',
+              color: '#a3a3a3',
               fontSize: 9,
               cursor: 'pointer',
               padding: 0

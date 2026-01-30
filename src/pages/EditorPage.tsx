@@ -1,64 +1,118 @@
 import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { useMissionLogic } from './MissionFoundry/hooks/useMissionLogic';
+import { useAssetStore } from '../stores/AssetStore';
 import FoundrySidebar from './MissionFoundry/components/FoundrySidebar';
 import TaskMatrix from './MissionFoundry/components/TaskMatrix';
 import MissionFacade from './MissionFoundry/components/MissionFacade';
-import P3Mirror from './MissionFoundry/components/P3Mirror';
+import ToolConfigurationPanel from './MissionFoundry/components/ToolConfigurationPanel';
+import ValidatedCapabilitiesPanel from './MissionFoundry/components/ValidatedCapabilitiesPanel';
+
+// Components & Hooks
+import { AssetLibraryContent } from './EditorPage/components/AssetLibraryContent';
+import { P2PreviewModal } from './EditorPage/components/P2PreviewModal';
+import { ExportModal } from './EditorPage/components/ExportModal';
+import { EditorHeader } from './EditorPage/components/EditorHeader';
+import { SmartCommandBar } from './EditorPage/components/SmartCommandBar';
+import { useSmartCommand } from './EditorPage/hooks/useSmartCommand';
+import { useMissionRunner } from './EditorPage/hooks/useMissionRunner';
+
+import { initDefaultCapabilities } from '../stores/CapabilityStore';
 
 const EditorPage = () => {
-  const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null);
   
+  // 反馈提示状态
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
+  // P2预览生成状态
+  const [showP2Preview, setShowP2Preview] = useState(false);
   
+  // 素材库侧边栏状态
+  const [showAssetLibrary, setShowAssetLibrary] = useState(false);
+  
+  // 导出配置弹窗状态
+  const [showExportModal, setShowExportModal] = useState(false);
+  
+  // 从 useAssetStore 获取资产数据和方法
+  const { assets, addAsset } = useAssetStore();
+  
+  // 显示反馈提示
+  const showFeedback = (message: string) => {
+    setFeedbackMessage(message);
+    if (feedbackTimerRef.current) {
+      clearTimeout(feedbackTimerRef.current);
+    }
+    feedbackTimerRef.current = setTimeout(() => {
+      setFeedbackMessage('');
+    }, 2000);
+  };
 
   // 使用核心逻辑 Hook
   const {
     // 状态
-    mediaUrl,
     instruction,
-    audioTrackName,
-    verifyType,
-    matchKeyword,
     isAnalyzing,
-    logs,
-    uploadedFile,
+    uploadedFileUrl,
+    previewFocusUrl,
+    activePreviewUrl,
     draftMission,
     selectedStepIndex,
     isManualMode,
-    fileInputRef,
-    isScreenCapturing,
-    capturedVideoUrl,
-    capturedAudioUrl,
-    mediaStream,
+    facadeCoverUrl,
     
     // 方法
-    handleFormChange,
     handleFileUpload,
     handleAnalyze,
     handleAddStep,
     handleDeleteStep,
+    handleCopyStep,
     handleMoveStepUp,
     handleMoveStepDown,
     handleSignAndRelease,
     handleVoiceAI,
-    handleIdentifyKeyFrames,
     analyzeStepAssets,
     handleAutoFill,
     setSelectedStepIndex,
+    setPreviewFocusUrl,
+    setActivePreviewUrl,
     setIsManualMode,
     updateStep,
     updateDraftMission,
-    handleStartScreenCapture,
-    handleStopScreenCapture,
     downloadVideo,
-    downloadAudio
+    downloadAudio,
+    setFacadeCover
   } = useMissionLogic();
+
+  // 使用智能指令 Hook
+  const { handleSmartCommand } = useSmartCommand({
+    draftMission,
+    selectedStepIndex,
+    updateDraftMission,
+    updateStep,
+    handleAddStep,
+    handleDeleteStep,
+    handleMoveStepUp,
+    handleMoveStepDown,
+    analyzeStepAssets,
+    handleAutoFill,
+    handleVoiceAI,
+    showFeedback,
+    instruction
+  });
+
+  // 使用任务执行器 Hook
+  const { handleRunStep, isRunning } = useMissionRunner({
+      draftMission,
+      updateStep,
+      showFeedback
+  });
 
   // 默认进入手动模式，确保任务列表是空的
   React.useEffect(() => {
     setIsManualMode(true);
+    initDefaultCapabilities();
   }, [setIsManualMode]);
   
   // 添加消息监听，处理来自LabPage的下载事件
@@ -72,9 +126,7 @@ const EditorPage = () => {
         downloadAudio();
       }
     };
-    
     window.addEventListener('message', handleMessage);
-    
     return () => {
       window.removeEventListener('message', handleMessage);
     };
@@ -96,320 +148,299 @@ const EditorPage = () => {
     };
     
     window.addEventListener('forceNavigateToP3', handleForceNavigateToP3);
-    
     return () => {
       window.removeEventListener('forceNavigateToP3', handleForceNavigateToP3);
     };
   }, [setSelectedStepIndex]);
-
-  // 视频跳转处理函数
-  const handleSeekToTime = (timestamp: number) => {
-    console.log(`Seeking to ${timestamp}s`);
-    // 这里可以添加实际的视频跳转逻辑
-  };
-
-  // 当前视频播放时间状态
-  const [currentVideoTime, setCurrentVideoTime] = useState<number>(0);
-  const [currentVideoPlaying, setCurrentVideoPlaying] = useState<boolean>(false);
-  // 视频播放器引用
-  const videoRef = useRef<HTMLVideoElement>(null);
-  // 音频管理引用
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // 处理视频播放器引用就绪
-  const handleVideoRefReady = (ref: React.RefObject<HTMLVideoElement>) => {
-    videoRef.current = ref.current;
-    
-    if (videoRef.current) {
-      // 添加视频事件监听器
-      videoRef.current.addEventListener('play', handleVideoPlay);
-      videoRef.current.addEventListener('pause', handleVideoPause);
-      videoRef.current.addEventListener('ended', handleVideoPause);
-    }
-  };
   
-  // 视频播放事件处理
-  const handleVideoPlay = () => {
-    setCurrentVideoPlaying(true);
-  };
-  
-  // 视频暂停事件处理
-  const handleVideoPause = () => {
-    setCurrentVideoPlaying(false);
-    stopPreviewAudio();
-  };
-  
-  // 停止预览音频
-  const stopPreviewAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      audioRef.current = null;
-    }
-  };
-
-  // 处理视频当前时间变化
-  const handleCurrentTimeChange = (time: number) => {
-    setCurrentVideoTime(time);
-  };
-
-  // 视频跳转方法
-  const seekToTime = (timestamp: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = timestamp;
-    }
-    console.log(`Seeking to ${timestamp}s`);
-  };
-
-  // 设置入点（开始时间）
-  const handleSetInPoint = (stepIndex: number) => {
-    if (!videoRef.current) return;
-    
-    const currentTime = videoRef.current.currentTime;
-    console.log(`Setting in point for step ${stepIndex + 1} to ${currentTime}s`);
-    // 使用 updateStep 函数更新步骤的开始时间
-    updateStep(stepIndex, { start_time: currentTime });
-  };
-
-  // 设置出点（结束时间）
-  const handleSetOutPoint = (stepIndex: number) => {
-    if (!videoRef.current) return;
-    
-    const currentTime = videoRef.current.currentTime;
-    console.log(`Setting out point for step ${stepIndex + 1} to ${currentTime}s`);
-    // 使用 updateStep 函数更新步骤的结束时间
-    updateStep(stepIndex, { end_time: currentTime });
-  };
-
-  // 停止预览功能
-  const handleStopPreview = () => {
-    stopPreviewAudio();
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  };
-
-  // 生成切片功能
-  const handleGenerateSlice = (stepIndex: number, startTime: number, endTime: number, isScreenType: boolean) => {
-    console.log(`Generating slice for step ${stepIndex + 1} from ${startTime}s to ${endTime}s`);
-    
-    // 获取当前任务的原始视频路径
-    const originalVideoPath = draftMission.video.url;
-    console.log(`Original video path: ${originalVideoPath}`);
-    
-    // 生成输出文件名
-    const timestamp = Date.now();
-    const outputFilename = `slice_step${stepIndex + 1}_${timestamp}.mp4`;
-    
-    // 执行 FFmpeg 切片命令 - 强制转码音频为 AAC 格式，使用固定路径
-    const ffmpegCommand = `ffmpeg -i "${originalVideoPath}" -ss ${startTime} -to ${endTime} -c:v libx264 -c:a aac -strict -2 "./p4_vault/slices/${outputFilename}"`;
-    
-    // 模拟 FFmpeg 切片执行
-    console.log(`Executing FFmpeg command: ${ffmpegCommand}`);
-    console.log("Attempting to write file to:", `./p4_vault/slices/${outputFilename}`);
-    
-    // 更新步骤，添加视频路径信息
-    const updatedSteps = [...draftMission.steps];
-    const outputPath = `./p4_vault/slices/${outputFilename}`;
-    updatedSteps[stepIndex] = {
-      ...updatedSteps[stepIndex],
-      videoPath: outputPath
-    };
-    
-    // 更新任务数据
-    updateDraftMission({ steps: updatedSteps });
-    
-    console.log(`Slice generated successfully at: ${outputPath}`);
-  };
-  
-  // 预览片段功能
-  const handlePreviewClip = (stepIndex: number, startTime: number, endTime: number, audioUrl?: string) => {
-    if (!videoRef.current) return;
-    
-    console.log(`Previewing clip for step ${stepIndex + 1} from ${startTime}s to ${endTime}s`);
-    
-    // 先停止当前播放的音频
-    stopPreviewAudio();
-    
-    // 清除之前的事件监听器
-    const clearEventListeners = () => {
-      videoRef.current?.removeEventListener('timeupdate', handleTimeUpdate);
-      videoRef.current?.removeEventListener('ended', handleEnded);
-    };
-    
-    // 时间更新事件处理
-    const handleTimeUpdate = () => {
-      if (!videoRef.current) return;
+  // 添加P4实验室返回事件监听，实现实验室与P4的通信
+  React.useEffect(() => {
+    const handleP4LabReturn = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const { stepIndex, updatedStep } = customEvent.detail;
       
-      if (videoRef.current.currentTime >= endTime) {
-        console.log(`Reached end time ${endTime}s, pausing video`);
-        videoRef.current.pause();
-        stopPreviewAudio();
-        clearEventListeners();
+      console.log('[P4_LAB_RETURN] 收到实验室返回数据:', { stepIndex, updatedStep });
+      
+      // 更新对应的步骤数据
+      updateStep(stepIndex, updatedStep);
+      showFeedback(`实验室参数已同步至步骤 ${stepIndex + 1}`);
+      
+      // 检查localStorage中是否有实验室更新
+      const storedUpdate = localStorage.getItem(`lab_updated_step_${stepIndex}`);
+      if (storedUpdate) {
+        console.log('[LOCAL_STORAGE] 检测到实验室更新备份，确保数据完整性');
       }
     };
     
-    // 视频结束事件处理
-    const handleEnded = () => {
-      stopPreviewAudio();
-      clearEventListeners();
+    window.addEventListener('p4-lab-return', handleP4LabReturn);
+    return () => {
+      window.removeEventListener('p4-lab-return', handleP4LabReturn);
     };
-    
-    // 设置事件监听器
-    videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
-    videoRef.current.addEventListener('ended', handleEnded);
-    
-    // 跳转到开始时间并播放视频
-    videoRef.current.currentTime = startTime;
-    videoRef.current.play().catch(error => {
-      console.error('Failed to play video:', error);
-      stopPreviewAudio();
-      clearEventListeners();
-    });
-    
-    // 播放对应音频 - 如果有AI配音则播放AI配音，否则使用视频原始音频
-    if (audioUrl) {
-      const audio = new Audio(audioUrl);
-      audioRef.current = audio;
-      audio.play().catch(error => {
-        console.error('Failed to play audio:', error);
-        stopPreviewAudio();
+  }, [updateStep, showFeedback]);
+  
+  // 组件挂载时检查localStorage中是否有实验室更新
+  React.useEffect(() => {
+    const lastSyncTime = localStorage.getItem('lab_last_sync_time');
+    if (lastSyncTime) {
+      console.log('[LOCAL_STORAGE] 检测到实验室同步记录，时间:', lastSyncTime);
+      for (let i = 0; i < (draftMission.steps?.length || 0); i++) {
+        const storedUpdate = localStorage.getItem(`lab_updated_step_${i}`);
+        if (storedUpdate) {
+          try {
+            const updatedStep = JSON.parse(storedUpdate);
+            updateStep(i, updatedStep);
+            console.log(`[LOCAL_STORAGE] 恢复实验室更新至步骤 ${i + 1}`);
+            localStorage.removeItem(`lab_updated_step_${i}`);
+          } catch (error) {
+            console.error(`[LOCAL_STORAGE] 恢复实验室更新失败步骤 ${i + 1}:`, error);
+          }
+        }
+      }
+    }
+  }, [draftMission.steps?.length, updateStep]);
+
+  // 指令处理器 - 处理输入框和发送按钮的指令
+  const handleExecute = () => {
+    if (inputValue.trim()) {
+      console.log('【P4 指令触发】:', inputValue);
+      // 智能指令处理逻辑 - 直接操作 MissionContext 里的数据
+      handleSmartCommand(inputValue);
+      
+      // 清空输入框 - 用户要求的视觉反馈
+      setInputValue('');
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
+    }
+  };
+  
+  // 创始人审计：这是将 P4LAB 的能力包一键注入 P4 任务的物理通道
+  const handleCapabilitySelect = (capability: any) => {
+    console.log('[CAPABILITY_MOUNT] 正在挂载能力包到当前步骤:', capability);
+    if (selectedStepIndex >= 0) {
+      // 物理覆盖：将实验室的能力包直接注入任务节点
+      updateStep(selectedStepIndex, {
+        mountedCapability: capability,
+        // 清除旧的 pluginIds 和 toolType，确保纯净模式
+        pluginIds: [],
+        toolType: undefined,
+        // 初始化 dynamic params 的默认值
+        params: {
+          ...(capability.parameter_config?.dynamic?.reduce((acc: any, param: any) => {
+             acc[param.id] = param.defaultValue;
+             return acc;
+          }, {}) || {})
+        }
       });
+      showFeedback(`✅ 已挂载能力: ${capability.meta.name || '未命名能力'}`);
     } else {
-      console.log('Using original video audio for preview');
-      // 视频原始音频会自动播放，无需额外处理
+      showFeedback('⚠️ 请先选择一个步骤');
     }
   };
 
   return (
-    <div className="foundry-container" style={{ display: 'grid', gridTemplateColumns: '25% 50% 25%', height: '100vh', width: '100vw' }}>
-      {/* 返回按钮 */}
-      <button 
-        onClick={() => navigate('/')} 
-        style={{
-          position: 'absolute',
-          top: 20,
-          left: 20,
-          zIndex: 100,
-          background: '#222',
-          border: '1px solid #333',
-          borderRadius: '50%',
-          padding: 10,
-          color: '#fff',
-          cursor: 'pointer'
-        }}
-      >
-        <ArrowLeft size={20} />
-      </button>
-
-      {/* 左栏 - 全局配置区 */}
-        <FoundrySidebar
-          mediaUrl={mediaUrl}
-          instruction={instruction}
-          audioTrackName={audioTrackName}
-          verifyType={verifyType}
-          matchKeyword={matchKeyword}
-          isAnalyzing={isAnalyzing}
-          logs={logs}
-          uploadedFile={uploadedFile}
+    <div className="foundry-container" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
+      
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px', background: '#1a1a1a', borderBottom: '1px solid #333' }}>
+        <EditorHeader 
           draftMission={draftMission}
-          isManualMode={isManualMode}
-          fileInputRef={fileInputRef}
-          isScreenCapturing={isScreenCapturing}
-          capturedVideoUrl={capturedVideoUrl}
-          verification={{
-            type: draftMission.verifyType,
-            keyword: draftMission.matchKeyword
-          }}
-          handleFormChange={handleFormChange}
-          handleFileUpload={handleFileUpload}
-          handleAnalyze={handleAnalyze}
-          handleSignAndRelease={handleSignAndRelease}
-          handleIdentifyKeyFrames={handleIdentifyKeyFrames}
-          setIsManualMode={setIsManualMode}
-          handleStartScreenCapture={handleStartScreenCapture}
-          handleStopScreenCapture={handleStopScreenCapture}
+          setShowP2Preview={setShowP2Preview}
+          setShowExportModal={setShowExportModal}
         />
-
-      {/* 中栏 - 任务矩阵区 */}
-      <div style={{ height: '100%', overflowY: 'auto', padding: '20px', boxSizing: 'border-box' }}>
-        {/* 任务门面配置 */}
-        <MissionFacade
-          difficulty={draftMission.difficulty || 1}
-          creditScore={draftMission.creditScore || 0}
-          title={draftMission.title}
-          onDifficultyChange={(difficulty) => updateDraftMission({ difficulty })}
-          onCreditScoreChange={(creditScore) => updateDraftMission({ creditScore })}
-          onTitleChange={(title) => updateDraftMission({ title })}
-        />
-        
-        <TaskMatrix
-          steps={draftMission.steps}
-          isManualMode={isManualMode}
-          selectedStepIndex={selectedStepIndex}
-          currentVideoTime={currentVideoTime}
-          currentVideoPlaying={currentVideoPlaying}
-          onAddStep={handleAddStep}
-          onSelectStep={setSelectedStepIndex}
-          onMoveStepUp={handleMoveStepUp}
-          onMoveStepDown={handleMoveStepDown}
-          onDeleteStep={handleDeleteStep}
-          onUpdateStep={updateStep}
-          onVoiceAI={handleVoiceAI}
-          onAutoFill={handleAutoFill}
-          analyzeStepAssets={analyzeStepAssets}
-          onSeekToTime={handleSeekToTime}
-          onPreviewClip={handlePreviewClip}
-          onStopPreview={handleStopPreview}
-          onGenerateSlice={handleGenerateSlice}
-          onSetInPoint={handleSetInPoint}
-          onSetOutPoint={handleSetOutPoint}
-          isEntryView={false}
-        />
+        <div style={{ display: 'flex', gap: '10px' }}>
+             {/* Open Builder 按钮已移除，功能整合至 EditorPage */}
+        </div>
       </div>
 
-      {/* 右栏 - 真迹镜像区 */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <P3Mirror
-            missionData={draftMission}
-            currentStepIndex={selectedStepIndex}
-            onCurrentTimeChange={handleCurrentTimeChange}
-            onVideoRefReady={handleVideoRefReady}
-            mediaStream={mediaStream}
-            capturedAudioUrl={capturedAudioUrl}
-            style={{ flex: 1 }}
+      {/* 中间内容区 - 三栏布局：左侧边栏 + 中间任务列表 + 右侧工具坞 */}
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* 左侧边栏 - 上传区域和抽屉 */}
+        <FoundrySidebar
+          isAnalyzing={isAnalyzing}
+          draftMission={draftMission}
+          selectedStepIndex={selectedStepIndex}
+          handleAnalyze={handleAnalyze}
+          handleSignAndRelease={handleSignAndRelease}
+        />
+
+        {/* 中间任务列表区 - 宽度收缩，轻量化设计 */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px', boxSizing: 'border-box', maxWidth: 'calc(100% - 400px)' }}>
+          {/* 任务门面配置 */}
+          <MissionFacade
+            difficulty={draftMission.difficulty || 1}
+            creditScore={draftMission.creditScore || 0}
+            title={draftMission.title}
+            onDifficultyChange={(difficulty) => updateDraftMission({ difficulty })}
+            onCreditScoreChange={(score) => updateDraftMission({ creditScore: score })}
+            onTitleChange={(title) => updateDraftMission({ title })}
+            coverUrl={facadeCoverUrl || draftMission.facadeCoverUrl}
+            onCoverUpload={async (file) => {
+              const oldUploadedFileUrl = uploadedFileUrl;
+              handleFileUpload({ target: { files: [file] } } as any);
+              setTimeout(() => {
+                if (uploadedFileUrl !== oldUploadedFileUrl) {
+                  setFacadeCover(uploadedFileUrl);
+                }
+              }, 100);
+            }}
           />
-          <div style={{ padding: '10px', display: 'flex', gap: '10px', justifyContent: 'center', borderTop: '1px solid #222', marginBottom: 0, marginTop: 'auto' }}>
-            <button
-              onClick={downloadVideo}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#06b6d4',
-                color: '#000',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
-            >
-              导出纯净视频
-            </button>
-            <button
-              onClick={downloadAudio}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#06b6d4',
-                color: '#000',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
-            >
-              导出纯净音频
-            </button>
-          </div>
+          
+          <TaskMatrix
+            steps={draftMission.steps}
+            isManualMode={isManualMode}
+            selectedStepIndex={selectedStepIndex}
+            onAddStep={handleAddStep}
+            onSelectStep={setSelectedStepIndex}
+            onMoveStepUp={handleMoveStepUp}
+            onMoveStepDown={handleMoveStepDown}
+            onDeleteStep={handleDeleteStep}
+            onCopyStep={handleCopyStep}
+            onUpdateStep={updateStep}
+            onVoiceAI={handleVoiceAI}
+            onAutoFill={handleAutoFill}
+            analyzeStepAssets={analyzeStepAssets}
+            previewFocusUrl={previewFocusUrl}
+            setPreviewFocusUrl={setPreviewFocusUrl}
+            onImageClick={setActivePreviewUrl}
+            activePreviewUrl={activePreviewUrl}
+            onRunStep={handleRunStep}
+            onUploadImage={(index, file) => {
+              const fileUrl = URL.createObjectURL(file);
+              const updatedSteps = [...draftMission.steps];
+              const currentStep = updatedSteps[index];
+              if (currentStep) {
+                let assetType: 'image' | 'audio' | 'video';
+                if (file.type.startsWith('image/')) assetType = 'image';
+                else if (file.type.startsWith('audio/')) assetType = 'audio';
+                else if (file.type.startsWith('video/')) assetType = 'video';
+                else return false;
+                
+                addAsset({
+                  name: file.name,
+                  url: fileUrl,
+                  type: assetType,
+                  size: file.size
+                });
+                
+                const newAsset = assets.find(asset => asset.name === file.name && asset.url === fileUrl);
+                
+                if (newAsset) {
+                  updatedSteps[index] = {
+                    ...currentStep,
+                    mediaAssets: [...(currentStep.mediaAssets || []), newAsset.id],
+                    sourceImage: fileUrl
+                  };
+                } else return false;
+                
+                updateDraftMission({ steps: updatedSteps });
+                console.log(`步骤 \${index + 1} 上传了新的媒体资产: \${file.name}`);
+              }
+            }}
+          />
         </div>
+
+        {/* 右侧工具坞 - 至少400px宽，动态加载配置界面 */}
+        <div style={{ 
+          width: '400px', 
+          backgroundColor: '#1a1a1a', 
+          borderLeft: '1px solid #333', 
+          overflowY: 'auto', 
+          padding: '20px', 
+          boxSizing: 'border-box' 
+        }}>
+          <ValidatedCapabilitiesPanel onCapabilitySelect={handleCapabilitySelect} />
+          <ToolConfigurationPanel
+            step={selectedStepIndex >= 0 && draftMission.steps[selectedStepIndex] ? draftMission.steps[selectedStepIndex] : null}
+            onUpdateStep={updateStep}
+            stepIndex={selectedStepIndex}
+          />
+        </div>
+        
+        {/* 可折叠素材库侧边栏 */}
+      {showAssetLibrary && (
+          <div style={{
+            width: '400px',
+            backgroundColor: '#1a1a1a',
+            borderLeft: '1px solid #333',
+            overflowY: 'auto',
+            padding: '20px',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px',
+              paddingBottom: '10px',
+              borderBottom: '1px solid #333'
+            }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#a3a3a3', margin: 0 }}>📦 素材库</h2>
+              <button
+                onClick={() => setShowAssetLibrary(false)}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#ef4444',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                ✕ 关闭
+              </button>
+            </div>
+            
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              <AssetLibraryContent 
+                onSelectAsset={(asset) => {
+                  if (selectedStepIndex >= 0 && draftMission.steps[selectedStepIndex]) {
+                    const currentStep = draftMission.steps[selectedStepIndex];
+                    const updatedSteps = [...draftMission.steps];
+                    updatedSteps[selectedStepIndex] = {
+                      ...currentStep,
+                      mediaAssets: [...(currentStep.mediaAssets || []), asset.id],
+                      sourceImage: asset.url
+                    };
+                    updateDraftMission({ steps: updatedSteps });
+                    showFeedback(`已从素材库添加素材到步骤 \${selectedStepIndex + 1}`);
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <SmartCommandBar 
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        inputRef={inputRef}
+        handleExecute={handleExecute}
+        feedbackMessage={feedbackMessage}
+        showAssetLibrary={showAssetLibrary}
+        setShowAssetLibrary={setShowAssetLibrary}
+      />
+      
+      {/* P2预览模态框 */}
+      <P2PreviewModal 
+        show={showP2Preview}
+        onClose={() => setShowP2Preview(false)}
+        draftMission={draftMission}
+        instruction={instruction}
+      />
+      
+      {/* 导出配置弹窗 */}
+      <ExportModal 
+        show={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        draftMission={draftMission}
+        onFeedback={showFeedback}
+      />
     </div>
   );
 };

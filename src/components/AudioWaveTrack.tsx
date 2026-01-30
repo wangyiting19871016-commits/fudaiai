@@ -33,8 +33,8 @@ const AudioWaveTrack: React.FC<AudioWaveTrackProps> = ({
     // 创建 Wavesurfer 实例
     const wavesurfer = WaveSurfer.create({
       container: containerRef.current,
-      waveColor: '#06b6d4',
-      progressColor: '#06b6d4',
+      waveColor: '#a3a3a3',
+      progressColor: '#a3a3a3',
       cursorColor: '#ffffff',
       barWidth: 2,
       barGap: 1,

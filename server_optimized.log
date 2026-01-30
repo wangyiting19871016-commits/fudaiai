@@ -1,0 +1,34 @@
+✅ 物理保存路径已锁定: F:/project_kuajing/temp_processing
+✅ 下载目录已初始化: F:\project_kuajing\downloads
+🔥 [核心监听启动] 后端心脏已跳动，端口: 3002
+🔥 物理进程已开启，PID: 43896
+
+🚀 Server is running on http://localhost:3002
+📡 API endpoints available at:
+   - Health check: http://localhost:3002/api/health
+   - FFmpeg check: http://localhost:3002/api/ffmpeg-check
+   - Audio separate: http://localhost:3002/api/audio/separate
+   - AI Triple Split: http://localhost:3002/api/audio/process-triple-split
+   - Traditional Split: http://localhost:3002/api/audio/split-traditional
+   - Video Compose: http://localhost:3002/api/video/compose
+
+🎯 Frontend available at: http://localhost:3002
+🚀 后端服务已在 3002 端口就绪，准备调用 FFmpeg
+
+🔍 Checking FFmpeg installation...
+🚨 [监听失败] 检查 3002 是否被占用！ Error: listen EADDRINUSE: address already in use 0.0.0.0:3002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3002
+}
+
+✅ FFmpeg FOUND:
+   Path: ffmpeg
+   Version: 2025-12-31-git-38e89fe502-full_build-www.gyan.dev
+   FFmpeg service is now active and reachable

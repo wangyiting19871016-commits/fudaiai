@@ -1,45 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import StepCard from './StepCard';
 import { useMissionLogic } from '../hooks/useMissionLogic';
-
-// 定义 Step 类型
-interface Step {
-  step_id: number;
-  title: string;
-  desc?: string;
-  action_instruction?: string;
-  isCompleted: boolean;
-  visionData?: any;
-  evidence_desc?: string;
-  audioUrl?: string;
-  audioDuration?: number;
-  keyFrame?: any;
-  startTime?: number;
-  start_time?: number; // 视频切片开始时间（秒）
-  end_time?: number; // 视频切片结束时间（秒）
-  assets: string[]; // 支持多图素材预览，升级自 demonstration
-  status?: 'idle' | 'generating' | 'ready'; // AI 生成状态
-  originalAudioUrl?: string; // 原始视频提取的音频URL
-  videoPath?: string; // 切片视频的本地路径
-  audioPath?: string; // 音频文件的本地路径
-  // TrueTrack Protocol 字段
-  template_id: string;
-  logic_anchor: string;
-  activeControls?: string[] | any;
-  // 新字段 - 取代旧的 verification 字段
-  promptSnippet?: string;
-  controls?: any;
-  mediaAssets: any[];
-  privateAccess: string;
-  fingerprintWeights: any;
-  fingerprintImpact?: number; // 灵魂匹配度影响权重
-  // 决策节点配置器字段
-  options: { label: string; assetIndex: number; fragment: string }[];
-}
+import { MissionStep } from '../../../types';
 
 // 定义 TaskMatrixProps 类型
 interface TaskMatrixProps {
-  steps: Step[];
+  steps: MissionStep[];
   isManualMode: boolean;
   selectedStepIndex: number;
   currentVideoTime?: number;
@@ -49,10 +15,11 @@ interface TaskMatrixProps {
   onMoveStepUp: (index: number) => void;
   onMoveStepDown: (index: number) => void;
   onDeleteStep: (index: number) => void;
-  onUpdateStep: (index: number, updates: Partial<Step>) => void;
+  onUpdateStep: (index: number, updates: Partial<MissionStep>) => void;
   onVisionAI?: (index: number) => void;
   onVoiceAI: (index: number) => void;
   onAutoFill: (index: number) => void; // AI 自动填充回调
+  onCopyStep?: (index: number) => void; // 复制步骤回调
   analyzeStepAssets?: (index: number) => void; // AI 视觉分析函数
   onSeekToTime?: (timestamp: number) => void; // 视频跳转回调
   onPreviewClip?: (index: number, startTime: number, endTime: number, audioUrl?: string) => void; // 预览片段回调
@@ -62,6 +29,13 @@ interface TaskMatrixProps {
   onSetOutPoint?: (index: number) => void; // 设置出点回调
   capturedAudioUrl?: string; // 从视频中提取的原始音频URL
   isEntryView?: boolean; // 是否为入口视图，控制协议载入按钮显示
+  previewFocusUrl?: string; // 唯一的预览指针 URL
+  setPreviewFocusUrl?: (url: string) => void; // 设置唯一的预览指针
+  onImageClick?: (url: string) => void; // 点击图片时的回调函数
+  activePreviewUrl?: string; // 全局预览焦点 URL
+  onUploadImage?: (index: number, file: File) => void; // 上传图片回调函数
+  // Phase 2
+  onRunStep?: (index: number) => void;
 }
 
 const TaskMatrix: React.FC<TaskMatrixProps> = ({
@@ -79,6 +53,7 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
   onVisionAI,
   onVoiceAI,
   onAutoFill,
+  onCopyStep,
   analyzeStepAssets,
   onSeekToTime,
   onPreviewClip,
@@ -86,7 +61,13 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
   onGenerateSlice,
   onSetInPoint,
   onSetOutPoint,
-  isEntryView = false
+  isEntryView = false,
+  previewFocusUrl,
+  setPreviewFocusUrl,
+  onImageClick,
+  activePreviewUrl,
+  onUploadImage,
+  onRunStep
 }) => {
   // 获取核心逻辑钩子
   const { loadProtocolToMission } = useMissionLogic();
@@ -95,7 +76,7 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
   const [showProtocolModal, setShowProtocolModal] = useState(false);
   const [protocolJson, setProtocolJson] = useState('');
   const [parseError, setParseError] = useState('');
-
+  
   // 调试标记：按钮渲染成功后打印日志
   useEffect(() => {
     console.log('[UI_READY] P1 协议载入入口已在顶部就绪');
@@ -165,10 +146,8 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
 
   return (
     <div style={{
-      flex: '0 0 45%',
+      flex: '1 0 100%',
       height: '100%',
-      borderLeft: '1px solid #222',
-      borderRight: '1px solid #222',
       background: '#0a0a0a',
       display: 'flex',
       flexDirection: 'column',
@@ -183,12 +162,12 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
         alignItems: 'center',
         marginBottom: 20
       }}>
-        <h2 style={{ fontSize: 18, fontWeight: 'bold', color: '#06b6d4', margin: 0 }}>Visual Blueprint 演示</h2>
+        <h2 style={{ fontSize: 18, fontWeight: 'bold', color: '#a3a3a3', margin: 0 }}>Visual Blueprint 演示</h2>
         {isEntryView && (
           <button
             onClick={handleLoadProtocol}
             style={{
-              backgroundColor: '#06b6d4', // 青色背景色
+              backgroundColor: '#a3a3a3', // 青色背景色
               color: 'white',
               border: 'none',
               padding: '10px 20px',
@@ -214,7 +193,7 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
           style={{
             width: '100%',
             padding: 12,
-            background: '#06b6d4',
+            background: '#a3a3a3',
             color: '#000',
             border: 'none',
             borderRadius: 8,
@@ -241,44 +220,32 @@ const TaskMatrix: React.FC<TaskMatrixProps> = ({
               grid-template-columns: 1fr;
               gap: 24px;
             }
-            
-            @media (min-width: 768px) {
-              .task-grid {
-                grid-template-columns: repeat(2, 1fr);
-              }
-            }
           `}</style>
           <div className="task-grid">
-            {steps.map((step: Step, index: number) => (
+            {steps.map((step: MissionStep, index: number) => (
               <StepCard
-                key={index}
-                step={step}
-                index={index}
-                isSelected={selectedStepIndex === index}
-                isActive={
-                  currentVideoTime !== undefined &&
-                  step.start_time !== undefined &&
-                  step.end_time !== undefined &&
-                  currentVideoTime >= step.start_time &&
-                  currentVideoTime <= step.end_time
-                }
-                onSelect={onSelectStep}
-                onMoveUp={onMoveStepUp}
-                onMoveDown={onMoveStepDown}
-                onDelete={onDeleteStep}
-                onUpdateStep={onUpdateStep}
-                onVoiceAI={onVoiceAI}
-                onAutoFill={onAutoFill}
-                analyzeStepAssets={analyzeStepAssets}
-                onPreviewClip={(startTime, endTime, audioUrl) => {
-                  if (onPreviewClip) {
-                    onPreviewClip(index, startTime, endTime, audioUrl);
-                  }
-                }}
-                onGenerateSlice={onGenerateSlice}
-                onSetInPoint={onSetInPoint}
-                onSetOutPoint={onSetOutPoint}
-              />
+              key={index}
+              step={step}
+              index={index}
+              isSelected={selectedStepIndex === index}
+              isActive={
+                currentVideoTime !== undefined &&
+                step.start_time !== undefined &&
+                step.end_time !== undefined &&
+                currentVideoTime >= step.start_time &&
+                currentVideoTime <= step.end_time
+              }
+              onSelect={onSelectStep}
+              onDelete={onDeleteStep}
+              onCopyStep={onCopyStep}
+              onUpdateStep={onUpdateStep}
+              onVoiceAI={onVoiceAI}
+              onAutoFill={onAutoFill}
+              onImageClick={onImageClick}
+                  hasParams={!!step.aestheticParams}
+                  onUploadImage={onUploadImage}
+                  onRun={onRunStep}
+                />
             ))}
           </div>
         </>

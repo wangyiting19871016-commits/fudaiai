@@ -43,8 +43,8 @@ const TaskMap: React.FC<TaskMapProps> = ({ title, type, onSync, onInjectData }) 
           <span style={{
             padding: '4px 12px', 
             background: '#000', 
-            border: '1px solid #06b6d4', 
-            color: '#06b6d4', 
+            border: '1px solid #a3a3a3', 
+            color: '#a3a3a3', 
             fontSize: 12, 
             borderRadius: '0', 
             letterSpacing: 2, 

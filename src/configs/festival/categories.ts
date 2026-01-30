@@ -1,0 +1,58 @@
+/**
+ * 功能分类配置
+ *
+ * 扩展方式：直接在 CATEGORIES 数组中添加新分类
+ */
+
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  gradient: [string, string];
+  order: number;  // 排序权重
+}
+
+export const CATEGORIES: Category[] = [
+  {
+    id: 'avatar',
+    name: '新年形象',
+    icon: '🎭',
+    description: '生成专属新年头像',
+    gradient: ['#D32F2F', '#FF6B6B'],
+    order: 1
+  },
+  {
+    id: 'family',
+    name: '家庭相册',
+    icon: '👨‍👩‍👧',
+    description: '合照生成与老照片修复',
+    gradient: ['#FF6B6B', '#FFA07A'],
+    order: 2
+  },
+  {
+    id: 'blessing',
+    name: '拜年祝福',
+    icon: '💬',
+    description: '文案、语音、春联',
+    gradient: ['#FFD700', '#FFA000'],
+    order: 3
+  },
+  {
+    id: 'fun',
+    name: '运势玩法',
+    icon: '🔮',
+    description: '运势占卜与趣味互动',
+    gradient: ['#9C27B0', '#E1BEE7'],
+    order: 4
+  }
+];
+
+// 辅助函数
+export const getCategoryById = (id: string): Category | undefined => {
+  return CATEGORIES.find(c => c.id === id);
+};
+
+export const getSortedCategories = (): Category[] => {
+  return [...CATEGORIES].sort((a, b) => a.order - b.order);
+};

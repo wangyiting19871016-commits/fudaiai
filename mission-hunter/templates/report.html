@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>{{ title }}</title>
+    <!-- CSS_PLACEHOLDER -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>小红书任务候选名单</h1>
+            <p>生成时间: {{ current_time }} | 数据来源: {{ keyword }}</p>
+        </header>
+        
+        <div class="summary">
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-number">{{ mission_count }}</div>
+                    <div class="summary-label">任务数量</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">{{ data_count }}</div>
+                    <div class="summary-label">素材总数</div>
+                </div>
+            </div>
+            <div class="confidence-section">
+                <p class="confidence-text">本报告基于对 {{ total_samples }} 个原始样本的筛选，取点赞排名最高的 30 个爆款进行深度复刻。</p>
+            </div>
+        </div>
+
+        {{ category_analysis_html }}
+        
+        <div class="main-content">
+            <div class="missions-section">
+                <h2>任务候选名单</h2>
+                {{ missions_html }}
+            </div>
+            
+            <div class="sidebar">
+                {{ gallery_html }}
+            </div>
+        </div>
+        
+        {{ raw_materials_html }}
+        
+        <footer>
+            <p>&copy; {{ current_year }} 小红书任务生成系统 | 仅供学习参考</p>
+        </footer>
+    </div>
+    
+    <script>
+        function copyToClipboard(button) {
+            const textarea = button.previousElementSibling;
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                button.textContent = '已复制!';
+                setTimeout(() => {
+                    button.textContent = '复制到剪贴板';
+                }, 2000);
+            } catch (err) {
+                console.error('复制失败:', err);
+            }
+        }
+    </script>
+</body>
+</html>

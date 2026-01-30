@@ -1,44 +1,13 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { callDeepSeek } from '../../../services/deepseekService';
 import { callVolcTTS } from '../../../services/volcService';
 import { callAliVision } from '../../../services/aliService';
-import { ControlItem } from '@/types';
+import { ControlItem, MissionStep } from '../../../types';
+import { CapabilityManifest } from '../../../types/Protocol';
 import { P4_PROTOCOL_DICTIONARY, getProtocolDefinition } from '../../../constants/protocol';
-
-interface Step {
-  step_id: number;
-  title: string;
-  desc?: string;
-  action_instruction?: string;
-  isCompleted: boolean;
-  visionData?: any;
-  evidence_desc?: string;
-  audioUrl?: string;
-  originalAudioUrl?: string;
-  audioDuration?: number;
-  keyFrame?: any;
-  startTime?: number;
-  start_time?: number;
-  end_time?: number;
-  assets: string[];
-  videoPath?: string;
-  audioPath?: string;
-  template_id: string;
-  logic_anchor: string;
-  activeControls?: string[] | any;
-  promptSnippet?: string;
-  controls?: ControlItem[];
-  mediaAssets: any[];
-  privateAccess: string;
-  fingerprintWeights: any;
-  fingerprintImpact?: number;
-  mappingKey?: string; // 新增：逻辑映射键
-  sliderLabel?: string; // 新增：滑块名称
-  portraitImpact?: number; // 新增：画像影响值
-  options: { label: string; assetIndex: number; fragment: string }[];
-  stepMode?: 'view' | 'tweak' | 'select' | 'code'; // 用于定义 P3 交互逻辑
-}
+import { AestheticParams } from '../../../constants/AestheticProtocol';
+import { useProtocolContext } from '../../../stores/ActiveProtocolStore';
 
 interface DraftMission {
   id: string;
@@ -56,7 +25,7 @@ interface DraftMission {
     isVerified: boolean;
     isRecorded: boolean;
   };
-  steps: Step[];
+  steps: MissionStep[];
   createdAt: string;
   description?: string;
   reference_material?: {
@@ -69,11 +38,100 @@ interface DraftMission {
   matchKeyword: string;
   difficulty: number;
   creditScore: number;
+  // 新增：全局门面标杆
+  facadeCoverUrl?: string; // 任务门面卡片上传的封面图/成品图
+  // 新增：全局预览焦点状态
+  activePreviewUrl?: string; // 当前激活的预览URL
+  selectedStepIndex?: number; // 当前选中的步骤索引
+  // 新增：拼接逻辑配置
+  mergeConfig?: {
+    enabled: boolean;
+    layers?: Array<{
+      stepIndex: number;
+      opacity: number;
+      blendMode: string;
+      position: { x: number; y: number };
+    }>;
+    // 预留更多图层融合参数
+    [key: string]: any;
+  };
 }
 
-export const useMissionLogic = () => {
+export interface UseMissionLogicResult {
+  mediaUrl: string;
+  instruction: string;
+  audioTrackName: string;
+  verifyType: string;
+  matchKeyword: string;
+  isAnalyzing: boolean;
+  logs: string[];
+  uploadedFile: File | null;
+  uploadedFileUrl: string;
+  draftMission: DraftMission;
+  selectedStepIndex: number;
+  isManualMode: boolean;
+  editingStepIndex: number | null;
+  editingStep: MissionStep | Partial<MissionStep> | null;
+  fileInputRef: React.RefObject<HTMLInputElement>;
+  isScreenCapturing: boolean;
+  capturedVideoUrl: string;
+  capturedAudioUrl: string;
+  verification: string;
+  mediaStream: MediaStream | null;
+  activePreviewUrl: string;
+  setActivePreviewUrl: (url: string) => void;
+  previewFocusUrl: string;
+  setPreviewFocusUrl: (url: string) => void;
+  isAuditModalOpen: boolean;
+  setIsAuditModalOpen: (isOpen: boolean) => void;
+  isPublishing: boolean;
+  loadProtocolToMission: (protocolData: any) => boolean;
+  handleFormChange: (field: string, value: any) => void;
+  handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleAnalyze: (instruction?: string) => Promise<void>;
+  handleAddStep: () => void;
+  handleEditStep: (index: number) => void;
+  handleSaveStep: () => void;
+  handleDeleteStep: (index: number) => void;
+  handleCopyStep: (index: number) => void;
+  handleMoveStepUp: (index: number) => void;
+  handleMoveStepDown: (index: number) => void;
+  handleSignAndRelease: () => void;
+  handleVoiceAI: (index: number) => Promise<void>;
+  handleIdentifyKeyFrames: () => Promise<void>;
+  analyzeStepAssets: (index: number) => Promise<void>;
+  setSelectedStepIndex: (index: number) => void;
+  setIsManualMode: (isManual: boolean) => void;
+  updateStep: (index: number, updates: Partial<MissionStep>) => void;
+  updateDraftMission: (updates: Partial<DraftMission> | ((prev: DraftMission) => Partial<DraftMission>)) => void;
+  setMediaUrl: (url: string) => void;
+  setInstruction: (instruction: string) => void;
+  setAudioTrackName: (name: string) => void;
+  setVerifyType: (type: string) => void;
+  setMatchKeyword: (keyword: string) => void;
+  handleStartScreenCapture: () => Promise<void>;
+  handleStopScreenCapture: () => Promise<void>;
+  downloadVideo: () => void;
+  downloadAudio: () => void;
+  handleAutoFill: (index: number) => Promise<void>;
+  facadeCoverUrl: string;
+  setFacadeCover: (url: string) => void;
+  currentAestheticParams: Partial<AestheticParams>;
+  setCurrentAestheticParams: (params: Partial<AestheticParams>) => void;
+  updateStepAestheticParams: (stepIndex: number, params: Partial<AestheticParams>) => void;
+  handleStepChange: (index: number, updates: Partial<MissionStep>) => void;
+  getCurrentStepAestheticParams: () => AestheticParams;
+}
+
+export const useMissionLogic = (): UseMissionLogicResult => {
   const navigate = useNavigate();
+  const { setActiveProtocol } = useProtocolContext();
   
+  // 从URL状态获取数据
+  // const location = useLocation();
+  // const state = location.state as any;
+  
+  // 状态管理
   const [mediaUrl, setMediaUrl] = useState<string>('');
   const [instruction, setInstruction] = useState<string>('');
   const [audioTrackName, setAudioTrackName] = useState<string>('');
@@ -81,6 +139,12 @@ export const useMissionLogic = () => {
   const [matchKeyword, setMatchKeyword] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [logs, setLogs] = useState<string[]>([]);
+  
+  // 全局预览焦点状态
+  const [activePreviewUrl, setActivePreviewUrl] = useState<string>('');
+  
+  // 唯一的预览指针状态
+  const [previewFocusUrl, setPreviewFocusUrl] = useState<string>('');
   
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
@@ -124,29 +188,91 @@ export const useMissionLogic = () => {
     return audio;
   };
 
-  const [draftMission, setDraftMission] = useState<DraftMission>({
-    id: `draft_${Date.now()}`,
-    title: '未命名任务',
-    type: 'audio',
-    video: {
-      url: '',
-      type: 'mp4'
-    },
-    code: {
-      template: '',
-      target: ''
-    },
-    status: {
-      isVerified: false,
-      isRecorded: false
-    },
-    steps: [],
-    createdAt: new Date().toISOString(),
-    verifyType: 'TEXT',
-    matchKeyword: '',
-    difficulty: 1,
-    creditScore: 0
-  });
+  // 从localStorage加载初始任务数据
+  const loadInitialMission = (): DraftMission => {
+    try {
+      const savedMission = localStorage.getItem('current_mission_draft');
+      if (savedMission && savedMission.trim()) {
+        const parsedMission = JSON.parse(savedMission);
+        // 确保所有必要字段都存在
+        return {
+          id: parsedMission.id || `draft_${Date.now()}`,
+          title: parsedMission.title || '未命名任务',
+          type: parsedMission.type || 'image',
+          video: parsedMission.video || {
+            url: '',
+            type: 'mp4'
+          },
+          code: parsedMission.code || {
+            template: '',
+            target: ''
+          },
+          status: parsedMission.status || {
+            isVerified: false,
+            isRecorded: false
+          },
+          steps: parsedMission.steps || [],
+          createdAt: parsedMission.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          description: parsedMission.description || '',
+          reference_material: parsedMission.reference_material,
+          keyFrames: parsedMission.keyFrames || [],
+          verifyType: parsedMission.verifyType || 'TEXT',
+          matchKeyword: parsedMission.matchKeyword || '',
+          difficulty: parsedMission.difficulty || 1,
+          creditScore: parsedMission.creditScore || 0,
+          facadeCoverUrl: parsedMission.facadeCoverUrl,
+          activePreviewUrl: parsedMission.activePreviewUrl,
+          selectedStepIndex: parsedMission.selectedStepIndex,
+          mergeConfig: parsedMission.mergeConfig
+        };
+      }
+    } catch (error) {
+      console.error('Failed to load mission from localStorage, clearing invalid cache:', error);
+      // 清除无效的localStorage缓存
+      localStorage.removeItem('current_mission_draft');
+    }
+    // 默认初始值
+    return {
+      id: `draft_${Date.now()}`,
+      title: '未命名任务',
+      type: 'image',
+      video: {
+        url: '',
+        type: 'mp4'
+      },
+      code: {
+        template: '',
+        target: ''
+      },
+      status: {
+        isVerified: false,
+        isRecorded: false
+      },
+      steps: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      verifyType: 'TEXT',
+      matchKeyword: '',
+      difficulty: 1,
+      creditScore: 0
+    };
+  };
+
+  const [draftMission, setDraftMission] = useState<DraftMission>(loadInitialMission());
+  
+  // 当draftMission变化时，自动保存到localStorage
+  useEffect(() => {
+    try {
+      const missionToSave = {
+        ...draftMission,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem('current_mission_draft', JSON.stringify(missionToSave));
+    } catch (error) {
+      console.error('Failed to save mission to localStorage:', error);
+    }
+  }, [draftMission]);
 
   const [selectedStepIndex, setSelectedStepIndex] = useState<number>(0);
   const [isManualMode, setIsManualMode] = useState<boolean>(false);
@@ -154,8 +280,12 @@ export const useMissionLogic = () => {
   // 添加审计弹窗和发布状态
   const [isAuditModalOpen, setIsAuditModalOpen] = useState<boolean>(false);
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
+  // 新增：全局门面标杆状态
+  const [facadeCoverUrl, setFacadeCoverUrl] = useState<string>('');
+  // 新增：当前步骤的审美参数状态
+  const [currentAestheticParams, setCurrentAestheticParams] = useState<Partial<AestheticParams>>({});
   
-  const [editingStep, setEditingStep] = useState<Partial<Step>>({
+  const [editingStep, setEditingStep] = useState<Partial<MissionStep>>({
     title: '',
     desc: '',
     template_id: 'default',
@@ -163,7 +293,8 @@ export const useMissionLogic = () => {
     mediaAssets: [],
     privateAccess: 'public',
     fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 },
-    fingerprintImpact: 0.6
+    fingerprintImpact: 0.6,
+    aestheticParams: {} // 初始化空的审美参数对象
   });
 
   const updateDraftMission = (updates: Partial<DraftMission> | ((prev: DraftMission) => Partial<DraftMission>)) => {
@@ -216,7 +347,7 @@ export const useMissionLogic = () => {
     if (!file) return;
 
     if (!file.type.startsWith('audio/') && !file.type.startsWith('video/') && !file.type.startsWith('image/')) {
-      alert('请上传 MP3、MP4 或图片文件');
+      console.error('请上传 MP3、MP4 或图片文件');
       return;
     }
 
@@ -235,66 +366,139 @@ export const useMissionLogic = () => {
       fileType = file.type.split('/')[1]; // 获取图片扩展名，如 jpg, png 等
     }
     
-    updateDraftMission({
-      video: {
-        url: fileUrl,
-        type: fileType
-      },
-      type: file.type.startsWith('audio/') ? 'audio' : file.type.startsWith('video/') ? 'video' : 'image'
-    });
-    
-    setMediaUrl(fileUrl);
-    
+    // 不直接预览，只存储文件 URL 供后续“填入卡片”使用
     setLogs(prev => [...prev, `✅ 已上传文件: ${file.name}`]);
   };
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = async (smartInstruction?: string) => {
     setIsAnalyzing(true);
-    setLogs(["正在握手 DeepSeek API...", "正在传输视频物料与脚本...", "AI 正在生成 3-10 步协议任务包..."]);
-    
-    updateDraftMission({ steps: [] });
+    setLogs(["正在握手 DeepSeek API...", "正在传输指令与视觉数据...", "AI 正在生成 API 参数协议..."]);
     
     try {
-      const missionPackage = await callDeepSeek(instruction || '默认任务指令');
+      // 1. 准备指令（优先使用智能指令输入，其次使用传统指令）
+      const finalInstruction = smartInstruction || instruction || '默认调参指令';
       
-      if (!missionPackage || !missionPackage.steps) {
-        throw new Error("AI 返回的任务包格式不正确，缺少必要字段");
+      // 2. 将DeepSeek的职能锁定为"API抓取器"
+      // 从预设的API列表（如SiliconFlow）中返回真实的Model ID和参数schema
+      const deepSeekPrompt = `
+        你现在的唯一任务是"API抓取器"，从预设的API列表（如SiliconFlow）中返回真实的Model ID和参数schema。
+        
+        请根据以下自然语言指令，返回一个包含API调用所需的Model ID和参数schema的JSON对象。
+        
+        自然语言指令：${finalInstruction}
+        
+        预设的API列表：
+        1. SiliconFlow API: https://api.siliconflow.cn/v1
+        2. Model ID: stabilityai/stable-diffusion-xl-base-1.0
+        
+        请输出一个包含以下字段的JSON对象：
+        1. api_endpoint: 完整的API端点URL
+        2. model_id: 真实的Model ID
+        3. params_schema: 该API所需的参数schema，包括参数名、类型、默认值、最小值、最大值等
+        4. input_params: 基于指令生成的初始参数值
+        
+        请确保输出是纯JSON格式，不要包含其他任何文本。
+      `;
+      
+      const apiConfig = await callDeepSeek(deepSeekPrompt);
+      
+      if (!apiConfig) {
+        throw new Error("DeepSeek API返回空结果");
       }
       
-      const steps = missionPackage.steps;
-      if (steps.length < 3 || steps.length > 10) {
-        throw new Error(`AI 返回的任务步数 (${steps.length}) 不在 3-10 步范围内，请重试`);
-      }
+      setLogs(prev => [...prev, `✅ API配置生成成功`]);
       
-      updateDraftMission({
-        title: missionPackage.title || "未命名任务",
-        description: missionPackage.description || instruction,
-        steps: steps.map((step: any, index: number) => {
-          const verifyType = step.verifyType || 'TEXT';
-          return {
-            ...step,
-            step_id: index + 1,
-            isCompleted: false,
-            videoUrl: mediaUrl,
-            template_id: step.template_id || mapVerifyTypeToTemplateId(verifyType),
-            logic_anchor: step.logic_anchor || `step_${index + 1}`
-          };
-        }),
-        reference_material: missionPackage.reference_material || {
-          type: "MARKDOWN",
-          content: `# 任务包\n\n**原始素材:** ${mediaUrl}\n\n**任务指令:** ${instruction || '无'}`
+      // 3. 使用模拟的SiliconFlow API配置（如果DeepSeek返回失败）
+      const finalApiConfig = apiConfig || {
+        api_endpoint: "https://api.siliconflow.cn/v1/image/generate",
+        model_id: "stabilityai/stable-diffusion-xl-base-1.0",
+        params_schema: [
+          {
+            id: "prompt",
+            name: "提示词",
+            type: "string",
+            defaultValue: finalInstruction,
+            required: true
+          },
+          {
+            id: "negative_prompt",
+            name: "负面提示词",
+            type: "string",
+            defaultValue: "low quality, blurry, distorted",
+            required: false
+          },
+          {
+            id: "height",
+            name: "高度",
+            type: "number",
+            defaultValue: 512,
+            min: 256,
+            max: 1024,
+            step: 64
+          },
+          {
+            id: "width",
+            name: "宽度",
+            type: "number",
+            defaultValue: 512,
+            min: 256,
+            max: 1024,
+            step: 64
+          },
+          {
+            id: "num_images",
+            name: "生成数量",
+            type: "number",
+            defaultValue: 1,
+            min: 1,
+            max: 4,
+            step: 1
+          },
+          {
+            id: "guidance_scale",
+            name: "引导权重",
+            type: "number",
+            defaultValue: 7.5,
+            min: 1,
+            max: 20,
+            step: 0.5
+          },
+          {
+            id: "seed",
+            name: "随机种子",
+            type: "number",
+            defaultValue: -1,
+            min: -1,
+            max: 4294967295
+          }
+        ],
+        input_params: {
+          prompt: finalInstruction,
+          negative_prompt: "low quality, blurry, distorted",
+          height: 512,
+          width: 512,
+          num_images: 1,
+          guidance_scale: 7.5,
+          seed: -1
         }
-      });
+      };
       
-      setLogs(prev => [...prev, `✅ AI 生成成功！共 ${steps.length} 步任务`]);
-      setLogs(prev => [...prev, `📋 任务步骤：`]);
-      steps.forEach((step: any, index: number) => {
-        setLogs(prev => [...prev, `   ${index + 1}. ${step.title}`]);
-      });
+      // 4. 设置活动协议
+      setActiveProtocol(finalApiConfig);
+      
+      // 5. 发送自定义事件，更新实验室的参数配置
+      window.dispatchEvent(new CustomEvent('updateLabParams', {
+        detail: finalApiConfig
+      }));
+      
+      setLogs(prev => [...prev, `✅ 已设置活动协议`]);
+      setLogs(prev => [...prev, `✅ 已发送实验室参数更新事件`]);
+      setLogs(prev => [...prev, `📋 生成的API配置：${JSON.stringify(finalApiConfig)}`]);
+      
     } catch (error: any) {
       console.error(error);
       setLogs(prev => [...prev, `❌ 错误: ${error.message}`]);
-      alert(`生成失败: ${error.message}`);
+      console.error(`生成失败: ${error.message}`);
     } finally {
       setIsAnalyzing(false);
     }
@@ -304,7 +508,7 @@ export const useMissionLogic = () => {
     const stepIndex = draftMission.steps.length;
     const verifyType = 'TEXT';
     
-    const newStep: Step = {
+    const newStep: MissionStep = {
       step_id: stepIndex + 1,
       title: '新步骤',
       desc: '请输入步骤描述',
@@ -317,7 +521,21 @@ export const useMissionLogic = () => {
       privateAccess: 'public',
       fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 },
       fingerprintImpact: 0.6,
-      options: []
+      options: [],
+      // 新增：actionType默认值
+      actionType: 'Preset',
+      // 新增：materialPool默认值
+      materialPool: {
+        id: `material_pool_${stepIndex + 1}`,
+        name: `素材池 ${stepIndex + 1}`,
+        images: [],
+        selectedImageIds: []
+      },
+      // 新增：如果是第一个步骤，标记为P1_Facade_GIF
+      isP1FacadeGIF: stepIndex === 0,
+      // 新增：配方模式初始化
+      isRecipeMode: false,
+      recipeParams: {}
     };
     
     const updatedSteps = [...draftMission.steps, newStep];
@@ -340,14 +558,69 @@ export const useMissionLogic = () => {
     setLogs(prev => [...prev, `📝 开始编辑步骤 ${index + 1}`]);
   };
   
+  // 新增：更新步骤的审美参数
+  const updateStepAestheticParams = (stepIndex: number, params: Partial<AestheticParams>) => {
+    const updatedSteps = [...draftMission.steps];
+    const step = updatedSteps[stepIndex];
+    if (step) {
+      updatedSteps[stepIndex] = {
+        ...step,
+        aestheticParams: {
+          ...step.aestheticParams,
+          ...params
+        }
+      };
+      updateDraftMission({
+        steps: updatedSteps
+      });
+      // 更新当前审美参数状态
+      setCurrentAestheticParams(updatedSteps[stepIndex].aestheticParams || {});
+    }
+  };
+
+  // 新增：切换步骤时保存当前步骤的审美参数并加载新步骤的审美参数
+  const handleStepChange = (newIndex: number) => {
+    // 保存当前步骤的审美参数
+    if (selectedStepIndex >= 0 && selectedStepIndex < draftMission.steps.length) {
+      updateStepAestheticParams(selectedStepIndex, currentAestheticParams);
+    }
+    
+    // 切换到新步骤
+    setSelectedStepIndex(newIndex);
+    
+    // 加载新步骤的审美参数
+    const newStep = draftMission.steps[newIndex];
+    if (newStep) {
+      setCurrentAestheticParams(newStep.aestheticParams || {});
+    }
+  };
+
+  // 新增：设置全局门面标杆
+  const setFacadeCover = (coverUrl: string) => {
+    setFacadeCoverUrl(coverUrl);
+    updateDraftMission({
+      facadeCoverUrl: coverUrl
+    });
+  };
+
+  // 新增：获取当前步骤的审美参数
+  const getCurrentStepAestheticParams = () => {
+    if (selectedStepIndex >= 0 && selectedStepIndex < draftMission.steps.length) {
+      return draftMission.steps[selectedStepIndex].aestheticParams || {};
+    }
+    return {};
+  };
+
   const handleSaveStep = () => {
     if (editingStepIndex !== null) {
       const updatedSteps = [...draftMission.steps];
       updatedSteps[editingStepIndex] = {
         ...updatedSteps[editingStepIndex],
         ...editingStep,
-        step_id: editingStepIndex + 1
-      } as Step;
+        step_id: editingStepIndex + 1,
+        // 确保每个步骤都有独立的审美参数对象
+        aestheticParams: editingStep.aestheticParams || updatedSteps[editingStepIndex].aestheticParams || {}
+      } as MissionStep;
       
       updateDraftMission({
         steps: updatedSteps
@@ -362,7 +635,8 @@ export const useMissionLogic = () => {
         mediaAssets: [],
         privateAccess: 'public',
         fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 },
-        fingerprintImpact: 0.6
+        fingerprintImpact: 0.6,
+        aestheticParams: {} // 初始化空的审美参数对象
       });
       
       setLogs(prev => [...prev, `✅ 已保存步骤 ${editingStepIndex + 1}`]);
@@ -387,6 +661,41 @@ export const useMissionLogic = () => {
     }
     
     setLogs(prev => [...prev, `❌ 已删除步骤 ${index + 1}`]);
+  };
+  
+  // 复制步骤功能
+  const handleCopyStep = (index: number) => {
+    const stepToCopy = draftMission.steps[index];
+    if (!stepToCopy) return;
+    
+    // 创建步骤副本，修改step_id和逻辑锚点
+    const copiedStep = {
+      ...stepToCopy,
+      step_id: draftMission.steps.length + 1,
+      title: `${stepToCopy.title} (副本)`,
+      logic_anchor: `step_${draftMission.steps.length + 1}`,
+      // 如果是第一个步骤，标记为P1_Facade_GIF
+      isP1FacadeGIF: false // 复制的步骤不能是P1_Facade_GIF
+    };
+    
+    // 插入到原步骤后面
+    const updatedSteps = [...draftMission.steps];
+    updatedSteps.splice(index + 1, 0, copiedStep);
+    
+    // 更新所有步骤的step_id
+    const stepsWithUpdatedIds = updatedSteps.map((step, i) => ({
+      ...step,
+      step_id: i + 1
+    }));
+    
+    updateDraftMission({
+      steps: stepsWithUpdatedIds
+    });
+    
+    // 选中新复制的步骤
+    setSelectedStepIndex(index + 1);
+    
+    setLogs(prev => [...prev, `✅ 已复制步骤 ${index + 1}`]);
   };
   
   const handleMoveStepUp = (index: number) => {
@@ -484,10 +793,144 @@ export const useMissionLogic = () => {
       // 关键：不仅要载入 controls，还要载入资产
       const loadedData = protocolData;
       
+      // 自动步骤编排：根据 io_schema 生成默认步骤序列
+      let generatedSteps: any[] = [];
+      
+      // 如果协议包含 io_schema，自动生成步骤
+      if (loadedData.io_schema) {
+        const { io_schema, params_schema } = loadedData;
+        const inputTypeLabel = io_schema.inputType === 'image'
+          ? '图片'
+          : io_schema.inputType === 'video'
+            ? '视频'
+            : io_schema.inputType === 'audio'
+              ? '音频'
+              : io_schema.inputType === 'text'
+                ? '文本'
+                : '文件';
+        
+        // 步骤1：素材输入步骤
+        generatedSteps.push({
+          step_id: 1,
+          title: `素材输入`,
+          desc: `上传或选择${inputTypeLabel}素材`,
+          isCompleted: false,
+          assets: [],
+          template_id: 'template_generic_001',
+          logic_anchor: `step_1`,
+          mediaAssets: [],
+          privateAccess: 'public',
+          fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 },
+          fingerprintImpact: 0.6,
+          options: [],
+          actionType: 'Preset',
+          stepType: 'material-input',
+          taskType: io_schema.inputType,
+          materialPool: {
+            id: `material_pool_1`,
+            name: `素材池 1`,
+            images: [],
+            selectedImageIds: []
+          },
+          // 标记为素材输入步骤
+          stepMode: 'view',
+          instruction: `请上传或选择${inputTypeLabel}素材`
+        });
+        
+        // 步骤2：参数调节步骤
+        generatedSteps.push({
+          step_id: 2,
+          title: `参数调节`,
+          desc: `根据需求调整${inputTypeLabel}处理参数`,
+          isCompleted: false,
+          assets: [],
+          template_id: 'template_generic_001',
+          logic_anchor: `step_2`,
+          mediaAssets: [],
+          privateAccess: 'public',
+          fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 },
+          fingerprintImpact: 0.6,
+          options: [],
+          actionType: 'Preset',
+          stepType: 'param-adjustment',
+          taskType: io_schema.inputType,
+          materialPool: {
+            id: `material_pool_2`,
+            name: `素材池 2`,
+            images: [],
+            selectedImageIds: []
+          },
+          // 标记为参数调节步骤
+          stepMode: 'tweak',
+          instruction: `请根据需求调整处理参数`,
+          // 根据 params_schema 生成控制参数
+          controls: params_schema ? params_schema.map((param: any, index: number) => ({
+            id: `control_${Date.now()}_${index}`,
+            label: param.name,
+            target: `param:${param.id}`,
+            value: param.defaultValue || 0,
+            min: param.min || 0,
+            max: param.max || 100,
+            step: param.step || 1,
+            insight: `${param.name}影响处理结果的${param.name.toLowerCase()}`
+          })) : [],
+          // 原子挂载：将步骤绑定到协议对应的参数键名
+          mappingKey: 'params_adjustment',
+          // 存储参数 schema 用于后续自动填充
+          params_schema: params_schema
+        });
+        
+        // 步骤3：API触发步骤
+        generatedSteps.push({
+          step_id: 3,
+          title: `API触发`,
+          desc: `调用API处理${inputTypeLabel}素材`,
+          isCompleted: false,
+          assets: [],
+          template_id: 'template_generic_001',
+          logic_anchor: `step_3`,
+          mediaAssets: [],
+          privateAccess: 'public',
+          fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 },
+          fingerprintImpact: 0.6,
+          options: [],
+          actionType: 'GitHubPlugin',
+          stepType: 'api-trigger',
+          taskType: io_schema.outputType,
+          materialPool: {
+            id: `material_pool_3`,
+            name: `素材池 3`,
+            images: [],
+            selectedImageIds: []
+          },
+          // 标记为API触发步骤
+          stepMode: 'select',
+          instruction: `调用API处理素材`,
+          // GitHub插件配置
+          githubPluginConfig: {
+            algorithmId: loadedData.model_id || 'default',
+            params: loadedData.input_params || {},
+            sourceUrl: loadedData.api_endpoint || '',
+            version: '1.0'
+          },
+          // 原子挂载：将步骤绑定到协议对应的API端点
+          mappingKey: 'api_trigger',
+          // 存储API配置
+          api_config: {
+            endpoint: loadedData.api_endpoint || '',
+            method: 'POST'
+          }
+        });
+        
+        console.log(`[AUTO_STEP_GENERATION] 根据 io_schema 自动生成了 ${generatedSteps.length} 个步骤`);
+      }
+      
       // 必须确保 steps 数组至少有一个有效元素，防止读取 null
-      const safeSteps = loadedData.steps && loadedData.steps.length > 0 
-        ? loadedData.steps 
-        : [{ step_id: 1, controls: [] }];
+      const safeSteps = generatedSteps.length > 0 
+        ? generatedSteps 
+        : loadedData.steps && loadedData.steps.length > 0 
+          ? loadedData.steps 
+          : [{ step_id: 1, controls: [] }];
       
       const updatedMission = {
         ...defaultState,
@@ -521,8 +964,13 @@ export const useMissionLogic = () => {
           }
         }));
         
-        // 2. 强迫页面从P1穿梭到P3实验室
-        navigate('/lab/direct-fire');
+        // 物理锁死：防止跳转过程中 blob 丢失
+        if (updatedMission) {
+          sessionStorage.setItem('P3_PROTOCOL_LOCK', JSON.stringify(updatedMission));
+        }
+        navigate('/lab/direct-fire', {
+          state: { missionData: updatedMission }
+        });
         
         // 3. 立即发送 P3 引擎点火信号，强制移除视觉遮罩
         window.dispatchEvent(new CustomEvent('p3EngineIgnite'));
@@ -536,6 +984,20 @@ export const useMissionLogic = () => {
   };
 
   const handleSignAndRelease = () => {
+    // 任务复杂度检测：如果只有一个步骤，提示发布者
+    if (draftMission.steps.length === 1) {
+      const userConfirmed = window.confirm(
+        '⚠️ 检测到任务过于简单，仅包含1个步骤。\n\n' +
+        '建议：将其作为复合任务的一个步骤，以提高任务的完整性和实用性。\n\n' +
+        '是否继续发布此简单任务？'
+      );
+      
+      if (!userConfirmed) {
+        console.log('[MISSION_CANCELLED] 用户取消了简单任务的发布');
+        return;
+      }
+    }
+    
     // 使用组件状态管理发布状态
     setIsPublishing(true);
     try {
@@ -545,7 +1007,7 @@ export const useMissionLogic = () => {
         
         // 收集所有协议
         const allControls: any[] = [];
-        draftMission.steps.forEach((step: Step) => {
+        draftMission.steps.forEach((step: MissionStep) => {
           if (step.controls && Array.isArray(step.controls)) {
             allControls.push(...step.controls);
           }
@@ -604,7 +1066,7 @@ export const useMissionLogic = () => {
       
       // 收集所有物理协议
       const allControls: any[] = [];
-      draftMission.steps.forEach((step: Step) => {
+      draftMission.steps.forEach((step: MissionStep) => {
         if (step.controls && Array.isArray(step.controls)) {
           allControls.push(...step.controls);
         }
@@ -616,12 +1078,43 @@ export const useMissionLogic = () => {
         id: draftMission.id || `mission_${Date.now()}`,
         createdAt: draftMission.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        // 新增：引擎标识
+        engine: "CodeFormer_v1",
+        // 新增：API配置
+        api_config: {
+          endpoint: "https://api.fal.ai/v1/ai/codeformer",
+          method: "POST"
+        },
+        // 新增：UI schema - 描述P3应该显示的滑块
+        ui_schema: {
+          sliders: [
+            {
+              id: "fidelity",
+              name: "Fidelity (保真度)",
+              type: "slider",
+              min: 0,
+              max: 1,
+              step: 0.01,
+              defaultValue: 0.5,
+              description: "调整图像保真度"
+            },
+            {
+              id: "background_enhance",
+              name: "Background_Enhance (背景增强)",
+              type: "boolean",
+              defaultValue: true,
+              description: "是否增强背景"
+            }
+          ]
+        },
+        // 新增：P1预览图URL - 使用activePreviewUrl或facadeCoverUrl
+        p1_preview: activePreviewUrl || facadeCoverUrl || '',
         // 物理肌肉预览字段：FFmpeg命令
         ffmpeg_command: generateFfmpegCommand(),
         // 确保steps里的controls包含验证过的target和最终value
-        steps: draftMission.steps.map((step: Step) => {
+        steps: draftMission.steps.map((step: MissionStep) => {
           // 过滤并验证controls
-          const validatedControls = step.controls && Array.isArray(step.controls) 
+          const validatedControls = step.controls && Array.isArray(step.controls)
             ? step.controls.filter(control => 
                 typeof control === 'object' && 
                 control.target && 
@@ -649,7 +1142,7 @@ export const useMissionLogic = () => {
       const auditWindow = window.open('', 'MissionAudit', 'width=800,height=600');
       if (auditWindow) {
         // 构建审计内容
-        const assets = draftMission.steps.flatMap((step: Step) => 
+        const assets = draftMission.steps.flatMap((step: MissionStep) => 
           step.mediaAssets ? step.mediaAssets : []
         );
         
@@ -737,7 +1230,7 @@ export const useMissionLogic = () => {
       margin: 10px 0;
     }
     button {
-      background-color: #4CAF50;
+      background-color: #a3a3a3;
       color: white;
       border: none;
       padding: 10px 20px;
@@ -747,7 +1240,7 @@ export const useMissionLogic = () => {
       margin: 5px;
     }
     button:hover {
-      background-color: #45a049;
+      background-color: #a3a3a3;
     }
     .close-btn {
       background-color: #dc3545;
@@ -868,10 +1361,6 @@ export const useMissionLogic = () => {
       
       setLogs(prev => [...prev, `✅ 真迹已签署并发布`]);
       
-      // 移除路径跳转，改为Toast提示
-      // 这里使用alert作为简化的Toast实现
-      alert('✅ 任务签署成功，协议包已导出！');
-      
       // 关闭审计弹窗
       setIsAuditModalOpen(false);
       
@@ -879,7 +1368,6 @@ export const useMissionLogic = () => {
       console.error('[SIGN_ERROR] 发布失败:', error);
       console.dir({ error, draftMission });
       setLogs(prev => [...prev, `❌ 发布失败: ${error.message || String(error)}`]);
-      alert(`发布失败: ${error.message || String(error)}`);
     } finally {
       // 强制状态重置：确保发布动作结束后，物理调用setIsPublishing(false)
       setIsPublishing(false);
@@ -1095,7 +1583,7 @@ export const useMissionLogic = () => {
         index: i,
         time: `${Math.floor(i * 10)}s`,
         description: `关键帧 ${i + 1}: 核心操作画面`,
-        thumbnail: `https://example.com/keyframe-${i}.jpg`
+        thumbnail: ''
       }));
       
       updateDraftMission({ keyFrames });
@@ -1454,18 +1942,77 @@ export const useMissionLogic = () => {
     }
   };
 
-  const updateStep = (index: number, updates: Partial<Step>) => {
-    // 物理重构：使用函数式更新，确保获取最新的状态，防止异步快照回滚
+  const updateStep = (index: number, updates: Partial<MissionStep>) => {
     updateDraftMission(prev => {
-      // 从最新的状态中获取 steps
       const updatedSteps = [...prev.steps];
-      // 更新指定步骤
+      
+      // 防御性编程：确保currentStep存在
+      const currentStep = updatedSteps[index];
+      if (!currentStep) {
+        // 如果currentStep不存在，创建一个新的步骤对象
+        updatedSteps[index] = {
+          step_id: index + 1,
+          title: '新步骤',
+          desc: '',
+          isCompleted: false,
+          assets: [],
+          template_id: updates.template_id || 'template_generic_001',
+          logic_anchor: `step_${index + 1}`,
+          mediaAssets: updates.mediaAssets || [],
+          privateAccess: 'public',
+          fingerprintWeights: { accuracy: 0.8, consistency: 0.7, creativity: 0.5 },
+          options: []
+        };
+        return { ...prev, steps: updatedSteps };
+      }
+      
+      // 使用可选链确保安全访问
+      const nextControls = updates.controls || currentStep.controls;
+      
+      // 合并更新，确保 mediaAssets 是数组
+      const updatedMediaAssets = updates.mediaAssets || currentStep.mediaAssets || [];
+      const updatedAssets = updates.assets || currentStep.assets || [];
+      
       updatedSteps[index] = {
-        ...updatedSteps[index],
+        ...currentStep,
         ...updates,
-        template_id: updates.template_id || updatedSteps[index].template_id || 'template_generic_001',
-        logic_anchor: updates.logic_anchor || `step_${index + 1}`
+        controls: nextControls,
+        template_id: updates.template_id || currentStep.template_id || 'template_generic_001',
+        mediaAssets: updatedMediaAssets,
+        assets: updatedAssets,
       };
+
+      // 强制审计日志 - 使用可选链确保安全访问
+      const bri = nextControls?.find(c => c.target === 'artifact:brilliance');
+      if (bri) console.log('!!! LOGICAL COMMITTED VALUE:', bri.value);
+
+      // 增加强制清洗器，确保手动输入的值不被字典回弹
+      if (updates.controls) {
+        updates.controls = updates.controls.map(c => {
+          if (c.target === 'artifact:brilliance') {
+            return { ...c, min: -1.0, max: 1.0, value: (c.value === 0.01) ? 0 : c.value };
+          }
+          return c;
+        });
+      }
+
+      // 检查是否有新图片上传，如果有，立即设置为活动预览图
+      if (updates.mediaAssets) {
+        // 如果 mediaAssets 是新数组，取最后一张图的 assetId
+        const lastAssetId = updates.mediaAssets[updates.mediaAssets.length - 1];
+        if (lastAssetId) {
+          // 由于这里无法直接访问 AssetStore，我们暂时跳过设置活动预览图
+          // 活动预览图会在组件中通过 assetId 获取
+        }
+      } else if (updates.assets) {
+        // 如果 assets 是新数组，取最后一张图
+        const lastItem = updates.assets[updates.assets.length - 1];
+        if (lastItem) {
+          const url = typeof lastItem === 'string' ? lastItem : lastItem.url;
+          setActivePreviewUrl(url);
+        }
+      }
+
       return { ...prev, steps: updatedSteps };
     });
   };
@@ -1627,6 +2174,14 @@ export const useMissionLogic = () => {
             console.log(`[PROTOCOL_SYNC] 成功挂载标准协议: ${target}`);
           }
           
+          // 彻底重写 artifact:brilliance 的逻辑，直接截断字典引用
+          if (target === 'artifact:brilliance') {
+            const rawValue = control.value;
+            // 只要是 0.01（AI默认残留）或 undefined，一律强制归零（原图点）；其余负数信号严禁拦截
+            const cleanValue = (rawValue === 0.01 || rawValue === undefined) ? 0 : rawValue;
+            return { ...control, value: cleanValue, min: -1.0, max: 1.0, step: 0.01 };
+          }
+          
           // 获取协议定义，补充默认值
           const protocolDef = getProtocolDefinition(target);
           
@@ -1683,13 +2238,10 @@ export const useMissionLogic = () => {
 
       // 原子化打包：创建一个统一的 updates 对象，包含所有需要更新的字段
       const currentBase64Image = context.mediaUrl;
-      const updates: Partial<Step> = {
+      const updates: Partial<MissionStep> = {
         // 资产字段：确保旧字段和新字段都有图
         assets: currentBase64Image ? [currentBase64Image] : [...(step.assets || [])],
-        mediaAssets: currentBase64Image ? [{ 
-          url: currentBase64Image, 
-          type: currentBase64Image.endsWith('.mp4') ? 'video' : 'image' 
-        }] : [...(step.mediaAssets || [])],
+        mediaAssets: currentBase64Image ? [currentBase64Image] : [...(step.mediaAssets || [])],
         
         // 协议字段：来自 DeepSeek 的协议
         title: deepSeekResult.title || step.title,
@@ -1723,7 +2275,7 @@ export const useMissionLogic = () => {
         
         // 物理注入：同时将图片 URL 写入 assets 和 mediaAssets 两个字段
         updates.assets = [currentUrl];
-        updates.mediaAssets = [{ url: currentUrl, type: assetType }];
+        updates.mediaAssets = [currentUrl];
         
         // 生成新的 Key 值，用于强制 UI 重绘
         const newKey = currentUrl || Date.now();
@@ -1777,6 +2329,12 @@ export const useMissionLogic = () => {
     capturedAudioUrl,
     verification: '',
     mediaStream: mediaStreamRef.current,
+    // 全局预览焦点状态
+    activePreviewUrl,
+    setActivePreviewUrl,
+    // 唯一的预览指针状态
+    previewFocusUrl,
+    setPreviewFocusUrl,
     // 添加新的状态和函数
     isAuditModalOpen,
     setIsAuditModalOpen,
@@ -1791,6 +2349,7 @@ export const useMissionLogic = () => {
     handleEditStep,
     handleSaveStep,
     handleDeleteStep,
+    handleCopyStep,
     handleMoveStepUp,
     handleMoveStepDown,
     handleSignAndRelease,
@@ -1810,6 +2369,15 @@ export const useMissionLogic = () => {
     handleStopScreenCapture,
     downloadVideo,
     downloadAudio,
-    handleAutoFill // AI 自动填充功能
+    handleAutoFill, // AI 自动填充功能
+    // 新增：全局门面标杆相关
+    facadeCoverUrl,
+    setFacadeCover,
+    // 新增：审美参数相关
+    currentAestheticParams,
+    setCurrentAestheticParams,
+    updateStepAestheticParams,
+    handleStepChange,
+    getCurrentStepAestheticParams
   };
 };

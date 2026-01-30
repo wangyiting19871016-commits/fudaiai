@@ -51,12 +51,12 @@ const StepEditor: React.FC<StepEditorProps> = ({
       boxSizing: 'border-box'
     }}>
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ fontSize: 18, fontWeight: 'bold', color: '#06b6d4' }}>步骤编辑器</h2>
+        <h2 style={{ fontSize: 18, fontWeight: 'bold', color: '#a3a3a3' }}>步骤编辑器</h2>
         <button
           onClick={onAddStep}
           style={{
             padding: '10px 20px',
-            backgroundColor: '#06b6d4',
+            backgroundColor: '#a3a3a3',
             color: '#000',
             border: 'none',
             borderRadius: '6px',
@@ -71,7 +71,7 @@ const StepEditor: React.FC<StepEditorProps> = ({
 
       {/* 步骤列表 */}
       <div style={{ marginBottom: '30px' }}>
-        <h3 style={{ fontSize: 14, fontWeight: 'bold', color: '#06b6d4', marginBottom: '15px' }}>步骤列表（共 {steps.length} 步）</h3>
+        <h3 style={{ fontSize: 14, fontWeight: 'bold', color: '#a3a3a3', marginBottom: '15px' }}>步骤列表（共 {steps.length} 步）</h3>
         {steps.length === 0 ? (
           <div style={{
             padding: '40px',
@@ -91,7 +91,7 @@ const StepEditor: React.FC<StepEditorProps> = ({
                 style={{
                   padding: '15px',
                   backgroundColor: editingStepIndex === index ? '#1a1a1a' : '#111',
-                  border: editingStepIndex === index ? '1px solid #06b6d4' : '1px solid #333',
+                  border: editingStepIndex === index ? '1px solid #a3a3a3' : '1px solid #333',
                   borderRadius: '8px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
@@ -100,7 +100,7 @@ const StepEditor: React.FC<StepEditorProps> = ({
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: '#06b6d4', fontWeight: 'bold' }}>步骤 {index + 1}:</span>
+                    <span style={{ color: '#a3a3a3', fontWeight: 'bold' }}>步骤 {index + 1}:</span>
                     <span style={{ color: '#fff' }}>{step.title || '未命名步骤'}</span>
                     <span style={{
                       backgroundColor: '#222',
@@ -213,7 +213,7 @@ const StepEditor: React.FC<StepEditorProps> = ({
           border: '1px solid #333',
           borderRadius: '8px'
         }}>
-          <h3 style={{ fontSize: 14, fontWeight: 'bold', color: '#06b6d4', marginBottom: '20px' }}>
+          <h3 style={{ fontSize: 14, fontWeight: 'bold', color: '#a3a3a3', marginBottom: '20px' }}>
             编辑步骤 {editingStepIndex + 1}
           </h3>
 
@@ -375,7 +375,7 @@ const StepEditor: React.FC<StepEditorProps> = ({
             onClick={onSaveStep}
             style={{
               padding: '12px 24px',
-              backgroundColor: '#06b6d4',
+              backgroundColor: '#a3a3a3',
               color: '#000',
               border: 'none',
               borderRadius: '6px',

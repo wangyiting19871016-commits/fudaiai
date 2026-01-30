@@ -1,0 +1,47 @@
+{
+  "// 这是您的Cursor配置模板": "复制到 .cursor/settings.json 或通过 Ctrl+, 设置",
+  
+  "// === AI Agent配置（核心，让AI自动执行）===": "",
+  "cursor.agent.requiredPermissions": ["all"],
+  "cursor.agent.autoRun": true,
+  "cursor.agent.maxIterations": 50,
+  "cursor.agent.confirmDangerousOperations": true,
+  
+  "// === 编辑器配置 ===": "",
+  "editor.fontSize": 14,
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.organizeImports": true
+  },
+  
+  "// === TypeScript配置 ===": "",
+  "typescript.validate.enable": true,
+  "typescript.suggest.autoImports": true,
+  "javascript.validate.enable": true,
+  
+  "// === Git配置 ===": "",
+  "git.enabled": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  
+  "// === 文件配置 ===": "",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  
+  "// === 终端配置 ===": "",
+  "terminal.integrated.fontSize": 13,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  
+  "// === Cursor特定配置 ===": "",
+  "cursor.chat.defaultModel": "claude-3.5-sonnet",
+  "cursor.composer.defaultModel": "claude-3.5-sonnet",
+  "cursor.general.enableAutocompletions": true
+}

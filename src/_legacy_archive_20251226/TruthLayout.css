@@ -644,7 +644,7 @@ body {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: #007bff;
+    background-color: #a3a3a3;
     border: none;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -680,7 +680,7 @@ body {
 
 /* 退出按钮 */
 .tm-exit-btn {
-    background-color: #007bff;
+    background-color: #a3a3a3;
     color: #FFFFFF;
     border: none;
     padding: 10px 20px;

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MissionStep } from '@/types';
+import { MissionStep } from '../../../types';
 
 interface ProtocolDrawerProps {
   isOpen: boolean;
@@ -11,289 +11,247 @@ interface ProtocolDrawerProps {
 }
 
 const ProtocolDrawer: React.FC<ProtocolDrawerProps> = ({ isOpen, step, index, onUpdateStep, onClose }) => {
-  const handlePromptSnippetChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onUpdateStep(index, { promptSnippet: e.target.value });
-  };
+  // 14个参数配置
+  const paramsConfig = [
+    { key: 'exposure', label: '曝光', min: -2.0, max: 2.0, step: 0.01, defaultValue: 0 },
+    { key: 'brilliance', label: '通透度', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'highlights', label: '高光', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'shadows', label: '阴影', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'contrast', label: '对比度', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'brightness', label: '亮度', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'blackPoint', label: '质感深度', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'saturation', label: '饱和度', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'vibrance', label: '鲜艳度', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'warmth', label: '色温', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'tint', label: '色调', min: -1.0, max: 1.0, step: 0.01, defaultValue: 0 },
+    { key: 'sharpness', label: '锐度', min: 0.0, max: 2.0, step: 0.01, defaultValue: 0 },
+    { key: 'definition', label: '清晰度', min: 0.0, max: 2.0, step: 0.01, defaultValue: 0 },
+    { key: 'noise', label: '降噪', min: 0.0, max: 1.0, step: 0.01, defaultValue: 0 }
+  ];
 
-  const addNewOption = () => {
-    const newOptions = [...(step.options || []), { label: '', assetIndex: 0, fragment: '' }];
-    onUpdateStep(index, { options: newOptions });
-  };
+  // 参数状态管理
+  const [params, setParams] = useState<Record<string, number>>(
+    // 初始化默认参数值
+    paramsConfig.reduce((acc, config) => {
+      acc[config.key] = config.defaultValue;
+      return acc;
+    }, {} as Record<string, number>)
+  );
 
-  const updateOption = (optionIndex: number, field: string, value: string | number) => {
-    const newOptions = [...(step.options || [])];
-    newOptions[optionIndex] = { ...newOptions[optionIndex], [field]: value };
-    onUpdateStep(index, { options: newOptions });
-  };
+  // 当step变化时，更新参数状态
+  useEffect(() => {
+    // 从controls属性中提取参数值
+    if (step.controls && Array.isArray(step.controls)) {
+      const extractedParams: Record<string, number> = {};
+      step.controls.forEach(control => {
+        if (control.id && typeof control.value === 'number') {
+          extractedParams[control.id] = control.value;
+        }
+      });
+      
+      if (Object.keys(extractedParams).length > 0) {
+        setParams(prevParams => ({
+          ...prevParams,
+          ...extractedParams
+        }));
+      }
+    }
+  }, [step]);
 
-  const deleteOption = (optionIndex: number) => {
-    const newOptions = (step.options || []).filter((_, i) => i !== optionIndex);
-    onUpdateStep(index, { options: newOptions });
+  // 处理参数变化
+  const handleParamChange = (key: string, value: number) => {
+    const newParams = { ...params, [key]: value };
+    setParams(newParams);
+    
+    // 将参数转换为ControlItem[]格式
+    const controls = paramsConfig.map(config => ({
+      id: config.key,
+      label: config.label,
+      target: config.key,
+      value: newParams[config.key]
+    }));
+    
+    // 更新当前Step的参数协议
+    onUpdateStep(index, { controls });
+    
+    // 触发WebGL渲染更新
+    window.dispatchEvent(new CustomEvent('updateArtifactParams', {
+      detail: newParams
+    }));
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0, x: '100%' }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: '100%' }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
           style={{
-            marginTop: 8,
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '350px',
+            height: '100vh',
             background: '#1a1a1a',
-            border: '1px solid #333',
-            borderRadius: 6,
-            padding: 12,
-            overflow: 'hidden'
+            borderLeft: '2px solid #333',
+            boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.5)',
+            zIndex: 1000,
+            overflowY: 'auto',
+            padding: '20px'
           }}
         >
+          {/* 抽屉头部 */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: 12
+            marginBottom: '20px',
+            paddingBottom: '15px',
+            borderBottom: '1px solid #333'
           }}>
             <h3 style={{
-              fontSize: 12,
+              fontSize: 18,
               fontWeight: 'bold',
-              color: '#06b6d4',
+              color: '#a3a3a3',
               margin: 0
-            }}>🔧 高级协议设置</h3>
+            }}>🔧 专家微调</h3>
             <button
               onClick={onClose}
               style={{
                 background: '#000',
                 border: '1px solid #ef4444',
                 color: '#ef4444',
-                borderRadius: 3,
-                padding: '2px 6px',
-                fontSize: 9,
-                cursor: 'pointer'
+                borderRadius: 4,
+                padding: '8px 12px',
+                fontSize: 14,
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                transition: 'all 0.3s ease'
               }}
             >
               关闭
             </button>
           </div>
 
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ display: 'flex', flexDirection: 'column', marginBottom: 12 }}>
-              <span style={{
-                fontSize: 9,
-                color: '#666',
-                marginBottom: 2,
-                display: 'block'
-              }}>
-                📝 Prompt Editor
-              </span>
-              <textarea
-                value={step.promptSnippet || ''}
-                onChange={handlePromptSnippetChange}
-                style={{
-                  width: '100%',
-                  padding: 8,
-                  background: '#000',
-                  border: '1px solid #333',
-                  borderRadius: 4,
-                  color: '#fff',
-                  minHeight: 80,
-                  maxHeight: 120,
-                  resize: 'vertical',
-                  fontSize: 10,
-                  fontFamily: 'monospace',
-                  lineHeight: 1.4,
-                  outline: 'none'
-                }}
-                placeholder="在此输入提示词片段..."
-              />
-            </div>
-          </div>
-
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-              <span style={{
-                fontSize: 9,
-                color: '#666',
-                display: 'block'
-              }}>
-                🎯 决策分支配置
-              </span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  addNewOption();
-                }}
-                style={{
-                  padding: '2px 6px',
-                  background: '#000',
-                  border: '1px solid #10b981',
-                  color: '#10b981',
-                  borderRadius: 3,
-                  fontSize: 8,
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
-              >
-                + 新增选项
-              </button>
-            </div>
-            
+          {/* 步骤信息 */}
+          <div style={{
+            marginBottom: '20px',
+            padding: '12px',
+            background: '#0a0a0a',
+            borderRadius: 8,
+            border: '1px solid #333'
+          }}>
             <div style={{
-              background: '#000',
-              border: '1px solid #333',
-              borderRadius: 4,
-              padding: 6,
-              minHeight: 80,
-              maxHeight: 120,
-              overflowY: 'auto'
-            }}>
-              <AnimatePresence>
-                {(step.options || []).map((option, optionIndex) => (
-                  <motion.div
-                    key={optionIndex}
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2 }}
-                    style={{
-                      display: 'flex',
-                      gap: 4,
-                      marginBottom: 4,
-                      paddingBottom: 4,
-                      borderBottom: optionIndex < (step.options?.length || 0) - 1 ? '1px solid #333' : 'none'
-                    }}
-                  >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteOption(optionIndex);
-                      }}
-                      style={{
-                        background: '#000',
-                        border: '1px solid #ef4444',
-                        color: '#ef4444',
-                        borderRadius: 3,
-                        width: 16,
-                        height: 16,
-                        fontSize: 8,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0
-                      }}
-                    >
-                      ×
-                    </button>
-                    
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                        <span style={{ fontSize: 8, color: '#666', width: 30 }}>Label:</span>
-                        <input
-                          type="text"
-                          value={option.label}
-                          onChange={(e) => updateOption(optionIndex, 'label', e.target.value)}
-                          style={{
-                            flex: 1,
-                            padding: 2,
-                            background: '#1a1a1a',
-                            border: '1px solid #444',
-                            borderRadius: 2,
-                            color: '#fff',
-                            fontSize: 8
-                          }}
-                          placeholder="按钮文字"
-                        />
-                      </div>
-                      
-                      <div style={{ display: 'flex', gap: 6 }}>
-                        <div style={{ flex: 1, display: 'flex', gap: 4, alignItems: 'center' }}>
-                          <span style={{ fontSize: 8, color: '#666', width: 70 }}>Asset Index:</span>
-                          <input
-                            type="number"
-                            min="0"
-                            max="8"
-                            value={option.assetIndex}
-                            onChange={(e) => updateOption(optionIndex, 'assetIndex', parseInt(e.target.value) || 0)}
-                            style={{
-                              flex: 1,
-                              padding: 2,
-                              background: '#1a1a1a',
-                              border: '1px solid #444',
-                              borderRadius: 2,
-                              color: '#fff',
-                              fontSize: 8,
-                              textAlign: 'center'
-                            }}
-                          />
-                        </div>
-                        
-                        <div style={{ flex: 2, display: 'flex', gap: 4, alignItems: 'center' }}>
-                          <span style={{ fontSize: 8, color: '#666', width: 60 }}>Fragment:</span>
-                          <input
-                            type="text"
-                            value={option.fragment}
-                            onChange={(e) => updateOption(optionIndex, 'fragment', e.target.value)}
-                            style={{
-                              flex: 1,
-                              padding: 2,
-                              background: '#1a1a1a',
-                              border: '1px solid #444',
-                              borderRadius: 2,
-                              color: '#fff',
-                              fontSize: 8
-                            }}
-                            placeholder="关键词片段"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              
-              {(step.options || []).length === 0 && (
-                <div style={{
-                  fontSize: 8,
-                  color: '#444',
-                  textAlign: 'center',
-                  padding: '20px 0'
-                }}>
-                  暂无选项，点击 [+ 新增选项] 添加
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div style={{ marginBottom: 12 }}>
-            <span style={{
-              fontSize: 9,
+              fontSize: 12,
               color: '#666',
-              marginBottom: 4,
-              display: 'block'
-            }}>
-              🔑 Mapping Key 设置
-            </span>
+              marginBottom: 6
+            }}>当前步骤</div>
             <div style={{
-              background: '#000',
-              border: '1px solid #333',
-              borderRadius: 4,
-              padding: 8
-            }}>
-              <div style={{
+              fontSize: 16,
+              fontWeight: 'bold',
+              color: '#fff'
+            }}>步骤 {index + 1}: {step.title || '未命名'}</div>
+          </div>
+
+          {/* 14个参数滑块 */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px'
+          }}>
+            {paramsConfig.map(config => (
+              <div key={config.key} style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 6
+                gap: '8px'
               }}>
                 <div style={{
-                  fontSize: 8,
-                  color: '#888',
-                  fontStyle: 'italic'
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: 14,
+                  color: '#fff'
                 }}>
-                  高级 Mapping Key 配置区域，可用于设置复杂的映射规则
+                  <span>{config.label}</span>
+                  <span style={{
+                    color: '#a3a3a3',
+                    fontWeight: 'bold',
+                    fontSize: 12
+                  }}>
+                    {params[config.key].toFixed(2)}
+                  </span>
                 </div>
+                <input
+                  type="range"
+                  min={config.min}
+                  max={config.max}
+                  step={config.step}
+                  value={params[config.key]}
+                  onChange={(e) => handleParamChange(config.key, parseFloat(e.target.value))}
+                  style={{
+                    width: '100%',
+                    height: 6,
+                    borderRadius: 3,
+                    background: '#333',
+                    outline: 'none',
+                    appearance: 'none',
+                    cursor: 'pointer'
+                  }}
+                />
               </div>
-            </div>
+            ))}
+          </div>
+
+          {/* 底部操作按钮 */}
+          <div style={{
+            marginTop: '30px',
+            paddingTop: '20px',
+            borderTop: '1px solid #333',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px'
+          }}>
+            <button
+              onClick={() => {
+                // 重置所有参数为默认值
+                const defaultParams = paramsConfig.reduce((acc, config) => {
+                  acc[config.key] = config.defaultValue;
+                  return acc;
+                }, {} as Record<string, number>);
+                setParams(defaultParams);
+                
+                // 将默认参数转换为ControlItem[]格式
+                const defaultControls = paramsConfig.map(config => ({
+                  id: config.key,
+                  label: config.label,
+                  target: config.key,
+                  value: defaultParams[config.key]
+                }));
+                
+                // 更新当前Step的参数协议
+                onUpdateStep(index, { controls: defaultControls });
+                
+                // 触发WebGL渲染更新
+                window.dispatchEvent(new CustomEvent('updateArtifactParams', {
+                  detail: defaultParams
+                }));
+              }}
+              style={{
+                padding: '12px',
+                background: '#000',
+                border: '1px solid #444',
+                color: '#fff',
+                borderRadius: 8,
+                fontSize: 14,
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              重置参数
+            </button>
           </div>
         </motion.div>
       )}

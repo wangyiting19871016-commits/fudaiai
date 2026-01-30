@@ -1,0 +1,7 @@
+playwright
+pydantic
+pydantic-settings
+loguru
+python-dotenv
+requests
+beautifulsoup4

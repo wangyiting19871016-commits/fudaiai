@@ -254,13 +254,15 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
     
     // 检查文件类型
     if (!file.type.startsWith('video/')) {
-      alert('请上传视频文件（MP4格式）');
+      // alert('请上传视频文件（MP4格式）');
+      console.error('请上传视频文件（MP4格式）');
       return;
     }
     
     // 检查文件大小（限制为100MB）
     if (file.size > 100 * 1024 * 1024) {
-      alert('文件大小不能超过100MB');
+      // alert('文件大小不能超过100MB');
+      console.error('文件大小不能超过100MB');
       return;
     }
     
@@ -277,7 +279,8 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
       url: videoUrl
     });
     
-    alert('✅ 视频文件上传成功！已生成本地Blob URL供P3预览。');
+    // alert('✅ 视频文件上传成功！已生成本地Blob URL供P3预览。');
+    console.log('✅ 视频文件上传成功！已生成本地Blob URL供P3预览。');
   };
 
   // 清除上传的文件
@@ -310,7 +313,8 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
       missionId: missionData?.id || `mission_${Date.now()}`
     };
     localStorage.setItem(storageKey, JSON.stringify(syncData)); // 2. 纯净写入数据
-    alert('数据已锁死在 LocalStorage'); // 3. 阻塞式确认
+    // alert('数据已锁死在 LocalStorage'); // 3. 阻塞式确认
+    console.log('数据已锁死在 LocalStorage');
   };
   
   // 强制发布 - 硬核发货逻辑
@@ -329,7 +333,8 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
     
     // 直接塞进仓库，跳过所有校验
     localStorage.setItem(storageKey, JSON.stringify(dataToStore));
-    alert('✅ 硬核发货成功！数据已直接写入 LocalStorage');
+    // alert('✅ 硬核发货成功！数据已直接写入 LocalStorage');
+    console.log('✅ 硬核发货成功！数据已直接写入 LocalStorage');
   };
   
   // 重新进入编辑模式
@@ -348,7 +353,8 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
       console.warn('P4 持久化 - 状态更新失败:', error);
     }
     
-    alert("🔓 已重新进入编辑模式，可以修改任务内容。");
+    // alert("🔓 已重新进入编辑模式，可以修改任务内容。");
+    console.log("🔓 已重新进入编辑模式，可以修改任务内容。");
   };
 
   // 获取当前物理存储位置（从 localStorage 或其他方式）
@@ -386,7 +392,7 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
             <h3 style={{
               fontSize: '18px',
               fontWeight: 'bold',
-              color: '#06b6d4',
+              color: '#a3a3a3',
               margin: 0
             }}>
               🛠️ P4 任务铸造厂
@@ -394,7 +400,7 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
             {/* 可视化路径反馈 */}
             <div style={{
               fontSize: '12px',
-              color: '#10b981',
+              color: '#a3a3a3',
               fontWeight: 'bold'
             }}>
               📁 当前物理存储位置：{getCurrentStoragePath()}
@@ -409,9 +415,9 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
               style={{
                 padding: '8px 12px',
                 height: '36px',
-                background: syncStatus === 'success' ? '#10b981' : 
+                background: syncStatus === 'success' ? '#a3a3a3' : 
                          syncStatus === 'syncing' ? '#f59e0b' : 
-                         syncStatus === 'error' ? '#ef4444' : '#10b981',
+                         syncStatus === 'error' ? '#ef4444' : '#a3a3a3',
                 color: '#000',
                 border: 'none',
                 borderRadius: '4px',
@@ -439,7 +445,7 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
               style={{
                 padding: '8px 12px',
                 height: '36px',
-                background: isReleased ? '#666' : '#06b6d4',
+                background: isReleased ? '#666' : '#a3a3a3',
                 color: isReleased ? '#999' : '#000',
                 border: 'none',
                 borderRadius: '4px',
@@ -465,7 +471,7 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
               style={{
                 padding: '8px 12px',
                 height: '36px',
-                background: isReleased ? '#10b981' : '#ef4444',
+                background: isReleased ? '#a3a3a3' : '#ef4444',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '4px',
@@ -645,7 +651,7 @@ const TaskEditorContainer: React.FC<TaskEditorContainerProps> = ({
                       flex: 1,
                       padding: '4px 8px',
                       background: task.verificationType === type ? 
-                                 (isReleased ? '#666' : '#06b6d4') : 
+                                 (isReleased ? '#666' : '#a3a3a3') : 
                                  (isReleased ? 'transparent' : 'transparent'),
                       color: task.verificationType === type ? 
                              (isReleased ? '#fff' : '#000') : 

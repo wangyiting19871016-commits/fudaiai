@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import CodeRunner from './CodeRunner';
 import AudioRecorder from './AudioRecorder';
-import VerifyPanel from './VerifyPanel';
 import { Eye, Settings } from 'lucide-react';
 
 interface ToolboxProps {
@@ -13,7 +12,6 @@ interface ToolboxProps {
 }
 
 const Toolbox: React.FC<ToolboxProps> = ({ title, code, instruction, currentStep, onNextStep }) => {
-  const [isVerifyPanelOpen, setIsVerifyPanelOpen] = useState(true);
   const [isToolboxExpanded, setIsToolboxExpanded] = useState(true);
 
   return (
@@ -64,39 +62,14 @@ const Toolbox: React.FC<ToolboxProps> = ({ title, code, instruction, currentStep
             <Eye size={10} />
             视觉审计
           </button>
-          
-          <button 
-            onClick={() => setIsVerifyPanelOpen(!isVerifyPanelOpen)}
-            style={{
-              background: '#0a0a0a',
-              color: '#fff',
-              padding: '4px 8px',
-              fontSize: '10px',
-              cursor: 'pointer',
-              border: 'none'
-            }}
-          >
-            {isVerifyPanelOpen ? '隐藏验证' : '显示验证'}
-          </button>
         </div>
       </div>
       
       {/* 代码运行器 */}
       <CodeRunner initialCode={code} instruction={instruction} />
       
-      {/* 验证面板和音频录制 */}
+      {/* 音频录制模块 */}
       <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        {/* 验证面板 */}
-        {isVerifyPanelOpen && (
-          <div>
-            <VerifyPanel 
-              step={currentStep}
-              onVerified={onNextStep}
-              themeColor={'#fff'}
-            />
-          </div>
-        )}
-        
         {/* 音频录制模块 */}
         <AudioRecorder />
       </div>

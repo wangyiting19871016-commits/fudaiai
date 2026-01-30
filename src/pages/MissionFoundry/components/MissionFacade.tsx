@@ -33,7 +33,7 @@ const MissionFacade: React.FC<MissionFacadeProps> = ({
       <h2 style={{
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#06b6d4',
+        color: '#a3a3a3',
         marginBottom: '20px'
       }}>📋 任务门面配置</h2>
       
@@ -149,7 +149,7 @@ const MissionFacade: React.FC<MissionFacadeProps> = ({
           {onCoverUpload && (
             <label style={{
               padding: '10px 20px',
-              backgroundColor: '#06b6d4',
+              backgroundColor: '#a3a3a3',
               color: '#000',
               border: 'none',
               borderRadius: '4px',
@@ -252,7 +252,7 @@ const MissionFacade: React.FC<MissionFacadeProps> = ({
             />
             <span style={{
               fontSize: 16,
-              color: '#10b981',
+              color: '#a3a3a3',
               fontWeight: 'bold'
             }}>
               信用分

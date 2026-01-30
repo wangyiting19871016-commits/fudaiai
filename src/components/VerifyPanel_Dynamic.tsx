@@ -10,7 +10,7 @@ interface VerifyPanelProps {
 const VerifyPanel: React.FC<VerifyPanelProps> = ({ 
   step, 
   onVerified, 
-  themeColor = '#06b6d4' 
+  themeColor = '#a3a3a3' 
 }) => {
   // 获取显示类型 - 支持新协议格式
   const stepType = step.verifyType || (step.type === 'SCREEN_SHOT' ? 'SCREEN' : step.type);
@@ -164,7 +164,7 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 15, color: '#666', justifyContent: 'center' }}>
               <Monitor size={16} /> <span style={{ fontSize: 12, fontWeight: 'bold' }}>SYSTEM SCREENSHOT REQUIRED</span>
               {screenshotData && (
-                <span style={{ color: '#10b981', fontSize: 10, fontWeight: 'bold', padding: '2px 8px', background: 'rgba(16,185,129,0.1)', borderRadius: 4 }}>✓ 截屏已捕获</span>
+                <span style={{ color: '#a3a3a3', fontSize: 10, fontWeight: 'bold', padding: '2px 8px', background: 'rgba(16,185,129,0.1)', borderRadius: 4 }}>✓ 截屏已捕获</span>
               )}
             </div>
             
@@ -179,7 +179,7 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
                   borderRadius: 12, 
                   cursor: screenshotData ? 'default' : 'pointer',
                   background: screenshotData ? 'linear-gradient(135deg, #0a0a0a 0%, #111 100%)' : 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
-                  border: screenshotData ? '2px solid #10b981' : '2px solid #8b5cf6',
+                  border: screenshotData ? '2px solid #a3a3a3' : '2px solid #8b5cf6',
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
@@ -233,7 +233,7 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
                 height: 150, 
                 borderRadius: 12, 
                 background: 'linear-gradient(135deg, #0a0a0a 0%, #111 100%)',
-                border: '2px solid #10b981',
+                border: '2px solid #a3a3a3',
                 margin: '15px auto 0',
                 overflow: 'hidden',
                 position: 'relative',
@@ -256,7 +256,7 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
                   bottom: 5,
                   left: 5,
                   background: 'rgba(0,0,0,0.7)',
-                  color: '#10b981',
+                  color: '#a3a3a3',
                   fontSize: 10,
                   padding: '2px 6px',
                   borderRadius: 4,
@@ -281,7 +281,7 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
                 width: '100%', 
                 marginTop: 25, 
                 padding: 18, 
-                background: isVerified ? '#10b981' : (screenshotData ? '#10b981' : 'linear-gradient(135deg, #ffd700, #b8860b)'), 
+                background: isVerified ? '#a3a3a3' : (screenshotData ? '#a3a3a3' : 'linear-gradient(135deg, #ffd700, #b8860b)'), 
                 color: isVerified || screenshotData ? '#fff' : '#000', 
                 border: 'none', 
                 borderRadius: 16, 
@@ -328,7 +328,7 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
               style={{ 
                 width: '100%', 
                 padding: 18, 
-                background: isVerified ? '#10b981' : (isTextInputValid() ? '#10b981' : 'linear-gradient(135deg, #ffd700, #b8860b)'), 
+                background: isVerified ? '#a3a3a3' : (isTextInputValid() ? '#a3a3a3' : 'linear-gradient(135deg, #ffd700, #b8860b)'), 
                 color: isVerified || isTextInputValid() ? '#fff' : '#000', 
                 border: 'none', 
                 borderRadius: 16, 
@@ -365,8 +365,8 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
                 height: 180, 
                 borderRadius: '50%', 
                 cursor: 'pointer',
-                background: isRecording ? '#ef4444' : (isPlayingAudio ? '#06b6d4' : (currentStepAudioData ? '#10b981' : '#0a0a0a')),
-                border: `1px solid ${isRecording ? '#ef4444' : (isPlayingAudio ? '#06b6d4' : (currentStepAudioData ? '#10b981' : '#333'))}`,
+                background: isRecording ? '#ef4444' : (isPlayingAudio ? '#a3a3a3' : (currentStepAudioData ? '#a3a3a3' : '#0a0a0a')),
+                border: `1px solid ${isRecording ? '#ef4444' : (isPlayingAudio ? '#a3a3a3' : (currentStepAudioData ? '#a3a3a3' : '#333'))}`,
                 boxShadow: isRecording ? '0 0 80px rgba(239,68,68,0.5)' : (isPlayingAudio ? '0 0 80px rgba(6,182,212,0.5)' : (currentStepAudioData ? '0 0 80px rgba(16,185,129,0.5)' : `0 0 40px ${themeColor}1a`)),
                 display: 'flex', 
                 alignItems: 'center', 
@@ -402,7 +402,7 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
                 width: '100%', 
                 marginTop: 25, 
                 padding: 18, 
-                background: isVerified ? '#10b981' : (currentStepAudioData ? '#10b981' : 'linear-gradient(135deg, #ffd700, #b8860b)'), 
+                background: isVerified ? '#a3a3a3' : (currentStepAudioData ? '#a3a3a3' : 'linear-gradient(135deg, #ffd700, #b8860b)'), 
                 color: isVerified || currentStepAudioData ? '#fff' : '#000', 
                 border: 'none', 
                 borderRadius: 16, 
@@ -445,7 +445,7 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
               style={{ 
                 width: '100%', 
                 padding: 18, 
-                background: isVerified ? '#10b981' : 'linear-gradient(135deg, #ffd700, #b8860b)', 
+                background: isVerified ? '#a3a3a3' : 'linear-gradient(135deg, #ffd700, #b8860b)', 
                 color: isVerified ? '#fff' : '#000', 
                 border: 'none', 
                 borderRadius: 16, 
@@ -535,8 +535,8 @@ const VerifyPanel: React.FC<VerifyPanelProps> = ({
             zIndex: 100 
           }}>
             <div style={{ 
-              border: '6px solid #10b981', 
-              color: '#10b981', 
+              border: '6px solid #a3a3a3', 
+              color: '#a3a3a3', 
               padding: '15px 50px', 
               fontSize: 60, 
               fontWeight: 900, 

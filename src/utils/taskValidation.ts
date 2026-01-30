@@ -507,9 +507,9 @@ export function getValidationStatusColor(status: 'idle' | 'verifying' | 'success
     case 'idle':
       return '#666';
     case 'verifying':
-      return '#2196F3';
+      return '#a3a3a3';
     case 'success':
-      return '#4CAF50';
+      return '#a3a3a3';
     case 'failed':
       return '#F44336';
     default:

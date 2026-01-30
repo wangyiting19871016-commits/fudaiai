@@ -26,6 +26,7 @@ export interface VisionAnalysisRequest {
   prompt?: string;
   maxTokens?: number;
   temperature?: number;
+  model?: string;
 }
 
 const ALI_VISION_MODEL = 'qwen-vl-plus';
@@ -137,7 +138,7 @@ const blobToBase64 = async (blobUrl: string): Promise<string> => {
 };
 
 export const callAliVision = async (request: VisionAnalysisRequest): Promise<AliVisionResult> => {
-  const { images, prompt, maxTokens = 1024, temperature = 0.7 } = request;
+  const { images, prompt, maxTokens = 1024, temperature = 0.7, model = ALI_VISION_MODEL } = request;
 
   const apiKey = import.meta.env.VITE_DASHSCOPE_API_KEY || '';
   if (!apiKey) {
@@ -161,7 +162,7 @@ export const callAliVision = async (request: VisionAnalysisRequest): Promise<Ali
     const processedImages = await Promise.all(images.map(blobToBase64));
 
     const payload = {
-      model: ALI_VISION_MODEL,
+      model: model,
       input: {
         messages: [
           {

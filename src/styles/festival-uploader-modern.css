@@ -1,0 +1,196 @@
+/* ========== 现代化上传组件 - Apple风格 ========== */
+
+.zj-uploader {
+  width: 100%;
+  min-height: 320px;
+  border: 2px dashed #d0d0d0;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(145deg, #fafafa, #f5f5f5);
+  position: relative;
+  overflow: hidden;
+  margin: 20px auto;
+  max-width: 460px;
+}
+
+.zj-uploader:hover {
+  border-color: #D32F2F;
+  background: linear-gradient(145deg, #ffffff, #fafafa);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 32px rgba(211,47,47,0.08),
+    0 6px 16px rgba(211,47,47,0.04);
+}
+
+.zj-uploader-dragging {
+  border-color: #D32F2F;
+  background: linear-gradient(145deg, 
+    rgba(211,47,47,0.05), 
+    rgba(230,74,25,0.05)
+  );
+  box-shadow: 
+    0 16px 48px rgba(211,47,47,0.15),
+    inset 0 0 0 2px rgba(211,47,47,0.2);
+}
+
+.zj-uploader-processing {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* 内容容器 */
+.zj-uploader-content-modern {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+/* Apple风格相机图标 */
+.upload-icon-modern {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.zj-uploader:hover .upload-icon-modern {
+  background: linear-gradient(135deg, #D32F2F, #E64A19);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(211,47,47,0.3);
+}
+
+.upload-icon-modern svg {
+  width: 40px;
+  height: 40px;
+}
+
+/* 文字样式 - 黑色可见 */
+.upload-text-modern {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.upload-text-modern.primary {
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.upload-text-modern.processing {
+  font-size: 16px;
+  color: #666;
+}
+
+.upload-hint-modern {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* 处理中动画 */
+.upload-spinner-modern {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f0f0f0;
+  border-top-color: #D32F2F;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 拖拽时的提示 */
+.zj-uploader-dragging .upload-icon-modern {
+  background: linear-gradient(135deg, #D32F2F, #E64A19);
+  color: white;
+  transform: scale(1.15);
+  animation: iconPulse 0.6s ease-in-out;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1.15); }
+  50% { transform: scale(1.25); }
+}
+
+.zj-uploader-dragging .upload-text-modern {
+  color: #D32F2F;
+  font-weight: 800;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .zj-uploader {
+    min-height: 280px;
+    border-radius: 20px;
+  }
+
+  .zj-uploader-content-modern {
+    gap: 16px;
+    padding: 32px 20px;
+  }
+
+  .upload-icon-modern {
+    width: 64px;
+    height: 64px;
+  }
+
+  .upload-icon-modern svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .upload-text-modern.primary {
+    font-size: 16px;
+  }
+
+  .upload-hint-modern {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .zj-uploader {
+    min-height: 240px;
+  }
+
+  .upload-icon-modern {
+    width: 56px;
+    height: 56px;
+  }
+
+  .upload-icon-modern svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .preview-image-container {
+    max-width: 220px;
+  }
+
+  .generate-button-modern {
+    font-size: 15px;
+    padding: 14px 24px;
+  }
+}

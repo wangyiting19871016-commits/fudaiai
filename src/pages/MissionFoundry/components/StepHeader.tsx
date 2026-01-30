@@ -27,7 +27,7 @@ const StepHeader: React.FC<StepHeaderProps> = ({ step, index, onTitleChange, onM
       }}>
         <span style={{ 
           fontSize: 13, 
-          color: '#06b6d4',
+          color: '#a3a3a3',
           fontWeight: 'bold' 
         }}>Step {index + 1}</span>
         <input 
@@ -140,20 +140,31 @@ const StepHeader: React.FC<StepHeaderProps> = ({ step, index, onTitleChange, onM
             onDelete();
           }} 
           style={{
-            padding: 4,
+            padding: 12, // 增加内边距，扩大透明点击区
             background: '#ef4444',
             color: '#fff',
             border: '1px solid #ef4444',
-            borderRadius: 3,
+            borderRadius: '50%', // 圆形按钮
             cursor: 'pointer',
-            fontSize: 10,
-            minWidth: 22,
-            height: 22,
+            fontSize: 14, // 增大图标大小
+            minWidth: 40, // 物理宽度达到 40px
+            height: 40,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            transition: 'all 0.2s ease' // 添加过渡效果
           }}
           title="删除步骤"
+          onMouseEnter={(e) => {
+            // 悬浮时增加红色背景圆圈反馈
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.6)';
+          }}
+          onMouseLeave={(e) => {
+            // 离开时恢复
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
         >
           ×
         </button>

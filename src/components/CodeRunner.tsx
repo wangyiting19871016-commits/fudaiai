@@ -29,7 +29,7 @@ const CodeRunner: React.FC<CodeRunnerProps> = ({ initialCode, instruction }) => 
         style={{ 
           flex: 1, 
           backgroundColor: '#000000', 
-          color: '#00ff00', 
+          color: '#a3a3a3', 
           fontFamily: 'monospace', 
           padding: '12px', 
           border: 'none',
@@ -42,7 +42,7 @@ const CodeRunner: React.FC<CodeRunnerProps> = ({ initialCode, instruction }) => 
         <button 
           onClick={handleRunCode} 
           style={{ 
-            backgroundColor: '#008000', 
+            backgroundColor: '#a3a3a3', 
             color: '#ffffff', 
             padding: '8px 16px', 
             border: 'none', 

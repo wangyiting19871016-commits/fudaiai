@@ -102,7 +102,7 @@ const OnlineUsers: React.FC<OnlineUsersProps> = ({
       borderRadius: '0',
       boxShadow: 'none'
     }}>
-      <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#007bff', marginBottom: '8px' }}>
+      <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#a3a3a3', marginBottom: '8px' }}>
         {count.toLocaleString()}
       </div>
       <div style={{ fontSize: '16px', color: '#666', marginBottom: '15px' }}>

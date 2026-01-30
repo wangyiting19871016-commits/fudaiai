@@ -1,34 +1,30 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import ProtocolDrawer from './ProtocolDrawer';
-import AssetMatrix from './AssetMatrix';
-import ControlPanel from './ControlPanel';
-import TimeAnchor from './TimeAnchor';
-import FileSaveStatus from './FileSaveStatus';
-import StepHeader from './StepHeader';
-import PhysicalInstruction from './PhysicalInstruction';
-import EvidenceDescription from './EvidenceDescription';
-import AIPluginButtons from './AIPluginButtons';
-import { useAudioPlayer } from './useAudioPlayer';
-import { MissionStep } from '@/types';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { Upload, Button, Switch } from 'antd';
+import { UploadOutlined, LinkOutlined, DisconnectOutlined } from '@ant-design/icons';
+import { MissionStep } from '../../../types';
+import { useAssetStore } from '../../../stores/AssetStore';
+import { useProtocolContext } from '../../../stores/ActiveProtocolStore';
+import UniversalPreview from '../../../components/UniversalPreview';
+import { getProtocolById, MISSION_PROTOCOLS } from '../../../config/protocolConfig';
 
 interface StepCardProps {
   step: MissionStep;
   index: number;
   isSelected: boolean;
-  isActive: boolean; // 当前是否为活动卡片（视频时间在该步骤区间内）
+  isActive: boolean;
   onSelect: (index: number) => void;
-  onMoveUp: (index: number) => void;
-  onMoveDown: (index: number) => void;
   onDelete: (index: number) => void;
+  onCopyStep: (index: number) => void;
   onUpdateStep: (index: number, updates: Partial<MissionStep>) => void;
   onVoiceAI: (index: number) => void;
-  onAutoFill: (index: number) => void; // AI 自动填充回调
-  analyzeStepAssets?: (index: number) => void; // AI 视觉分析函数
-  onPreviewClip?: (startTime: number, endTime: number, audioUrl?: string) => void; // 预览片段回调
-  onGenerateSlice?: (stepIndex: number, startTime: number, endTime: number, isScreenType: boolean) => void; // 生成切片回调
-  onSetInPoint?: (index: number) => void; // 设置入点回调
-  onSetOutPoint?: (index: number) => void; // 设置出点回调
+  onAutoFill: (index: number) => void;
+  onImageClick?: (url: string) => void;
+  hasParams?: boolean;
+  onUploadImage?: (index: number, file: File) => void;
+  // Phase 2: Add onRun prop
+  onRun?: (index: number) => void;
 }
 
 const StepCard: React.FC<StepCardProps> = ({
@@ -37,291 +33,262 @@ const StepCard: React.FC<StepCardProps> = ({
   isSelected,
   isActive,
   onSelect,
-  onMoveUp,
-  onMoveDown,
   onDelete,
+  onCopyStep,
   onUpdateStep,
   onVoiceAI,
   onAutoFill,
-  analyzeStepAssets,
-  onPreviewClip,
-  onGenerateSlice,
-  onSetInPoint,
-  onSetOutPoint
+  onImageClick,
+  hasParams,
+  onUploadImage,
+  onRun
 }) => {
-  // 使用音频播放 hook
-  const { isPlaying, volume, handlePlayToggle, handleVolumeChange } = useAudioPlayer();
-  
-  // 其他状态管理
-  const [isVoiceGenerating, setIsVoiceGenerating] = useState(false);
-  const [isVisionGenerating, setIsVisionGenerating] = useState(false);
-  const [isStartTimeFlashing, setIsStartTimeFlashing] = useState(false);
-  const [isEndTimeFlashing, setIsEndTimeFlashing] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // 协议抽屉开关状态
-  
-  // 处理时间更新闪烁效果
-  const handleTimeUpdate = (field: 'start_time' | 'end_time') => {
-    if (field === 'start_time') {
-      setIsStartTimeFlashing(true);
-      setTimeout(() => setIsStartTimeFlashing(false), 500);
-    } else {
-      setIsEndTimeFlashing(true);
-      setTimeout(() => setIsEndTimeFlashing(false), 500);
-    }
-  };
+  const formattedIndex = (index + 1).toString().padStart(2, '0');
+  const navigate = useNavigate();
+  const { assets, addAsset, getAsset } = useAssetStore();
+  const [isFrozenCollapsed, setIsFrozenCollapsed] = useState(true);
 
-  // 处理AI语音生成
-  const handleVoiceAI = async () => {
-    if (isVoiceGenerating) return; // 防止重复点击
-    
-    setIsVoiceGenerating(true);
-    try {
-      await onVoiceAI(index);
-    } finally {
-      setIsVoiceGenerating(false);
-    }
-  };
+  // Phase 2: Industrial Card Logic (Mounted Capability)
+  if (step.mountedCapability) {
+    const capability = step.mountedCapability;
+    const isAutoLinked = step.logicInheritance?.inheritFromPrevious;
+    // Auto-Collapse Logic: Check if there are any dynamic params
+    const hasDynamicParams = capability.parameter_config.dynamic.length > 0;
 
-  // 处理AI视觉分析
-  const handleVisionAI = async () => {
-    if (!analyzeStepAssets) return;
-    
-    setIsVisionGenerating(true);
-    try {
-      await analyzeStepAssets(index);
-    } finally {
-      setIsVisionGenerating(false);
-    }
-  };
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-      whileHover={{ scale: 1.01, boxShadow: '0 0 20px rgba(6, 182, 212, 0.3)' }}
-      whileTap={{ scale: 0.99 }}
-      style={{
-        background: isSelected ? '#1a1a1a' : isActive ? '#222' : '#111',
-        borderLeft: isSelected ? '4px solid #06b6d4' : isActive ? '4px solid #f59e0b' : '4px solid transparent',
-        border: `1px solid ${isActive ? '#f59e0b' : step.status === 'ready' ? '#10b981' : '#333'}`,
-        borderRadius: 8,
-        padding: 8,
-        boxShadow: isActive ? '0 0 15px rgba(245, 158, 11, 0.4)' : isSelected ? '0 0 15px rgba(6, 182, 212, 0.2)' : 'none',
-        cursor: 'pointer',
-        position: 'relative',
-        overflow: 'hidden',
-        // 高亮边框效果 - Cyan 呼吸灯或 Orange 活动状态
-        animation: isSelected || isActive ? `${isActive ? 'pulse-orange' : 'pulse-cyan'} 2s infinite` : 'none'
-      }}
-      onClick={() => onSelect(index)}
-    >
-      <style>{`
-        @keyframes pulse-cyan {
-          0%, 100% {
-            box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.3);
-          }
-          50% {
-            box-shadow: 0 0 0 8px rgba(6, 182, 212, 0);
-          }
-        }
-        
-        @keyframes pulse-orange {
-          0%, 100% {
-            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
-          }
-          50% {
-            box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
-          }
-        }
-      `}</style>
-      {/* 成功标记 */}
-      {step.status === 'ready' && (
-        <div style={{
-          position: 'absolute',
-          top: 6,
-          right: 6,
-          background: '#10b981',
-          color: '#000',
-          fontSize: 9,
-          fontWeight: 'bold',
-          padding: '2px 6px',
-          borderRadius: 10,
-          zIndex: 10
-        }}>
-          ✅ 已就绪
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{
+          background: isSelected ? '#1f1f1f' : '#141414',
+          border: isSelected ? '1px solid #a3a3a3' : '1px solid #333',
+          borderRadius: '12px',
+          padding: '16px',
+          cursor: 'pointer',
+          position: 'relative',
+          marginBottom: '24px' // Spacing for flow line
+        }}
+        onClick={() => onSelect(index)}
+      >
+        {/* 1. Header: Capability Info */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ 
+                    fontSize: '16px', fontWeight: 'bold', color: '#a3a3a3', 
+                    background: 'rgba(16, 185, 129, 0.1)', padding: '4px 8px', borderRadius: '4px' 
+                }}>
+                    {formattedIndex}
+                </div>
+                <div>
+                    <div style={{ color: '#fff', fontWeight: 'bold', fontSize: '14px' }}>
+                        {capability.meta.name}
+                    </div>
+                    <div style={{ fontSize: '10px', color: '#666' }}>
+                        {capability.meta.tags?.[0]} • v{capability.meta.version}
+                    </div>
+                </div>
+            </div>
+            
+            {/* Status Indicator & Run Button */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Button 
+                    type="primary" 
+                    size="small" 
+                    style={{ background: '#d73a49', borderColor: '#d73a49', fontWeight: 'bold' }}
+                    onClick={(e) => { e.stopPropagation(); onRun?.(index); }}
+                >
+                    ⚡ Run
+                </Button>
+                <div style={{ fontSize: '12px', color: step.isCompleted ? '#a3a3a3' : '#f59e0b' }}>
+                    {step.isCompleted ? '✅ 完成' : '⏳ 待命'}
+                </div>
+            </div>
         </div>
-      )}
-      
-      {/* 视觉锚点 - StepGallery 支持 1-9 张素材预览 */}
-      <div style={{ 
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        marginBottom: 8
-      }}>
-        {/* StepGallery - 支持 1-9 张素材预览 */}
-        <div style={{
+
+        {/* 2. Data Relay (Auto-reference) */}
+        {index > 0 && (
+            <div style={{ 
+                marginBottom: '12px', 
+                padding: '8px', 
+                background: isAutoLinked ? 'rgba(6, 182, 212, 0.1)' : '#222', 
+                border: isAutoLinked ? '1px solid #a3a3a3' : '1px dashed #444',
+                borderRadius: '6px',
+                fontSize: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+            }}>
+                {isAutoLinked ? (
+                    <>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#a3a3a3' }}>
+                            <LinkOutlined />
+                            <span>已自动引用 Step {index.toString().padStart(2, '0')} 输出</span>
+                        </div>
+                        <Button 
+                            type="text" 
+                            size="small" 
+                            danger 
+                            icon={<DisconnectOutlined />} 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onUpdateStep(index, { 
+                                    logicInheritance: { ...step.logicInheritance, inheritFromPrevious: false } as any 
+                                });
+                            }}
+                        >
+                            解除
+                        </Button>
+                    </>
+                ) : (
+                    <div style={{ color: '#666', fontStyle: 'italic' }}>
+                        🔗 未关联上游数据 (手动模式)
+                    </div>
+                )}
+            </div>
+        )}
+
+        {/* 3. Body: Dynamic Params Only (Collapse UI) */}
+        {hasDynamicParams ? (
+            <div style={{ marginBottom: '12px' }}>
+                {capability.parameter_config.dynamic.slice(0, 3).map((param: any) => (
+                    <div key={param.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px' }}>
+                        <span style={{ color: '#888' }}>{param.name}</span>
+                        <span style={{ color: '#ccc' }}>{step.params?.[param.id] || param.defaultValue}</span>
+                    </div>
+                ))}
+                {capability.parameter_config.dynamic.length > 3 && (
+                    <div style={{ fontSize: '10px', color: '#666', textAlign: 'center' }}>
+                        + {capability.parameter_config.dynamic.length - 3} 更多参数
+                    </div>
+                )}
+            </div>
+        ) : (
+            // All params frozen -> Show Run Button Prominently
+            <div style={{ textAlign: 'center', padding: '12px', background: '#222', borderRadius: '6px', marginBottom: '12px' }}>
+                <div style={{ fontSize: '12px', color: '#666', marginBottom: '8px' }}>参数已完全锁定 (Black Box)</div>
+                <Button 
+                    type="primary" 
+                    danger 
+                    block
+                    size="large"
+                    onClick={(e) => { e.stopPropagation(); onRun?.(index); }}
+                >
+                    🚀 点火运行 (Ignite)
+                </Button>
+            </div>
+        )}
+
+        {/* 4. Result Area (Physical Overflow Control) */}
+        {step.outputResult && (
+            <div style={{ 
+                marginTop: '12px', 
+                background: '#000', 
+                borderRadius: '8px', 
+                border: '1px solid #333',
+                overflow: 'hidden'
+            }}>
+                <div style={{ 
+                    padding: '8px', 
+                    borderBottom: '1px solid #222', 
+                    fontSize: '10px', 
+                    color: '#666',
+                    display: 'flex',
+                    justifyContent: 'space-between'
+                }}>
+                    <span>OUTPUT ({step.outputResult.type})</span>
+                </div>
+                
+                {/* Max-Height & Scroll Container */}
+                <div style={{ 
+                    maxHeight: '200px', 
+                    overflowY: 'auto', 
+                    padding: '10px' 
+                }}>
+                    {step.outputResult.type === 'text' && (
+                        <div style={{ fontSize: '12px', color: '#ccc', whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>
+                            {step.outputResult.data}
+                        </div>
+                    )}
+                    {step.outputResult.type === 'image' && (
+                        <img 
+                            src={step.outputResult.data} 
+                            style={{ width: '100%', borderRadius: '4px', cursor: 'zoom-in' }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onImageClick?.(step.outputResult!.data);
+                            }}
+                        />
+                    )}
+                    {step.outputResult.type === 'audio' && (
+                         <audio controls src={step.outputResult.data} style={{ width: '100%' }} />
+                    )}
+                </div>
+            </div>
+        )}
+        
+        {/* Delete Action (Hover) */}
+        {isSelected && (
+            <div style={{ position: 'absolute', top: -10, right: -10 }}>
+                <Button 
+                    shape="circle" 
+                    danger 
+                    size="small" 
+                    onClick={(e) => { e.stopPropagation(); onDelete(index); }}
+                >
+                    ✕
+                </Button>
+            </div>
+        )}
+      </motion.div>
+    );
+  }
+
+  // --- Legacy / Idle Card Logic ---
+  // (Keep the minimal version of original card for backward compatibility or idle state)
+  return (
+    <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{
+          background: '#111',
+          border: '1px dashed #444',
+          borderRadius: '12px',
+          padding: '20px',
+          textAlign: 'center',
+          cursor: 'pointer',
+          minHeight: '120px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 4,
-          width: '100%'
-        }}>
-          {/* 素材预览网格 - 使用 AssetMatrix 组件 */}
-          <AssetMatrix
-            mediaAssets={step.mediaAssets || []}
-            index={index}
-            onDeleteAsset={(assetIndex) => {
-              // 处理删除素材事件
-              const updatedMediaAssets = (step.mediaAssets || []).filter((_, i) => i !== assetIndex);
-              onUpdateStep(index, { mediaAssets: updatedMediaAssets });
-            }}
-            onUpdateStep={onUpdateStep}
-          />
-          
-          {/* 素材信息 */}
-          <div style={{
-            fontSize: 8,
-            color: '#666',
-            textAlign: 'center'
-          }}>
-            {(step.mediaAssets || []).length} / 9 素材
-          </div>
-          
-          {/* AI 视觉扫描分析按钮 */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleVisionAI();
-            }}
-            style={{
-              marginTop: 8,
-              padding: '4px 8px',
-              background: '#000',
-              color: '#06b6d4',
-              border: '1px solid #06b6d4',
-              borderRadius: 3,
-              fontWeight: 'bold',
-              fontSize: 9,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 2,
-              transition: 'all 0.3s ease'
-            }}
-            title="使用 AI 视觉扫描分析素材特征"
-          >
-            AI 视觉扫描分析
-          </button>
-          
-          {/* 视频切片时间锚点 - 使用 TimeAnchor 组件 */}
-          <TimeAnchor
-            step={step}
-            index={index}
-            isStartTimeFlashing={isStartTimeFlashing}
-            isEndTimeFlashing={isEndTimeFlashing}
-            onUpdateStep={onUpdateStep}
-            onSetInPoint={onSetInPoint}
-            onSetOutPoint={onSetOutPoint}
-            onPreviewClip={onPreviewClip}
-            onGenerateSlice={onGenerateSlice}
-          />
-          
-          {/* 文件保存状态和打开文件夹链接 - 使用 FileSaveStatus 组件 */}
-          {(step.videoPath || step.audioPath) && (
-            <FileSaveStatus step={step} />
-          )}
-        </div>
-      </div>
-      
-      {/* 卡片头部 - 使用 StepHeader 组件 */}
-      <StepHeader
-        step={step}
-        index={index}
-        onTitleChange={(title) => onUpdateStep(index, { title })}
-        onMoveUp={() => onMoveUp(index)}
-        onMoveDown={() => onMoveDown(index)}
-        onDelete={() => onDelete(index)}
-        onAutoFill={() => onAutoFill(index)}
-      />
-      
-      {/* 物理指令 - 使用 PhysicalInstruction 组件 */}
-      <PhysicalInstruction
-        step={step}
-        onInstructionChange={(instruction) => {
-          if (step.action_instruction) {
-            onUpdateStep(index, { action_instruction: instruction });
-          } else {
-            onUpdateStep(index, { desc: instruction });
-          }
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#666',
+          position: 'relative'
         }}
-      />
-      
-      {/* 协议专家设置折叠开关 */}
-      <div style={{ marginBottom: 8 }}>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsDrawerOpen(!isDrawerOpen);
-          }}
-          style={{
-            width: '100%',
-            padding: '6px 10px',
-            background: '#000',
-            border: '1px solid #06b6d4',
-            color: '#06b6d4',
-            borderRadius: 4,
-            fontSize: 9,
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 8
-          }}
-        >
-          <span>🔧 协议专家设置</span>
-          <span style={{ fontSize: 12 }}>
-            {isDrawerOpen ? '▼' : '▶'}
-          </span>
-        </button>
+        onClick={() => onSelect(index)}
+    >
+        <div style={{ fontSize: '24px', marginBottom: '8px' }}>➕</div>
+        <div style={{ fontWeight: 'bold' }}>Step {formattedIndex}</div>
+        <div style={{ fontSize: '12px', marginTop: '4px' }}>点击挂载能力 (Idle)</div>
         
-        {/* 协议专家设置内容 - 使用 ProtocolDrawer 组件 */}
-        <ProtocolDrawer
-          isOpen={isDrawerOpen}
-          step={step}
-          index={index}
-          onUpdateStep={onUpdateStep}
-          onClose={() => setIsDrawerOpen(false)}
-        />
-      </div>
-      
-      {/* 证据描述 - 使用 EvidenceDescription 组件 */}
-      <EvidenceDescription step={step} />
-      
-      {/* AI 插件组按钮 - 使用 AIPluginButtons 组件 */}
-      <AIPluginButtons
-        step={step}
-        isVoiceGenerating={isVoiceGenerating}
-        isVisionGenerating={isVisionGenerating}
-        isPlaying={isPlaying}
-        volume={volume}
-        onPrivateAccessToggle={() => {
-          onUpdateStep(index, { privateAccess: step.privateAccess === 'private' ? 'public' : 'private' });
-        }}
-        onVisionAI={handleVisionAI}
-        onPlayToggle={() => handlePlayToggle(step.audioUrl || '', step.originalAudioUrl, step.start_time, step.end_time)}
-        onVolumeChange={handleVolumeChange}
-        onVoiceAI={handleVoiceAI}
-      />
-      
-      {/* 映射滑块和灵魂映射 - 使用 ControlPanel 组件 */}
-      <ControlPanel
-        step={step}
-        index={index}
-        onUpdateStep={onUpdateStep}
-      />
+        {isSelected && (
+            <div style={{ marginTop: '12px', color: '#a3a3a3', fontSize: '12px' }}>
+                👉 请在右侧能力库选择
+            </div>
+        )}
+
+        {/* Delete Action for Idle Card */}
+        {isSelected && (
+            <div style={{ position: 'absolute', top: -10, right: -10 }}>
+                <Button 
+                    shape="circle" 
+                    danger 
+                    size="small" 
+                    onClick={(e) => { e.stopPropagation(); onDelete(index); }}
+                >
+                    ✕
+                </Button>
+            </div>
+        )}
     </motion.div>
   );
 };

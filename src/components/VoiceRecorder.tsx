@@ -8,7 +8,7 @@ interface VoiceRecorderProps {
 
 const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ 
   onRecordingComplete, 
-  themeColor = '#06b6d4' 
+  themeColor = '#a3a3a3' 
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -274,7 +274,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
                 onClick={togglePauseRecording}
                 style={{
                   padding: '12px 20px',
-                  background: isPaused ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  background: isPaused ? 'linear-gradient(135deg, #a3a3a3, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 8,
@@ -304,7 +304,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
                 onClick={stopRecording}
                 style={{
                   padding: '12px 20px',
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  background: 'linear-gradient(135deg, #a3a3a3, #059669)',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 8,
@@ -341,11 +341,11 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
           borderRadius: 12,
           padding: 20,
           marginBottom: 20,
-          border: '1px solid #10b981'
+          border: '1px solid #a3a3a3'
         }}>
           <div style={{
             fontSize: 14,
-            color: '#10b981',
+            color: '#a3a3a3',
             marginBottom: 15,
             fontWeight: 'bold'
           }}>
@@ -372,7 +372,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
               onClick={playRecording}
               style={{
                 padding: '8px 16px',
-                background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                background: 'linear-gradient(135deg, #a3a3a3, #0891b2)',
                 color: '#fff',
                 border: 'none',
                 borderRadius: 6,

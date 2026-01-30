@@ -1,0 +1,174 @@
+{
+  "lead_id": "lead_20260117_001_deepseek_v4_forum",
+  "revision": 0,
+  "created_at": "2026-01-17T09:30:00Z",
+  "updated_at": "2026-01-17T09:35:00Z",
+  "origin": {
+    "source_type": "web_api",
+    "provider": "UnknownTechForum",
+    "endpoint": "https://forum.example.com/api/posts/12345",
+    "url": "https://forum.example.com/t/deepseek-v4-release-plan/12345",
+    "request": {
+      "method": "GET",
+      "headers": {
+        "Accept": "application/json",
+        "User-Agent": "mission-hunter/1.0"
+      },
+      "params": {
+        "expand": true,
+        "include_media": true
+      },
+      "body": null
+    }
+  },
+  "evidence": {
+    "raw_payload": {
+      "post_id": "12345",
+      "thread_title": "爆料：DeepSeek-V4 发布计划（Q1）",
+      "author": "tech_leaker_07",
+      "posted_at": "2026-01-17T08:55:12Z",
+      "content": "据称 DeepSeek-V4 将在今年 Q1 发布，重点提升多模态推理与长上下文稳定性，提供新的系统提示模板和更高吞吐量的批量接口。官方路线图图像如下链接，来源未核实：",
+      "claims": [
+        "DeepSeek-V4 目标发布时间：2026 Q1",
+        "多模态推理能力升级（文本/图像/音频联合）",
+        "长上下文稳定性提升（> 200k tokens）",
+        "批量接口吞吐优化（面向企业集成）",
+        "将发布系统提示模板规范"
+      ],
+      "links": [
+        "https://cdn.forum.example.com/media/deepseek_v4_roadmap.png",
+        "https://deepseek.example.com/blog/roadmap (未证实)"
+      ],
+      "moderation_notes": "此贴来源不明，未标注官方渠道。",
+      "thread_tags": ["DeepSeek", "V4", "发布计划", "爆料", "多模态"]
+    },
+    "content_type": "application/json",
+    "content_hash": "sha256:9f0b0a91b1e26e1a9a3bc67c1cdeef4e3b3d5a6b2f8f4c1ab3a64f9f21c1de4b",
+    "size_bytes": 15273
+  },
+  "protocol_snapshot": {
+    "io_schema": {
+      "inputType": "url",
+      "outputType": "json"
+    },
+    "params_schema": [
+      {
+        "id": "url",
+        "name": "目标页面URL",
+        "type": "string",
+        "defaultValue": "",
+        "required": true
+      },
+      {
+        "id": "expand",
+        "name": "展开引用与媒体",
+        "type": "boolean",
+        "defaultValue": true,
+        "required": false
+      },
+      {
+        "id": "include_media",
+        "name": "包含媒体元数据",
+        "type": "boolean",
+        "defaultValue": true,
+        "required": false
+      },
+      {
+        "id": "sanitize_level",
+        "name": "文本清洗级别",
+        "type": "string",
+        "defaultValue": "moderate",
+        "required": false,
+        "options": [
+          { "label": "轻度", "value": "light" },
+          { "label": "中度", "value": "moderate" },
+          { "label": "重度", "value": "aggressive" }
+        ]
+      }
+    ]
+  },
+  "input_params": {
+    "url": "https://forum.example.com/t/deepseek-v4-release-plan/12345",
+    "expand": true,
+    "include_media": true,
+    "sanitize_level": "moderate"
+  },
+  "scoring": {
+    "freshness": 0.92,
+    "uniqueness": 0.78,
+    "actionability": 0.64,
+    "verifiability": 0.55,
+    "protocol_fit": 0.87
+  },
+  "assets": [
+    {
+      "id": "asset_roadmap_img",
+      "type": "image",
+      "uri": "https://cdn.forum.example.com/media/deepseek_v4_roadmap.png",
+      "size": 482163,
+      "checksum": "sha256:1a2b3c4d5e6f7890abcdef1234567890fedcba0987654321f0e1d2c3b4a59687",
+      "metadata": {
+        "format": "png",
+        "width": 1600,
+        "height": 900,
+        "caption": "据称为 DeepSeek-V4 路线图（未证实）"
+      }
+    }
+  ],
+  "lifecycle": {
+    "status": "scored",
+    "history": [
+      {
+        "timestamp": "2026-01-17T09:30:05Z",
+        "action": "ingested",
+        "by": "mission-hunter",
+        "notes": "通过 URL 协议抓取论坛帖子原始内容与媒体引用。"
+      },
+      {
+        "timestamp": "2026-01-17T09:34:30Z",
+        "action": "scored",
+        "by": "mission-hunter",
+        "notes": "完成真迹协议五维评分；标记为候选线索，待后续验证与合龙。"
+      }
+    ]
+  },
+  "compliance": {
+    "auth_type": "none",
+    "rate_limit": {
+      "limit": 30,
+      "window_seconds": 60,
+      "remaining": 29
+    },
+    "legal_flags": [
+      "unverified_source",
+      "potential_rumor"
+    ]
+  },
+  "tags": ["DeepSeek", "V4", "发布计划", "爆料", "论坛", "多模态"],
+  "annotations": [
+    {
+      "key": "scoring_rationale_verifiability",
+      "value": "来源未标注官方渠道，存在不确定性；可通过官方博客/GitHub/新闻源交叉验证，暂定 0.55。"
+    },
+    {
+      "key": "scoring_rationale_protocol_fit",
+      "value": "来源具备结构化抓取能力（URL→JSON），与基座 io_schema 完全契合，且 params_schema 可生成 UI 控件，给 0.87。"
+    },
+    {
+      "key": "scoring_rationale_actionability",
+      "value": "线索可立即转化为验证任务：收集官方渠道、比对路线图要点、监控后续公告，给 0.64。"
+    },
+    {
+      "key": "compounding_value_note",
+      "value": "若后续出现官方确认或二次来源证实，可作为 delta 合龙，提升可信度并沉淀模板化验证流程。"
+    }
+  ],
+  "extensions": {
+    "candidate_next_steps": [
+      "监控官方域名与 RSS 以求交叉验证",
+      "抽取路线图图像关键要点并生成可比较表",
+      "为后续证据追加 delta 合龙机制"
+    ],
+    "risk_level": "medium"
+  }
+}

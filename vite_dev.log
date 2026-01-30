@@ -1,0 +1,94 @@
+
+> trinity-mirror@1.0.0 dev
+> node ./node_modules/vite/bin/vite.js
+
+[dotenv@17.2.3] injecting env (13) from .env -- tip: ⚙️  override existing env vars with { override: true }
+[COS Middleware] 初始化配置: {
+  bucket: 'fudaiai-1400086527',
+  region: 'ap-shanghai',
+  hasSecretId: true,
+  hasSecretKey: true
+}
+
+  [32m[1mVITE[22m v4.5.14[39m  [2mready in [0m[1m4043[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5174[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://26.26.26.1:[1m5174[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.2.2:[1m5174[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.23.0.1:[1m5174[22m/[39m
+[2m23:38:43[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m23:38:44[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m23:38:46[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m23:38:47[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m23:38:56[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m23:39:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m23:39:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m23:39:52[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m23:39:53[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m23:40:35[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m23:40:44[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m23:40:57[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m23:40:59[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m23:41:00[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m23:41:18[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m23:41:35[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/festival-template-selection.css[22m
+[2m23:41:36[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/festival-template-selection.css[22m
+[2m23:41:37[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/festival-template-selection.css[22m
+[2m23:41:46[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/festival-template-selection.css[22m
+[2m23:42:00[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/LabPage.tsx[22m
+[2m23:42:02[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/LabPage.tsx[22m
+[2m23:42:29[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx, /src/pages/Festival/CategoryPage.tsx, /src/pages/Festival/TextPage.tsx[22m
+[2m00:00:53[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx, /src/pages/Festival/CategoryPage.tsx, /src/pages/Festival/TextPage.tsx[22m
+[2m00:01:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx, /src/pages/Festival/CategoryPage.tsx, /src/pages/Festival/TextPage.tsx[22m
+[2m00:01:35[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m00:01:37[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m00:01:57[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx[22m
+[2m00:03:59[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m00:04:33[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/TemplateSelectionPage.tsx, /src/pages/Festival/CategoryPage.tsx, /src/pages/Festival/TextPage.tsx[22m
+[2m00:04:44[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m00:05:02[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m00:05:57[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m00:06:25[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/LabPage.tsx[22m
+[2m00:06:26[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/LabPage.tsx[22m
+[2m00:06:37[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/LabPage.tsx[22m
+[2m00:06:38[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/LabPage.tsx[22m
+[2m00:07:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/LabPage.tsx[22m
+[2m00:07:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/LabPage.tsx[22m
+[2m00:07:55[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/festival-lab-modern.css[22m
+[2m00:13:35[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/CategoryPage.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/APISlotManager/APISlotManager.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/stores/APISlotStore.tsx, /src/pages/Festival/VoicePage.tsx, /src/pages/P4LabPage.tsx, /src/components/VoiceCreator.tsx, /src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/EditorPage.tsx, /src/components/APISlotManager/APISlotManager.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/APISlotManager/APISlotManager.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/stores/APISlotStore.tsx, /src/pages/Festival/VoicePage.tsx, /src/pages/P4LabPage.tsx, /src/components/VoiceCreator.tsx, /src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/EditorPage.tsx, /src/components/APISlotManager/APISlotManager.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/P4LabPage.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/P4LabPage.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/P4LabPage.tsx[22m
+[2m00:15:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m00:15:31[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m00:15:31[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/P4LabPage.tsx[22m
+[2m00:15:31[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/P4LabPage.tsx, /src/pages/EditorPage.tsx, /src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx, /src/components/APISlotManager/APISlotManager.tsx[22m
+[2m00:15:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/P4LabPage.tsx, /src/pages/EditorPage.tsx, /src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx, /src/components/APISlotManager/APISlotManager.tsx[22m
+[2m00:15:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/ResultPage.tsx, /src/pages/Festival/VoicePage.tsx[22m
+[2m00:15:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/P4LabPage.tsx, /src/pages/EditorPage.tsx[22m
+[2m00:15:33[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/stores/APISlotStore.tsx[22m
+[2m00:15:33[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[2m00:15:33[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/stores/APISlotStore.tsx[22m
+[2m00:15:33[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+[COS Middleware] 初始化配置: {
+  bucket: 'fudaiai-1400086527',
+  region: 'ap-shanghai',
+  hasSecretId: true,
+  hasSecretKey: true
+}
+[2m00:15:43[22m [36m[1m[vite][22m[39m server restarted.
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://26.26.26.1:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.2.2:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.23.0.1:[1m5173[22m/[39m
+[2m00:48:40[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mdist/index.html[22m
+[2m01:14:33[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mdist/index.html[22m
+[2m01:45:44[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mdist/index.html[22m

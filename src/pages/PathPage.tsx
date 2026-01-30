@@ -156,8 +156,8 @@ const PathPage: React.FC = () => {
             marginBottom: '20px'
           }}
           onMouseOver={(e) => {
-            e.currentTarget.style.borderColor = '#06b6d4';
-            e.currentTarget.style.color = '#06b6d4';
+            e.currentTarget.style.borderColor = '#a3a3a3';
+            e.currentTarget.style.color = '#a3a3a3';
           }}
           onMouseOut={(e) => {
             e.currentTarget.style.borderColor = '#fff';
@@ -174,7 +174,7 @@ const PathPage: React.FC = () => {
           padding: '20px',
           border: '1px solid rgba(6, 182, 212, 0.3)'
         }}>
-          <div style={{ fontSize: '12px', color: '#06b6d4', marginBottom: '10px' }}>原子任务进度</div>
+          <div style={{ fontSize: '12px', color: '#a3a3a3', marginBottom: '10px' }}>原子任务进度</div>
           <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#fff' }}>
             {allSteps.filter(step => 
               localStorage.getItem(`completed_step_${step?.parentMissionId || ''}_${step?.stepIndex || 0}`) === 'true'
@@ -276,7 +276,7 @@ const PathPage: React.FC = () => {
               fontWeight: 'bold',
               color: '#fff',
               marginBottom: '8px',
-              background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+              background: 'linear-gradient(135deg, #a3a3a3 0%, #8b5cf6 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent'
             }}>
@@ -493,7 +493,7 @@ const PathPage: React.FC = () => {
                     position: 'absolute',
                     top: '12px',
                     left: '12px',
-                    background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
+                    background: 'linear-gradient(135deg, #a3a3a3 0%, #a3a3a3 100%)',
                     color: '#fff',
                     padding: '4px 8px',
                     borderRadius: '12px',
@@ -555,7 +555,7 @@ const PathPage: React.FC = () => {
                   {/* 点击提示 */}
                   <div style={{
                     fontSize: '12px',
-                    color: isCompleted ? '#10b981' : '#06b6d4',
+                    color: isCompleted ? '#a3a3a3' : '#a3a3a3',
                     fontWeight: 'bold',
                     marginTop: '12px',
                     textAlign: 'center',
@@ -630,7 +630,7 @@ const PathPage: React.FC = () => {
           padding: '15px',
           border: '1px solid rgba(6, 182, 212, 0.2)'
         }}>
-          <div style={{ fontSize: '12px', color: '#06b6d4', marginBottom: '10px' }}>发布统计</div>
+          <div style={{ fontSize: '12px', color: '#a3a3a3', marginBottom: '10px' }}>发布统计</div>
           <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>0</div>
           <div style={{ fontSize: '11px', color: '#666' }}>已发布任务</div>
         </div>

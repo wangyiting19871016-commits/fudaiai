@@ -46,11 +46,11 @@ const ReferenceCard: React.FC<ReferenceCardProps> = ({ content, title = 'ðŸ“¦ æ 
         alignItems: 'center', 
         height: '40px' 
       }}> 
-        <span style={{ color: '#10b981', fontSize: 12, fontWeight: 'bold' }}>{title}</span> 
+        <span style={{ color: '#a3a3a3', fontSize: 12, fontWeight: 'bold' }}>{title}</span> 
         <button 
           onClick={handleCopy}
           style={{ 
-            background: isCopied ? '#10b981' : '#06b6d4', 
+            background: isCopied ? '#a3a3a3' : '#a3a3a3', 
             color: '#000', 
             padding: '4px 10px', 
             borderRadius: 4, 

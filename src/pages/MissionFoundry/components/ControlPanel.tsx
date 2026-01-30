@@ -1,5 +1,5 @@
 import React from 'react';
-import { MissionStep, ControlItem } from '@/types';
+import { MissionStep, ControlItem } from '../../../types';
 
 interface ControlPanelProps {
   step: MissionStep;
@@ -72,8 +72,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
             style={{
               padding: '2px 6px',
               background: '#000',
-              border: '1px solid #10b981',
-              color: '#10b981',
+              border: '1px solid #a3a3a3',
+              color: '#a3a3a3',
               borderRadius: 3,
               fontSize: 8,
               cursor: 'pointer',
@@ -99,7 +99,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
             }}>
               <span style={{ 
                 fontSize: 9, 
-                color: '#06b6d4',
+                color: '#a3a3a3',
                 fontWeight: 'bold',
                 display: 'flex',
                 alignItems: 'center',
@@ -134,7 +134,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
                     <span style={{ 
                       fontSize: 10, 
                       fontWeight: 'bold',
-                      background: '#06b6d4',
+                      background: '#a3a3a3',
                       color: '#000',
                       padding: '2px 6px',
                       borderRadius: 3,
@@ -180,7 +180,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
                       background: '#000',
                       border: '1px solid #444',
                       borderRadius: 3,
-                      color: '#10b981',
+                      color: '#a3a3a3',
                       fontSize: 9,
                       fontWeight: 'bold',
                       textAlign: 'right'
@@ -247,7 +247,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
                     borderRadius: 3,
                     outline: 'none',
                     cursor: 'pointer',
-                    background: 'linear-gradient(to right, #06b6d4 0%, #06b6d4 ' + 
+                    background: 'linear-gradient(to right, #a3a3a3 0%, #a3a3a3 ' + 
                               `${(((control.value || 0.5) - (control.min || 0)) / ((control.max || 1) - (control.min || 0))) * 100}%, ` +
                               '#333 ' +
                               `${(((control.value || 0.5) - (control.min || 0)) / ((control.max || 1) - (control.min || 0))) * 100}%, #333 100%)`,
@@ -263,7 +263,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
                 />
                 <span style={{ 
                   fontSize: 10, 
-                  color: '#06b6d4',
+                  color: '#a3a3a3',
                   fontWeight: 'bold',
                   width: 50,
                   textAlign: 'right'
@@ -289,7 +289,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
                   border: '1px solid rgba(6, 182, 212, 0.2)',
                   borderRadius: 4
                 }}>
-                  <span style={{ color: '#06b6d4' }}>💡</span>
+                  <span style={{ color: '#a3a3a3' }}>💡</span>
                   <input
                     type="text"
                     value={control.insight}
@@ -356,7 +356,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
           </span>
           <span style={{ 
             fontSize: 10, 
-            color: '#06b6d4',
+            color: '#a3a3a3',
             fontWeight: 'bold'
           }}>
             {step.fingerprintImpact !== undefined ? Math.round(step.fingerprintImpact * 100) : 50}%
@@ -426,8 +426,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
           gap: 4
         }}>
           {[
-            { key: 'accuracy', label: '准确性', color: '#10b981' },
-            { key: 'consistency', label: '一致性', color: '#06b6d4' },
+            { key: 'accuracy', label: '准确性', color: '#a3a3a3' },
+            { key: 'consistency', label: '一致性', color: '#a3a3a3' },
             { key: 'creativity', label: '创造性', color: '#f59e0b' },
             { key: 'detail', label: '细节度', color: '#8b5cf6' },
             { key: 'logic', label: '逻辑性', color: '#ec4899' },
@@ -500,8 +500,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ step, index, onUpdateStep }
                 transition: 'all 0.2s ease'
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.borderColor = '#06b6d4';
-                e.currentTarget.style.color = '#06b6d4';
+                e.currentTarget.style.borderColor = '#a3a3a3';
+                e.currentTarget.style.color = '#a3a3a3';
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.borderColor = '#444';

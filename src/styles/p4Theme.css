@@ -1,0 +1,205 @@
+:root {
+  --p4-bg-canvas: #0a0a0a;
+  --p4-bg-surface: #101010;
+  --p4-bg-elevated: #151515;
+  --p4-bg-input: #0d0d0d;
+  --p4-border-subtle: rgba(255, 255, 255, 0.08);
+  --p4-border-strong: rgba(255, 255, 255, 0.14);
+  --p4-text-primary: rgba(255, 255, 255, 0.92);
+  --p4-text-secondary: rgba(255, 255, 255, 0.72);
+  --p4-text-muted: rgba(255, 255, 255, 0.54);
+  --p4-accent: rgba(255, 255, 255, 0.92);
+  --p4-accent-2: rgba(255, 255, 255, 0.72);
+  --p4-danger: rgba(255, 255, 255, 0.86);
+  --p4-warn: rgba(255, 255, 255, 0.70);
+  --p4-focus: rgba(255, 255, 255, 0.24);
+
+  --mono-fg: rgba(0, 0, 0, 0.82);
+  --mono-fg-soft: rgba(0, 0, 0, 0.66);
+  --mono-fg-muted: rgba(0, 0, 0, 0.48);
+  --mono-ring: rgba(0, 0, 0, 0.18);
+  --mono-bg-soft: rgba(0, 0, 0, 0.06);
+  --mono-border: rgba(0, 0, 0, 0.14);
+  --mono-border-subtle: rgba(0, 0, 0, 0.10);
+
+  --mono-accent: rgba(64, 64, 64, 0.92);
+  --mono-accent-strong: rgba(18, 18, 18, 0.92);
+}
+
+.p4-theme {
+  color: var(--p4-text-primary);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+  --mono-fg: rgba(255, 255, 255, 0.92);
+  --mono-fg-soft: rgba(255, 255, 255, 0.72);
+  --mono-fg-muted: rgba(255, 255, 255, 0.54);
+  --mono-ring: rgba(255, 255, 255, 0.18);
+  --mono-bg-soft: rgba(255, 255, 255, 0.06);
+  --mono-border: rgba(255, 255, 255, 0.20);
+  --mono-border-subtle: rgba(255, 255, 255, 0.12);
+
+  --mono-accent: rgba(255, 255, 255, 0.78);
+  --mono-accent-strong: rgba(255, 255, 255, 0.92);
+}
+
+.p4-theme *:focus-visible {
+  outline: 2px solid var(--p4-focus);
+  outline-offset: 2px;
+}
+
+.p4-antd-popup {
+  background: var(--p4-bg-elevated) !important;
+}
+
+.p4-theme .ant-input,
+.p4-theme .ant-input-affix-wrapper,
+.p4-theme .ant-input-number,
+.p4-theme .ant-input-number-input,
+.p4-theme .ant-select-selector {
+  background: #1a1a1a !important;  /* 更亮的输入框背景 */
+  border-color: rgba(255, 255, 255, 0.25) !important;  /* 更明显的边框 */
+  color: rgba(255, 255, 255, 0.95) !important;  /* 更亮的文字 */
+  box-shadow: none !important;
+}
+
+.p4-theme .ant-select-selection-item {
+  color: rgba(255, 255, 255, 0.95) !important;  /* 选中项的文字更亮 */
+}
+
+.p4-theme .ant-select-arrow {
+  color: rgba(255, 255, 255, 0.65) !important;  /* 箭头更明显 */
+}
+
+.p4-theme .ant-input::placeholder,
+.p4-theme .ant-input-affix-wrapper input::placeholder,
+.p4-theme .ant-input-number-input::placeholder {
+  color: var(--p4-text-muted) !important;
+}
+
+.p4-theme .ant-input:focus,
+.p4-theme .ant-input-focused,
+.p4-theme .ant-input-affix-wrapper-focused,
+.p4-theme .ant-input-number:focus,
+.p4-theme .ant-input-number-focused,
+.p4-theme .ant-select-focused .ant-select-selector {
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14) !important;
+}
+
+.p4-theme .ant-select-dropdown,
+.p4-antd-popup .ant-select-dropdown {
+  background: #1a1a1a !important;  /* 更亮的背景 */
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;  /* 更明显的边框 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;  /* 增强阴影 */
+}
+
+.p4-theme .ant-select-item {
+  color: #000000 !important;  /* 纯黑文字（白底用） */
+  padding: 8px 12px !important;
+}
+
+.p4-theme .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+  background: #e6f4ff !important;  /* 浅蓝色悬停 */
+  color: #000000 !important;
+}
+
+.p4-theme .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background: #1677ff !important;  /* Antd标准蓝 */
+  color: #ffffff !important;  /* 纯白文字 */
+  font-weight: 600 !important;
+}
+
+.p4-theme .ant-select-item-option-disabled {
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+
+.p4-theme .ant-switch {
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+
+.p4-theme .ant-switch-checked {
+  background: rgba(255, 255, 255, 0.28) !important;
+}
+
+.p4-theme .ant-switch-handle::before {
+  background: rgba(255, 255, 255, 0.92) !important;
+}
+
+.p4-theme .ant-slider-rail {
+  background: rgba(255, 255, 255, 0.20) !important;  /* 更亮的滑块轨道 */
+}
+
+.p4-theme .ant-slider-track {
+  background: rgba(100, 149, 237, 0.70) !important;  /* 蓝色滑块进度条 */
+}
+
+.p4-theme .ant-slider-handle::after {
+  background: #ffffff !important;  /* 纯白滑块手柄 */
+  box-shadow: 0 0 0 2px rgba(100, 149, 237, 0.5) !important;  /* 蓝色光晕 */
+}
+
+.p4-theme .ant-slider-handle:hover::after {
+  box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.6) !important;  /* 悬停时更明显 */
+}
+
+.p4-btn {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);  /* 更明显的按钮边框 */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.08) 100%);  /* 更亮的按钮背景 */
+  color: rgba(255, 255, 255, 0.95);  /* 更亮的按钮文字 */
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 120ms ease, box-shadow 120ms ease, transform 120ms ease, opacity 120ms ease;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 10px 26px rgba(0, 0, 0, 0.55);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+.p4-btn:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.12) 100%);  /* 悬停更亮 */
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.p4-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.10) inset, 0 6px 18px rgba(0, 0, 0, 0.55);
+}
+
+.p4-btn--primary {
+  border-color: rgba(255, 255, 255, 0.20);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%);
+}
+
+.p4-btn--primary:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.12) 100%);
+}
+
+.p4-btn--subtle {
+  border-color: var(--p4-border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.10) inset, 0 8px 20px rgba(0, 0, 0, 0.50);
+}
+
+.p4-btn--disabled {
+  opacity: 0.45;
+  transform: none;
+  box-shadow: none;
+}
+
+.p4-btn--icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.p4-btn--sm {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 9px;
+  font-size: 12px;
+}

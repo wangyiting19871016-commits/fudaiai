@@ -1,0 +1,442 @@
+/* 🎨 全屏加载器 - 科技感设计 */
+.zj-fullscreen-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* 背景遮罩 */
+.zj-loader-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+  opacity: 0.98;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 内容区 */
+.zj-loader-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  max-width: 90vw;
+  animation: zj-fade-in 0.4s ease-out;
+}
+
+@keyframes zj-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 用户照片预览 */
+.zj-loader-avatar {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255, 201, 71, 0.3);
+  box-shadow: 0 8px 32px rgba(211, 47, 47, 0.3);
+}
+
+.zj-loader-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* DNA扫描线 */
+.zj-scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 201, 71, 0.8) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px rgba(255, 201, 71, 0.6);
+  animation: zj-scan 2s ease-in-out infinite;
+}
+
+@keyframes zj-scan {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(100px); }
+  100% { transform: translateY(0); }
+}
+
+/* 🎨 进度环容器 - 科技感设计 */
+.zj-progress-ring {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+/* 外圈装饰 - 持续旋转（表示"正在处理"） */
+.zj-outer-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  animation: zj-spin 3s linear infinite;
+}
+
+.zj-outer-ring-1 {
+  width: 190px;
+  height: 190px;
+  margin-top: -95px;
+  margin-left: -95px;
+  border-top-color: rgba(255, 201, 71, 0.4);
+  border-right-color: rgba(255, 111, 0, 0.3);
+}
+
+.zj-outer-ring-2 {
+  width: 200px;
+  height: 200px;
+  margin-top: -100px;
+  margin-left: -100px;
+  border-bottom-color: rgba(211, 47, 47, 0.3);
+  border-left-color: rgba(255, 201, 71, 0.2);
+  animation-duration: 4s;
+  animation-direction: reverse;
+}
+
+@keyframes zj-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 呼吸光晕 */
+.zj-glow-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160px;
+  height: 160px;
+  margin-top: -80px;
+  margin-left: -80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 201, 71, 0.2) 0%, transparent 70%);
+  animation: zj-glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes zj-glow-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* SVG容器 */
+.zj-progress-svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 8px rgba(255, 201, 71, 0.3));
+}
+
+/* 进度圆 - 流畅过渡 */
+.zj-progress-circle {
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 中心文字 - 绝对居中 */
+.zj-progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zj-progress-percent {
+  font-size: 42px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #FFC947 0%, #FF6F00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  animation: zj-number-pulse 2s ease-in-out infinite;
+}
+
+@keyframes zj-number-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+  }
+}
+
+/* 状态文案 */
+.zj-loader-message {
+  text-align: center;
+  color: #fff;
+  max-width: 300px;
+}
+
+.zj-stage-text {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #FFC947 0%, #FF6F00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: zj-text-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes zj-text-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.zj-detail-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+}
+
+/* 🌟 粒子装饰 - 科技感 */
+.zj-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.zj-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, rgba(255, 201, 71, 0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  animation: zj-particle-float 8s ease-in-out infinite;
+}
+
+.zj-particle:nth-child(1) {
+  left: 20%;
+  animation-delay: 0s;
+  animation-duration: 6s;
+}
+
+.zj-particle:nth-child(2) {
+  left: 50%;
+  animation-delay: 2s;
+  animation-duration: 8s;
+}
+
+.zj-particle:nth-child(3) {
+  left: 80%;
+  animation-delay: 4s;
+  animation-duration: 7s;
+}
+
+.zj-particle:nth-child(4) {
+  left: 35%;
+  animation-delay: 1s;
+  animation-duration: 9s;
+}
+
+@keyframes zj-particle-float {
+  0% {
+    bottom: -10px;
+    opacity: 0;
+    transform: translateX(0) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    bottom: 100%;
+    opacity: 0;
+    transform: translateX(20px) scale(1.5);
+  }
+}
+
+/* 提示文本 */
+.zj-loader-tips {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 280px;
+  padding: 12px 20px;
+  background: rgba(255, 201, 71, 0.08);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 201, 71, 0.2);
+  animation: zj-float 3s ease-in-out infinite;
+}
+
+@keyframes zj-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.zj-loader-tips p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* 📱 响应式调整 - 确保移动端完整显示 */
+@media (max-width: 480px) {
+  .zj-loader-content {
+    gap: 20px !important;
+  }
+
+  .zj-loader-avatar {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  /* 🎯 关键：容器必须大于最大元素 */
+  .zj-progress-ring {
+    width: 220px !important;    /* 确保容纳210px的outer-ring */
+    height: 220px !important;
+    margin: 0 auto !important;
+  }
+
+  /* 外圈1：190px */
+  .zj-outer-ring-1 {
+    width: 190px !important;
+    height: 190px !important;
+    margin-top: -95px !important;
+    margin-left: -95px !important;
+  }
+
+  /* 外圈2：200px */
+  .zj-outer-ring-2 {
+    width: 200px !important;
+    height: 200px !important;
+    margin-top: -100px !important;
+    margin-left: -100px !important;
+  }
+
+  /* 光晕 */
+  .zj-glow-effect {
+    width: 160px !important;
+    height: 160px !important;
+    margin-top: -80px !important;
+    margin-left: -80px !important;
+  }
+
+  /* SVG保持180px */
+  .zj-progress-svg {
+    width: 180px !important;
+    height: 180px !important;
+  }
+
+  .zj-progress-percent {
+    font-size: 36px !important;
+  }
+
+  .zj-stage-text {
+    font-size: 15px !important;
+  }
+
+  .zj-detail-text {
+    font-size: 12px !important;
+  }
+
+  .zj-loader-tips {
+    font-size: 12px !important;
+    padding: 10px 16px !important;
+    max-width: 260px !important;
+  }
+}
+
+/* 超小屏幕 */
+@media (max-width: 360px) {
+  .zj-progress-ring {
+    width: 180px;
+    height: 180px;
+  }
+
+  .zj-outer-ring-1 {
+    width: 150px;
+    height: 150px;
+    margin-top: -75px;
+    margin-left: -75px;
+    border-top-color: rgba(255, 201, 71, 0.4) !important;
+    border-right-color: rgba(255, 111, 0, 0.3) !important;
+  }
+
+  .zj-outer-ring-2 {
+    width: 160px;
+    height: 160px;
+    margin-top: -80px;
+    margin-left: -80px;
+    border-bottom-color: rgba(211, 47, 47, 0.3) !important;
+    border-left-color: rgba(255, 201, 71, 0.2) !important;
+  }
+
+  .zj-glow-effect {
+    width: 120px;
+    height: 120px;
+    margin-top: -60px;
+    margin-left: -60px;
+  }
+
+  .zj-progress-svg {
+    width: 140px !important;
+    height: 140px !important;
+  }
+
+  .zj-progress-percent {
+    font-size: 34px;
+  }
+}
+
+/* ⚡ 性能优化 */
+.zj-progress-circle,
+.zj-outer-ring,
+.zj-glow-effect,
+.zj-particle {
+  will-change: transform, opacity;
+}

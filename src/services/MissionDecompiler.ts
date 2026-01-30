@@ -2,20 +2,16 @@
 
 // 导入真迹协议 schema
 import { Mission } from '../missionSchema';
-import trueTrackProtocolV1 from '../data/trueTrackProtocolV1.json';
 
 // DeepSeek API 配置 - DeepSeek-V3 接口
 const DEEPSEEK_API_KEY = ''; // 实际使用时从环境变量获取
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
 // 提示模板 - 支持B站链接解析和3-10步约束
-const PROMPT_TEMPLATE = `你是一位专业的《真迹协议 v1.0》解析器。请将用户输入的视频文案/教程文字或B站链接，严格按照以下协议格式转换为JSON结构。
-
-# 真迹协议 v1.0 规范
-${JSON.stringify(trueTrackProtocolV1, null, 2)}
+const PROMPT_TEMPLATE = `你是一位专业的《真迹协议 v1.0》解析器。请将用户输入的视频文案/教程文字或B站链接，严格按照真迹协议格式转换为JSON结构。
 
 # 转换要求
-1. 严格遵循上述JSON schema，不得添加额外字段
+1. 严格遵循真迹协议JSON schema，不得添加额外字段
 2. 智能分析用户输入，提取关键信息
 3. 如果用户输入的是B站链接，请自动填充steps、instruction和mock_response
 4. 强制生成的steps数量在3到10之间，不得少于3个，也不得超过10个

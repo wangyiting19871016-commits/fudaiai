@@ -1,0 +1,37 @@
+✅ 物理保存路径已锁定: F:/project_kuajing/temp_processing
+✅ 下载目录已初始化: F:\project_kuajing\downloads
+🔥 [核心监听启动] 后端心脏已跳动，端口: 3002
+🔥 物理进程已开启，PID: 30356
+
+🚀 Server is running on http://localhost:3002
+📡 API endpoints available at:
+   - Health check: http://localhost:3002/api/health
+   - FFmpeg check: http://localhost:3002/api/ffmpeg-check
+   - Audio separate: http://localhost:3002/api/audio/separate
+   - AI Triple Split: http://localhost:3002/api/audio/process-triple-split
+   - Traditional Split: http://localhost:3002/api/audio/split-traditional
+   - Video Compose: http://localhost:3002/api/video/compose
+
+🎯 Frontend available at: http://localhost:3002
+🚀 后端服务已在 3002 端口就绪，准备调用 FFmpeg
+
+🔍 Checking FFmpeg installation...
+
+✅ FFmpeg FOUND:
+   Path: ffmpeg
+   Version: 2025-12-31-git-38e89fe502-full_build-www.gyan.dev
+   FFmpeg service is now active and reachable
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /favicon.ico
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！

@@ -1,0 +1,109 @@
+✅ 物理保存路径已锁定: F:/PROJECT_KUAJING/temp_processing
+✅ 下载目录已初始化: F:\PROJECT_KUAJING\downloads
+🔥 [核心监听启动] 后端心脏已跳动，端口: 3002
+🔥 物理进程已开启，PID: 37408
+
+🚀 Server is running on http://localhost:3002
+📡 API endpoints available at:
+   - Health check: http://localhost:3002/api/health
+   - FFmpeg check: http://localhost:3002/api/ffmpeg-check
+   - Audio separate: http://localhost:3002/api/audio/separate
+   - AI Triple Split: http://localhost:3002/api/audio/process-triple-split
+   - Traditional Split: http://localhost:3002/api/audio/split-traditional
+   - Video Compose: http://localhost:3002/api/video/compose
+
+🎯 Frontend available at: http://localhost:3002
+🚀 后端服务已在 3002 端口就绪，准备调用 FFmpeg
+
+🔍 Checking FFmpeg installation...
+
+✅ FFmpeg FOUND:
+   Path: ffmpeg
+   Version: 2025-12-31-git-38e89fe502-full_build-www.gyan.dev
+   FFmpeg service is now active and reachable
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: POST -> /api/video/compose
+✨ [3002 信号] 成功接收到来自网页的请求！
+🎬 [视频合成] 收到请求: {
+  inputUrl: 'https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png',
+  type: 'image',
+  subtitle: '🧧 恭喜发财，财神到！',
+  duration: 5,
+  outputFormat: 'mp4'
+}
+📥 [视频合成] 下载输入文件: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png
+📁 [视频合成] 临时文件: F:\PROJECT_KUAJING\temp_processing\temp_input_1769751688657.png
+✅ [视频合成] 下载完成，文件大小: 7037213
+📁 [视频合成] 输出路径: F:\PROJECT_KUAJING\downloads\composed_1769751688657.mp4
+✅ [视频合成] 使用 FFmpeg: ffmpeg
+📝 [视频合成] 添加字幕滤镜
+🎬 [FFmpeg] 命令: ffmpeg -loop 1 -t 5 -i F:\PROJECT_KUAJING\temp_processing\temp_input_1769751688657.png -y -filter:v drawtext=text='🧧 恭喜发财，财神到！':fontfile='C\:/Windows/Fonts/msyh.ttc':fontsize=100:fontcolor=white:borderw=5:bordercolor=black:shadowcolor=black@0.8:shadowx=3:shadowy=3:box=1:boxcolor=black@0.5:boxborderw=15:x=(w-text_w)/2:y=h/2:enable='between(t,0.5,4.5)' -c:v libx264 -pix_fmt yuv420p -preset ultrafast -crf 28 F:\PROJECT_KUAJING\downloads\composed_1769751688657.mp4
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+✅ [视频合成] 完成: composed_1769751688657.mp4
+🧹 已删除临时文件
+📡 [雷达捕捉到信号]: GET -> /downloads/composed_1769751688657.mp4
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /downloads/composed_1769751688657.mp4
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /downloads/composed_1769751688657.mp4
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: POST -> /api/video/compose
+✨ [3002 信号] 成功接收到来自网页的请求！
+🎬 [视频合成] 收到请求: {
+  inputUrl: 'https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png',
+  type: 'image',
+  subtitle: '🧧 恭喜发财，财神到！',
+  duration: 5,
+  outputFormat: 'mp4'
+}
+📥 [视频合成] 下载输入文件: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png
+📁 [视频合成] 临时文件: F:\PROJECT_KUAJING\temp_processing\temp_input_1769757530542.png
+📡 [雷达捕捉到信号]: POST -> /api/video/compose
+✨ [3002 信号] 成功接收到来自网页的请求！
+🎬 [视频合成] 收到请求: {
+  inputUrl: 'https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png',
+  type: 'image',
+  subtitle: '🧧 恭喜发财，财神到！',
+  duration: 5,
+  outputFormat: 'mp4'
+}
+📥 [视频合成] 下载输入文件: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png
+📁 [视频合成] 临时文件: F:\PROJECT_KUAJING\temp_processing\temp_input_1769757534708.png
+✅ [视频合成] 下载完成，文件大小: 7037213
+📁 [视频合成] 输出路径: F:\PROJECT_KUAJING\downloads\composed_1769757530542.mp4
+✅ [视频合成] 使用 FFmpeg: ffmpeg
+📝 [视频合成] 添加字幕滤镜
+🎬 [FFmpeg] 命令: ffmpeg -loop 1 -t 5 -i F:\PROJECT_KUAJING\temp_processing\temp_input_1769757530542.png -y -filter:v drawtext=text='🧧 恭喜发财，财神到！':fontfile='C\:/Windows/Fonts/msyh.ttc':fontsize=100:fontcolor=white:borderw=5:bordercolor=black:shadowcolor=black@0.8:shadowx=3:shadowy=3:box=1:boxcolor=black@0.5:boxborderw=15:x=(w-text_w)/2:y=h/2:enable='between(t,0.5,4.5)' -c:v libx264 -pix_fmt yuv420p -preset ultrafast -crf 28 F:\PROJECT_KUAJING\downloads\composed_1769757530542.mp4
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+✅ [视频合成] 完成: composed_1769757530542.mp4
+🧹 已删除临时文件
+📡 [雷达捕捉到信号]: GET -> /downloads/composed_1769757530542.mp4
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /downloads/composed_1769757530542.mp4
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /downloads/composed_1769757530542.mp4
+✨ [3002 信号] 成功接收到来自网页的请求！
+✅ [视频合成] 下载完成，文件大小: 7037213
+📁 [视频合成] 输出路径: F:\PROJECT_KUAJING\downloads\composed_1769757534708.mp4
+✅ [视频合成] 使用 FFmpeg: ffmpeg
+📝 [视频合成] 添加字幕滤镜
+🎬 [FFmpeg] 命令: ffmpeg -loop 1 -t 5 -i F:\PROJECT_KUAJING\temp_processing\temp_input_1769757534708.png -y -filter:v drawtext=text='🧧 恭喜发财，财神到！':fontfile='C\:/Windows/Fonts/msyh.ttc':fontsize=100:fontcolor=white:borderw=5:bordercolor=black:shadowcolor=black@0.8:shadowx=3:shadowy=3:box=1:boxcolor=black@0.5:boxborderw=15:x=(w-text_w)/2:y=h/2:enable='between(t,0.5,4.5)' -c:v libx264 -pix_fmt yuv420p -preset ultrafast -crf 28 F:\PROJECT_KUAJING\downloads\composed_1769757534708.mp4
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+✅ [视频合成] 完成: composed_1769757534708.mp4
+🧹 已删除临时文件
+📡 [雷达捕捉到信号]: GET -> /downloads/composed_1769757534708.mp4
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /downloads/composed_1769757534708.mp4
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /downloads/composed_1769757534708.mp4
+✨ [3002 信号] 成功接收到来自网页的请求！

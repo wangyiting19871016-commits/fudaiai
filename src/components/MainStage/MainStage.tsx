@@ -162,7 +162,7 @@ const MainStage: React.FC<MainStageProps> = ({ steps, onChallengeClick, onStepCh
                 position: 'fixed',
                 top: '20px',
                 right: '20px',
-                color: '#22c55e',
+                color: '#a3a3a3',
                 fontWeight: 'bold',
                 fontSize: '24px',
                 animation: 'creditFloat 1s ease-out forwards',
@@ -178,13 +178,13 @@ const MainStage: React.FC<MainStageProps> = ({ steps, onChallengeClick, onStepCh
             marginTop: '20px',
             padding: '15px',
             textAlign: 'center',
-            backgroundColor: 'rgba(0, 255, 136, 0.1)',
+            backgroundColor: 'rgba(163, 163, 163, 0.1)',
             borderRadius: '8px',
-            color: '#00ff88',
+            color: '#a3a3a3',
             fontSize: '14px',
             fontWeight: 'bold',
-            border: '1px solid rgba(0, 255, 136, 0.2)',
-            boxShadow: '0 0 10px rgba(0, 255, 136, 0.1)'
+            border: '1px solid rgba(163, 163, 163, 0.2)',
+            boxShadow: '0 0 10px rgba(163, 163, 163, 0.1)'
           }}>
             同频者
           </div>

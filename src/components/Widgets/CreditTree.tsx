@@ -10,15 +10,15 @@ const styles = {
   idContainer: {
     fontSize: '14px',
     fontFamily: 'Monospace',
-    color: '#00ff88',
+    color: '#a3a3a3',
     marginBottom: '10px',
-    textShadow: '0 0 5px #00ff88',
+    textShadow: '0 0 5px #a3a3a3',
     opacity: 0.8,
     animation: 'breath 2s infinite ease-in-out'
   },
   divider: {
     height: '1px',
-    backgroundColor: 'rgba(0, 255, 136, 0.3)',
+    backgroundColor: 'rgba(163, 163, 163, 0.3)',
     marginBottom: '15px'
   },
   container: {
@@ -30,7 +30,7 @@ const styles = {
     borderRadius: '16px',
     boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
     boxSizing: 'border-box' as const,
-    border: '1px solid rgba(0, 255, 136, 0.2)',
+    border: '1px solid rgba(163, 163, 163, 0.2)',
     backdropFilter: 'blur(10px)'
   },
   title: {
@@ -46,7 +46,7 @@ const styles = {
   },
   creditValue: {
     fontSize: '14px',
-    color: '#00ff88',
+    color: '#a3a3a3',
     marginTop: '5px',
     fontWeight: 'bold'
   }

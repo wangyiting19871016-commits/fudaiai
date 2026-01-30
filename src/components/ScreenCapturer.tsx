@@ -307,7 +307,7 @@ const ScreenCapturer: React.FC<ScreenCapturerProps> = ({ onCapture, onClose, ver
                   onClick={captureFrame}
                   style={{
                     padding: '12px 24px',
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    background: 'linear-gradient(135deg, #a3a3a3, #059669)',
                     color: '#fff',
                     border: 'none',
                     borderRadius: 8,
@@ -342,7 +342,7 @@ const ScreenCapturer: React.FC<ScreenCapturerProps> = ({ onCapture, onClose, ver
                 onClick={confirmCapture}
                 style={{
                   padding: '12px 24px',
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  background: 'linear-gradient(135deg, #a3a3a3, #059669)',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 8,
@@ -372,9 +372,9 @@ const ScreenCapturer: React.FC<ScreenCapturerProps> = ({ onCapture, onClose, ver
           textAlign: 'center'
         }}>
           {capturedImage ? (
-            <span style={{ color: '#10b981' }}>✅ 真迹已锁定 - 图像已捕获并准备存证</span>
+            <span style={{ color: '#a3a3a3' }}>✅ 真迹已锁定 - 图像已捕获并准备存证</span>
           ) : isCapturing ? (
-            <span style={{ color: '#06b6d4' }}>🎯 正在捕获中 - 请确保目标窗口内容清晰可见</span>
+            <span style={{ color: '#a3a3a3' }}>🎯 正在捕获中 - 请确保目标窗口内容清晰可见</span>
           ) : (
             <span>{showCaptureGuide()}</span>
           )}

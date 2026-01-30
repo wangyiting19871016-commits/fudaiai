@@ -90,7 +90,7 @@ const MediaView: React.FC<MediaViewProps> = ({ videoUrl, onPreviewStatusChange }
           left: '50%',
           transform: 'translate(-50%, -50%)',
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          color: '#06b6d4',
+          color: '#a3a3a3',
           padding: '12px 24px',
           borderRadius: '4px',
           fontSize: '14px',

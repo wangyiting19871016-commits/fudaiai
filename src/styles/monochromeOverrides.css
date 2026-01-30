@@ -1,0 +1,108 @@
+:root {
+  --mono-ui-fg: var(--mono-fg);
+  --mono-ui-fg-soft: var(--mono-fg-soft);
+  --mono-ui-fg-muted: var(--mono-fg-muted);
+  --mono-ui-ring: var(--mono-ring);
+  --mono-ui-bg-soft: var(--mono-bg-soft);
+  --mono-ui-border: var(--mono-border);
+  --mono-ui-border-subtle: var(--mono-border-subtle);
+  --mono-ui-accent: var(--mono-accent);
+  --mono-ui-accent-strong: var(--mono-accent-strong);
+}
+
+.ant-typography a,
+a {
+  color: inherit;
+}
+
+.ant-btn-primary {
+  background: var(--mono-ui-accent-strong) !important;
+  border-color: var(--mono-ui-accent-strong) !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: none !important;
+}
+
+.p4-theme .ant-btn-primary {
+  color: rgba(0, 0, 0, 0.86) !important;
+}
+
+.ant-btn-default,
+.ant-btn-dashed,
+.ant-btn {
+  border-color: var(--mono-ui-border) !important;
+}
+
+.ant-btn-default:not(:disabled),
+.ant-btn-dashed:not(:disabled),
+.ant-btn:not(:disabled) {
+  color: var(--mono-ui-fg) !important;
+}
+
+.ant-btn-default:hover,
+.ant-btn-dashed:hover,
+.ant-btn:hover {
+  border-color: var(--mono-ui-border) !important;
+  color: var(--mono-ui-fg) !important;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner,
+.ant-radio-checked .ant-radio-inner {
+  background-color: var(--mono-ui-accent-strong) !important;
+  border-color: var(--mono-ui-accent-strong) !important;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner::after {
+  border-color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.p4-theme .ant-checkbox-checked .ant-checkbox-inner::after {
+  border-color: rgba(0, 0, 0, 0.86) !important;
+}
+
+.ant-tabs-ink-bar {
+  background: var(--mono-ui-accent-strong) !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--mono-ui-accent-strong) !important;
+}
+
+.ant-progress-bg {
+  background: var(--mono-ui-accent-strong) !important;
+}
+
+.ant-pagination-item-active {
+  border-color: var(--mono-ui-accent-strong) !important;
+}
+
+.ant-pagination-item-active a {
+  color: var(--mono-ui-accent-strong) !important;
+}
+
+.ant-tag {
+  border-color: var(--mono-ui-border-subtle) !important;
+}
+
+.ant-tag,
+.ant-badge-status-text {
+  color: var(--mono-ui-fg-soft) !important;
+}
+
+.ant-alert-success,
+.ant-alert-info,
+.ant-alert-warning,
+.ant-alert-error {
+  border-color: var(--mono-ui-border-subtle) !important;
+}
+
+.ant-alert-success .ant-alert-icon,
+.ant-alert-info .ant-alert-icon,
+.ant-alert-warning .ant-alert-icon,
+.ant-alert-error .ant-alert-icon {
+  color: var(--mono-ui-fg) !important;
+}
+
+.ant-notification-notice-message,
+.ant-message-notice-content {
+  color: var(--mono-ui-fg) !important;
+}

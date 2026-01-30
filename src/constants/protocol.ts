@@ -149,6 +149,18 @@ export const P4_PROTOCOL_DICTIONARY: Record<string, ProtocolDefinition> = {
     description: '判定阈值调节',
     imageBehavior: 'No direct visual effect',
     videoBehavior: 'No direct visual effect'
+  },
+  // 资产协议
+  'artifact:brilliance': {
+    category: 'VISUAL',
+    default: 0.0,
+    min: -1.0,
+    max: 1.0,
+    step: 0.01,
+    backendCommand: 'VISUAL_BRILLIANCE',
+    description: '智能亮度调节',
+    imageBehavior: 'Enhances shadows without blowing out highlights',
+    videoBehavior: 'Enhances shadows without blowing out highlights'
   }
 };
 

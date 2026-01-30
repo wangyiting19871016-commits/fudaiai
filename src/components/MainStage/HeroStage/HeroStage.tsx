@@ -119,13 +119,13 @@ const HeroStage: React.FC<HeroStageProps> = ({
                 width: '12px',
                 height: '12px',
                 borderRadius: '50%',
-                background: index === activeStep ? '#4CAF50' : '#d0d0d0',
+                background: index === activeStep ? '#a3a3a3' : '#d0d0d0',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 position: 'relative',
                 zIndex: 2,
                 transform: index === activeStep ? 'scale(1.2)' : 'scale(1)',
-                boxShadow: index === activeStep ? '0 0 15px rgba(76, 175, 80, 0.5)' : 'none'
+                boxShadow: index === activeStep ? '0 0 15px rgba(163, 163, 163, 0.5)' : 'none'
               }}
               data-title={step.title}
               onClick={() => switchStep(index)}
@@ -166,7 +166,7 @@ const HeroStage: React.FC<HeroStageProps> = ({
         </p>
         <button 
           style={{
-            background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
+            background: 'linear-gradient(135deg, #a3a3a3 0%, #a3a3a3 100%)',
             color: 'white',
             border: 'none',
             padding: '12px 30px',
@@ -175,17 +175,17 @@ const HeroStage: React.FC<HeroStageProps> = ({
             fontWeight: '600',
             cursor: 'pointer',
             transition: 'all 0.3s ease',
-            boxShadow: '0 4px 15px rgba(76, 175, 80, 0.3)'
+            boxShadow: '0 4px 15px rgba(163, 163, 163, 0.3)'
           }}
           id="challengeBtn" 
           onClick={onChallengeClick}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(163, 163, 163, 0.4)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(163, 163, 163, 0.3)';
           }}
         >
           发起同款挑战

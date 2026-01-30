@@ -12,7 +12,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ disabled = false }) => {
   
   let mediaRecorder: MediaRecorder | null = null;
   let recordingChunks: BlobPart[] = [];
-  let recordingTimer: number | null = null;
+  let recordingTimer: ReturnType<typeof setInterval> | null = null;
   
   // 开始录音
   const startRecording = async () => {
@@ -81,7 +81,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ disabled = false }) => {
           style={{
             flex: 1,
             padding: '10px',
-            backgroundColor: disabled ? '#666666' : (isRecording ? '#dc2626' : '#16a34a'),
+            backgroundColor: disabled ? '#666666' : (isRecording ? '#dc2626' : '#a3a3a3'),
             color: '#ffffff',
             border: '2px solid #ff0000', // Red border as required
             cursor: disabled ? 'not-allowed' : 'pointer',

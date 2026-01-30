@@ -72,13 +72,13 @@
 }
 
 .pearl.active {
-    background: #4CAF50;
+    background: #a3a3a3;
     transform: scale(1.2);
-    box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+    box-shadow: 0 0 15px rgba(163, 163, 163, 0.5);
 }
 
 .pearl:hover {
-    background: #4CAF50;
+    background: #a3a3a3;
     transform: scale(1.1);
 }
 
@@ -103,7 +103,7 @@
 }
 
 .challengeBtn {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    background: linear-gradient(135deg, #a3a3a3 0%, #a3a3a3 100%);
     color: white;
     border: none;
     padding: 12px 30px;
@@ -112,12 +112,12 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    box-shadow: 0 4px 15px rgba(163, 163, 163, 0.3);
 }
 
 .challengeBtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 6px 20px rgba(163, 163, 163, 0.4);
 }
 
 .taskTitle {
@@ -235,7 +235,7 @@
 .taskCardRewards::before {
     content: "🏆";
     margin-right: 5px;
-    color: #4CAF50;
+    color: #a3a3a3;
     font-weight: bold;
 }
 
@@ -290,7 +290,7 @@
 
 .courseCardDifficulty {
     font-size: 14px;
-    color: #4CAF50;
+    color: #a3a3a3;
 }
 
 .courseCardDuration {
@@ -450,7 +450,7 @@
     right: 0;
     width: 12px;
     height: 12px;
-    background: #00ff88;
+    background: #a3a3a3;
     border-radius: 50%;
     border: 2px solid #1a1a1a;
 }
@@ -592,13 +592,13 @@
 .liveDot {
     width: 8px;
     height: 8px;
-    background: #00ff88;
+    background: #a3a3a3;
     border-radius: 50%;
     animation: pulse 2s infinite;
 }
 
 .syncText {
-    color: #00ff88;
+    color: #a3a3a3;
     font-size: 12px;
     font-weight: 500;
 }

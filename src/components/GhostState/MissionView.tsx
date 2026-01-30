@@ -17,7 +17,7 @@ export const MissionView: React.FC<MissionViewProps> = ({ mission, onFillBenchma
           </h2>
           <div style={{ 
             padding: '6px 12px', 
-            backgroundColor: mission.difficulty === 'Easy' ? '#4caf50' : mission.difficulty === 'Hard' ? '#ff9800' : '#f44336',
+            backgroundColor: mission.difficulty === 'Easy' ? '#a3a3a3' : mission.difficulty === 'Hard' ? '#ff9800' : '#f44336',
             color: 'white',
             borderRadius: '4px',
             fontSize: '14px',

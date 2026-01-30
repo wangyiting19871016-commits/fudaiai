@@ -1,4 +1,17 @@
-import { Mission, AtomicSlot } from './schema';
+import { Mission, AtomicSlot, Benchmark } from './schema';
+
+// 默认基准标杆配置
+const DEFAULT_BENCHMARK: Benchmark = {
+  id: 'default_bench',
+  author: 'system',
+  videoUrl: '',
+  tips: '',
+  aestheticParams: {
+    exposure: 0, brightness: 1, contrast: 1, saturation: 1, warmth: 0, tint: 0,
+    highlights: 0, shadows: 0, blackPoint: 0, brilliance: 0, vibrance: 0,
+    sharpness: 0, definition: 0, noise: 0
+  }
+};
 
 // 示例原子槽位数据
 const coffeeExtractionSlots: AtomicSlot[] = [
@@ -17,6 +30,8 @@ const coffeeExtractionSlots: AtomicSlot[] = [
     officialCriteria: '萃取压力需稳定在9bar±0.5bar',
     officialAnchor: '/assets/anchors/pressure-anchor.png',
     currentBenchmark: {
+      ...DEFAULT_BENCHMARK,
+      id: 'bench-pressure',
       author: '咖啡大师',
       videoUrl: 'https://example.com/benchmark/pressure.mp4',
       tips: '预热手柄后再开始萃取'
@@ -46,7 +61,13 @@ export const missions: Mission[] = [
         title: '心形拉花',
         officialCriteria: '心形需对称，顶部圆润，底部收尖',
         officialAnchor: '/assets/anchors/heart-anchor.png',
-        currentBenchmark: null
+        currentBenchmark: {
+          ...DEFAULT_BENCHMARK,
+          id: 'bench-heart-latte',
+          author: '拉花大师',
+          videoUrl: 'https://example.com/benchmark/heart-latte.mp4',
+          tips: '控制好拉花高度和速度'
+        }
       }
     ]
   },

@@ -1,0 +1,47 @@
+
+> trinity-mirror@1.0.0 dev
+> node ./node_modules/vite/bin/vite.js
+
+[dotenv@17.2.3] injecting env (13) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+[COS Middleware] 初始化配置: {
+  bucket: 'fudaiai-1400086527',
+  region: 'ap-shanghai',
+  hasSecretId: true,
+  hasSecretKey: true
+}
+
+  [32m[1mVITE[22m v4.5.14[39m  [2mready in [0m[1m479[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://26.26.26.1:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.2.2:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.23.0.1:[1m5173[22m/[39m
+[COS Middleware] 🔍 end事件被触发，当前isProcessing: false
+[COS Middleware] 🔍 开始处理，body长度: 133371
+[COS Middleware] 构造的URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1769764852819_98s1w5w29z6.jpg
+[COS Middleware] URL长度: 99
+[COS Middleware] URL类型: string
+[COS Middleware] 响应体: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1769764852819_98s1w5w29z6.jpg"}
+[COS Middleware] 响应体长度: 109
+[COS Middleware] 📤 准备发送响应...
+[COS Middleware] ✅ 响应已发送
+(node:39476) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[COS Middleware] 🔍 end事件被触发，当前isProcessing: false
+[COS Middleware] 🔍 开始处理，body长度: 130
+[COS Middleware] 构造的URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1769766348596_s7tdsrexxx.jpg
+[COS Middleware] URL长度: 98
+[COS Middleware] URL类型: string
+[COS Middleware] 响应体: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1769766348596_s7tdsrexxx.jpg"}
+[COS Middleware] 响应体长度: 108
+[COS Middleware] 📤 准备发送响应...
+[COS Middleware] ✅ 响应已发送
+[2m17:48:29[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+[COS Middleware] 初始化配置: {
+  bucket: 'fudaiai-1400086527',
+  region: 'ap-shanghai',
+  hasSecretId: true,
+  hasSecretKey: true
+}
+[2m17:48:30[22m [36m[1m[vite][22m[39m server restarted.

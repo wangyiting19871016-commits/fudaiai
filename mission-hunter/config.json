@@ -1,0 +1,12 @@
+{
+  "SERPER_API_KEY": "ac3b4e434a05836c263f9f69e7f35f7359c96197",
+  "SERPER_ENDPOINT": "https://google.serper.dev/search",
+
+  "FIRECRAWL_API_KEY": "fc-b4511916a57c4fe7bc3ec0e54c0ce02e",
+  "FIRECRAWL_ENDPOINT": "https://api.firecrawl.dev/v1/scrape",
+
+  "DEEPSEEK_API_KEY": "sk-a6ed993fee184d05a0636aa75268c6ae",
+  "DEEPSEEK_ENDPOINT": "https://api.deepseek.com",
+  "DEEPSEEK_ROUTE": "/chat/completions",
+  "DEEPSEEK_MODEL": "deepseek-chat"
+}

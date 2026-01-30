@@ -34,9 +34,9 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
           disabled={isSuccess || isVerifying}
           className={`w-full mt-5 p-4 border-none rounded-xl font-bold text-lg cursor-pointer transition-colors ${
             isSuccess 
-              ? 'bg-green-600 text-white' 
+              ? 'bg-gray-100 text-black' 
               : isVerifying
-              ? 'bg-yellow-600 text-white animate-pulse'
+              ? 'bg-gray-700 text-white animate-pulse'
               : 'bg-white text-black hover:bg-gray-200'
           } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
@@ -54,14 +54,14 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
           onClick={!isSuccess && !isVerifying ? handleVerify : undefined}
           className={`w-36 h-36 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
             isSuccess 
-              ? 'bg-green-600 border-green-600' 
+              ? 'bg-gray-100 border-gray-100' 
               : isVerifying
-              ? 'bg-yellow-600 border-yellow-600 animate-pulse'
+              ? 'bg-gray-700 border-gray-700 animate-pulse'
               : 'bg-gray-800 border-gray-600 hover:bg-gray-700'
           } border-4 ${(isSuccess || isVerifying) ? 'cursor-default' : 'cursor-pointer'}`}
         >
           {isSuccess ? (
-            <CheckCircle size={60} className="text-white" />
+            <CheckCircle size={60} className="text-black" />
           ) : isVerifying ? (
             <div className="animate-spin">
               <Mic size={50} className="text-white" />
@@ -82,7 +82,7 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
     <div className="w-full text-center">
       <div className="w-full h-48 border-2 border-dashed border-gray-600 rounded-2xl flex items-center justify-center mb-7 bg-gray-900">
         {isSuccess ? (
-          <CheckCircle size={48} className="text-green-500" />
+          <CheckCircle size={48} className="text-gray-200" />
         ) : isVerifying ? (
           <div className="animate-pulse">
             <Camera size={48} className="text-yellow-500" />
@@ -96,10 +96,10 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
         disabled={isSuccess || isVerifying}
         className={`px-10 py-4 border-none rounded-full text-lg font-bold cursor-pointer flex items-center gap-2.5 mx-auto transition-colors ${
           isSuccess 
-            ? 'bg-green-600 text-white' 
+            ? 'bg-gray-100 text-black' 
             : isVerifying
-            ? 'bg-yellow-600 text-white animate-pulse'
-            : 'bg-cyan-600 text-white hover:bg-cyan-700'
+            ? 'bg-gray-700 text-white animate-pulse'
+            : 'bg-white text-black hover:bg-gray-200'
         } disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         {isSuccess ? (

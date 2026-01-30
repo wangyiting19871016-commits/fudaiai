@@ -1,0 +1,9 @@
+c78c2cba9a550793f0c665c8e5eac8cb18131752 1d6f701392abc207b597f29f594e65d58c2a7301 Your Name <you@example.com> 1766764953 +0800	commit: chore: add gitignore to exclude build and dependencies
+1d6f701392abc207b597f29f594e65d58c2a7301 1983947c205359da7f10b27d471d1ce604182f3f Your Name <you@example.com> 1766764975 +0800	commit: feat: save current src structure as baseline
+1983947c205359da7f10b27d471d1ce604182f3f ef726ec375c8e69bd168fa332357559541801aa5 Your Name <you@example.com> 1766866899 +0800	commit: feat: MVP逻辑全线贯通 - 15卡片精准点亮 & 分数同步完成
+ef726ec375c8e69bd168fa332357559541801aa5 37ab6cdeac41fc4c067956c802747a127e306cbf Your Name <you@example.com> 1766958378 +0800	commit: BASE: P4像素级拆解调通 + 实时素材采集Ready + TS报错修复
+37ab6cdeac41fc4c067956c802747a127e306cbf 36227bb600e31b55a40ad33bf1ce29a907b2f43d Your Name <you@example.com> 1767025318 +0800	commit: feat: P3实验台结构化重构完成 - 实现LabPage瘦身与组件解耦
+36227bb600e31b55a40ad33bf1ce29a907b2f43d 2289b7612b2bdbd6340beaaf0eb0fa123bd4357b Your Name <you@example.com> 1767300336 +0800	commit: P4实验室-封存存档：FFmpeg Full Build已就绪，三轨分离代码待后续API调优
+2289b7612b2bdbd6340beaaf0eb0fa123bd4357b 37ab6cdeac41fc4c067956c802747a127e306cbf Your Name <you@example.com> 1767629239 +0800	reset: moving to 37ab6cd
+37ab6cdeac41fc4c067956c802747a127e306cbf 2289b7612b2bdbd6340beaaf0eb0fa123bd4357b Your Name <you@example.com> 1767629756 +0800	reset: moving to 2289b76
+2289b7612b2bdbd6340beaaf0eb0fa123bd4357b 1a02048614baf4681fd18c0efce1b839bd975b49 Your Name <you@example.com> 1767729101 +0800	commit: feat: 固化 P4 编辑器 JSON 协议发布逻辑，P1 唯一验证入口合龙，P3 实验室进入待重建挂起状态

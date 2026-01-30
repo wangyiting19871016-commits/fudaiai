@@ -1,0 +1,689 @@
+2026-01-07 20:02:43 | INFO     | analyst:run:397 | === 分析流程开始 ===
+2026-01-07 20:02:43 | INFO     | analyst:read_csv_comments:72 | 开始读取 outputs 文件夹中的 CSV 文件
+2026-01-07 20:02:43 | INFO     | analyst:read_csv_comments:94 | 共读取 0 条评论
+2026-01-07 20:02:43 | INFO     | analyst:analyze_technical_reproduction:137 | 开始分析技术复刻需求
+2026-01-07 20:02:43 | WARNING  | analyst:analyze_technical_reproduction:140 | 没有评论数据可以分析
+2026-01-07 20:02:43 | ERROR    | __main__:run_analyst:76 | === 分析过程中发生错误: 'Config' object has no attribute 'report_file' ===
+2026-01-07 20:08:08 | INFO     | __main__:run:420 | === 分析流程开始 ===
+2026-01-07 20:08:08 | INFO     | __main__:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 20:08:08 | INFO     | __main__:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 20:08:08 | INFO     | __main__:read_data:104 | 共读取 28 条数据
+2026-01-07 20:08:08 | INFO     | __main__:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 20:08:08 | INFO     | __main__:call_deepseek_api:108 | 调用 DeepSeek API 进行分析...
+2026-01-07 20:08:39 | ERROR    | __main__:call_deepseek_api:142 | 调用 DeepSeek API 失败: HTTPSConnectionPool(host='api.deepseek.com', port=443): Read timed out.
+2026-01-07 20:08:39 | ERROR    | __main__:analyze_technical_reproduction:192 | DeepSeek 返回的结果不是有效的 JSON: 
+2026-01-07 20:08:39 | INFO     | __main__:generate_html_report:209 | 生成可视化报告: analysis_report.html
+2026-01-07 20:11:38 | INFO     | __main__:run:439 | === 分析流程开始 ===
+2026-01-07 20:11:38 | INFO     | __main__:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 20:11:38 | INFO     | __main__:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 20:11:38 | INFO     | __main__:read_data:104 | 共读取 28 条数据
+2026-01-07 20:11:38 | INFO     | __main__:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 20:11:38 | INFO     | __main__:call_deepseek_api:108 | 调用 DeepSeek API 进行分析...
+2026-01-07 20:12:05 | ERROR    | __main__:analyze_technical_reproduction:192 | DeepSeek 返回的结果不是有效的 JSON: ```json
+{
+    "pain_points": [
+        "用户缺乏系统性的调色知识，难以理解复杂参数背后的逻辑",
+        "不同设备（iPhone、华为、索尼ZVE10）和软件（达芬奇、剪映、醒图、Ps、Lr）的调色方法差异大，学习成本高",
+        "普通用户难以将‘废片’通过调色提升为具有‘电影感’、‘氛围感’或‘高级感’的作品",
+        "教程参数固定，用户无法灵活应用于不同光线、场景（如阴天、室内、扫街）的照片",
+        "追求特定风格（如富士胶片感、暗黑Ins风、复古电影感）但找不到可靠、易复现的一键式或公式化解决方案"
+    ],
+    "technical_demands": [
+        "跨平台、跨设备的‘一键生成’或‘参数公式’调色技术，能智能适配不同原图",
+        "基于AI的场景与风格识别技术，可自动分析图片内容（如人像背影、阴天海景、咖啡厅室内）并推荐或应用最匹配的调色方案",
+        "可解释的调色参数调整技术，将‘电影感’、‘胶片感’等抽象审美概念拆解为具体、可调节的滑块（如色调曲线、色彩分级、颗粒感），并附带效果预览与原理说明",
+        "风格迁移与复刻技术，允许用户上传参考图（如某张富士色调照片或电影截图），自动分析其色彩特征并应用于自己的照片",
+        "针对‘废片’（如曝光不足、色彩平淡）的智能增强与风格化技术，能同时完成基础校正与艺术风格渲染"
+    ],
+    "p3_steps": [
+        "P1：需求分析与数据准备。收集并标注大量不同风格（电影感、胶片感、暗黑风、高级质感等）的成片与原始图片对比数据，构建风格数据库。同时，梳理主流平台（如达芬奇、Lr、剪映、醒图）的调色参数逻辑，建立映射关系。",
+        "P2：核心算法开发与原型实现。开发基于深度学习的风格分析与迁移模型，实现输入原图后，可自动推荐风格或根据用户选择的参考图进行色彩迁移。同时，开发一个‘参数解释器’模块，将模型输出转换为各平台通用的调色参数（如曝光、对比度、HSL、曲线等），并生成通俗的调整口诀或步骤说明。",
+        "P3：产品化集成与用户体验优化。将上述技术封装为SDK或插件，集成到主流图像处理App或作为独立应用。开发‘智能诊断’功能，自动识别照片问题（如过暗、色彩寡淡）并推荐修正方案。提供‘风格市场’，允许用户分享、一键应用及微调各种风格配方，并通过社区反馈持续优化模型。"
+    ],
+    "thumbnail_suggestion": "建议使用一组对比图作为缩略图素材：左侧放置一张普通、色彩平淡的原图（如一张在阴天拍摄的普通街景或室内人像），右侧放置经过调色后具有强烈‘电影感’或‘高级暗调氛围感’的成片。在对比图中央使用醒目的箭头或‘Before & After’文字标注，背景可虚化处理并叠加微弱的胶片颗粒或光晕效果，以直观传达技术带来的质感提升。"
+}
+```
+2026-01-07 20:12:05 | INFO     | __main__:generate_html_report:209 | 生成可视化报告: analysis_report.html
+2026-01-07 20:17:03 | INFO     | __main__:run:438 | === 分析流程开始 ===
+2026-01-07 20:17:03 | INFO     | __main__:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 20:17:03 | INFO     | __main__:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 20:17:03 | INFO     | __main__:read_data:104 | 共读取 28 条数据
+2026-01-07 20:17:03 | INFO     | __main__:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 20:17:03 | INFO     | __main__:call_deepseek_api:108 | 调用 DeepSeek API 进行分析...
+2026-01-07 20:17:25 | ERROR    | __main__:analyze_technical_reproduction:192 | DeepSeek 返回的结果不是有效的 JSON: ```json
+{
+  "pain_points": [
+    "用户缺乏系统性的调色知识，难以理解复杂参数背后的逻辑",
+    "普通用户拍摄的照片缺乏专业感，希望快速获得高级视觉效果",
+    "不同设备（iPhone、华为、相机）和场景（阴天、室内）需要针对性调色方案",
+    "调色过程繁琐，用户希望有简单、可复制的“万能公式”或“傻瓜级”操作",
+    "对特定风格（如电影感、胶片感、暗黑ins风）的调色方法有强烈需求但不知如何实现"
+  ],
+  "technical_demands": [
+    "一键生成高级质感滤镜（如电影感、胶片感、暗黑ins风）的技术",
+    "跨平台（手机App如醒图、剪映，专业软件如Ps、Lr、达芬奇）的智能调色参数迁移或同步",
+    "基于场景（阴天、室内、扫街）和主题（人像、静物、风景）的自动调色优化",
+    "模仿特定设备或品牌色彩风格（如“富士胶片感”、“iPhone电影感直出”）的算法",
+    "将“废片”通过智能调整快速提升为具有氛围感照片的修复与增强技术"
+  ],
+  "p3_steps": [
+    "P1（问题定义与数据收集）：明确目标风格（如电影感、胶片感），收集大量对应风格的高质量前后期对比图作为训练数据，并标注关键调色参数（如色调曲线、HSL调整、颗粒感等）。",
+    "P2（算法模型开发）：构建基于深度学习的图像风格迁移模型，或开发参数预测模型，能够根据输入图像的内容、光线条件自动推荐或应用匹配的调色参数集，实现“一键调色”。",
+    "P3（产品化与优化）：将模型集成到用户友好的界面中，提供“风格选择”（如电影感、富士风、暗黑ins）、“强度调节”和“参数微调”功能，并针对不同平台（移动端App、桌面软件）进行性能优化和用户体验测试。"
+  ],
+  "thumbnail_suggestion": "建议使用一张对比图作为缩略图：左侧为一张普通、略显平淡的原片（例如阴天室外或室内灯光不足的照片），右侧为经过调色后充满电影感、胶片质感或高级暗调氛围的成片，中间用箭头或VS字样连接，直观展示技术实现的强大效果。背景可搭配简洁的调色参数面板或风格名称标签（如“🎬电影感”、“📸富士胶片”）。"
+}
+```
+2026-01-07 20:17:25 | INFO     | __main__:generate_html_report:209 | 生成可视化报告: analysis_report.html
+2026-01-07 20:17:25 | INFO     | __main__:generate_html_report:432 | 报告生成成功: analysis_report.html
+2026-01-07 20:17:25 | INFO     | __main__:run:442 | === 分析流程结束 ===
+2026-01-07 20:19:23 | INFO     | analyst:run:444 | === 分析流程开始 ===
+2026-01-07 20:19:23 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 20:19:23 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 20:19:23 | INFO     | analyst:read_data:104 | 共读取 28 条数据
+2026-01-07 20:19:23 | INFO     | analyst:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 20:19:23 | INFO     | analyst:call_deepseek_api:108 | 调用 DeepSeek API 进行分析...
+2026-01-07 20:19:54 | ERROR    | analyst:call_deepseek_api:142 | 调用 DeepSeek API 失败: HTTPSConnectionPool(host='api.deepseek.com', port=443): Read timed out.
+2026-01-07 20:19:54 | ERROR    | analyst:analyze_technical_reproduction:198 | DeepSeek 返回的结果不是有效的 JSON: 
+2026-01-07 20:19:54 | INFO     | analyst:generate_html_report:215 | 生成可视化报告: analysis_report.html
+2026-01-07 20:19:54 | INFO     | analyst:generate_html_report:438 | 报告生成成功: analysis_report.html
+2026-01-07 20:19:54 | INFO     | analyst:run:448 | === 分析流程结束 ===
+2026-01-07 20:19:54 | INFO     | __main__:run_analyst:73 | === 分析完成 ===
+2026-01-07 20:31:31 | INFO     | __main__:run:474 | === 分析流程开始 ===
+2026-01-07 20:31:31 | INFO     | __main__:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 20:31:31 | INFO     | __main__:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 20:31:31 | INFO     | __main__:read_data:104 | 共读取 28 条数据
+2026-01-07 20:31:31 | INFO     | __main__:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 20:32:01 | INFO     | __main__:run:475 | === 分析流程开始 ===
+2026-01-07 20:32:01 | INFO     | __main__:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 20:32:01 | INFO     | __main__:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 20:32:01 | INFO     | __main__:read_data:104 | 共读取 28 条数据
+2026-01-07 20:32:01 | INFO     | __main__:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 20:32:01 | INFO     | __main__:call_deepseek_api:108 | 调用 DeepSeek API 进行分析...
+2026-01-07 20:32:26 | INFO     | __main__:analyze_technical_reproduction:212 | 技术复刻需求分析完成
+2026-01-07 20:32:26 | INFO     | __main__:generate_html_report:233 | 生成可视化报告: analysis_report.html
+2026-01-07 20:32:26 | INFO     | __main__:generate_html_report:469 | 报告生成成功: analysis_report.html
+2026-01-07 20:32:26 | INFO     | __main__:run:479 | === 分析流程结束 ===
+2026-01-07 20:39:23 | INFO     | __main__:run:554 | === 分析流程开始 ===
+2026-01-07 20:39:23 | INFO     | __main__:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 20:39:23 | INFO     | __main__:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 20:39:23 | INFO     | __main__:read_data:104 | 共读取 28 条数据
+2026-01-07 20:39:23 | INFO     | __main__:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 20:39:23 | INFO     | __main__:call_deepseek_api:108 | 调用 DeepSeek API 进行分析...
+2026-01-07 20:39:48 | INFO     | __main__:analyze_technical_reproduction:229 | 技术复刻需求分析完成
+2026-01-07 20:39:48 | INFO     | __main__:generate_html_report:256 | 生成可视化报告: analysis_report.html
+2026-01-07 20:39:48 | INFO     | __main__:generate_html_report:548 | 报告生成成功: analysis_report.html
+2026-01-07 20:39:48 | INFO     | __main__:run:558 | === 分析流程结束 ===
+2026-01-07 21:01:41 | INFO     | analyst:run:753 | === 分析流程开始 ===
+2026-01-07 21:01:41 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 21:01:41 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 21:01:41 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 21:01:41 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 21:01:41 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 21:01:41 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 21:01:41 | INFO     | analyst:read_data:104 | 共读取 140 条数据
+2026-01-07 21:01:41 | INFO     | analyst:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 21:01:41 | INFO     | analyst:analyze_technical_reproduction:163 | 共筛选出 0 个高价值帖子
+2026-01-07 21:01:41 | WARNING  | analyst:analyze_technical_reproduction:166 | 没有高价值数据可以分析
+2026-01-07 21:01:41 | INFO     | analyst:generate_html_report:336 | 生成可视化报告: analysis_report.html
+2026-01-07 21:01:41 | INFO     | analyst:generate_html_report:747 | 报告生成成功: analysis_report.html
+2026-01-07 21:01:41 | INFO     | analyst:run:757 | === 分析流程结束 ===
+2026-01-07 21:01:41 | INFO     | __main__:main:57 | === mission-hunter 全领域狩猎完成 ===
+2026-01-07 21:01:41 | INFO     | __main__:main:58 | 报告已生成，路径: analysis_report.html
+2026-01-07 21:01:41 | INFO     | __main__:main:59 | 请打开浏览器查看报告
+2026-01-07 22:09:55 | INFO     | analyst:run:796 | === 分析流程开始 ===
+2026-01-07 22:09:55 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 22:09:55 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:09:55 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:09:55 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:09:55 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:09:55 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:09:55 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:09:55 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:09:55 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:09:55 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:09:55 | INFO     | analyst:read_data:104 | 共读取 185 条数据
+2026-01-07 22:09:55 | INFO     | analyst:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 22:09:55 | INFO     | analyst:analyze_technical_reproduction:163 | 共筛选出 0 个高价值帖子
+2026-01-07 22:09:55 | WARNING  | analyst:analyze_technical_reproduction:166 | 没有高价值数据可以分析
+2026-01-07 22:09:55 | INFO     | analyst:generate_html_report:379 | 生成可视化报告: analysis_report.html
+2026-01-07 22:09:55 | INFO     | analyst:generate_html_report:790 | 报告生成成功: analysis_report.html
+2026-01-07 22:09:55 | INFO     | analyst:run:800 | === 分析流程结束 ===
+2026-01-07 22:09:55 | INFO     | __main__:main:57 | === mission-hunter 全领域狩猎完成 ===
+2026-01-07 22:09:55 | INFO     | __main__:main:58 | 报告已生成，路径: analysis_report.html
+2026-01-07 22:09:55 | INFO     | __main__:main:59 | 请打开浏览器查看报告
+2026-01-07 22:12:36 | INFO     | analyst:run:796 | === 分析流程开始 ===
+2026-01-07 22:12:36 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 22:12:36 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:12:36 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:12:36 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:12:36 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:12:36 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:12:36 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:12:36 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:12:36 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:12:36 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:12:36 | INFO     | analyst:read_data:104 | 共读取 185 条数据
+2026-01-07 22:12:36 | INFO     | analyst:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 22:12:36 | INFO     | analyst:analyze_technical_reproduction:163 | 共筛选出 0 个高价值帖子
+2026-01-07 22:12:36 | WARNING  | analyst:analyze_technical_reproduction:166 | 没有高价值数据可以分析
+2026-01-07 22:12:36 | INFO     | analyst:generate_html_report:379 | 生成可视化报告: analysis_report.html
+2026-01-07 22:12:36 | INFO     | analyst:generate_html_report:790 | 报告生成成功: analysis_report.html
+2026-01-07 22:12:36 | INFO     | analyst:run:800 | === 分析流程结束 ===
+2026-01-07 22:12:36 | INFO     | __main__:main:57 | === mission-hunter 全领域狩猎完成 ===
+2026-01-07 22:12:36 | INFO     | __main__:main:58 | 报告已生成，路径: analysis_report.html
+2026-01-07 22:12:36 | INFO     | __main__:main:59 | 请打开浏览器查看报告
+2026-01-07 22:15:32 | INFO     | analyst:run:796 | === 分析流程开始 ===
+2026-01-07 22:15:32 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 22:15:32 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:15:32 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:15:32 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:15:32 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:15:32 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:15:32 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:15:32 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:15:32 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:15:32 | INFO     | analyst:read_data:83 | 读取文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:15:32 | INFO     | analyst:read_data:104 | 共读取 185 条数据
+2026-01-07 22:15:32 | INFO     | analyst:analyze_technical_reproduction:147 | 开始分析技术复刻需求
+2026-01-07 22:15:32 | INFO     | analyst:analyze_technical_reproduction:163 | 共筛选出 0 个高价值帖子
+2026-01-07 22:15:32 | WARNING  | analyst:analyze_technical_reproduction:166 | 没有高价值数据可以分析
+2026-01-07 22:15:32 | INFO     | analyst:generate_html_report:379 | 生成可视化报告: analysis_report.html
+2026-01-07 22:15:32 | INFO     | analyst:generate_html_report:790 | 报告生成成功: analysis_report.html
+2026-01-07 22:15:32 | INFO     | analyst:run:800 | === 分析流程结束 ===
+2026-01-07 22:15:32 | INFO     | __main__:main:57 | === mission-hunter 全领域狩猎完成 ===
+2026-01-07 22:15:32 | INFO     | __main__:main:58 | 报告已生成，路径: analysis_report.html
+2026-01-07 22:15:32 | INFO     | __main__:main:59 | 请打开浏览器查看报告
+2026-01-07 22:23:43 | INFO     | analyst:run:825 | === 分析流程开始 ===
+2026-01-07 22:23:43 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 22:23:43 | INFO     | analyst:read_data:85 | outputs 文件夹中共找到 9 个文件
+2026-01-07 22:23:43 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:23:43 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:23:43 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:23:43 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:23:43 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:23:43 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:124 | 成功读取 10 条数据
+2026-01-07 22:23:43 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:124 | 成功读取 9 条数据
+2026-01-07 22:23:43 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:23:43 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:23:43 | INFO     | analyst:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:23:43 | INFO     | analyst:read_data:133 | 共成功读取 185 条数据
+2026-01-07 22:23:43 | INFO     | analyst:analyze_technical_reproduction:176 | 开始分析技术复刻需求
+2026-01-07 22:23:43 | INFO     | analyst:analyze_technical_reproduction:192 | 共筛选出 0 个高价值帖子
+2026-01-07 22:23:43 | WARNING  | analyst:analyze_technical_reproduction:195 | 没有高价值数据可以分析
+2026-01-07 22:23:43 | INFO     | analyst:generate_html_report:408 | 生成可视化报告: analysis_report.html
+2026-01-07 22:23:43 | INFO     | analyst:generate_html_report:819 | 报告生成成功: analysis_report.html
+2026-01-07 22:23:43 | INFO     | analyst:run:829 | === 分析流程结束 ===
+2026-01-07 22:23:43 | INFO     | __main__:main:41 | === 仅分析模式完成 ===
+2026-01-07 22:23:43 | INFO     | __main__:main:42 | 报告已生成，路径: analysis_report.html
+2026-01-07 22:23:43 | INFO     | __main__:main:43 | 请打开浏览器查看报告
+2026-01-07 22:31:20 | INFO     | analyst:run:835 | === 分析流程开始 ===
+2026-01-07 22:31:20 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 22:31:20 | INFO     | analyst:read_data:85 | outputs 文件夹中共找到 9 个文件
+2026-01-07 22:31:20 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:31:20 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:31:20 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:31:20 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:31:20 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:31:20 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:124 | 成功读取 10 条数据
+2026-01-07 22:31:20 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:124 | 成功读取 9 条数据
+2026-01-07 22:31:20 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:31:20 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:31:20 | INFO     | analyst:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:31:20 | INFO     | analyst:read_data:133 | 共成功读取 185 条数据
+2026-01-07 22:31:20 | INFO     | analyst:analyze_technical_reproduction:176 | 开始分析技术复刻需求
+2026-01-07 22:31:20 | INFO     | analyst:analyze_technical_reproduction:201 | 共筛选出 185 个高价值帖子
+2026-01-07 22:31:20 | INFO     | analyst:call_deepseek_api:137 | 调用 DeepSeek API 进行分析...
+2026-01-07 22:31:50 | ERROR    | analyst:call_deepseek_api:171 | 调用 DeepSeek API 失败: HTTPSConnectionPool(host='api.deepseek.com', port=443): Read timed out.
+2026-01-07 22:31:50 | WARNING  | analyst:analyze_technical_reproduction:317 | JSON 字符串格式不正确，尝试修复
+2026-01-07 22:31:50 | INFO     | analyst:analyze_technical_reproduction:339 | 技术复刻需求分析完成
+2026-01-07 22:31:50 | INFO     | analyst:generate_html_report:417 | 生成可视化报告: analysis_report.html
+2026-01-07 22:31:50 | INFO     | analyst:generate_html_report:829 | 报告生成成功: analysis_report.html
+2026-01-07 22:31:50 | INFO     | analyst:run:839 | === 分析流程结束 ===
+2026-01-07 22:31:50 | INFO     | __main__:main:41 | === 仅分析模式完成 ===
+2026-01-07 22:31:50 | INFO     | __main__:main:42 | 报告已生成，路径: analysis_report.html
+2026-01-07 22:31:50 | INFO     | __main__:main:43 | 请打开浏览器查看报告
+2026-01-07 22:37:10 | INFO     | analyst:run:1035 | === 分析流程开始 ===
+2026-01-07 22:37:10 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 22:37:10 | INFO     | analyst:read_data:85 | outputs 文件夹中共找到 9 个文件
+2026-01-07 22:37:10 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:37:10 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:37:10 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:37:10 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:37:10 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:37:10 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:124 | 成功读取 10 条数据
+2026-01-07 22:37:10 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:124 | 成功读取 9 条数据
+2026-01-07 22:37:10 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:37:10 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:37:10 | INFO     | analyst:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:37:10 | INFO     | analyst:read_data:133 | 共成功读取 185 条数据
+2026-01-07 22:37:10 | INFO     | analyst:analyze_technical_reproduction:176 | 开始分析技术复刻需求
+2026-01-07 22:37:10 | INFO     | analyst:analyze_technical_reproduction:187 | 过滤后剩余 122 个有效帖子
+2026-01-07 22:37:10 | INFO     | analyst:analyze_technical_reproduction:212 | 计算保存率后剩余 122 个高价值帖子
+2026-01-07 22:37:10 | INFO     | analyst:analyze_technical_reproduction:219 | 精选后剩余 20 个帖子用于DeepSeek分析
+2026-01-07 22:37:10 | INFO     | analyst:analyze_technical_reproduction:221 | 共筛选出 20 个高价值帖子
+2026-01-07 22:37:10 | INFO     | analyst:call_deepseek_api:137 | 调用 DeepSeek API 进行分析...
+2026-01-07 22:38:07 | INFO     | analyst:analyze_technical_reproduction:359 | 技术复刻需求分析完成
+2026-01-07 22:38:07 | INFO     | analyst:generate_html_report:437 | 生成可视化报告: analysis_report.html
+2026-01-07 22:38:07 | INFO     | analyst:generate_html_report:1029 | 报告生成成功: analysis_report.html
+2026-01-07 22:38:07 | INFO     | analyst:run:1039 | === 分析流程结束 ===
+2026-01-07 22:38:07 | INFO     | __main__:main:41 | === 仅分析模式完成 ===
+2026-01-07 22:38:07 | INFO     | __main__:main:42 | 报告已生成，路径: analysis_report.html
+2026-01-07 22:38:07 | INFO     | __main__:main:43 | 请打开浏览器查看报告
+2026-01-07 22:44:14 | INFO     | __main__:run:1061 | === 分析流程开始 ===
+2026-01-07 22:44:14 | INFO     | __main__:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 22:44:14 | INFO     | __main__:read_data:85 | outputs 文件夹中共找到 9 个文件
+2026-01-07 22:44:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:44:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:44:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:44:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:44:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:44:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:124 | 成功读取 10 条数据
+2026-01-07 22:44:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:124 | 成功读取 9 条数据
+2026-01-07 22:44:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:44:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:44:14 | INFO     | __main__:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:44:14 | INFO     | __main__:read_data:133 | 共成功读取 185 条数据
+2026-01-07 22:44:14 | INFO     | __main__:analyze_technical_reproduction:176 | 开始分析技术复刻需求
+2026-01-07 22:44:14 | INFO     | __main__:analyze_technical_reproduction:187 | 过滤后剩余 122 个有效帖子
+2026-01-07 22:44:14 | INFO     | __main__:analyze_technical_reproduction:212 | 计算保存率后剩余 122 个高价值帖子
+2026-01-07 22:44:14 | INFO     | __main__:analyze_technical_reproduction:219 | 精选后剩余 20 个帖子用于DeepSeek分析
+2026-01-07 22:44:14 | INFO     | __main__:analyze_technical_reproduction:221 | 共筛选出 20 个高价值帖子
+2026-01-07 22:44:14 | INFO     | __main__:call_deepseek_api:137 | 调用 DeepSeek API 进行分析...
+2026-01-07 22:45:15 | INFO     | __main__:analyze_technical_reproduction:359 | 技术复刻需求分析完成
+2026-01-07 22:45:15 | INFO     | __main__:generate_html_report:437 | 生成可视化报告: analysis_report.html
+2026-01-07 22:45:15 | INFO     | __main__:generate_html_report:1055 | 报告生成成功: analysis_report.html
+2026-01-07 22:45:15 | INFO     | __main__:run:1065 | === 分析流程结束 ===
+2026-01-07 22:58:14 | INFO     | __main__:run:1136 | === 分析流程开始 ===
+2026-01-07 22:58:14 | INFO     | __main__:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 22:58:14 | INFO     | __main__:read_data:85 | outputs 文件夹中共找到 9 个文件
+2026-01-07 22:58:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:58:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:58:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:58:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:58:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:124 | 成功读取 28 条数据
+2026-01-07 22:58:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:124 | 成功读取 10 条数据
+2026-01-07 22:58:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:124 | 成功读取 9 条数据
+2026-01-07 22:58:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:58:14 | INFO     | __main__:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 22:58:14 | INFO     | __main__:read_data:124 | 成功读取 13 条数据
+2026-01-07 22:58:14 | INFO     | __main__:read_data:133 | 共成功读取 185 条数据
+2026-01-07 22:58:14 | INFO     | __main__:analyze_technical_reproduction:176 | 开始分析技术复刻需求
+2026-01-07 22:58:14 | INFO     | __main__:analyze_technical_reproduction:187 | 过滤后剩余 122 个有效帖子
+2026-01-07 22:58:14 | INFO     | __main__:analyze_technical_reproduction:212 | 计算保存率后剩余 122 个高价值帖子
+2026-01-07 22:58:14 | INFO     | __main__:analyze_technical_reproduction:219 | 精选后剩余 20 个帖子用于DeepSeek分析
+2026-01-07 22:58:14 | INFO     | __main__:analyze_technical_reproduction:221 | 共筛选出 20 个高价值帖子
+2026-01-07 22:58:14 | INFO     | __main__:call_deepseek_api:137 | 调用 DeepSeek API 进行分析...
+2026-01-07 22:59:18 | ERROR    | __main__:analyze_technical_reproduction:361 | DeepSeek 返回的结果不是有效的 JSON: ```json
+{
+  "missions": [
+    {
+      "mission_title": "暗调氛围感人像调色复刻",
+      "pain_points": ["普通照片缺乏氛围感", "调色后画面发灰不高级", "无法突出人物轮廓与情绪"],
+      "technical_demands": ["实现暗部压暗并保留细节", "营造整体低饱和、冷色调氛围", "为高光或人物边缘添加柔和发光效果"],
+      "p3_steps": ["基础影调定调", "色彩氛围营造", "局部光影强化"],
+      "p4_parameters": {
+        "基础影调定调": {"brightness": -0.3, "contrast": 0.8, "highlights": -0.7, "shadows": -0.4, "blacks": -0.2},
+        "色彩氛围营造": {"temperature": -0.4, "tint": 0.1, "vibrance": -0.3, "saturation": -0.5},
+        "局部光影强化": {"clarity": 0.2, "dehaze": 0.1, "grain_amount": 0.15, "grain_size": 25}
+      },
+      "aesthetic_params": ["对比度 +0.8", "高光 -0.7", "色温 -0.4", "饱和度 -0.5"],
+      "thumbnail_suggestion": "一张人物暗调背影或侧脸特写，背景有氛围光，整体色调偏冷、高级。",
+      "cover_url": "",
+      "demand_type": "审美调色",
+      "demand_tags": ["暗调", "氛围感", "人像", "发光感", "Lr/醒图"],
+      "save_rate": 0.1
+    },
+    {
+      "mission_title": "电影感通用调色流程复刻",
+      "pain_points": ["照片平淡无电影叙事感", "色彩杂乱不统一", "模仿电影色调参数套用无效"],
+      "technical_demands": ["建立电影感色彩分级逻辑", "实现画面色彩统一与风格化", "添加电影画幅与质感元素"],
+      "p3_steps": ["LOG模式还原与一级调色", "风格化二级调色（色彩偏移）", "添加电影质感元素"],
+      "p4_parameters": {
+        "LOG模式还原与一级调色": {"contrast": 0.5, "shadows": 0.2, "highlights": -0.3, "gamma": 0.1},
+        "风格化二级调色（色彩偏移）": {"shadows_tint": 0.2, "highlights_tint": -0.1, "color_grade_midtones_hue": 0.05, "color_grade_midtones_saturation": 0.15},
+        "添加电影质感元素": {"vignette_amount": -0.15, "film_grain_amount": 0.1, "anamorphic_flare_intensity": 0.05}
+      },
+      "aesthetic_params": ["阴影加青 (+0.2)", "高光加橙 (-0.1)", "添加电影遮幅", "添加微颗粒"],
+      "thumbnail_suggestion": "一张具有故事感的街景或人物场景图，画面有明确的色彩倾向（如橙青色），带有上下黑边。",
+      "cover_url": "",
+      "demand_type": "审美调色",
+      "demand_tags": ["电影感", "达芬奇/剪映", "色彩分级", "通用公式"],
+      "save_rate": 0.1
+    },
+    {
+      "mission_title": "富士胶片感直出模拟复刻",
+      "pain_points": ["手机照片数码感强，缺乏胶片质感", "想要富士相机经典的色彩但无设备", "调色参数复杂难记忆"],
+      "technical_demands": ["模拟富士经典胶片色彩曲线（如Classic Chrome）", "实现高光柔和、阴影偏青的色调", "添加胶片特有的颗粒与暗角"],
+      "p3_steps": ["应用胶片模拟色彩曲线", "调整高光阴影色彩倾向", "添加胶片质感细节"],
+      "p4_parameters": {
+        "应用胶片模拟色彩曲线": {"profile": "Classic Chrome", "dynamic_range": 200, "highlight": -1, "shadow": 1},
+        "调整高光阴影色彩倾向": {"color": 2, "fx_blue": "strong", "white_balance_shift_r": 2, "white_balance_shift_b": -5},
+        "添加胶片质感细节": {"grain_effect": "strong", "size": "large", "color_chrome_effect": "strong", "clarity": -2}
+      },
+      "aesthetic_params": ["动态范围 DR200", "高光 -1，阴影 +1", "颗粒效果：强、大", "色彩 +2"],
+      "thumbnail_suggestion": "一张生活场景或静物图，色彩浓郁但不艳俗，带有明显的富士胶片色彩风格和颗粒感。",
+      "cover_url": "",
+      "demand_type": "审美调色",
+      "demand_tags": ["富士滤镜", "胶片感", "手机直出", "华为/iPhone"],
+      "save_rate": 0.1
+    },
+    {
+      "mission_title": "Ins暗黑高级风调色复刻",
+      "pain_points": ["阴天或光线不足照片显脏", "想要低调高级的暗色系风格", "调色后画面沉闷缺乏层次"],
+      "technical_demands": ["实现低明度、高对比的视觉冲击", "统一色彩至黑、灰、少量点缀色", "保留并强化画面纹理与细节"],
+      "p3_steps": ["大幅压暗整体与局部亮度", "去色并统一色调", "强化清晰度与结构"],
+      "p4_parameters": {
+        "大幅压暗整体与局部亮度": {"exposure": -0.6, "contrast": 1.0, "highlights": -0.9, "shadows": -0.7, "blacks": -0.5},
+        "去色并统一色调": {"saturation": -0.7, "vibrance": -0.4, "temperature": -0.3, "tint": 0.0},
+        "强化清晰度与结构": {"clarity": 0.4, "texture": 0.3, "dehaze": 0.15, "sharpening": 0.6}
+      },
+      "aesthetic_params": ["曝光 -0.6", "对比度 +1.0", "饱和度 -0.7", "清晰度 +0.4"],
+      "thumbnail_suggestion": "一张建筑、静物或人物轮廓照，画面大部分处于暗部，仅有少量高光或线条勾勒，色调偏冷灰。",
+      "cover_url": "",
+      "demand_type": "审美调色",
+      "demand_tags": ["暗黑风", "高级感", "ins风", "阴天", "质感"],
+      "save_rate": 0.1
+    },
+    {
+      "mission_title": "傻瓜式一键质感滤镜包开发",
+      "pain_points": ["用户不懂复杂参数，想要一键出片", "不同场景需要不同滤镜，选择困难", "免费滤镜效果普通，缺乏质感"],
+      "technical_demands": ["封装成可一键套用的滤镜或预设", "覆盖多种高频场景（美食、人像、风景等）", "确保滤镜应用后画面质感提升，不失真"],
+      "p3_steps": ["针对场景优化基础调色参数包", "测试并微调不同光线条件下的适应性", "封装为APP内可一键套用的滤镜或导入预设"],
+      "p4_parameters": {
+        "针对场景优化基础调色参数包": {"scenario": "Food", "base_contrast": 0.5, "base_saturation": 0.3, "base_sharpness": 0.4},
+        "测试并微调不同光线条件下的适应性": {"adaptive_exposure_compensation": "auto", "shadow_recovery_strength": 0.3},
+        "封装为APP内可一键套用的滤镜或导入预设": {"filter_name": "质感奶油", "format": ".dng/.cube/.xmp", "compatibility": ["Lightroom", "醒图"]}
+      },
+      "aesthetic_params": ["场景化预设", "自适应曝光", "一键套用"],
+      "thumbnail_suggestion": "九宫格展示图，同一张原图应用不同命名的滤镜（如“复古胶片”、“清新奶油”、“暗黑高级”）后的对比效果。",
+      "cover_url": "",
+      "demand_type": "逻辑技巧",
+      "demand_tags": ["一键滤镜", "预设包", "万能公式", "小白友好", "醒图/Lr"],
+      "save_rate": 0.1
+    }
+  ]
+}
+```
+2026-01-07 22:59:18 | ERROR    | __main__:analyze_technical_reproduction:362 | JSON 解析错误: Expecting ',' delimiter: line 79 column 123 (char 4249)
+2026-01-07 22:59:18 | INFO     | __main__:analyze_technical_reproduction:364 | 使用原始抓取数据生成结果
+2026-01-07 22:59:18 | INFO     | __main__:generate_html_report:437 | 生成可视化报告: analysis_report.html
+2026-01-07 22:59:18 | INFO     | __main__:generate_html_report:1130 | 报告生成成功: analysis_report.html
+2026-01-07 22:59:18 | INFO     | __main__:run:1140 | === 分析流程结束 ===
+2026-01-07 23:51:08 | INFO     | analyst:run:1262 | === 分析流程开始 ===
+2026-01-07 23:51:08 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-07 23:51:08 | INFO     | analyst:read_data:85 | outputs 文件夹中共找到 16 个文件
+2026-01-07 23:51:08 | INFO     | analyst:read_data:91 | 找到符合规范的 CSV 文件: xhs_search_产品需求_20260107_233253.csv
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xhs_search_产品需求_20260107_233253.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:91 | 找到符合规范的 CSV 文件: xhs_search_产品需求_20260107_233657.csv
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xhs_search_产品需求_20260107_233657.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:91 | 找到符合规范的 CSV 文件: xhs_search_电影感调色_20260107_235108.csv
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xhs_search_电影感调色_20260107_235108.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_产品需求_20260107_233253.csv
+2026-01-07 23:51:08 | INFO     | analyst:read_data:115 | 成功读取 5 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_产品需求_20260107_233253.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 5 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_产品需求_20260107_233657.csv
+2026-01-07 23:51:08 | INFO     | analyst:read_data:115 | 成功读取 5 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_产品需求_20260107_233657.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 5 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_电影感调色_20260107_235108.csv
+2026-01-07 23:51:08 | INFO     | analyst:read_data:115 | 成功读取 5 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_电影感调色_20260107_235108.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 5 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_195234.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205711.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_205839.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210003.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_210131.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 28 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_214909.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 10 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_215601.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 9 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220245.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 13 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:105 | 正在读取文件: xiaohongshu_data_20260107_220945.json
+2026-01-07 23:51:08 | INFO     | analyst:read_data:124 | 成功读取 13 条数据
+2026-01-07 23:51:08 | INFO     | analyst:read_data:133 | 共成功读取 215 条数据
+2026-01-07 23:51:08 | INFO     | analyst:analyze_technical_reproduction:176 | 开始分析技术复刻需求
+2026-01-07 23:51:08 | INFO     | analyst:analyze_technical_reproduction:187 | 过滤后剩余 152 个有效帖子
+2026-01-07 23:51:08 | INFO     | analyst:analyze_technical_reproduction:212 | 计算保存率后剩余 134 个高价值帖子
+2026-01-07 23:51:08 | INFO     | analyst:analyze_technical_reproduction:219 | 精选后剩余 20 个帖子用于DeepSeek分析
+2026-01-07 23:51:08 | INFO     | analyst:analyze_technical_reproduction:221 | 共筛选出 20 个高价值帖子
+2026-01-07 23:51:08 | INFO     | analyst:call_deepseek_api:137 | 调用 DeepSeek API 进行分析...
+2026-01-07 23:51:29 | ERROR    | analyst:analyze_technical_reproduction:369 | DeepSeek 返回的结果不是有效的 JSON: ```json
+{
+  "missions": [
+    {
+      "mission_title": "复刻高赞魔法感调色",
+      "pain_points": ["普通照片缺乏高级感和氛围感", "用户不知如何实现特定风格调色", "调色参数不明确，难以模仿"],
+      "technical_demands": ["实现高对比度、低饱和的暗调风格", "调整肤色至健康小麦色", "增强画面通透感和光影层次"],
+      "p3_steps": [
+        "基础影调调整，压暗整体曝光，提升对比度",
+        "HSL工具精细调整肤色与背景色",
+        "色彩分级，为高光添加暖橙色，阴影添加冷蓝色"
+      ],
+      "p4_parameters": {
+        "步骤1": {"exposure": -0.5, "contrast": 1.8, "highlights": -30, "shadows": 10, "whites": 5, "blacks": -15},
+        "步骤2": {"hue_orange": 0, "saturation_orange": -10, "luminance_orange": 15, "hue_green": 10, "saturation_green": -20, "luminance_green": -5},
+        "步骤3": {"highlights_hue": 40, "highlights_saturation": 15, "shadows_hue": 220, "shadows_saturation": 10}
+      },
+      "aesthetic_params": ["对比度 +1.8", "曝光 -0.5", "高光 -30", "阴影 +10", "橙色饱和度 -10", "橙色明度 +15", "高光加暖橙", "阴影加冷蓝"],
+      "thumbnail_suggestion": "一张人物侧脸或背影在光影下的对比图，左原图右效果图，突出色调的戏剧性变化。",
+      "cover_url": "https://sns-webpic-qc.xhscdn.com/202601072348/3f18f48dd9e7090cc7f2d14dcd001c5c/1040g00831qgbifu7n0005pbmk4ho6u3bdducn7o!nc_n_webp_mw_1",
+      "demand_type": "审美调色",
+      "demand_tags": ["暗调", "氛围感", "电影感", "高级感", "人像调色"],
+      "save_rate": 0.1,
+      "source_evidence": ["帖子标题“朋友说我的调色像魔法🪄不信你看😂”获得57.5万点赞，表明其调色效果极具吸引力和模仿价值。", "虽然评论数据为空，但极高的点赞数本身即是用户对“魔法感”调色效果的强烈认可和需求信号。"],
+      "evidence_quotes": ["【“朋友说我的调色像魔法🪄不信你看😂”】"]
+    }
+  ]
+}
+```
+2026-01-07 23:51:29 | ERROR    | analyst:analyze_technical_reproduction:370 | JSON 解析错误: Invalid control character at: line 19 column 27 (char 952)
+2026-01-07 23:51:29 | INFO     | analyst:analyze_technical_reproduction:372 | 使用原始抓取数据生成结果
+2026-01-07 23:51:29 | INFO     | analyst:generate_html_report:447 | 生成可视化报告: analysis_report.html
+2026-01-07 23:51:29 | INFO     | analyst:generate_html_report:1256 | 报告生成成功: analysis_report.html
+2026-01-07 23:51:29 | INFO     | analyst:run:1266 | === 分析流程结束 ===
+2026-01-07 23:51:29 | INFO     | __main__:main:72 | === 抓取+分析模式完成 ===
+2026-01-07 23:51:29 | INFO     | __main__:main:73 | 报告已生成，路径: analysis_report.html
+2026-01-07 23:51:29 | INFO     | __main__:main:74 | 请打开浏览器查看报告
+2026-01-08 00:03:00 | INFO     | analyst:run:1446 | === 分析流程开始 ===
+2026-01-08 00:03:00 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-08 00:03:00 | INFO     | analyst:read_data:85 | outputs 文件夹中共找到 3 个文件
+2026-01-08 00:03:00 | INFO     | analyst:read_data:91 | 找到符合规范的 CSV 文件: xhs_search_电影感调色_20260108_000300.csv
+2026-01-08 00:03:00 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xhs_search_电影感调色_20260108_000300.json
+2026-01-08 00:03:00 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_电影感调色_20260108_000300.csv
+2026-01-08 00:03:00 | INFO     | analyst:read_data:115 | 成功读取 5 条数据
+2026-01-08 00:03:00 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_电影感调色_20260108_000300.json
+2026-01-08 00:03:00 | INFO     | analyst:read_data:124 | 成功读取 5 条数据
+2026-01-08 00:03:00 | INFO     | analyst:read_data:133 | 共成功读取 10 条数据
+2026-01-08 00:03:00 | INFO     | analyst:analyze_technical_reproduction:176 | 开始分析技术复刻需求
+2026-01-08 00:03:00 | INFO     | analyst:analyze_technical_reproduction:187 | 过滤后剩余 10 个有效帖子
+2026-01-08 00:03:00 | INFO     | analyst:analyze_technical_reproduction:212 | 计算保存率后剩余 0 个高价值帖子
+2026-01-08 00:03:00 | INFO     | analyst:analyze_technical_reproduction:219 | 精选后剩余 0 个帖子用于DeepSeek分析
+2026-01-08 00:03:00 | INFO     | analyst:analyze_technical_reproduction:221 | 共筛选出 0 个高价值帖子
+2026-01-08 00:03:00 | WARNING  | analyst:analyze_technical_reproduction:224 | 没有高价值数据可以分析
+2026-01-08 00:03:00 | INFO     | analyst:generate_html_report:631 | 生成可视化报告: analysis_report.html
+2026-01-08 00:03:00 | INFO     | analyst:generate_html_report:1440 | 报告生成成功: analysis_report.html
+2026-01-08 00:03:00 | INFO     | analyst:run:1450 | === 分析流程结束 ===
+2026-01-08 00:03:00 | INFO     | __main__:main:72 | === 抓取+分析模式完成 ===
+2026-01-08 00:03:00 | INFO     | __main__:main:73 | 报告已生成，路径: analysis_report.html
+2026-01-08 00:03:00 | INFO     | __main__:main:74 | 请打开浏览器查看报告
+2026-01-08 00:03:16 | INFO     | analyst:run:1446 | === 分析流程开始 ===
+2026-01-08 00:03:16 | INFO     | analyst:read_data:72 | 开始读取 outputs 文件夹中的数据文件
+2026-01-08 00:03:16 | INFO     | analyst:read_data:85 | outputs 文件夹中共找到 3 个文件
+2026-01-08 00:03:16 | INFO     | analyst:read_data:91 | 找到符合规范的 CSV 文件: xhs_search_电影感调色_20260108_000300.csv
+2026-01-08 00:03:16 | INFO     | analyst:read_data:94 | 找到 JSON 文件: xhs_search_电影感调色_20260108_000300.json
+2026-01-08 00:03:16 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_电影感调色_20260108_000300.csv
+2026-01-08 00:03:16 | INFO     | analyst:read_data:115 | 成功读取 5 条数据
+2026-01-08 00:03:16 | INFO     | analyst:read_data:105 | 正在读取文件: xhs_search_电影感调色_20260108_000300.json
+2026-01-08 00:03:16 | INFO     | analyst:read_data:124 | 成功读取 5 条数据
+2026-01-08 00:03:16 | INFO     | analyst:read_data:133 | 共成功读取 10 条数据
+2026-01-08 00:03:16 | INFO     | analyst:analyze_technical_reproduction:176 | 开始分析技术复刻需求
+2026-01-08 00:03:16 | INFO     | analyst:analyze_technical_reproduction:187 | 过滤后剩余 10 个有效帖子
+2026-01-08 00:03:16 | INFO     | analyst:analyze_technical_reproduction:212 | 计算保存率后剩余 0 个高价值帖子
+2026-01-08 00:03:16 | INFO     | analyst:analyze_technical_reproduction:219 | 精选后剩余 0 个帖子用于DeepSeek分析
+2026-01-08 00:03:16 | INFO     | analyst:analyze_technical_reproduction:221 | 共筛选出 0 个高价值帖子
+2026-01-08 00:03:16 | WARNING  | analyst:analyze_technical_reproduction:224 | 没有高价值数据可以分析
+2026-01-08 00:03:16 | INFO     | analyst:generate_html_report:631 | 生成可视化报告: analysis_report.html
+2026-01-08 00:03:16 | INFO     | analyst:generate_html_report:1440 | 报告生成成功: analysis_report.html
+2026-01-08 00:03:16 | INFO     | analyst:run:1450 | === 分析流程结束 ===
+2026-01-08 00:03:16 | INFO     | __main__:main:43 | === 仅分析模式完成 ===
+2026-01-08 00:03:16 | INFO     | __main__:main:44 | 报告已生成，路径: analysis_report.html
+2026-01-08 00:03:16 | INFO     | __main__:main:45 | 请打开浏览器查看报告
+2026-01-08 00:31:26 | INFO     | analyst:run:1454 | === 分析流程开始 ===
+2026-01-08 00:31:26 | INFO     | analyst:read_data:74 | 开始读取 outputs 文件夹中的数据文件
+2026-01-08 00:31:26 | INFO     | analyst:read_data:86 | outputs 文件夹中共找到 3 个文件
+2026-01-08 00:31:26 | INFO     | analyst:read_data:87 | 当前搜索关键词: 电影感调色
+2026-01-08 00:31:26 | WARNING  | analyst:read_data:99 | 跳过与当前关键词无关的文件: images
+2026-01-08 00:31:26 | INFO     | analyst:read_data:97 | 找到相关文件: xhs_search_电影感调色_20260108_003126.csv
+2026-01-08 00:31:26 | INFO     | analyst:read_data:97 | 找到相关文件: xhs_search_电影感调色_20260108_003126.json
+2026-01-08 00:31:26 | INFO     | analyst:read_data:109 | 使用最新的文件进行分析: xhs_search_电影感调色_20260108_003126.json
+2026-01-08 00:31:26 | INFO     | analyst:read_data:130 | 成功读取 5 条数据
+2026-01-08 00:31:26 | INFO     | analyst:read_data:138 | 共成功读取 5 条数据
+2026-01-08 00:31:26 | INFO     | analyst:analyze_technical_reproduction:181 | 开始分析技术复刻需求
+2026-01-08 00:31:26 | INFO     | analyst:analyze_technical_reproduction:192 | 过滤后剩余 5 个有效帖子
+2026-01-08 00:31:26 | INFO     | analyst:analyze_technical_reproduction:217 | 计算保存率后剩余 0 个高价值帖子
+2026-01-08 00:31:26 | INFO     | analyst:analyze_technical_reproduction:224 | 精选后剩余 0 个帖子用于DeepSeek分析
+2026-01-08 00:31:26 | INFO     | analyst:analyze_technical_reproduction:226 | 共筛选出 0 个高价值帖子
+2026-01-08 00:31:26 | WARNING  | analyst:analyze_technical_reproduction:229 | 没有高价值数据可以分析
+2026-01-08 00:31:26 | INFO     | analyst:generate_html_report:636 | 生成可视化报告: analysis_report.html
+2026-01-08 00:31:26 | INFO     | analyst:generate_html_report:1448 | 报告生成成功: analysis_report.html
+2026-01-08 00:31:26 | INFO     | analyst:run:1458 | === 分析流程结束 ===
+2026-01-08 00:31:26 | INFO     | __main__:main:76 | === 抓取+分析模式完成 ===
+2026-01-08 00:31:26 | INFO     | __main__:main:77 | 报告已生成，路径: analysis_report.html
+2026-01-08 00:31:26 | INFO     | __main__:main:78 | 请打开浏览器查看报告
+2026-01-08 00:39:48 | INFO     | analyst:run:1454 | === 分析流程开始 ===
+2026-01-08 00:39:48 | INFO     | analyst:read_data:74 | 开始读取 outputs 文件夹中的数据文件
+2026-01-08 00:39:48 | INFO     | analyst:read_data:86 | outputs 文件夹中共找到 5 个文件
+2026-01-08 00:39:48 | INFO     | analyst:read_data:87 | 当前搜索关键词: 电影感调色
+2026-01-08 00:39:48 | WARNING  | analyst:read_data:99 | 跳过与当前关键词无关的文件: images
+2026-01-08 00:39:48 | INFO     | analyst:read_data:97 | 找到相关文件: xhs_search_电影感调色_20260108_003126.csv
+2026-01-08 00:39:48 | INFO     | analyst:read_data:97 | 找到相关文件: xhs_search_电影感调色_20260108_003126.json
+2026-01-08 00:39:48 | INFO     | analyst:read_data:97 | 找到相关文件: xhs_search_电影感调色_20260108_003948.csv
+2026-01-08 00:39:48 | INFO     | analyst:read_data:97 | 找到相关文件: xhs_search_电影感调色_20260108_003948.json
+2026-01-08 00:39:48 | INFO     | analyst:read_data:109 | 使用最新的文件进行分析: xhs_search_电影感调色_20260108_003948.json
+2026-01-08 00:39:48 | INFO     | analyst:read_data:130 | 成功读取 5 条数据
+2026-01-08 00:39:48 | INFO     | analyst:read_data:138 | 共成功读取 5 条数据
+2026-01-08 00:39:48 | INFO     | analyst:analyze_technical_reproduction:181 | 开始分析技术复刻需求
+2026-01-08 00:39:48 | INFO     | analyst:analyze_technical_reproduction:192 | 过滤后剩余 5 个有效帖子
+2026-01-08 00:39:48 | INFO     | analyst:analyze_technical_reproduction:217 | 计算保存率后剩余 1 个高价值帖子
+2026-01-08 00:39:48 | INFO     | analyst:analyze_technical_reproduction:224 | 精选后剩余 1 个帖子用于DeepSeek分析
+2026-01-08 00:39:48 | INFO     | analyst:analyze_technical_reproduction:226 | 共筛选出 1 个高价值帖子
+2026-01-08 00:39:48 | INFO     | analyst:call_deepseek_api:142 | 调用 DeepSeek API 进行分析...
+2026-01-08 00:40:04 | WARNING  | analyst:analyze_technical_reproduction:353 | JSON 字符串格式不正确，尝试修复
+2026-01-08 00:40:04 | ERROR    | analyst:analyze_technical_reproduction:378 | DeepSeek 返回的结果不是有效的 JSON: ```json
+{
+  "missions": [
+    {
+      "mission_title": "复刻日系电影感调色参数",
+      "pain_points": ["普通照片缺乏电...
+2026-01-08 00:40:04 | ERROR    | analyst:analyze_technical_reproduction:379 | JSON 解析错误: Unterminated string starting at: line 1 column 792 (char 791)
+2026-01-08 00:40:04 | INFO     | analyst:analyze_technical_reproduction:382 | 尝试使用正则表达式强行提取 missions 列表
+2026-01-08 00:40:04 | WARNING  | analyst:analyze_technical_reproduction:415 | 无法提取有效任务，使用原始抓取数据生成结果
+2026-01-08 00:40:04 | INFO     | analyst:generate_html_report:636 | 生成可视化报告: analysis_report.html
+2026-01-08 00:40:04 | INFO     | analyst:generate_html_report:1448 | 报告生成成功: analysis_report.html
+2026-01-08 00:40:04 | INFO     | analyst:run:1458 | === 分析流程结束 ===
+2026-01-08 00:40:04 | INFO     | __main__:main:76 | === 抓取+分析模式完成 ===
+2026-01-08 00:40:04 | INFO     | __main__:main:77 | 报告已生成，路径: analysis_report.html
+2026-01-08 00:40:04 | INFO     | __main__:main:78 | 请打开浏览器查看报告

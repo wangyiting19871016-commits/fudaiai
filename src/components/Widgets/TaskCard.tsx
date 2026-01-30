@@ -189,7 +189,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, onPreview, onStart, mode, classNa
       }}>
         <span style={{ 
           fontSize: '14px', 
-          color: status === 'certified' ? '#4caf50' : '#ff9800'
+          color: status === 'certified' ? '#a3a3a3' : '#ff9800'
         }}>
           状态: {status === 'certified' ? '✅ 已存证' : '⏳ 未激活'}
         </span>

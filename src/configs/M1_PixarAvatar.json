@@ -1,0 +1,58 @@
+{
+  "mission_id": "M1_3D_PIXAR",
+  "name": "皮克斯3D头像生成",
+  "description": "FLUX.1-DEV + Pixar-pks-LoRA 身份DNA提取与风格化渲染",
+  "version": "1.0.0",
+  "pipeline": {
+    "step_1": {
+      "node": "qwen-vl-plus",
+      "api_slot": "qwen-dashscope",
+      "model": "qwen-vl-plus",
+      "prompt": "Extract hair topology (hairline, parting, volume), face geometry (chin width, elongated/round), and age anchor (mature/young). Output English tags only.",
+      "output_var": "identity_tags",
+      "instructions": [
+        "强制执行 Identity-DNA v7.0 指令",
+        "仅提取 Hair Topology, Face Geometry, Age Anchor",
+        "输出纯英文标签"
+      ]
+    },
+    "step_2": {
+      "node": "flux-liblib",
+      "api_slot": "liblib-controlnet",
+      "model": "liblib-flux-dev",
+      "template_uuid": "5d7e67009b344550bc1aa6ccbfa1d7f4",
+      "lora_uuid": "95ec78a639394f48827c31adabc00828",
+      "lora_weight": 0.8,
+      "prompt_template": "pks, (masterpiece), 3d pixar animation style, \n( {{QWEN_DNA_OUTPUT}} :1.7), \n(detailed individual hair strands, clear forehead silhouette:1.4),\n{{GENDER_SPECIFIC_MODIFIER}},\nwearing a vibrant red traditional Chinese silk jacket with gold dragon patterns, \nholding a shiny golden ingot (Yuanbao), \nsoft cinematic lighting, bokeh festive background, \nhigh-end 3d character design, rendered in Octane, stylized movie look, \nvibrant colors, clean smooth surfaces",
+      "negative_prompt_template": "{{GENDER_NEG}}, snake, reptile, low quality, (distorted:1.2)",
+      "gender_logic": {
+        "male": {
+          "modifier": "(adult masculine male, sharp mature features, clean ears:1.5)",
+          "negative_add": "earrings, tassels, jewelry, female, makeup, lipstick, feminine, baby-face, puffy hair"
+        },
+        "female": {
+          "modifier": "(elegant young adult woman, refined sophisticated features:1.4)",
+          "negative_add": "beard, mustache, rough skin, masculine, snake"
+        }
+      },
+      "default_params": {
+        "cfg_scale": 3.5,
+        "steps": 25,
+        "sampler": 15,
+        "width": 768,
+        "height": 1024,
+        "seed": -1,
+        "randn_source": 0,
+        "restore_faces": 0,
+        "img_count": 1
+      }
+    }
+  },
+  "metadata": {
+    "author": "真迹系统",
+    "created": "2026-01-26",
+    "技术底座": "FLUX.1-DEV + Pixar-pks-LoRA",
+    "适用场景": "运营海报、节日头像、3D角色设计",
+    "触发词": "pks"
+  }
+}

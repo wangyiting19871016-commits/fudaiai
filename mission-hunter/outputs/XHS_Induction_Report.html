@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XHS_Induction_Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .category-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .category-rank {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .category-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .category-likes {
+            background-color: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1em;
+            font-weight: 500;
+        }
+        
+        .category-image {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .category-image img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .category-details {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f7fafc;
+            border-radius: 8px;
+        }
+        
+        .detail-label {
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .detail-value {
+            color: #4a5568;
+        }
+        
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .tag-item {
+            background-color: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #718096;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 XHS_Induction_Report</h1>
+            <p class="subtitle">视觉成品提纯报告 - 基于调色关键词的归纳分析</p>
+        </header>        <div class="category-card">
+            <div class="category-header">
+                <div class="category-rank">#1</div>
+                <div class="category-name">胶片感</div>
+                <div class="category-likes">❤️ 703620</div>
+            </div>
+            
+            <div class="category-image">
+                <img src="https://picsum.photos/seed/胶片感0/800/600" alt="胶片感 样板原图">
+            </div>
+            
+            <div class="category-details">
+                <div class="detail-item">
+                    <span class="detail-label">归纳风格名</span>
+                    <span class="detail-value">胶片感</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">该类目总点赞</span>
+                    <span class="detail-value">703620</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">原始链接</span>
+                    <span class="detail-value"><a href="https://example.com/胶片感0" target="_blank">https://example.com/胶片感0</a></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">高频标签词云</span>
+                    <div class="tag-cloud">
+                        <div class="tag-item">胶片感</div><div class="tag-item">调色</div><div class="tag-item">教程</div><div class="tag-item">摄影</div><div class="tag-item">后期</div>
+                    </div>
+                </div>
+            </div>
+        </div>        <div class="category-card">
+            <div class="category-header">
+                <div class="category-rank">#2</div>
+                <div class="category-name">日系</div>
+                <div class="category-likes">❤️ 703580</div>
+            </div>
+            
+            <div class="category-image">
+                <img src="https://picsum.photos/seed/日系0/800/600" alt="日系 样板原图">
+            </div>
+            
+            <div class="category-details">
+                <div class="detail-item">
+                    <span class="detail-label">归纳风格名</span>
+                    <span class="detail-value">日系</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">该类目总点赞</span>
+                    <span class="detail-value">703580</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">原始链接</span>
+                    <span class="detail-value"><a href="https://example.com/日系0" target="_blank">https://example.com/日系0</a></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">高频标签词云</span>
+                    <div class="tag-cloud">
+                        <div class="tag-item">日系</div><div class="tag-item">调色</div><div class="tag-item">教程</div><div class="tag-item">摄影</div><div class="tag-item">后期</div>
+                    </div>
+                </div>
+            </div>
+        </div>        <div class="category-card">
+            <div class="category-header">
+                <div class="category-rank">#3</div>
+                <div class="category-name">复古</div>
+                <div class="category-likes">❤️ 703520</div>
+            </div>
+            
+            <div class="category-image">
+                <img src="https://picsum.photos/seed/复古0/800/600" alt="复古 样板原图">
+            </div>
+            
+            <div class="category-details">
+                <div class="detail-item">
+                    <span class="detail-label">归纳风格名</span>
+                    <span class="detail-value">复古</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">该类目总点赞</span>
+                    <span class="detail-value">703520</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">原始链接</span>
+                    <span class="detail-value"><a href="https://example.com/复古0" target="_blank">https://example.com/复古0</a></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">高频标签词云</span>
+                    <div class="tag-cloud">
+                        <div class="tag-item">复古</div><div class="tag-item">调色</div><div class="tag-item">教程</div><div class="tag-item">摄影</div><div class="tag-item">后期</div>
+                    </div>
+                </div>
+            </div>
+        </div>        <div class="category-card">
+            <div class="category-header">
+                <div class="category-rank">#4</div>
+                <div class="category-name">赛博朋克</div>
+                <div class="category-likes">❤️ 703480</div>
+            </div>
+            
+            <div class="category-image">
+                <img src="https://picsum.photos/seed/赛博朋克0/800/600" alt="赛博朋克 样板原图">
+            </div>
+            
+            <div class="category-details">
+                <div class="detail-item">
+                    <span class="detail-label">归纳风格名</span>
+                    <span class="detail-value">赛博朋克</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">该类目总点赞</span>
+                    <span class="detail-value">703480</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">原始链接</span>
+                    <span class="detail-value"><a href="https://example.com/赛博朋克0" target="_blank">https://example.com/赛博朋克0</a></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">高频标签词云</span>
+                    <div class="tag-cloud">
+                        <div class="tag-item">赛博朋克</div><div class="tag-item">调色</div><div class="tag-item">教程</div><div class="tag-item">摄影</div><div class="tag-item">后期</div>
+                    </div>
+                </div>
+            </div>
+        </div>        <div class="category-card">
+            <div class="category-header">
+                <div class="category-rank">#5</div>
+                <div class="category-name">莫兰迪</div>
+                <div class="category-likes">❤️ 703420</div>
+            </div>
+            
+            <div class="category-image">
+                <img src="https://picsum.photos/seed/莫兰迪0/800/600" alt="莫兰迪 样板原图">
+            </div>
+            
+            <div class="category-details">
+                <div class="detail-item">
+                    <span class="detail-label">归纳风格名</span>
+                    <span class="detail-value">莫兰迪</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">该类目总点赞</span>
+                    <span class="detail-value">703420</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">原始链接</span>
+                    <span class="detail-value"><a href="https://example.com/莫兰迪0" target="_blank">https://example.com/莫兰迪0</a></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">高频标签词云</span>
+                    <div class="tag-cloud">
+                        <div class="tag-item">莫兰迪</div><div class="tag-item">调色</div><div class="tag-item">教程</div><div class="tag-item">摄影</div><div class="tag-item">后期</div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        <footer>
+            <p>© 2026 XHS_Induction_Report | 生成时间: 2026-01-08 21:49:41</p>
+        </footer>
+    </div>
+</body>
+</html>

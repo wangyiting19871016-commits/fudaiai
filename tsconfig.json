@@ -17,8 +17,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vite/client"]
+    "types": ["vite/client", "node"]
   },
   "include": ["src/**/*"],
-  "exclude": ["src/_legacy_archive_20251226/**"]
+  "exclude": ["src/_legacy_archive_20251226/**", "src/_legacy_archive_20250124/**"]
 }

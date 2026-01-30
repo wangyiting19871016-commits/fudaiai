@@ -1,0 +1,1670 @@
+✅ 物理保存路径已锁定: F:/project_kuajing/temp_processing
+✅ 下载目录已初始化: F:\project_kuajing\downloads
+🔥 [核心监听启动] 后端心脏已跳动，端口: 3002
+🔥 物理进程已开启，PID: 44872
+
+🚀 Server is running on http://localhost:3002
+📡 API endpoints available at:
+   - Health check: http://localhost:3002/api/health
+   - FFmpeg check: http://localhost:3002/api/ffmpeg-check
+   - Audio separate: http://localhost:3002/api/audio/separate
+   - AI Triple Split: http://localhost:3002/api/audio/process-triple-split
+   - Traditional Split: http://localhost:3002/api/audio/split-traditional
+   - Video Compose: http://localhost:3002/api/video/compose
+
+🎯 Frontend available at: http://localhost:3002
+🚀 后端服务已在 3002 端口就绪，准备调用 FFmpeg
+
+🔍 Checking FFmpeg installation...
+
+✅ FFmpeg FOUND:
+   Path: ffmpeg
+   Version: 2025-12-31-git-38e89fe502-full_build-www.gyan.dev
+   FFmpeg service is now active and reachable
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: POST -> /api/video/compose
+✨ [3002 信号] 成功接收到来自网页的请求！
+🎬 [视频合成] 收到请求: {
+  inputUrl: 'https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen_female_1.jpg',
+  type: 'image',
+  subtitle: '🧧 恭喜发财，财神到！',
+  duration: 5,
+  outputFormat: 'mp4'
+}
+📁 [视频合成] 输出路径: F:\project_kuajing\downloads\composed_1769719947055.mp4
+✅ [视频合成] 使用 FFmpeg: ffmpeg
+📝 [视频合成] 添加字幕滤镜
+🎬 [FFmpeg] 命令: ffmpeg -loop 1 -t 5 -i https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen_female_1.jpg -y -filter:v drawtext=text='🧧 恭喜发财，财神到！':fontfile='C\:/Windows/Fonts/msyh.ttc':fontsize=48:fontcolor=white:borderw=3:bordercolor=black:shadowcolor=black@0.6:shadowx=2:shadowy=2:x=(w-text_w)/2:y=h-th-50:enable='between(t,0.5,4.5)' -c:v libx264 -pix_fmt yuv420p -preset medium -crf 23 F:\project_kuajing\downloads\composed_1769719947055.mp4
+❌ [FFmpeg] 错误: ffmpeg exited with code 3419392776: Error opening input file https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen_female_1.jpg.
+Error opening input files: Server returned 404 Not Found
+
+❌ [FFmpeg] stderr: ffmpeg version 2025-12-31-git-38e89fe502-full_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-cairo --enable-fontconfig --enable-iconv --enable-gnutls --enable-lcms2 --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-libsnappy --enable-zlib --enable-librist --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-libbluray --enable-libcaca --enable-libdvdnav --enable-libdvdread --enable-sdl2 --enable-libaribb24 --enable-libaribcaption --enable-libdav1d --enable-libdavs2 --enable-libopenjpeg --enable-libquirc --enable-libuavs3d --enable-libxevd --enable-libzvbi --enable-liboapv --enable-libqrencode --enable-librav1e --enable-libsvtav1 --enable-libvvenc --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxavs2 --enable-libxeve --enable-libxvid --enable-libaom --enable-libjxl --enable-libsvtjpegxs --enable-libvpx --enable-mediafoundation --enable-libass --enable-frei0r --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-liblensfun --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-libshaderc --enable-vulkan --enable-libplacebo --enable-opencl --enable-libcdio --enable-openal --enable-libgme --enable-libmodplug --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libshine --enable-libtheora --enable-libtwolame --enable-libvo-amrwbenc --enable-libcodec2 --enable-libilbc --enable-libgsm --enable-liblc3 --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-ladspa --enable-libbs2b --enable-libflite --enable-libmysofa --enable-librubberband --enable-libsoxr --enable-chromaprint --enable-whisper
+  libavutil      60. 21.102 / 60. 21.102
+  libavcodec     62. 23.102 / 62. 23.102
+  libavformat    62.  8.102 / 62.  8.102
+  libavdevice    62.  2.100 / 62.  2.100
+  libavfilter    11. 10.101 / 11. 10.101
+  libswscale      9.  3.100 /  9.  3.100
+  libswresample   6.  2.100 /  6.  2.100
+[https @ 0000018bba5ba0c0] HTTP error 404 Not Found
+[in#0 @ 0000018bba5b9280] Error opening input: Server returned 404 Not Found
+Error opening input file https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen_female_1.jpg.
+Error opening input files: Server returned 404 Not Found
+
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: POST -> /api/video/compose
+✨ [3002 信号] 成功接收到来自网页的请求！
+🎬 [视频合成] 收到请求: {
+  inputUrl: 'https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png',
+  type: 'image',
+  subtitle: '🧧 恭喜发财，财神到！',
+  duration: 5,
+  outputFormat: 'mp4'
+}
+📁 [视频合成] 输出路径: F:\project_kuajing\downloads\composed_1769720033089.mp4
+✅ [视频合成] 使用 FFmpeg: ffmpeg
+📝 [视频合成] 添加字幕滤镜
+🎬 [FFmpeg] 命令: ffmpeg -loop 1 -t 5 -i https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png -y -filter:v drawtext=text='🧧 恭喜发财，财神到！':fontfile='C\:/Windows/Fonts/msyh.ttc':fontsize=48:fontcolor=white:borderw=3:bordercolor=black:shadowcolor=black@0.6:shadowx=2:shadowy=2:x=(w-text_w)/2:y=h-th-50:enable='between(t,0.5,4.5)' -c:v libx264 -pix_fmt yuv420p -preset medium -crf 23 F:\project_kuajing\downloads\composed_1769720033089.mp4
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📡 [雷达捕捉到信号]: POST -> /api/video/compose
+✨ [3002 信号] 成功接收到来自网页的请求！
+🎬 [视频合成] 收到请求: {
+  inputUrl: 'https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png',
+  type: 'image',
+  subtitle: '🧧 恭喜发财，财神到！',
+  duration: 5,
+  outputFormat: 'mp4'
+}
+📁 [视频合成] 输出路径: F:\project_kuajing\downloads\composed_1769720044951.mp4
+📊 [FFmpeg] 进度: 0%
+✅ [视频合成] 使用 FFmpeg: ffmpeg
+📝 [视频合成] 添加字幕滤镜
+🎬 [FFmpeg] 命令: ffmpeg -loop 1 -t 5 -i https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png -y -filter:v drawtext=text='🧧 恭喜发财，财神到！':fontfile='C\:/Windows/Fonts/msyh.ttc':fontsize=48:fontcolor=white:borderw=3:bordercolor=black:shadowcolor=black@0.6:shadowx=2:shadowy=2:x=(w-text_w)/2:y=h-th-50:enable='between(t,0.5,4.5)' -c:v libx264 -pix_fmt yuv420p -preset medium -crf 23 F:\project_kuajing\downloads\composed_1769720044951.mp4
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📡 [雷达捕捉到信号]: GET -> /api/video/compose
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /assets/index-7fbea5d6.css
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /assets/index-2d26c939.js
+✨ [3002 信号] 成功接收到来自网页的请求！
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📡 [雷达捕捉到信号]: GET -> /favicon.ico
+✨ [3002 信号] 成功接收到来自网页的请求！
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📡 [雷达捕捉到信号]: POST -> /api/video/compose
+✨ [3002 信号] 成功接收到来自网页的请求！
+🎬 [视频合成] 收到请求: {
+  inputUrl: 'https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png',
+  type: 'image',
+  subtitle: '🧧 恭喜发财，财神到！',
+  duration: 5,
+  outputFormat: 'mp4'
+}
+📁 [视频合成] 输出路径: F:\project_kuajing\downloads\composed_1769720126935.mp4
+✅ [视频合成] 使用 FFmpeg: ffmpeg
+📝 [视频合成] 添加字幕滤镜
+🎬 [FFmpeg] 命令: ffmpeg -loop 1 -t 5 -i https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/caishen/female/female_01.png -y -filter:v drawtext=text='🧧 恭喜发财，财神到！':fontfile='C\:/Windows/Fonts/msyh.ttc':fontsize=48:fontcolor=white:borderw=3:bordercolor=black:shadowcolor=black@0.6:shadowx=2:shadowy=2:x=(w-text_w)/2:y=h-th-50:enable='between(t,0.5,4.5)' -c:v libx264 -pix_fmt yuv420p -preset medium -crf 23 F:\project_kuajing\downloads\composed_1769720126935.mp4
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+📊 [FFmpeg] 进度: 0%
+❌ [FFmpeg] 错误: ffmpeg exited with code 1: frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:57.75    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:58.26    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:58.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:59.30    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:59.82    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:00.33    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:00.85    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:01.37    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:01.88    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:02.39    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:02.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:03.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:03.95    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:04.46    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:04.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:05.48    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:06.01    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:06.52    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:07.04    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:07.56    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:08.07    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:08.58    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:09.09    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:09.61    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:10.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:10.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:11.17    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:11.68    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:12.19    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:12.72    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:13.23    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:13.74    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:14.26    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:14.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:15.30    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:15.82    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:16.34    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:16.84    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:17.36    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:17.89    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:18.40    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:18.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:19.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:19.94    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:20.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:20.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:21.50    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:22.02    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:22.55    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:23.06    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:23.58    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:24.11    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:24.62    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:25.13    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:25.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:26.16    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:26.68    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:27.19    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:27.71    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:28.23    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:28.75    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:29.26    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:29.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:30.29    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:30.81    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:31.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:31.84    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:32.36    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:32.87    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:33.38    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:33.89    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:34.42    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:34.93    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:35.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:35.96    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:36.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:37.00    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:37.51    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:38.03    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:38.54    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:39.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:39.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:40.09    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:40.61    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:41.12    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:41.64    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:42.16    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:42.68    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:43.19    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:43.71    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:44.23    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:44.74    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:45.25    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:45.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:46.29    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:46.80    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:47.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:47.84    
+
+❌ [FFmpeg] stderr: frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:57.75    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:58.26    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:58.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:59.30    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:59.82    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:00.33    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:00.85    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:01.37    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:01.88    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:02.39    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:02.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:03.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:03.95    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:04.46    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:04.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:05.48    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:06.01    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:06.52    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:07.04    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:07.56    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:08.07    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:08.58    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:09.09    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:09.61    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:10.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:10.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:11.17    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:11.68    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:12.19    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:12.72    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:13.23    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:13.74    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:14.26    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:14.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:15.30    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:15.82    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:16.34    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:16.84    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:17.36    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:17.89    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:18.40    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:18.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:19.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:19.94    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:20.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:20.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:21.50    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:22.02    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:22.55    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:23.06    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:23.58    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:24.11    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:24.62    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:25.13    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:25.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:26.16    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:26.68    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:27.19    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:27.71    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:28.23    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:28.75    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:29.26    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:29.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:30.29    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:30.81    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:31.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:31.84    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:32.36    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:32.87    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:33.38    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:33.89    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:34.42    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:34.93    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:35.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:35.96    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:36.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:37.00    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:37.51    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:38.03    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:38.54    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:39.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:39.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:40.09    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:40.61    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:41.12    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:41.64    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:42.16    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:42.68    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:43.19    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:43.71    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:44.23    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:44.74    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:45.25    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:45.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:46.29    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:46.80    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:47.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:01:47.84    
+
+❌ [FFmpeg] 错误: ffmpeg exited with code 1: frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:19.26    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:19.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:20.29    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:20.79    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:21.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:21.83    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:22.35    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:22.86    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:23.38    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:23.89    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:24.41    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:24.93    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:25.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:25.96    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:26.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:26.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:27.51    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:28.02    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:28.54    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:29.06    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:29.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:30.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:30.61    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:31.12    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:31.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:32.16    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:32.68    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:33.19    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:33.70    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:34.23    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:34.74    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:35.25    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:35.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:36.28    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:36.79    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:37.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:37.83    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:38.34    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:38.86    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:39.38    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:39.90    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:40.41    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:40.92    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:41.44    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:41.96    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:42.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:42.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:43.50    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:44.01    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:44.53    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:45.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:45.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:46.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:46.59    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:47.11    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:47.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:48.15    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:48.66    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:49.17    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:49.70    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:50.21    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:50.73    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:51.24    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:51.76    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:52.27    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:52.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:53.31    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:53.82    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:54.33    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:54.85    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:55.36    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:55.89    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:56.40    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:56.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:57.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:57.94    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:58.46    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:58.97    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:59.49    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:00.01    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:00.52    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:01.03    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:01.55    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:02.07    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:02.59    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:03.11    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:03.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:04.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:04.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:05.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:05.69    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:06.21    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:06.72    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:07.24    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:07.76    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:08.27    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:08.79    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:09.31    
+
+❌ [FFmpeg] stderr: frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:19.26    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:19.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:20.29    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:20.79    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:21.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:21.83    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:22.35    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:22.86    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:23.38    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:23.89    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:24.41    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:24.93    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:25.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:25.96    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:26.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:26.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:27.51    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:28.02    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:28.54    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:29.06    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:29.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:30.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:30.61    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:31.12    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:31.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:32.16    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:32.68    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:33.19    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:33.70    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:34.23    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:34.74    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:35.25    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:35.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:36.28    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:36.79    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:37.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:37.83    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:38.34    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:38.86    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:39.38    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:39.90    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:40.41    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:40.92    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:41.44    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:41.96    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:42.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:42.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:43.50    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:44.01    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:44.53    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:45.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:45.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:46.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:46.59    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:47.11    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:47.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:48.15    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:48.66    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:49.17    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:49.70    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:50.21    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:50.73    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:51.24    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:51.76    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:52.27    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:52.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:53.31    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:53.82    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:54.33    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:54.85    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:55.36    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:55.89    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:56.40    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:56.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:57.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:57.94    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:58.46    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:58.97    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:59.49    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:00.01    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:00.52    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:01.03    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:01.55    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:02.07    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:02.59    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:03.11    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:03.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:04.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:04.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:05.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:05.69    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:06.21    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:06.72    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:07.24    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:07.76    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:08.27    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:08.79    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:09.31    
+
+❌ [FFmpeg] 错误: ffmpeg exited with code 1: frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:31.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:32.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:32.67    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:33.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:33.71    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:34.22    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:34.74    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:35.25    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:35.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:36.28    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:36.80    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:37.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:37.84    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:38.35    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:38.86    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:39.37    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:39.90    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:40.41    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:40.93    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:41.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:41.96    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:42.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:42.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:43.50    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:44.03    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:44.54    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:45.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:45.56    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:46.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:46.60    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:47.12    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:47.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:48.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:48.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:49.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:49.71    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:50.22    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:50.73    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:51.25    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:51.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:52.29    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:52.80    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:53.31    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:53.83    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:54.34    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:54.87    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:55.39    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:55.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:56.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:56.95    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:57.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:57.99    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:58.50    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:59.02    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:59.53    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:00.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:00.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:01.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:01.59    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:02.12    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:02.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:03.15    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:03.66    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:04.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:04.69    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:05.21    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:05.73    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:06.24    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:06.75    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:07.27    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:07.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:08.31    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:08.82    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:09.33    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:09.85    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:10.36    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:10.88    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:11.39    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:11.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:12.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:12.94    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:13.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:13.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:14.49    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:15.01    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:15.53    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:16.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:16.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:17.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:17.60    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:18.11    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:18.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:19.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:19.66    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:20.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:20.69    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:21.21    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:21.73    
+
+❌ [FFmpeg] stderr: frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:31.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:32.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:32.67    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:33.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:33.71    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:34.22    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:34.74    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:35.25    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:35.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:36.28    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:36.80    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:37.32    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:37.84    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:38.35    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:38.86    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:39.37    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:39.90    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:40.41    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:40.93    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:41.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:41.96    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:42.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:42.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:43.50    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:44.03    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:44.54    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:45.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:45.56    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:46.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:46.60    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:47.12    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:47.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:48.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:48.65    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:49.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:49.71    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:50.22    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:50.73    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:51.25    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:51.77    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:52.29    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:52.80    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:53.31    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:53.83    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:54.34    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:54.87    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:55.39    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:55.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:56.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:56.95    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:57.47    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:57.99    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:58.50    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:59.02    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:02:59.53    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:00.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:00.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:01.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:01.59    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:02.12    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:02.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:03.15    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:03.66    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:04.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:04.69    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:05.21    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:05.73    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:06.24    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:06.75    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:07.27    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:07.78    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:08.31    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:08.82    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:09.33    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:09.85    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:10.36    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:10.88    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:11.39    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:11.91    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:12.43    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:12.94    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:13.45    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:13.98    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:14.49    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:15.01    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:15.53    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:16.05    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:16.57    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:17.08    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:17.60    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:18.11    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:18.63    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:19.14    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:19.66    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:20.18    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:20.69    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:21.21    
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:03:21.73    
+

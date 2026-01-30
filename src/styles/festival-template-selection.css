@@ -1,0 +1,355 @@
+/**
+ * 模板选择页样式
+ * 移动端H5优先设计
+ * 红金配色匹配整体春节风格
+ */
+
+.template-selection-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg,
+    #B71C1C 0%,      /* 深红顶部 */
+    #D32F2F 20%,     /* 中国红 */
+    #E64A19 50%,     /* 橙红中部 */
+    #F57C00 80%,     /* 橙色 */
+    #FFA726 100%     /* 金橙底部 */
+  );
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* 背景装饰 */
+.template-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 顶部导航 */
+.template-top-nav {
+  position: relative;
+  z-index: 10;
+  padding: 16px 20px;
+}
+
+.template-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s;
+}
+
+.template-back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-4px);
+}
+
+/* 主内容 */
+.template-content {
+  position: relative;
+  z-index: 1;
+  padding: 0 20px 40px;
+}
+
+/* 标题区 */
+.template-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.template-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.template-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* 性别选择 */
+.gender-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.gender-tab {
+  flex: 1;
+  min-width: 90px;
+  max-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  padding: 12px 8px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+}
+
+.gender-tab:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.gender-tab.active {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: #FFD700;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+}
+
+.gender-icon {
+  font-size: 32px;
+}
+
+.gender-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 模板区域 */
+.template-section {
+  margin-bottom: 80px;
+}
+
+.template-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+/* 模板网格 */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.template-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.template-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.template-card.selected {
+  border: 3px solid #FFD700;
+  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
+}
+
+/* 预览图 */
+.template-preview {
+  position: relative;
+  width: 100%;
+  padding-top: 125%; /* 4:5 比例 */
+  background: #f5f5f5;
+  overflow: hidden;
+}
+
+.template-preview img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.template-selected-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  animation: bounceIn 0.3s;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* 模板信息 */
+.template-info {
+  padding: 12px;
+}
+
+.template-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.template-desc {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+/* 底部按钮 */
+.template-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+  z-index: 10;
+}
+
+.template-continue-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.4);
+  transition: all 0.3s;
+}
+
+.template-continue-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255, 215, 0, 0.5);
+}
+
+.template-continue-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 错误提示 */
+.template-selection-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.template-selection-error p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.template-selection-error button {
+  padding: 12px 32px;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  color: #667eea;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ========== 移动端适配 ========== */
+@media (max-width: 480px) {
+  .template-title {
+    font-size: 24px;
+  }
+
+  .template-grid {
+    gap: 12px;
+  }
+
+  .gender-tabs {
+    gap: 8px;
+  }
+
+  .gender-tab {
+    padding: 12px;
+  }
+
+  .gender-icon {
+    font-size: 28px;
+  }
+
+  .template-name {
+    font-size: 14px;
+  }
+
+  .template-desc {
+    font-size: 11px;
+  }
+}
+
+/* 超小屏幕（iPhone SE） */
+@media (max-width: 375px) {
+  .template-content {
+    padding: 0 16px 40px;
+  }
+
+  .template-title {
+    font-size: 22px;
+  }
+
+  .template-grid {
+    gap: 10px;
+  }
+}
+
+/* ========== 占位卡片样式 ========== */
+.template-card-placeholder {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border: 2px dashed rgba(255, 255, 255, 0.5) !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+.template-card-placeholder:hover {
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.template-preview-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+}
+
+.placeholder-icon {
+  font-size: 48px;
+  opacity: 0.5;
+}

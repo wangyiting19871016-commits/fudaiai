@@ -29,8 +29,8 @@
 /* ===== 红→橙→金垂直渐变背景 ===== */
 .festival-layout {
   min-height: 100vh;
-  /* 纯白背景 - 现代极简风格 */
-  background: linear-gradient(180deg, #FF6B6B 0%, #FFE5E5 25%, #FFFFFF 40%);
+  /* 浅灰背景 - 复刻小红书 */
+  background: #F5F5F5;
   position: relative;
   overflow-x: hidden;
   padding-bottom: 40px;
@@ -306,20 +306,24 @@
   z-index: 1;
   max-width: 600px;
   margin: 0 auto;
+  /* 红色顶栏背景 */
+  background: #ED1C24;
+  margin-left: 0;
+  margin-right: 0;
+  max-width: 100%;
+  border-radius: 0 0 20px 20px;
 }
 
 /* 主标题 - 简洁深色 */
 .main-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 900;
-  /* 红金渐变文字 */
-  background: linear-gradient(135deg, #D32F2F 0%, #FFD700 50%, #FFA000 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: 0.5px;
+  /* 白色文字 - 在红色背景上可见 */
+  color: #FFFFFF;
+  letter-spacing: 1px;
   margin-bottom: 6px;
   padding: 0;
+  text-shadow: none;
 }
   position: relative;
   display: inline-block;
@@ -343,11 +347,11 @@
 .main-title::after { right: 8px; }
 
 .subtitle {
-  font-size: 16px;
-  color: #D32F2F;
-  font-weight: 600;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
   letter-spacing: 0.5px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 /* ===== 任务卡片网格（2列，140px高度） ===== */
@@ -3770,33 +3774,9 @@
 
 /* ========== 新增：3D装饰元素 ========== */
 
-/* 顶部灯笼装饰 - 缩小尺寸 */
+/* 顶部灯笼装饰 - 隐藏（带白框太丑）*/
 .header-lanterns {
-  position: absolute;
-  top: 10px;
-  left: 0;
-  right: 0;
-  height: 50px;
-  max-width: 100%;
-  pointer-events: none;
-}
-
-.lantern-decoration {
-  position: absolute;
-  width: 35px;
-  height: 45px;
-  top: 0;
-  /* 需要抠图处理 */
-  mix-blend-mode: multiply;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.lantern-decoration.left {
-  left: 10px;
-}
-
-.lantern-decoration.right {
-  right: 10px;
+  display: none;
 }
 
 @keyframes lanternSwing {

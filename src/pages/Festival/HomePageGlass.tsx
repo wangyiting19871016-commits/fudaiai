@@ -83,10 +83,25 @@ const HomePageGlass: React.FC = () => {
                   <div className="card-content">
                     <h3 className="card-title">{category.name}</h3>
                     <p className="card-desc">{category.description}</p>
+
+                    {/* 引导标识 ActionLink */}
+                    {!isLast && (
+                      <div className="action-link">
+                        <span className="action-text">
+                          {index === 0 ? '立即生成' : index === 1 ? '修复时光' : '生成祝福'}
+                        </span>
+                        <span className="action-arrow">→</span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* 箭头 */}
-                  {isLast && <span className="card-arrow">→</span>}
+                  {/* 最后一个卡片的引导标识 */}
+                  {isLast && (
+                    <div className="action-link">
+                      <span className="action-text">查看运势</span>
+                      <span className="action-arrow">→</span>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -104,14 +119,16 @@ const HomePageGlass: React.FC = () => {
           </div>
 
           <div className="showcase-scroll">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="showcase-item">
-                <div className="showcase-placeholder">🖼️</div>
-                <div className="showcase-label">
-                  #{i === 1 ? '3D头像' : i === 2 ? '全家福' : '写真'}
+            <div className="showcase-scroll-inner">
+              {[1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6].map((i, idx) => (
+                <div key={idx} className="showcase-item">
+                  <div className="showcase-placeholder">🖼️</div>
+                  <div className="showcase-label">
+                    #{i === 1 ? '3D头像' : i === 2 ? '全家福' : i === 3 ? '写真' : i === 4 ? '修复' : i === 5 ? '国潮' : '春联'}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 

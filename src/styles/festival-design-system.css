@@ -153,8 +153,8 @@
      📝 字体系统
      ======================================== */
 
-  --font-display: 'Noto Serif SC', serif;
-  --font-body: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Songti SC', 'Noto Serif SC', 'STSong', 'SimSun', serif;
+  --font-body: 'SF Pro Display', 'SF Pro Text', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --font-light: 300;
   --font-normal: 400;

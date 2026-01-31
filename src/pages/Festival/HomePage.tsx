@@ -25,49 +25,32 @@ const FestivalHomePage: React.FC = () => {
 
   return (
     <div className="festival-home">
-      {/* 春节烟花动效背景 */}
-      <FestivalFireworks />
-
-      {/* 飘落动画层 */}
-      <div className="particles-container">
-        <div className="particle particle-redpack">🧧</div>
-        <div className="particle particle-redpack delay-1">🧧</div>
-        <div className="particle particle-redpack delay-4">🧧</div>
-        <div className="particle particle-lantern">🏮</div>
-        <div className="particle particle-lantern delay-2">🏮</div>
-        <div className="particle particle-yuanbao">💰</div>
-        <div className="particle particle-yuanbao delay-3">💰</div>
-        <div className="particle particle-firework">🎆</div>
-        <div className="particle particle-firework delay-5">🎆</div>
-        <div className="particle particle-fu">福</div>
-        <div className="particle particle-fu delay-6">福</div>
-      </div>
-
       {/* 主内容 */}
       <div className="festival-home-content">
-        {/* 顶部装饰区 */}
-        <div className="header-decoration">
-          <div className="couplet couplet-left">
-            <span>福</span>
-            <span>运</span>
-            <span>亨</span>
-            <span>通</span>
-          </div>
-          <div className="couplet couplet-right">
-            <span>迎</span>
-            <span>春</span>
-            <span>纳</span>
-            <span>福</span>
-          </div>
-          <div className="lantern lantern-left">🏮</div>
-          <div className="lantern lantern-right">🏮</div>
-          <div className="yuanbao">💰</div>
+        {/* 顶部灯笼装饰 */}
+        <div className="header-lanterns">
+          <img
+            src="/assets/decorations/lantern.jpg"
+            alt="灯笼"
+            className="lantern-decoration left"
+          />
+          <img
+            src="/assets/decorations/lantern.jpg"
+            alt="灯笼"
+            className="lantern-decoration right"
+          />
         </div>
 
         {/* 标题区 */}
         <div className="title-section">
-          <h1 className="main-title">🧧 福袋AI · 马年大吉</h1>
-          <p className="subtitle">距离除夕 3 天</p>
+          <h1 className="main-title">福袋AI · 马年大吉</h1>
+          <p className="subtitle">距离除夕还有 3 天</p>
+        </div>
+
+        {/* 招财猫主视觉 */}
+        <div className="hero-mascot">
+          <img src="/assets/decorations/lucky-cat.jpg" alt="招财猫" />
+          <p className="mascot-subtitle">AI生成专属春节祝福</p>
         </div>
 
         {/* 4个分类入口 - 2x2网格 */}
@@ -130,7 +113,11 @@ const FestivalHomePage: React.FC = () => {
         {/* 春节大礼包购买入口 */}
         <div className="package-banner" onClick={handleBuyPackage}>
           <div className="package-content">
-            <div className="package-icon">🎁</div>
+            <img
+              src="/assets/decorations/gold-ingot.jpg"
+              alt="元宝"
+              className="gift-icon-decoration"
+            />
             <div className="package-info">
               <div className="package-title">春节大礼包 ¥19.9</div>
               <div className="package-desc">全部功能无限用 · 限时优惠 · 过年必备</div>

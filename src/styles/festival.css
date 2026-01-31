@@ -29,12 +29,8 @@
 /* ===== 红→橙→金垂直渐变背景 ===== */
 .festival-layout {
   min-height: 100vh;
-  /* 小红书风格：橙色到奶油色渐变 */
-  background: linear-gradient(180deg,
-    #FFA959 0%,      /* 暖橙色 */
-    #FFD7A8 40%,     /* 浅橙色 */
-    #FFF5E8 100%     /* 奶油白 */
-  );
+  /* 纯白背景 - 现代极简风格 */
+  background: #FFFFFF;
   position: relative;
   overflow-x: hidden;
   padding-bottom: 40px;
@@ -226,10 +222,8 @@
 
 /* ===== 顶部装饰区：对联+灯笼+金元宝 ===== */
 .header-decoration {
-  position: relative;
-  height: 80px;
-  margin-bottom: 20px;
-  z-index: 1;
+  /* 隐藏旧的装饰元素 */
+  display: none;
 }
 
 /* 左右对联 */
@@ -307,9 +301,11 @@
 /* ===== 标题区 ===== */
 .title-section {
   text-align: center;
-  padding: 0 20px 30px;
+  padding: 60px 20px 40px;
   position: relative;
   z-index: 1;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 /* 主标题 - 简洁深色 */
@@ -3768,3 +3764,65 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
 }
+
+/* ========== 新增：3D装饰元素 ========== */
+
+/* 顶部灯笼装饰 */
+.header-lanterns {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  height: 100px;
+}
+
+.lantern-decoration {
+  position: absolute;
+  width: 60px;
+  height: 80px;
+  top: 20px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  animation: lanternSwing 3s ease-in-out infinite;
+}
+
+.lantern-decoration.left {
+  left: 20px;
+}
+
+.lantern-decoration.right {
+  right: 20px;
+}
+
+@keyframes lanternSwing {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+/* 招财猫主视觉 */
+.hero-mascot {
+  text-align: center;
+  margin: 30px auto;
+  max-width: 400px;
+}
+
+.hero-mascot img {
+  width: 160px;
+  height: 160px;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.08));
+  margin-bottom: 16px;
+}
+
+.mascot-subtitle {
+  font-size: 15px;
+  color: #666;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* 元宝装饰（礼包区） */
+.gift-icon-decoration {
+  width: 56px;
+  height: 56px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+  margin-right: 12px;
+}
+

@@ -130,7 +130,7 @@ export class FastFortuneCardGenerator {
       });
 
       // 7. 导出Base64
-      const base64 = await canvas.exportAsBase64();
+      const base64 = canvas.toDataURL();
       
       // 8. 清理
       canvas.destroy();

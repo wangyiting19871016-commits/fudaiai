@@ -103,7 +103,7 @@ const FortunePage: React.FC = () => {
             <ZJFullscreenLoader
               progress={progress}
               narrativeTexts={narrativeTexts}
-              stage={stage === 'complete' ? 'complete' : 'generating'}
+              stage="generating"
             />
           )}
 

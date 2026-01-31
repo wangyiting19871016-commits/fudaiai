@@ -37,6 +37,12 @@ const FestivalCategoryPage: React.FC = () => {
 
     // 图片类功能
     if (processType === 'image') {
+      // M7运势抽卡：无需输入，直接执行
+      if (feature.input.type === 'none') {
+        navigate(`/festival/lab/${feature.id}`);
+        return;
+      }
+
       // 判断是否需要模板选择
       if (feature.input.needTemplate) {
         // 需要模板选择：M1/M2/M3/M4

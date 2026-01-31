@@ -20,7 +20,8 @@ export class FastFortuneCardGenerator {
     try {
       // 1. 获取背景图URL
       const backgroundUrl = this.getBackgroundUrl(fortune.id);
-      
+      console.log('[FastFortuneCardGenerator] 背景图路径:', backgroundUrl);
+
       // 2. Canvas合成
       const finalImageBase64 = await this.composeCard(
         backgroundUrl,
@@ -32,9 +33,10 @@ export class FastFortuneCardGenerator {
       console.log('[FastFortuneCardGenerator] 生成完成');
       return finalImageBase64;
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('[FastFortuneCardGenerator] 生成失败:', error);
-      throw error;
+      console.error('[FastFortuneCardGenerator] 错误详情:', error.message, error.stack);
+      throw new Error(`运势卡生成失败: ${error.message}`);
     }
   }
 
@@ -73,8 +75,14 @@ export class FastFortuneCardGenerator {
       await this.loadGoogleFont();
 
       // 2. 绘制背景图
-      console.log('[FastFortuneCardGenerator] 绘制背景...');
-      await canvas.drawBackgroundImage(backgroundUrl);
+      console.log('[FastFortuneCardGenerator] 开始加载背景图:', backgroundUrl);
+      try {
+        await canvas.drawBackgroundImage(backgroundUrl);
+        console.log('[FastFortuneCardGenerator] 背景图绘制完成');
+      } catch (error: any) {
+        console.error('[FastFortuneCardGenerator] 背景图加载失败:', error);
+        throw new Error(`背景图加载失败: ${backgroundUrl}`);
+      }
 
       // 3. 创建红金渐变
       const redGoldGradient = canvas.createGradient(384, 100, 384, 200, ['#D32F2F', '#FFD700']);

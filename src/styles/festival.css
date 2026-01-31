@@ -200,14 +200,13 @@
   width: 100%;
   position: relative;
   z-index: 1;
-  /* 白色背景从category-grid位置开始 */
+  /* 白色背景从标题区域+留白后开始 */
   background: linear-gradient(to bottom,
     transparent 0%,
-    transparent calc(18vh + 72px),
-    #FFFFFF calc(18vh + 72px),
+    transparent calc(16vh + 72px + 28px),
+    #FFFFFF calc(16vh + 72px + 28px),
     #FFFFFF 100%
   );
-  /* 顶部圆角应用到白色区域 */
   border-radius: 0 0 0 0;
   min-height: 100vh;
 }
@@ -216,7 +215,7 @@
 .festival-home-content::after {
   content: '';
   position: absolute;
-  top: calc(18vh + 72px - 24px);
+  top: calc(16vh + 72px + 28px);
   left: 0;
   right: 0;
   height: 24px;
@@ -324,8 +323,8 @@
 /* ===== 标题区 - 红色背景包裹白色内容 ===== */
 .title-section {
   text-align: center;
-  /* 高度减半 */
-  min-height: 18vh;
+  /* 缩小10% */
+  min-height: 16vh;
   padding: 32px 20px 40px;
   position: relative;
   z-index: 1;
@@ -334,11 +333,13 @@
   justify-content: center;
   align-items: center;
   /* 红色背景 */
-  background: #ED1C24;
+  background: transparent;
   /* 无圆角 - 作为背景包裹下面内容 */
   border-radius: 0;
   /* 无边距 - 从顶部开始，全宽 */
   margin: 0;
+  /* 底部留白 - 和白色区域分离 */
+  margin-bottom: 28px;
   box-shadow: none;
 }
 

@@ -1537,6 +1537,8 @@ export class MissionExecutor {
         fortuneResult.blessing
       );
 
+      console.log('[MissionExecutor] 运势卡生成完成，图片大小:', (cardImageDataUrl.length / 1024).toFixed(2) + 'KB');
+
       this.updateProgress({
         stage: 'generating',
         progress: 90,
@@ -1555,12 +1557,19 @@ export class MissionExecutor {
         ],
         metadata: {
           missionId: 'M7',
+          fortuneType: fortuneResult.fortune.id,
+          fortuneName: fortuneResult.fortune.name,
+          rarity: fortuneResult.fortune.rarity,
           timestamp: Date.now()
         }
       };
 
+      console.log('[MissionExecutor] 准备保存到LocalStorage, taskId:', taskId);
+
       // 保存到LocalStorage
       this.saveToLocalStorage(taskId, finalResult);
+
+      console.log('[MissionExecutor] LocalStorage保存完成');
 
       // 更新进度为完成
       this.updateProgress({

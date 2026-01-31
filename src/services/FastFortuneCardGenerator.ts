@@ -130,8 +130,10 @@ export class FastFortuneCardGenerator {
       });
 
       // 7. 导出Base64
-      const base64 = canvas.toDataURL();
-      
+      const base64 = canvas.toDataURL('image/jpeg', 0.9); // 使用JPEG格式减小体积
+
+      console.log('[FastFortuneCardGenerator] 图片导出完成，大小:', (base64.length / 1024).toFixed(2) + 'KB');
+
       // 8. 清理
       canvas.destroy();
 

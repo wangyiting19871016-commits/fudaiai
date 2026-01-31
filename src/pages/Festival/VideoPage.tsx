@@ -151,7 +151,7 @@ const FestivalVideoPage: React.FC = () => {
     if (taskId) {
       navigate(`/festival/result/${taskId}`);
     } else {
-      navigate('/festival/home');
+      navigate(-1);
     }
   };
 

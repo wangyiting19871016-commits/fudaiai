@@ -85,7 +85,7 @@ const FestivalCategoryPage: React.FC = () => {
       <div className="festival-category-page">
         {/* 顶部导航 */}
         <div className="category-header">
-          <button className="back-btn" onClick={() => navigate('/festival/home')}>
+          <button className="back-btn" onClick={() => navigate(-1)}>
             ← 返回
           </button>
           <h1 className="category-title">{category.icon} {category.name}</h1>
@@ -97,16 +97,18 @@ const FestivalCategoryPage: React.FC = () => {
           {features.map((feature) => (
             <div
               key={feature.id}
-              className="feature-card"
+              className="feature-card feature-card-v2"
               onClick={() => handleFeatureClick(feature)}
             >
-              {/* 预览图占位 */}
-              <div className="feature-preview">
-                <div className="feature-icon-large">{feature.icon}</div>
-              </div>
+              {/* 上层：预览图 */}
+              {feature.previewImage && (
+                <div className="feature-preview-bg" style={{
+                  backgroundImage: `url(${feature.previewImage})`
+                }} />
+              )}
 
-              {/* 功能信息 */}
-              <div className="feature-info">
+              {/* 下层：功能信息 */}
+              <div className="feature-info-v2">
                 <h3 className="feature-name">{feature.name}</h3>
                 <p className="feature-desc">{feature.subtitle}</p>
                 {renderFreeQuota(feature)}

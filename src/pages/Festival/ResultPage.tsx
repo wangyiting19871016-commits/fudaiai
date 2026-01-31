@@ -125,7 +125,7 @@ const FestivalResultPage: React.FC = () => {
 
   const handleChangeTask = () => {
     // 返回福境入口
-    navigate('/festival/home');
+    navigate(-1);
   };
 
   // 判断是否为老照片修复任务

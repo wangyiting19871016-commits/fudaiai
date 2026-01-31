@@ -27,6 +27,7 @@ export interface Feature {
   name: string;
   subtitle: string;
   icon: string;
+  previewImage?: string;  // 预览图路径
   order: number;
   enabled: boolean;  // 是否启用
 
@@ -130,6 +131,7 @@ export const FEATURES: Feature[] = [
     name: '新年3D头像',
     subtitle: '重塑数字分身',
     icon: '🎭',
+    previewImage: '/assets/showcase/avatar-3d.png',
     order: 1,
     enabled: true,
     input: {
@@ -170,6 +172,7 @@ export const FEATURES: Feature[] = [
     name: '新年写真',
     subtitle: '换脸到新年场景',
     icon: '📸',
+    previewImage: '/assets/showcase/avatar-animated.png',
     order: 2,
     enabled: true,
     input: {
@@ -205,6 +208,7 @@ export const FEATURES: Feature[] = [
     name: '情侣合照',
     subtitle: '和TA一起迎新年',
     icon: '💑',
+    previewImage: '/assets/showcase/couple-photo.png',
     order: 1,
     enabled: true,
     input: {
@@ -245,6 +249,7 @@ export const FEATURES: Feature[] = [
     name: '全家福',
     subtitle: '温馨家庭时刻',
     icon: '👨‍👩‍👧',
+    previewImage: '/assets/showcase/family-photo.png',
     order: 2,
     enabled: false,  // ⚠️ 功能暂时下线（3人位置匹配太复杂）
     input: {
@@ -381,6 +386,7 @@ export const FEATURES: Feature[] = [
     name: '语音贺卡',
     subtitle: '听见时光的祝福',
     icon: '🎵',
+    previewImage: '/assets/showcase/voice-card.png',
     order: 2,
     enabled: true,
     input: {
@@ -422,6 +428,7 @@ export const FEATURES: Feature[] = [
     name: 'AI春联',
     subtitle: '定制你的新春对联',
     icon: '🏮',
+    previewImage: '/assets/showcase/couplet.png',
     order: 3,
     enabled: true,
     input: {
@@ -459,6 +466,7 @@ export const FEATURES: Feature[] = [
     name: '运势抽卡',
     subtitle: '抽一张马年运势卡',
     icon: '🎴',
+    previewImage: '/assets/showcase/fortune-wealth.png',
     order: 1,
     enabled: true,
     input: {
@@ -492,11 +500,12 @@ export const FEATURES: Feature[] = [
   },
 
   {
-    id: 'M6',
+    id: 'M8',
     categoryId: 'fun',
     name: 'AI运势占卜',
     subtitle: '测测你的马年运势',
     icon: '🔮',
+    previewImage: '/assets/showcase/fortune-love.png',
     order: 2,
     enabled: true,
     input: {

@@ -10,6 +10,7 @@ export interface Category {
   icon: string;
   description: string;
   gradient: [string, string];
+  previewImage?: string;  // 预览图路径
   order: number;  // 排序权重
 }
 
@@ -18,32 +19,36 @@ export const CATEGORIES: Category[] = [
     id: 'avatar',
     name: '新年形象',
     icon: '🎭',
-    description: '生成专属新年头像',
+    description: 'AI生成专属新年头像',
     gradient: ['#D32F2F', '#FF6B6B'],
+    previewImage: '/assets/showcase/avatar-example.jpg',
     order: 1
   },
   {
     id: 'family',
     name: '家庭相册',
     icon: '👨‍👩‍👧',
-    description: '合照生成与老照片修复',
+    description: '情侣合照 · 老照片修复',
     gradient: ['#FF6B6B', '#FFA07A'],
+    previewImage: '/assets/showcase/couple-photo.png',
     order: 2
   },
   {
     id: 'blessing',
     name: '拜年祝福',
     icon: '💬',
-    description: '文案、语音、春联',
+    description: '文案 · 语音 · 春联',
     gradient: ['#FFD700', '#FFA000'],
+    previewImage: '/assets/showcase/blessing-example.jpg',
     order: 3
   },
   {
     id: 'fun',
     name: '运势玩法',
-    icon: '🔮',
-    description: '运势占卜与趣味互动',
+    icon: '🎴',
+    description: '马年运势 · 趣味占卜',
     gradient: ['#9C27B0', '#E1BEE7'],
+    previewImage: '/assets/showcase/fortune-wealth.png',
     order: 4
   }
 ];

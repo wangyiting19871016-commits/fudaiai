@@ -75,15 +75,27 @@ const FestivalHomePage: React.FC = () => {
           {CATEGORIES.map((category) => (
             <div
               key={category.id}
-              className="category-card"
+              className="category-card category-card-v2"
               onClick={() => handleCategoryClick(category.id)}
-              style={{
-                background: `linear-gradient(135deg, ${category.gradient[0]}, ${category.gradient[1]})`
-              }}
             >
-              <div className="category-icon">{category.icon}</div>
-              <h3 className="category-name">{category.name}</h3>
-              <p className="category-desc">{category.description}</p>
+              {/* 背景预览图 */}
+              {category.previewImage && (
+                <div className="category-preview-bg" style={{
+                  backgroundImage: `url(${category.previewImage})`
+                }} />
+              )}
+
+              {/* 渐变遮罩 */}
+              <div className="category-overlay" style={{
+                background: `linear-gradient(135deg, ${category.gradient[0]}dd, ${category.gradient[1]}dd)`
+              }} />
+
+              {/* 内容区 */}
+              <div className="category-content">
+                <div className="category-icon-small">{category.icon}</div>
+                <h3 className="category-name">{category.name}</h3>
+                <p className="category-desc">{category.description}</p>
+              </div>
             </div>
           ))}
         </div>

@@ -317,9 +317,9 @@
 /* ===== 标题区 - 红色区域 ===== */
 .title-section {
   text-align: center;
-  /* 红色区域高度 - 约40vh */
-  min-height: 40vh;
-  padding: 48px 20px 120px;
+  /* 红色区域高度缩小 */
+  min-height: 35vh;
+  padding: 48px 20px 80px;
   position: relative;
   z-index: 1;
   display: flex;
@@ -330,6 +330,7 @@
   background: transparent;
   border-radius: 0;
   margin: 0;
+  margin-bottom: 24px;
   box-shadow: none;
 }
 
@@ -3264,8 +3265,9 @@
   padding: 0 16px 32px;
   margin-bottom: 32px;
   /* 定位到红色区域下半部分，跨越到白色区域 */
+  /* 和红色背景的间距(24px) > 卡片间距(16px) */
   position: relative;
-  margin-top: -100px;
+  margin-top: -76px;
   z-index: 2;
 }
 

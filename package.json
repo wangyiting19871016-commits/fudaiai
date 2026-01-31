@@ -22,6 +22,7 @@
     "antd": "^6.1.4",
     "autoprefixer": "^10.4.23",
     "canvas": "^3.2.1",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "compressorjs": "^1.2.1",
     "cors": "^2.8.5",

@@ -17,7 +17,7 @@ import P4LabPage from './pages/P4LabPage';
 
 // 🧧 春节H5页面（全新独立）
 import FestivalLayout from './pages/Festival/Layout';
-import FestivalHomePage from './pages/Festival/HomePage';
+import HomePageGlass from './pages/Festival/HomePageGlass';
 import FestivalLabPage from './pages/Festival/LabPage';
 import FestivalResultPage from './pages/Festival/ResultPage';
 import FestivalVoicePage from './pages/Festival/VoicePage';
@@ -59,8 +59,8 @@ const AppLayout: React.FC = () => {
           
           {/* 🧧 春节H5（全新独立） */}
           <Route path="/festival" element={<FestivalLayout />}>
-            <Route index element={<FestivalHomePage />} />
-            <Route path="home" element={<FestivalHomePage />} />
+            <Route index element={<HomePageGlass />} />
+            <Route path="home" element={<HomePageGlass />} />
             <Route path="category/:categoryId" element={<FestivalCategoryPage />} />
             <Route path="template-select/:featureId" element={<TemplateSelectionPage />} />
             <Route path="lab/:missionId" element={<FestivalLabPage />} />

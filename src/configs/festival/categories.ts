@@ -21,7 +21,7 @@ export const CATEGORIES: Category[] = [
     icon: '🎭',
     description: 'AI生成专属新年头像',
     gradient: ['#D32F2F', '#FF6B6B'],
-    previewImage: '/assets/showcase/avatar-example-new.jpg',
+    previewImage: '/assets/showcase/avatar-animated.png',
     order: 1
   },
   {

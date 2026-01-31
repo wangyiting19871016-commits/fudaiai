@@ -78,20 +78,17 @@ const FestivalHomePage: React.FC = () => {
               className="category-card category-card-v2"
               onClick={() => handleCategoryClick(category.id)}
             >
-              {/* 背景预览图 */}
+              {/* 上层：清晰的预览图 */}
               {category.previewImage && (
                 <div className="category-preview-bg" style={{
                   backgroundImage: `url(${category.previewImage})`
                 }} />
               )}
 
-              {/* 渐变遮罩 */}
-              <div className="category-overlay" style={{
-                background: `linear-gradient(135deg, ${category.gradient[0]}dd, ${category.gradient[1]}dd)`
-              }} />
-
-              {/* 内容区 */}
-              <div className="category-content">
+              {/* 下层：文字标签（带渐变背景）*/}
+              <div className="category-content" style={{
+                background: `linear-gradient(135deg, ${category.gradient[0]}, ${category.gradient[1]})`
+              }}>
                 <h3 className="category-name">{category.name}</h3>
                 <p className="category-desc">{category.description}</p>
               </div>

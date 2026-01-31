@@ -23,6 +23,13 @@ const FestivalResultPage: React.FC = () => {
   const [showComparison, setShowComparison] = useState(true); // 默认展示对比图
 
   useEffect(() => {
+    // 自动清理过期任务（7天前的）
+    try {
+      MissionExecutor.cleanupExpiredTasks(7);
+    } catch (error) {
+      console.error('[Festival Result] 清理过期任务失败:', error);
+    }
+
     // 从 LocalStorage 获取任务结果
     if (taskId) {
       const savedResult = MissionExecutor.getResult(taskId);
@@ -119,8 +126,16 @@ const FestivalResultPage: React.FC = () => {
   };
 
   const handleRegenerate = () => {
-    // 返回实操页重新生成
-    navigate(`/festival/lab/${result.metadata.missionId}`);
+    const missionId = result?.metadata?.missionId;
+
+    // M7运势抽卡：返回运势页
+    if (missionId === 'M7') {
+      navigate(`/festival/fortune/${missionId}`);
+      return;
+    }
+
+    // 其他任务：返回实操页
+    navigate(`/festival/lab/${missionId}`);
   };
 
   const handleChangeTask = () => {

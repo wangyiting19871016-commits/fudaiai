@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>清理缓存</title>
+</head>
+<body>
+  <h1>清理localStorage缓存</h1>
+  <button onclick="clearStorage()">点击清理</button>
+  <pre id="output"></pre>
+  
+  <script>
+    function clearStorage() {
+      const keys = Object.keys(localStorage);
+      const festivalKeys = keys.filter(k => k.startsWith('festival_'));
+      
+      document.getElementById('output').textContent = 
+        '找到任务: ' + festivalKeys.length + '\n' +
+        festivalKeys.join('\n') + '\n\n' +
+        '正在清理...';
+      
+      festivalKeys.forEach(k => localStorage.removeItem(k));
+      
+      setTimeout(() => {
+        document.getElementById('output').textContent += '\n\n✅ 清理完成！';
+      }, 500);
+    }
+  </script>
+</body>
+</html>

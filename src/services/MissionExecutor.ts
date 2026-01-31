@@ -21,7 +21,7 @@ import { API_VAULT } from '../config/ApiVault';
 import { FESTIVAL_ASSET_TRIGGERS } from '../configs/festival/assetTriggers';
 import { TEMPLATE_CACHE } from '../configs/festival/templateCache';
 import { getEnabledWorkflows, LiblibWorkflowConfig } from '../configs/festival/liblibWorkflows';
-import { fastFortuneCardGenerator } from './FastFortuneCardGenerator';
+import { FortuneTemplateService } from './FortuneTemplateService';
 
 export interface MissionConfig {
   missionId: string;
@@ -1524,20 +1524,18 @@ export class MissionExecutor {
         message: `✨ 抽中【${fortuneResult.fortune.name}】！`
       });
 
-      // Step 2: 生成运势卡
+      // Step 2: 随机选择运势卡模板（瞬间完成）
       this.updateProgress({
         stage: 'generating',
         progress: 40,
-        message: '🎨 正在生成运势卡...'
+        message: '🎨 正在挑选运势卡...'
       });
 
-      // 使用快速生成器（2-3秒完成）
-      const cardImageDataUrl = await fastFortuneCardGenerator.generateCard(
-        fortuneResult.fortune,
-        fortuneResult.blessing
-      );
+      // 使用模板服务（<100ms完成）
+      const template = FortuneTemplateService.getRandomTemplate(fortuneResult.fortune.id);
+      const cardImageUrl = template.imagePath;
 
-      console.log('[MissionExecutor] 运势卡生成完成，图片大小:', (cardImageDataUrl.length / 1024).toFixed(2) + 'KB');
+      console.log('[MissionExecutor] 随机选择模板:', template.name, '路径:', cardImageUrl);
 
       this.updateProgress({
         stage: 'generating',
@@ -1548,18 +1546,21 @@ export class MissionExecutor {
       // 构建返回结果
       const finalResult: MissionResult = {
         taskId,
-        image: cardImageDataUrl,
+        image: cardImageUrl,
         caption: fortuneResult.blessing,
         dna: [
           `运势：${fortuneResult.fortune.name}`,
           `稀有度：${fortuneResult.fortune.rarity}`,
-          `吉祥话：${fortuneResult.blessing}`
+          `吉祥话：${fortuneResult.blessing}`,
+          `模板：${template.name}`
         ],
         metadata: {
           missionId: 'M7',
           fortuneType: fortuneResult.fortune.id,
           fortuneName: fortuneResult.fortune.name,
           rarity: fortuneResult.fortune.rarity,
+          templateId: template.id,
+          templateName: template.name,
           timestamp: Date.now()
         }
       };
@@ -1708,6 +1709,73 @@ export class MissionExecutor {
     } catch (error) {
       console.error('[MissionExecutor] LocalStorage读取失败:', error);
       return null;
+    }
+  }
+
+  /**
+   * 清理过期的localStorage任务
+   * @param maxAgeDays 最大保留天数，默认7天
+   */
+  static cleanupExpiredTasks(maxAgeDays: number = 7): number {
+    try {
+      const now = Date.now();
+      const maxAge = maxAgeDays * 24 * 60 * 60 * 1000; // 转换为毫秒
+      let cleanedCount = 0;
+
+      // 获取所有festival_task_开头的key
+      const keys = Object.keys(localStorage).filter(k => k.startsWith('festival_task_'));
+
+      console.log(`[MissionExecutor] 开始清理，共${keys.length}个任务`);
+
+      for (const key of keys) {
+        try {
+          const data = localStorage.getItem(key);
+          if (!data) continue;
+
+          const result: MissionResult = JSON.parse(data);
+
+          // 检查是否有timestamp
+          if (!result.metadata?.timestamp) {
+            console.log(`[MissionExecutor] 清理无时间戳任务: ${key}`);
+            localStorage.removeItem(key);
+            cleanedCount++;
+            continue;
+          }
+
+          // 检查是否过期
+          const age = now - result.metadata.timestamp;
+          if (age > maxAge) {
+            console.log(`[MissionExecutor] 清理过期任务: ${key} (${Math.floor(age / (24 * 60 * 60 * 1000))}天前)`);
+            localStorage.removeItem(key);
+            cleanedCount++;
+          }
+        } catch (parseError) {
+          // 数据损坏，直接删除
+          console.log(`[MissionExecutor] 清理损坏任务: ${key}`);
+          localStorage.removeItem(key);
+          cleanedCount++;
+        }
+      }
+
+      console.log(`[MissionExecutor] 清理完成，删除${cleanedCount}个任务，剩余${keys.length - cleanedCount}个任务`);
+      return cleanedCount;
+    } catch (error) {
+      console.error('[MissionExecutor] 清理任务失败:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * 获取所有任务ID列表
+   */
+  static getAllTaskIds(): string[] {
+    try {
+      return Object.keys(localStorage)
+        .filter(k => k.startsWith('festival_task_'))
+        .map(k => k.replace('festival_task_', ''));
+    } catch (error) {
+      console.error('[MissionExecutor] 获取任务列表失败:', error);
+      return [];
     }
   }
 }

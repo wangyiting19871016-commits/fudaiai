@@ -92,7 +92,6 @@ const FestivalHomePage: React.FC = () => {
 
               {/* 内容区 */}
               <div className="category-content">
-                <div className="category-icon-small">{category.icon}</div>
                 <h3 className="category-name">{category.name}</h3>
                 <p className="category-desc">{category.description}</p>
               </div>

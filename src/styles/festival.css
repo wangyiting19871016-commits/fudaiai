@@ -3329,7 +3329,7 @@
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: brightness(0.8);
+  filter: brightness(1.1);
   transition: transform 0.3s ease;
 }
 
@@ -3341,9 +3341,10 @@
 .category-overlay {
   position: absolute;
   inset: 0;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(1px);
   display: flex;
   align-items: flex-end;
+  opacity: 0.6;
 }
 
 .category-content {
@@ -3352,8 +3353,8 @@
   padding: 16px;
   width: 100%;
   background: linear-gradient(to top,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(0, 0, 0, 0.3) 60%,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.5) 60%,
     transparent 100%
   );
 }

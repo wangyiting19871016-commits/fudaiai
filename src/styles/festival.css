@@ -26,14 +26,14 @@
   --text-secondary: rgba(255, 255, 255, 0.85);
 }
 
-/* ===== 红→橙→金垂直渐变背景 ===== */
+/* ===== 红色背景 ===== */
 .festival-layout {
   min-height: 100vh;
-  /* 浅灰背景 - 复刻小红书 */
-  background: #F5F5F5;
+  /* 红色背景 */
+  background: #ED1C24;
   position: relative;
   overflow-x: hidden;
-  padding-bottom: 40px;
+  padding-bottom: 0;
 }
 
 /* 红色光晕效果 */
@@ -200,6 +200,29 @@
   width: 100%;
   position: relative;
   z-index: 1;
+  /* 白色背景从category-grid位置开始 */
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    transparent calc(18vh + 72px),
+    #FFFFFF calc(18vh + 72px),
+    #FFFFFF 100%
+  );
+  /* 顶部圆角应用到白色区域 */
+  border-radius: 0 0 0 0;
+  min-height: 100vh;
+}
+
+/* 白色内容区域的顶部圆角效果 */
+.festival-home-content::after {
+  content: '';
+  position: absolute;
+  top: calc(18vh + 72px - 24px);
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: #FFFFFF;
+  border-radius: 24px 24px 0 0;
+  z-index: 0;
 }
 
 /* Hero区域 - 震撼标题 */
@@ -298,12 +321,12 @@
   50% { transform: translateX(-50%) translateY(-10px); }
 }
 
-/* ===== 标题区 - 航班App风格独立卡片 ===== */
+/* ===== 标题区 - 红色背景包裹白色内容 ===== */
 .title-section {
   text-align: center;
-  /* 大Hero区域 - 占据35-40%视口高度 */
-  min-height: 35vh;
-  padding: 40px 24px 48px;
+  /* 高度减半 */
+  min-height: 18vh;
+  padding: 32px 20px 40px;
   position: relative;
   z-index: 1;
   display: flex;
@@ -312,11 +335,11 @@
   align-items: center;
   /* 红色背景 */
   background: #ED1C24;
-  /* 上下都圆角 - 独立卡片 */
-  border-radius: 24px;
-  /* 左右留白 + 上下间距 */
-  margin: 16px 16px 24px 16px;
-  box-shadow: 0 8px 24px rgba(237, 28, 36, 0.15);
+  /* 无圆角 - 作为背景包裹下面内容 */
+  border-radius: 0;
+  /* 无边距 - 从顶部开始，全宽 */
+  margin: 0;
+  box-shadow: none;
 }
 
 /* 主标题 */
@@ -640,7 +663,7 @@
 .showcase-section {
   padding: 40px 20px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .section-title {
@@ -3247,8 +3270,10 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  padding: 0 16px;
+  padding: 24px 16px 32px;
   margin-bottom: 32px;
+  position: relative;
+  z-index: 2;
 }
 
 .category-card {

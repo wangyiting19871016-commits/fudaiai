@@ -200,12 +200,12 @@
   width: 100%;
   position: relative;
   z-index: 1;
-  /* 白色背景从标题区域+留白后开始 */
+  /* 白色背景从红色区域中间开始（约25vh）*/
   background: linear-gradient(to bottom,
     transparent 0%,
-    transparent calc(16vh + 72px + 28px),
-    #FFFFFF calc(16vh + 72px + 28px),
-    #FFFFFF 100%
+    transparent 25vh,
+    #F5F5F5 25vh,
+    #F5F5F5 100%
   );
   border-radius: 0 0 0 0;
   min-height: 100vh;
@@ -215,11 +215,11 @@
 .festival-home-content::after {
   content: '';
   position: absolute;
-  top: calc(16vh + 72px + 28px);
+  top: 25vh;
   left: 0;
   right: 0;
-  height: 24px;
-  background: #FFFFFF;
+  height: 32px;
+  background: #F5F5F5;
   border-radius: 24px 24px 0 0;
   z-index: 0;
 }
@@ -320,26 +320,22 @@
   50% { transform: translateX(-50%) translateY(-10px); }
 }
 
-/* ===== 标题区 - 红色背景包裹白色内容 ===== */
+/* ===== 标题区 - 红色区域 ===== */
 .title-section {
   text-align: center;
-  /* 缩小10% */
-  min-height: 16vh;
-  padding: 32px 20px 40px;
+  /* 红色区域高度 - 约40vh */
+  min-height: 40vh;
+  padding: 48px 20px 120px;
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  /* 红色背景 */
+  padding-top: 60px;
   background: transparent;
-  /* 无圆角 - 作为背景包裹下面内容 */
   border-radius: 0;
-  /* 无边距 - 从顶部开始，全宽 */
   margin: 0;
-  /* 底部留白 - 和白色区域分离 */
-  margin-bottom: 28px;
   box-shadow: none;
 }
 
@@ -3271,9 +3267,11 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  padding: 24px 16px 32px;
+  padding: 0 16px 32px;
   margin-bottom: 32px;
+  /* 定位到红色区域下半部分，跨越到白色区域 */
   position: relative;
+  margin-top: -100px;
   z-index: 2;
 }
 

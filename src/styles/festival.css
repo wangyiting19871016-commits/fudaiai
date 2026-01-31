@@ -1445,6 +1445,47 @@
   margin: 0 auto;
 }
 
+/* 对比图视图切换按钮 */
+.festival-result-view-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.view-toggle-btn {
+  padding: 12px 28px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+.view-toggle-btn.active {
+  background: linear-gradient(135deg,
+    rgba(255, 215, 0, 0.4),
+    rgba(255, 193, 7, 0.3)
+  );
+  border-color: rgba(255, 215, 0, 0.8);
+  color: #FFFFFF;
+  box-shadow:
+    0 4px 16px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px);
+}
+
 .festival-result-image {
   width: 100%;
   max-width: 600px;

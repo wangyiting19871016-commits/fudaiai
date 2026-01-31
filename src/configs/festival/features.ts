@@ -454,12 +454,50 @@ export const FEATURES: Feature[] = [
 
   // ========== 运势玩法 ==========
   {
+    id: 'M7',
+    categoryId: 'fun',
+    name: '运势抽卡',
+    subtitle: '抽一张马年运势卡',
+    icon: '🎴',
+    order: 1,
+    enabled: true,
+    input: {
+      type: 'none'
+    },
+    output: {
+      type: 'image',
+      canAddText: true,
+      canAddAudio: true
+    },
+    process: {
+      type: 'image',
+      dna: { enabled: false, promptKey: '' },
+      generation: {
+        workflowType: 'text2img',
+        templateUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+        promptTemplate: 'Chinese New Year fortune card, decorative background',
+        negativePrompt: 'text, words, letters, low quality',
+        params: {
+          width: 768,
+          height: 1024,
+          steps: 20,
+          cfgScale: 3.5,
+          sampler: 15
+        }
+      },
+      caption: { enabled: true, promptKey: 'fortune_blessing' }
+    },
+    access: { freePerDay: 3, freeWatermark: false, vipOnly: false },
+    useLegacyExecutor: true
+  },
+
+  {
     id: 'M6',
     categoryId: 'fun',
     name: 'AI运势占卜',
     subtitle: '测测你的马年运势',
     icon: '🔮',
-    order: 1,
+    order: 2,
     enabled: true,
     input: {
       type: 'text',
@@ -494,7 +532,7 @@ export const FEATURES: Feature[] = [
     name: '隐形文字画',
     subtitle: '藏在年味里的秘密',
     icon: '🎨',
-    order: 2,
+    order: 3,
     enabled: true,
     input: {
       type: 'text',
@@ -543,7 +581,7 @@ export const FEATURES: Feature[] = [
     name: '高情商回复',
     subtitle: '接住尬问不憋屈',
     icon: '💬',
-    order: 3,
+    order: 4,
     enabled: true,
     input: {
       type: 'text',

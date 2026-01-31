@@ -53,6 +53,8 @@ export interface MissionResult {
   image: string;              // 生成的图片URL/Base64
   caption?: string;           // DeepSeek判词
   dna?: string[];             // Qwen-VL标签
+  originalImage?: string;     // 原始图片（老照片修复用）
+  comparisonImage?: string;   // 对比图（老照片修复用）
   metadata: {
     missionId: string;
     timestamp: number;
@@ -124,6 +126,15 @@ const MISSION_CONFIGS: Record<string, MissionConfig> = {
     requiresGender: false,
     apiSlot: 'liblib-controlnet',
     modelId: 'liblib-photo-restore'
+  },
+  M7: {
+    missionId: 'M7',
+    name: '运势抽卡',
+    requiresDNA: false,
+    requiresCaption: false,
+    requiresGender: false,
+    apiSlot: 'liblib-controlnet',
+    modelId: 'liblib-flux-dev'
   }
 };
 
@@ -161,7 +172,14 @@ export class MissionExecutor {
       const isM3 = missionId === 'M3';
       const isM4 = missionId === 'M4';
       const isM6 = missionId === 'M6';
+      const isM7 = missionId === 'M7';
       const isMultiPerson = isM3 || isM4;
+
+      // M7运势抽卡：使用专门的处理流程
+      if (isM7) {
+        console.log('[MissionExecutor] 检测到M7运势抽卡任务');
+        return await this.executeFortuneDrawing(taskId, config, input);
+      }
 
       // M6老照片修复：使用专门的处理流程
       if (isM6) {
@@ -929,12 +947,42 @@ export class MissionExecutor {
         message: '🎨 AI正在精心修复中...'
       });
 
-      const finalImageUrl = await this.pollComfyTaskStatus(generateUuid);
+      const restoredImageUrl = await this.pollComfyTaskStatus(generateUuid);
+
+      // Step 4: 生成对比图
+      this.updateProgress({
+        stage: 'enhancing',
+        progress: 85,
+        message: '🖼️ 正在生成对比图...'
+      });
+
+      let comparisonImageUrl: string | undefined;
+
+      try {
+        console.log('[MissionExecutor] 开始生成对比图...');
+        const { generateStandardComparison } = await import('./PhotoComparisonService');
+
+        const comparisonResult = await generateStandardComparison(photoUrl, restoredImageUrl);
+
+        if (comparisonResult.success && comparisonResult.dataUrl) {
+          // 上传对比图到COS
+          console.log('[MissionExecutor] 上传对比图到COS...');
+          const comparisonUploadResult = await this.uploadUserImageToPublicUrl(comparisonResult.dataUrl);
+          comparisonImageUrl = comparisonUploadResult;
+          console.log('[MissionExecutor] ✅ 对比图上传成功:', comparisonImageUrl.substring(0, 50) + '...');
+        } else {
+          console.warn('[MissionExecutor] ⚠️ 对比图生成失败:', comparisonResult.error);
+        }
+      } catch (comparisonError: any) {
+        console.error('[MissionExecutor] 对比图生成失败（不影响主流程）:', comparisonError);
+      }
 
       // 构建返回结果
       const finalResult: MissionResult = {
         taskId,
-        image: finalImageUrl,
+        image: restoredImageUrl,           // 修复后的图片
+        originalImage: photoUrl,           // 原始图片
+        comparisonImage: comparisonImageUrl, // 对比图
         metadata: {
           missionId: 'M6',
           timestamp: Date.now(),
@@ -951,6 +999,11 @@ export class MissionExecutor {
         progress: 100,
         message: '✨ 修复完成！'
       });
+
+      console.log('[MissionExecutor] ✅ 老照片修复完成，结果包含:');
+      console.log('  - 原始图片:', photoUrl.substring(0, 50) + '...');
+      console.log('  - 修复图片:', restoredImageUrl.substring(0, 50) + '...');
+      console.log('  - 对比图:', comparisonImageUrl ? comparisonImageUrl.substring(0, 50) + '...' : '未生成');
 
       return finalResult;
     } catch (error: any) {
@@ -1439,6 +1492,93 @@ export class MissionExecutor {
     }
 
     throw new Error('ComfyUI任务超时');
+  }
+
+  /**
+   * 执行运势抽卡任务（M7）
+   */
+  private async executeFortuneDrawing(
+    taskId: string,
+    config: MissionConfig,
+    input: MissionInput
+  ): Promise<MissionResult> {
+    console.log('[MissionExecutor] 开始执行运势抽卡任务');
+
+    try {
+      // Step 1: 执行抽卡
+      this.updateProgress({
+        stage: 'generating',
+        progress: 10,
+        message: '🎴 正在抽取运势卡...'
+      });
+
+      const { fortuneService } = await import('./FortuneService');
+      const fortuneResult = fortuneService.drawFortune();
+
+      console.log('[MissionExecutor] 抽中运势:', fortuneResult.fortune.name);
+
+      this.updateProgress({
+        stage: 'generating',
+        progress: 30,
+        message: `✨ 抽中【${fortuneResult.fortune.name}】！`
+      });
+
+      // Step 2: 生成运势卡
+      this.updateProgress({
+        stage: 'generating',
+        progress: 40,
+        message: '🎨 正在生成运势卡...'
+      });
+
+      const { fortuneCardGenerator } = await import('./FortuneCardGenerator');
+      const cardImageDataUrl = await fortuneCardGenerator.generate({
+        fortuneResult,
+        userPhoto: input.image
+      });
+
+      this.updateProgress({
+        stage: 'generating',
+        progress: 90,
+        message: '🎉 运势卡生成完成！'
+      });
+
+      // 构建返回结果
+      const finalResult: MissionResult = {
+        taskId,
+        image: cardImageDataUrl,
+        caption: fortuneResult.blessing,
+        dna: [
+          `运势：${fortuneResult.fortune.name}`,
+          `稀有度：${fortuneResult.fortune.rarity}`,
+          `吉祥话：${fortuneResult.blessing}`
+        ],
+        metadata: {
+          missionId: 'M7',
+          timestamp: Date.now()
+        }
+      };
+
+      // 保存到LocalStorage
+      this.saveToLocalStorage(taskId, finalResult);
+
+      // 更新进度为完成
+      this.updateProgress({
+        stage: 'complete',
+        progress: 100,
+        message: '✅ 运势抽卡完成！'
+      });
+
+      return finalResult;
+    } catch (error: any) {
+      console.error('[MissionExecutor] 运势抽卡失败:', error);
+      this.updateProgress({
+        stage: 'error',
+        progress: 0,
+        message: '抽卡失败',
+        error: error.message
+      });
+      throw error;
+    }
   }
 
   /**

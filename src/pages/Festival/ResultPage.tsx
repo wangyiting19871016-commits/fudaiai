@@ -20,6 +20,7 @@ const FestivalResultPage: React.FC = () => {
   const [result, setResult] = useState<MissionResult | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showComparison, setShowComparison] = useState(true); // 默认展示对比图
 
   useEffect(() => {
     // 从 LocalStorage 获取任务结果
@@ -27,10 +28,12 @@ const FestivalResultPage: React.FC = () => {
       const savedResult = MissionExecutor.getResult(taskId);
       if (savedResult) {
         console.log('✅ [Festival Result] LocalStorage读取成功');
+        console.log('[Festival Result] 结果包含对比图:', !!savedResult.comparisonImage);
         setResult(savedResult);
         setIsLoading(false);
 
-        // 预加载图片
+        // 预加载图片（优先加载对比图）
+        const imageToLoad = savedResult.comparisonImage || savedResult.image;
         const img = new Image();
         img.onload = () => {
           console.log('[Festival Result] 图片加载完成');
@@ -40,7 +43,7 @@ const FestivalResultPage: React.FC = () => {
           console.error('[Festival Result] 图片加载失败');
           setImageLoaded(true);  // 即使失败也显示
         };
-        img.src = savedResult.image;
+        img.src = imageToLoad;
       } else {
         console.error('❌ [Festival Result] LocalStorage读取失败，taskId:', taskId);
         console.error('可能原因：1) LocalStorage配额不足 2) 数据未保存 3) taskId错误');
@@ -125,9 +128,39 @@ const FestivalResultPage: React.FC = () => {
     navigate('/festival/home');
   };
 
+  // 判断是否为老照片修复任务
+  const isPhotoRestore = result?.metadata?.missionId === 'M6';
+  const hasComparison = isPhotoRestore && result?.comparisonImage;
+
+  // 获取当前显示的图片
+  const getCurrentImage = () => {
+    if (isPhotoRestore && hasComparison && showComparison) {
+      return result.comparisonImage!;
+    }
+    return result?.image || '';
+  };
+
   return (
     <div className="festival-result">
       <div className="festival-result-container">
+        {/* 老照片修复：对比图切换按钮 */}
+        {hasComparison && (
+          <div className="festival-result-view-toggle">
+            <button
+              className={`view-toggle-btn ${showComparison ? 'active' : ''}`}
+              onClick={() => setShowComparison(true)}
+            >
+              📊 对比图
+            </button>
+            <button
+              className={`view-toggle-btn ${!showComparison ? 'active' : ''}`}
+              onClick={() => setShowComparison(false)}
+            >
+              🖼️ 修复后
+            </button>
+          </div>
+        )}
+
         {/* 图片展示 - 带加载状态 */}
         <div className="festival-result-image-wrapper">
           {!imageLoaded && (
@@ -137,7 +170,7 @@ const FestivalResultPage: React.FC = () => {
             </div>
           )}
           <img
-            src={result.image}
+            src={getCurrentImage()}
             alt="Generated"
             className={`festival-result-image ${imageLoaded ? 'loaded' : 'loading'}`}
             style={{ opacity: imageLoaded ? 1 : 0 }}

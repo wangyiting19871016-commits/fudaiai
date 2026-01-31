@@ -31,7 +31,7 @@ const FestivalTextPage: React.FC = () => {
         <div className="festival-text-page">
           <div className="text-error">
             <h2>功能未找到</h2>
-            <button onClick={() => navigate(-1)}>返回首页</button>
+            <button onClick={() => navigate('/festival/home')}>返回首页</button>
           </div>
         </div>
       </div>

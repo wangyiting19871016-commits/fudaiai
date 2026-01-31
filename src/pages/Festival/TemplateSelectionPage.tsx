@@ -77,7 +77,7 @@ const TemplateSelectionPage: React.FC = () => {
     return (
       <div className="template-selection-error">
         <p>功能不存在</p>
-        <button onClick={() => navigate(-1)}>返回首页</button>
+        <button onClick={() => navigate('/festival/home')}>返回首页</button>
       </div>
     );
   }
@@ -86,7 +86,7 @@ const TemplateSelectionPage: React.FC = () => {
     return (
       <div className="template-selection-error">
         <p>暂无可用模板</p>
-        <button onClick={() => navigate(-1)}>返回首页</button>
+        <button onClick={() => navigate('/festival/home')}>返回首页</button>
       </div>
     );
   }

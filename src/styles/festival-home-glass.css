@@ -9,11 +9,13 @@
 
 .festival-home-glass {
   min-height: 100vh;
-  background: var(--cny-bg-cream);
+  background: var(--cny-bg-cream) !important;
   position: relative;
   overflow-x: hidden;
   font-family: var(--font-body);
   padding-bottom: 100px;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
 }
 
 /* 动态背景光晕 */
@@ -63,8 +65,10 @@
    ======================================== */
 
 .header-section {
-  padding: 32px 0 0;
-  margin-bottom: 40px;
+  padding: 32px 0 0 !important;
+  margin-bottom: 48px !important;
+  position: relative;
+  z-index: 2;
 }
 
 .date-badge {
@@ -119,7 +123,8 @@
   color: var(--cny-gray-600);
   opacity: 0.8;
   letter-spacing: var(--tracking-wide);
-  margin-bottom: 8px;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* ========================================
@@ -127,8 +132,10 @@
    ======================================== */
 
 .category-section {
-  margin-bottom: 32px;
-  margin-top: 16px;
+  margin-bottom: 32px !important;
+  margin-top: 0 !important;
+  position: relative;
+  z-index: 1;
 }
 
 .category-grid {

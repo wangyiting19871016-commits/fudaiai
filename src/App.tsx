@@ -25,6 +25,7 @@ import FestivalTextPage from './pages/Festival/TextPage';
 import FestivalCategoryPage from './pages/Festival/CategoryPage';
 import FestivalVideoPage from './pages/Festival/VideoPage';
 import TemplateSelectionPage from './pages/Festival/TemplateSelectionPage';
+import FortunePage from './pages/Festival/FortunePage';
 
 // 布局组件，用于处理路由相关的布局逻辑
 const AppLayout: React.FC = () => {
@@ -63,6 +64,7 @@ const AppLayout: React.FC = () => {
             <Route path="category/:categoryId" element={<FestivalCategoryPage />} />
             <Route path="template-select/:featureId" element={<TemplateSelectionPage />} />
             <Route path="lab/:missionId" element={<FestivalLabPage />} />
+            <Route path="fortune/:missionId" element={<FortunePage />} />
             <Route path="result/:taskId" element={<FestivalResultPage />} />
             <Route path="voice/:taskId" element={<FestivalVoicePage />} />
             <Route path="voice" element={<FestivalVoicePage />} />

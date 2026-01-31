@@ -37,9 +37,9 @@ const FestivalCategoryPage: React.FC = () => {
 
     // 图片类功能
     if (processType === 'image') {
-      // M7运势抽卡：无需输入，直接执行
-      if (feature.input.type === 'none') {
-        navigate(`/festival/lab/${feature.id}`);
+      // M7运势抽卡：跳转专用运势页面
+      if (feature.id === 'M7' || feature.input.type === 'none') {
+        navigate(`/festival/fortune/${feature.id}`);
         return;
       }
 

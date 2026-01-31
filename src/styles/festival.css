@@ -301,29 +301,26 @@
 /* ===== 标题区 ===== */
 .title-section {
   text-align: center;
-  padding: 20px 20px 30px;
+  padding: 24px 20px 28px;
   position: relative;
   z-index: 1;
-  max-width: 600px;
-  margin: 0 auto;
   /* 红色顶栏背景 */
   background: #ED1C24;
-  margin-left: 0;
-  margin-right: 0;
-  max-width: 100%;
-  border-radius: 0 0 20px 20px;
+  /* 向下圆角（底部圆角）*/
+  border-radius: 0 0 24px 24px;
+  /* 给下方留出间距 */
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(237, 28, 36, 0.15);
 }
 
-/* 主标题 - 简洁深色 */
+/* 主标题 */
 .main-title {
-  font-size: 22px;
-  font-weight: 900;
-  /* 白色文字 - 在红色背景上可见 */
+  font-size: 26px;
+  font-weight: 700;
   color: #FFFFFF;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-  padding: 0;
-  text-shadow: none;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 }
   position: relative;
   display: inline-block;

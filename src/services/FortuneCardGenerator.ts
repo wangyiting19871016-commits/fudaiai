@@ -126,7 +126,7 @@ export class FortuneCardGenerator {
 
     const styleDescription = styleMap[fortuneName] || 'Chinese New Year, festive decorations, auspicious patterns';
 
-    return `${styleDescription}, Chinese traditional art style, decorative background, no text, no words, clean composition, high quality, detailed, festive atmosphere, year of the snake 2025`;
+    return `${styleDescription}, intricate Chinese traditional art patterns, luxury decorative background, ornate golden details, rich textures, auspicious symbols, NO TEXT, NO WORDS, NO LETTERS, NO CHARACTERS, clean empty center space for text overlay, high quality 8K, detailed rendering, vibrant festive atmosphere, year of the horse 2026, professional fortune card design`;
   }
 
   /**
@@ -153,18 +153,18 @@ export class FortuneCardGenerator {
       console.log('[FortuneCardGenerator] 绘制背景图...');
       await canvasService.drawBackgroundImage(backgroundUrl);
 
-      // 创建渐变色
-      const gradient = canvasService.createGradient(384, 100, 384, 200, gradientColors);
+      // 创建红金渐变色（统一使用春节配色）
+      const redGoldGradient = canvasService.createGradient(384, 100, 384, 200, ['#D32F2F', '#FFD700']);
 
       // 渲染中文标题（顶部居中）
       console.log('[FortuneCardGenerator] 渲染中文标题...');
       canvasService.renderText({
         text: chineseTitle,
-        fontSize: 72,
+        fontSize: 80,
         fontFamily: 'SourceHanSansSC',
-        fillStyle: gradient,
+        fillStyle: redGoldGradient,
         strokeStyle: '#FFFFFF',
-        strokeWidth: 8,
+        strokeWidth: 10,
         x: 384,
         y: 150,
         textAlign: 'center',
@@ -173,10 +173,10 @@ export class FortuneCardGenerator {
 
       // 渲染英文标题（弧形，中部）
       console.log('[FortuneCardGenerator] 渲染英文标题...');
-      const arcGradient = canvasService.createGradient(384, 400, 384, 500, gradientColors);
+      const arcGradient = canvasService.createGradient(384, 400, 384, 500, ['#FFD700', '#FFA000']);
       canvasService.renderArcText({
         text: englishTitle,
-        fontSize: 32,
+        fontSize: 36,
         fontFamily: 'Arial, sans-serif',
         fillStyle: arcGradient,
         strokeStyle: '#FFFFFF',
@@ -190,7 +190,6 @@ export class FortuneCardGenerator {
 
       // 渲染吉祥话（底部）
       console.log('[FortuneCardGenerator] 渲染吉祥话...');
-      const blessingGradient = canvasService.createGradient(384, 850, 384, 920, gradientColors);
 
       // 自动换行（如果文字过长）
       const maxCharsPerLine = 12;
@@ -205,9 +204,9 @@ export class FortuneCardGenerator {
           text: line,
           fontSize: 42,
           fontFamily: 'SourceHanSansSC',
-          fillStyle: blessingGradient,
+          fillStyle: redGoldGradient,
           strokeStyle: '#FFFFFF',
-          strokeWidth: 6,
+          strokeWidth: 7,
           x: 384,
           y: 880 + index * 50,
           textAlign: 'center',

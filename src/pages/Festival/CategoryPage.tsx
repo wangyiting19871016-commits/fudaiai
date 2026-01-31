@@ -95,7 +95,9 @@ const FestivalCategoryPage: React.FC = () => {
             ← 返回
           </button>
           <h1 className="category-title">{category.icon} {category.name}</h1>
-          <div className="header-placeholder"></div>
+          <button className="home-btn" onClick={() => navigate('/festival/home')}>
+            🏠
+          </button>
         </div>
 
         {/* 功能列表 */}

@@ -1,0 +1,497 @@
+/**
+ * 🎨 福袋AI主页 - Liquid Glass液态玻璃风格
+ *
+ * Design: UI UX Pro Max - Liquid Glass Style
+ * Target: 年轻、现代、高端、不土气
+ *
+ * 核心特性：
+ * - 流动的玻璃形态
+ * - 彩虹光泽渐变
+ * - 色差（Chromatic Aberration）
+ * - 400-600ms流畅动画
+ * - 动态模糊效果
+ *
+ * Version: 6.0_LiquidGlass
+ * Date: 2026-01-31
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ========================================
+   LIQUID GLASS VARIABLES
+   ======================================== */
+
+:root {
+  /* Iridescent Colors - 彩虹光泽 */
+  --liquid-red: #FF0844;
+  --liquid-pink: #FFB199;
+  --liquid-purple: #B721FF;
+  --liquid-blue: #21D4FD;
+  --liquid-cyan: #00F5FF;
+
+  /* CNY Accent */
+  --cny-gold: #FFD700;
+  --cny-red: #ED1C24;
+
+  /* Glass Effect */
+  --glass-blur: 15px;
+  --glass-opacity: 0.85;
+
+  /* Animation */
+  --morph-duration: 500ms;
+  --fluid-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   HOMEPAGE BASE - 只影响主页
+   ======================================== */
+
+.festival-home {
+  min-height: 100vh;
+  background: linear-gradient(135deg,
+    #1a1a2e 0%,
+    #16213e 50%,
+    #0f3460 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated background orbs */
+.festival-home::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -25%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle at 30% 50%,
+    var(--liquid-red) 0%,
+    var(--liquid-purple) 25%,
+    var(--liquid-blue) 50%,
+    transparent 70%
+  );
+  opacity: 0.3;
+  animation: morphOrb 8s ease-in-out infinite;
+  filter: blur(80px);
+}
+
+.festival-home::after {
+  content: '';
+  position: absolute;
+  bottom: -50%;
+  right: -25%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle at 70% 50%,
+    var(--cny-gold) 0%,
+    var(--liquid-pink) 25%,
+    var(--liquid-cyan) 50%,
+    transparent 70%
+  );
+  opacity: 0.25;
+  animation: morphOrb 10s ease-in-out infinite reverse;
+  filter: blur(80px);
+}
+
+@keyframes morphOrb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.1);
+    opacity: 0.4;
+  }
+}
+
+/* ========================================
+   HERO SECTION - 液态标题
+   ======================================== */
+
+.festival-home .title-section {
+  padding: 80px 20px 60px;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.festival-home .main-title {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(36px, 10vw, 56px);
+  font-weight: 800;
+  background: linear-gradient(135deg,
+    #FFFFFF 0%,
+    var(--liquid-pink) 30%,
+    var(--cny-gold) 60%,
+    #FFFFFF 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: liquidFlow 4s ease-in-out infinite;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+}
+
+@keyframes liquidFlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.festival-home .subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.05em;
+  animation: fadeInUp 600ms var(--fluid-ease) 200ms backwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   LIQUID GLASS CARDS - 流动玻璃卡片
+   ======================================== */
+
+.festival-home .category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 0 20px 40px;
+  position: relative;
+  z-index: 10;
+}
+
+.festival-home .category-card-v2 {
+  position: relative;
+  aspect-ratio: 0.85;
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+
+  /* Liquid Glass Foundation */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  /* Chromatic Aberration Shadow */
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    -2px 0 4px rgba(255, 0, 68, 0.1),
+    2px 0 4px rgba(33, 212, 253, 0.1);
+
+  transition: all var(--morph-duration) var(--fluid-ease);
+  animation: liquidCardEnter 600ms var(--fluid-ease) backwards;
+}
+
+/* Staggered entrance */
+.festival-home .category-card-v2:nth-child(1) { animation-delay: 300ms; }
+.festival-home .category-card-v2:nth-child(2) { animation-delay: 400ms; }
+.festival-home .category-card-v2:nth-child(3) { animation-delay: 500ms; }
+.festival-home .category-card-v2:nth-child(4) { animation-delay: 600ms; }
+
+@keyframes liquidCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Hover - Liquid morphing */
+.festival-home .category-card-v2:hover {
+  transform: translateY(-12px) scale(1.02);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    -3px 0 6px rgba(255, 0, 68, 0.2),
+    3px 0 6px rgba(33, 212, 253, 0.2),
+    0 0 40px rgba(255, 215, 0, 0.2);
+}
+
+.festival-home .category-card-v2:active {
+  transform: translateY(-8px) scale(1);
+  transition-duration: 150ms;
+}
+
+/* Iridescent glow on hover */
+.festival-home .category-card-v2::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(255, 8, 68, 0.2) 0%,
+    rgba(183, 33, 255, 0.2) 25%,
+    rgba(33, 212, 253, 0.2) 50%,
+    rgba(255, 215, 0, 0.2) 75%,
+    rgba(255, 177, 153, 0.2) 100%
+  );
+  background-size: 200% 200%;
+  opacity: 0;
+  animation: iridescent 3s ease-in-out infinite;
+  transition: opacity var(--morph-duration) var(--fluid-ease);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.festival-home .category-card-v2:hover::before {
+  opacity: 1;
+}
+
+@keyframes iridescent {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Image with chromatic aberration */
+.festival-home .category-preview-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 65%;
+  background-size: cover;
+  background-position: center;
+  transition: transform var(--morph-duration) var(--fluid-ease);
+  filter: saturate(1.2) contrast(1.05);
+}
+
+.festival-home .category-card-v2:hover .category-preview-bg {
+  transform: scale(1.08);
+  filter: saturate(1.4) contrast(1.1) brightness(1.05);
+}
+
+/* Content section with glass effect */
+.festival-home .category-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 35%;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+
+  /* Glass morphism */
+  background: rgba(237, 28, 36, 0.85) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.festival-home .category-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.festival-home .category-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
+
+/* ========================================
+   SHOWCASE SECTION - 玻璃展示区
+   ======================================== */
+
+.festival-home .showcase-section {
+  padding: 48px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 32px 32px 0 0;
+  margin-top: 32px;
+  position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.festival-home .section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.festival-home .showcase-item {
+  flex: 0 0 140px;
+  aspect-ratio: 0.75;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  scroll-snap-align: start;
+  position: relative;
+  overflow: hidden;
+  transition: all 300ms var(--fluid-ease);
+}
+
+.festival-home .showcase-item:active {
+  transform: scale(0.95);
+}
+
+/* ========================================
+   LIQUID GOLD BANNER - 液态金色横幅
+   ======================================== */
+
+.festival-home .package-banner {
+  margin: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg,
+    var(--cny-gold) 0%,
+    #FFA500 50%,
+    var(--cny-gold) 100%
+  );
+  background-size: 200% 200%;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
+  cursor: pointer;
+  transition: all var(--morph-duration) var(--fluid-ease);
+  position: relative;
+  overflow: hidden;
+  animation: goldenFlow 3s ease-in-out infinite;
+}
+
+@keyframes goldenFlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Liquid shine effect */
+.festival-home .package-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 70%
+  );
+  animation: liquidShine 2s ease-in-out infinite;
+}
+
+@keyframes liquidShine {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(45deg);
+  }
+}
+
+.festival-home .package-banner:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 48px rgba(255, 215, 0, 0.4);
+}
+
+/* ========================================
+   FOOTER - 玻璃底部
+   ======================================== */
+
+.festival-home .footer-section {
+  padding: 32px 20px 48px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px);
+}
+
+.festival-home .footer-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 300ms var(--fluid-ease);
+  font-family: inherit;
+  color: #FFFFFF;
+}
+
+.festival-home .footer-btn:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.festival-home .footer-btn span:last-child {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (min-width: 768px) {
+  .festival-home .category-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .festival-home *,
+  .festival-home *::before,
+  .festival-home *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

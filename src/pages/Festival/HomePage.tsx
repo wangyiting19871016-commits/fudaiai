@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import FestivalFireworks from './components/FestivalFireworks';
 import { CATEGORIES } from '../../configs/festival/categories';
+import '../../styles/festival-home-liquid.css';
 
 /**
  * 🏮 福袋AI 首页

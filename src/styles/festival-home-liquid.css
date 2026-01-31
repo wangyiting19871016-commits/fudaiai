@@ -1,442 +1,472 @@
 /**
- * 🎨 福袋AI主页 - Liquid Glass液态玻璃风格
+ * 🎨 福袋AI主页 - 现代极简春节风格
  *
- * Design: UI UX Pro Max - Liquid Glass Style
- * Target: 年轻、现代、高端、不土气
+ * Design: 参考现代春节H5设计
+ * Style: 米白背景 + 柔和粉色 + 极简主义
  *
  * 核心特性：
- * - 流动的玻璃形态
- * - 彩虹光泽渐变
- * - 色差（Chromatic Aberration）
- * - 400-600ms流畅动画
- * - 动态模糊效果
+ * - 纵向流式布局
+ * - 大量留白和呼吸感
+ * - 柔和圆角卡片
+ * - 极简图标
+ * - 无多余装饰
  *
- * Version: 6.0_LiquidGlass
+ * Version: 7.0_MinimalCNY
  * Date: 2026-01-31
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@700;900&display=swap');
 
 /* ========================================
-   LIQUID GLASS VARIABLES
+   DESIGN TOKENS
    ======================================== */
 
 :root {
-  /* Iridescent Colors - 彩虹光泽 */
-  --liquid-red: #FF0844;
-  --liquid-pink: #FFB199;
-  --liquid-purple: #B721FF;
-  --liquid-blue: #21D4FD;
-  --liquid-cyan: #00F5FF;
+  /* Modern CNY Palette */
+  --bg-cream: #FFF5F0;
+  --bg-white: #FFFFFF;
+  --bg-pink-soft: #FFE5E5;
+  --bg-pink-light: #FFF0F0;
 
-  /* CNY Accent */
-  --cny-gold: #FFD700;
-  --cny-red: #ED1C24;
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --accent-red: #E53935;
+  --accent-red-dark: #C62828;
+  --accent-orange: #FF6B35;
+  --accent-pink: #FF9AA2;
 
-  /* Glass Effect */
-  --glass-blur: 15px;
-  --glass-opacity: 0.85;
+  /* Spacing - 呼吸感 */
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
 
-  /* Animation */
-  --morph-duration: 500ms;
-  --fluid-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Border Radius - 柔和圆角 */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  /* Shadows - 微妙阴影 */
+  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-lifted: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
 /* ========================================
-   HOMEPAGE BASE - 只影响主页
+   BASE - 主页专用
    ======================================== */
 
 .festival-home {
   min-height: 100vh;
-  background: linear-gradient(135deg,
-    #1a1a2e 0%,
-    #16213e 50%,
-    #0f3460 100%
-  );
+  background: var(--bg-cream);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
-/* Animated background orbs */
-.festival-home::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -25%;
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(circle at 30% 50%,
-    var(--liquid-red) 0%,
-    var(--liquid-purple) 25%,
-    var(--liquid-blue) 50%,
-    transparent 70%
-  );
-  opacity: 0.3;
-  animation: morphOrb 8s ease-in-out infinite;
-  filter: blur(80px);
-}
-
-.festival-home::after {
-  content: '';
-  position: absolute;
-  bottom: -50%;
-  right: -25%;
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(circle at 70% 50%,
-    var(--cny-gold) 0%,
-    var(--liquid-pink) 25%,
-    var(--liquid-cyan) 50%,
-    transparent 70%
-  );
-  opacity: 0.25;
-  animation: morphOrb 10s ease-in-out infinite reverse;
-  filter: blur(80px);
-}
-
-@keyframes morphOrb {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.3;
-  }
-  50% {
-    transform: translate(30px, -30px) scale(1.1);
-    opacity: 0.4;
-  }
+.festival-home-content {
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 24px;
 }
 
 /* ========================================
-   HERO SECTION - 液态标题
+   HERO SECTION - 极简标题区
    ======================================== */
 
 .festival-home .title-section {
-  padding: 80px 20px 60px;
-  text-align: center;
+  padding: var(--space-2xl) var(--space-lg) var(--space-xl);
+  text-align: left;
   position: relative;
-  z-index: 10;
+}
+
+/* 小标签 */
+.festival-home .title-section::before {
+  content: '2025 乙巳年';
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1.5px solid var(--accent-red);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent-red);
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
 }
 
 .festival-home .main-title {
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(36px, 10vw, 56px);
-  font-weight: 800;
-  background: linear-gradient(135deg,
-    #FFFFFF 0%,
-    var(--liquid-pink) 30%,
-    var(--cny-gold) 60%,
-    #FFFFFF 100%
-  );
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: liquidFlow 4s ease-in-out infinite;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--text-primary);
   margin-bottom: 12px;
+  line-height: 1.2;
   letter-spacing: -0.02em;
-  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
 }
 
-@keyframes liquidFlow {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+/* 红色强调 */
+.festival-home .main-title::after {
+  content: attr(data-accent);
+  color: var(--accent-red);
 }
 
 .festival-home .subtitle {
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
-  letter-spacing: 0.05em;
-  animation: fadeInUp 600ms var(--fluid-ease) 200ms backwards;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  margin-top: 8px;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* 右上角装饰图标 */
+.festival-home .title-section::after {
+  content: '✦';
+  position: absolute;
+  top: 48px;
+  right: 24px;
+  font-size: 48px;
+  color: var(--accent-orange);
+  opacity: 0.3;
+  transform: rotate(15deg);
 }
 
 /* ========================================
-   LIQUID GLASS CARDS - 流动玻璃卡片
+   CARD GRID - 纵向流式布局
    ======================================== */
 
 .festival-home .category-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  padding: 0 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: 0 var(--space-lg) var(--space-lg);
   position: relative;
-  z-index: 10;
+  z-index: 1;
 }
 
+/* 基础卡片样式 */
 .festival-home .category-card-v2 {
   position: relative;
-  aspect-ratio: 0.85;
-  border-radius: 24px;
-  overflow: hidden;
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-soft);
   cursor: pointer;
-
-  /* Liquid Glass Foundation */
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-
-  /* Chromatic Aberration Shadow */
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    inset 0 1px 1px rgba(255, 255, 255, 0.2),
-    -2px 0 4px rgba(255, 0, 68, 0.1),
-    2px 0 4px rgba(33, 212, 253, 0.1);
-
-  transition: all var(--morph-duration) var(--fluid-ease);
-  animation: liquidCardEnter 600ms var(--fluid-ease) backwards;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: 100px;
 }
 
-/* Staggered entrance */
-.festival-home .category-card-v2:nth-child(1) { animation-delay: 300ms; }
-.festival-home .category-card-v2:nth-child(2) { animation-delay: 400ms; }
-.festival-home .category-card-v2:nth-child(3) { animation-delay: 500ms; }
-.festival-home .category-card-v2:nth-child(4) { animation-delay: 600ms; }
-
-@keyframes liquidCardEnter {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(0.9);
-    filter: blur(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
+/* 第一个卡片 - 大卡片突出显示 */
+.festival-home .category-card-v2:nth-child(1) {
+  background: var(--bg-pink-soft);
+  min-height: 140px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
-/* Hover - Liquid morphing */
+/* 第二行 - 两个小卡片横向排列 */
+.festival-home .category-grid::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.festival-home .category-card-v2:nth-child(2),
+.festival-home .category-card-v2:nth-child(3) {
+  float: left;
+  width: calc(50% - 8px);
+  min-height: 120px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.festival-home .category-card-v2:nth-child(2) {
+  margin-right: 16px;
+}
+
+/* 第四个卡片 - 普通卡片 */
+.festival-home .category-card-v2:nth-child(4) {
+  clear: both;
+  background: var(--bg-pink-light);
+}
+
+/* Hover效果 - 微妙上浮 */
 .festival-home .category-card-v2:hover {
-  transform: translateY(-12px) scale(1.02);
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 215, 0, 0.4);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.2),
-    inset 0 1px 1px rgba(255, 255, 255, 0.3),
-    -3px 0 6px rgba(255, 0, 68, 0.2),
-    3px 0 6px rgba(33, 212, 253, 0.2),
-    0 0 40px rgba(255, 215, 0, 0.2);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lifted);
 }
 
 .festival-home .category-card-v2:active {
-  transform: translateY(-8px) scale(1);
-  transition-duration: 150ms;
+  transform: translateY(-2px);
+  transition-duration: 100ms;
 }
 
-/* Iridescent glow on hover */
-.festival-home .category-card-v2::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg,
-    rgba(255, 8, 68, 0.2) 0%,
-    rgba(183, 33, 255, 0.2) 25%,
-    rgba(33, 212, 253, 0.2) 50%,
-    rgba(255, 215, 0, 0.2) 75%,
-    rgba(255, 177, 153, 0.2) 100%
-  );
-  background-size: 200% 200%;
-  opacity: 0;
-  animation: iridescent 3s ease-in-out infinite;
-  transition: opacity var(--morph-duration) var(--fluid-ease);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-.festival-home .category-card-v2:hover::before {
-  opacity: 1;
-}
-
-@keyframes iridescent {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-/* Image with chromatic aberration */
+/* 隐藏预览图 - 使用极简图标代替 */
 .festival-home .category-preview-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 65%;
-  background-size: cover;
-  background-position: center;
-  transition: transform var(--morph-duration) var(--fluid-ease);
-  filter: saturate(1.2) contrast(1.05);
+  display: none;
 }
 
-.festival-home .category-card-v2:hover .category-preview-bg {
-  transform: scale(1.08);
-  filter: saturate(1.4) contrast(1.1) brightness(1.05);
-}
-
-/* Content section with glass effect */
+/* 内容区域重新设计 */
 .festival-home .category-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 35%;
-  padding: 14px 12px;
+  position: static;
+  height: auto;
+  padding: 0;
+  background: transparent !important;
+  border: none;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  z-index: 2;
+  gap: 6px;
+  flex: 1;
+}
 
-  /* Glass morphism */
-  background: rgba(237, 28, 36, 0.85) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(255, 215, 0, 0.3);
+/* 添加图标 */
+.festival-home .category-content::before {
+  content: attr(data-icon);
+  font-size: 24px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* 第一个卡片的图标 */
+.festival-home .category-card-v2:nth-child(1) .category-content::before {
+  content: '🎊';
+  font-size: 32px;
+}
+
+.festival-home .category-card-v2:nth-child(2) .category-content::before {
+  content: '📷';
+  font-size: 28px;
+}
+
+.festival-home .category-card-v2:nth-child(3) .category-content::before {
+  content: '💐';
+  font-size: 28px;
+}
+
+.festival-home .category-card-v2:nth-child(4) .category-content::before {
+  content: '🎯';
+  font-size: 28px;
+}
+
+/* 右箭头 */
+.festival-home .category-card-v2::after {
+  content: '→';
+  font-size: 20px;
+  color: var(--text-secondary);
+  opacity: 0;
+  transition: all 300ms ease;
+  margin-left: auto;
+}
+
+.festival-home .category-card-v2:hover::after {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* 第一个卡片的箭头定位 */
+.festival-home .category-card-v2:nth-child(1)::after {
+  position: absolute;
+  top: 50%;
+  right: 24px;
+  transform: translateY(-50%);
+}
+
+.festival-home .category-card-v2:nth-child(1):hover::after {
+  transform: translateY(-50%) translateX(4px);
+}
+
+/* 小卡片无箭头 */
+.festival-home .category-card-v2:nth-child(2)::after,
+.festival-home .category-card-v2:nth-child(3)::after {
+  display: none;
 }
 
 .festival-home .category-name {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 4px;
+  color: var(--text-primary);
+  margin: 0;
   letter-spacing: -0.01em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 第一个卡片标题更大 */
+.festival-home .category-card-v2:nth-child(1) .category-name {
+  font-size: 22px;
 }
 
 .festival-home .category-desc {
-  font-size: 11px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
-  letter-spacing: 0.01em;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin: 0;
   line-height: 1.4;
+  letter-spacing: 0.01em;
 }
 
 /* ========================================
-   SHOWCASE SECTION - 玻璃展示区
+   SHOWCASE SECTION - 作品展示
    ======================================== */
 
 .festival-home .showcase-section {
-  padding: 48px 20px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border-radius: 32px 32px 0 0;
-  margin-top: 32px;
-  position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--space-2xl) var(--space-lg) var(--space-xl);
+  background: transparent;
+  border-radius: 0;
+  margin-top: var(--space-xl);
+  box-shadow: none;
 }
 
 .festival-home .section-title {
   font-size: 20px;
   font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 24px;
+  color: var(--text-primary);
+  margin-bottom: var(--space-lg);
   letter-spacing: -0.02em;
+}
+
+.festival-home .showcase-carousel {
+  display: flex;
+  gap: var(--space-md);
+  overflow-x: auto;
+  padding-bottom: var(--space-sm);
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.festival-home .showcase-carousel::-webkit-scrollbar {
+  display: none;
 }
 
 .festival-home .showcase-item {
   flex: 0 0 140px;
   aspect-ratio: 0.75;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background: var(--bg-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
   scroll-snap-align: start;
   position: relative;
   overflow: hidden;
-  transition: all 300ms var(--fluid-ease);
+  transition: transform 200ms ease;
 }
 
 .festival-home .showcase-item:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
+}
+
+.festival-home .showcase-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 48px;
+  opacity: 0.15;
+}
+
+.festival-home .showcase-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-sm);
+  background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
+}
+
+.festival-home .user-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--bg-white);
 }
 
 /* ========================================
-   LIQUID GOLD BANNER - 液态金色横幅
+   PACKAGE BANNER - 礼包横幅
    ======================================== */
 
 .festival-home .package-banner {
-  margin: 20px;
-  padding: 20px;
+  margin: var(--space-lg);
+  padding: var(--space-lg);
   background: linear-gradient(135deg,
-    var(--cny-gold) 0%,
-    #FFA500 50%,
-    var(--cny-gold) 100%
+    var(--accent-red) 0%,
+    var(--accent-red-dark) 100%
   );
-  background-size: 200% 200%;
-  border-radius: 24px;
-  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
-  transition: all var(--morph-duration) var(--fluid-ease);
+  transition: all 300ms ease;
   position: relative;
   overflow: hidden;
-  animation: goldenFlow 3s ease-in-out infinite;
 }
 
-@keyframes goldenFlow {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-/* Liquid shine effect */
 .festival-home .package-banner::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.4) 50%,
-    transparent 70%
-  );
-  animation: liquidShine 2s ease-in-out infinite;
-}
-
-@keyframes liquidShine {
-  0% {
-    transform: translateX(-100%) rotate(45deg);
-  }
-  100% {
-    transform: translateX(100%) rotate(45deg);
-  }
+  display: none;
 }
 
 .festival-home .package-banner:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 16px 48px rgba(255, 215, 0, 0.4);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lifted);
+}
+
+.festival-home .package-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  position: relative;
+  z-index: 1;
+}
+
+.festival-home .gift-icon-decoration {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.festival-home .package-info {
+  flex: 1;
+}
+
+.festival-home .package-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--bg-white);
+  margin-bottom: 4px;
+}
+
+.festival-home .package-desc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+}
+
+.festival-home .package-arrow {
+  font-size: 20px;
+  color: var(--bg-white);
+  font-weight: 400;
 }
 
 /* ========================================
-   FOOTER - 玻璃底部
+   FOOTER - 底部导航
    ======================================== */
 
 .festival-home .footer-section {
-  padding: 32px 20px 48px;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(15px);
+  padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+  background: transparent;
+}
+
+.festival-home .footer-nav {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--space-sm);
 }
 
 .festival-home .footer-btn {
@@ -445,28 +475,45 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  padding: var(--space-md);
+  background: var(--bg-white);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
   cursor: pointer;
-  transition: all 300ms var(--fluid-ease);
+  transition: all 200ms ease;
   font-family: inherit;
-  color: #FFFFFF;
 }
 
 .festival-home .footer-btn:hover {
-  transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.festival-home .footer-btn:active {
+  transform: translateY(0);
+}
+
+.festival-home .footer-btn span:first-child {
+  font-size: 24px;
 }
 
 .festival-home .footer-btn span:last-child {
   font-size: 11px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
+}
+
+/* ========================================
+   HIDE OLD ELEMENTS
+   ======================================== */
+
+.festival-home .header-lanterns,
+.festival-home .hero-mascot,
+.festival-home .particles-container,
+.festival-home .festival-watermark,
+.festival-home .header-decoration {
+  display: none !important;
 }
 
 /* ========================================
@@ -474,11 +521,13 @@
    ======================================== */
 
 @media (min-width: 768px) {
-  .festival-home .category-grid {
-    grid-template-columns: repeat(4, 1fr);
-    max-width: 960px;
-    margin-left: auto;
-    margin-right: auto;
+  .festival-home-content {
+    max-width: 560px;
+  }
+
+  .festival-home .category-card-v2:nth-child(2),
+  .festival-home .category-card-v2:nth-child(3) {
+    width: calc(50% - 8px);
   }
 }
 
@@ -494,4 +543,11 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+.festival-home .category-card-v2:focus-visible,
+.festival-home .footer-btn:focus-visible,
+.festival-home .package-banner:focus-visible {
+  outline: 3px solid var(--accent-red);
+  outline-offset: 4px;
 }

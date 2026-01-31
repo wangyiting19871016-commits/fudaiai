@@ -202,29 +202,20 @@
   width: 100%;
   position: relative;
   z-index: 1;
-  /* 白色背景从红色区域中间开始（约25vh）*/
-  background: linear-gradient(to bottom,
-    transparent 0%,
-    transparent 25vh,
-    #F5F5F5 25vh,
-    #F5F5F5 100%
-  );
-  border-radius: 0 0 0 0;
   min-height: 100vh;
 }
 
-/* 白色内容区域的顶部圆角效果 */
+/* 白色内容区域 - 带顶部圆角 */
 .festival-home-content::after {
   content: '';
   position: absolute;
   top: 25vh;
   left: 0;
   right: 0;
-  height: 40px;
+  bottom: 0;
   background: #F5F5F5;
   border-radius: 28px 28px 0 0;
-  z-index: 1;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 0;
 }
 
 /* Hero区域 - 震撼标题 */

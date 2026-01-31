@@ -1,16 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import FestivalFireworks from './components/FestivalFireworks';
-import { CATEGORIES } from '../../configs/festival/categories';
+import '../../styles/festival-home-redesign.css';
+import HomePageRedesign from './HomePageRedesign';
 
 /**
  * 🏮 福袋AI 首页
  *
- * 按文档设计：4个分类入口
- * 首页 → 分类页 → 功能页 → 结果页
+ * 2026-01-31 重构：
+ * - 案例展示型布局
+ * - 春节氛围 + AI科技感
+ * - 去除低级动画
+ * - 真实效果驱动
  */
 
 const FestivalHomePage: React.FC = () => {
+  // 使用重构后的新版首页
+  return <HomePageRedesign />;
+};
+
+// 以下是旧版首页代码（保留备用）
+const FestivalHomePageOld: React.FC = () => {
   const navigate = useNavigate();
 
   // 点击分类进入分类页

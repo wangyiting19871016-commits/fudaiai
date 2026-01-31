@@ -30,7 +30,7 @@
 .festival-layout {
   min-height: 100vh;
   /* 纯白背景 - 现代极简风格 */
-  background: #FFFFFF;
+  background: linear-gradient(180deg, #FF6B6B 0%, #FFE5E5 25%, #FFFFFF 40%);
   position: relative;
   overflow-x: hidden;
   padding-bottom: 40px;
@@ -301,7 +301,7 @@
 /* ===== 标题区 ===== */
 .title-section {
   text-align: center;
-  padding: 60px 20px 40px;
+  padding: 20px 20px 30px;
   position: relative;
   z-index: 1;
   max-width: 600px;
@@ -310,13 +310,16 @@
 
 /* 主标题 - 简洁深色 */
 .main-title {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 900;
-  color: #2C1810;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  padding: 0 36px;
+  /* 红金渐变文字 */
+  background: linear-gradient(135deg, #D32F2F 0%, #FFD700 50%, #FFA000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  padding: 0;
 }
   position: relative;
   display: inline-block;
@@ -3767,29 +3770,33 @@
 
 /* ========== 新增：3D装饰元素 ========== */
 
-/* 顶部灯笼装饰 */
+/* 顶部灯笼装饰 - 缩小尺寸 */
 .header-lanterns {
-  position: relative;
-  max-width: 600px;
-  margin: 0 auto;
-  height: 100px;
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  height: 50px;
+  max-width: 100%;
+  pointer-events: none;
 }
 
 .lantern-decoration {
   position: absolute;
-  width: 60px;
-  height: 80px;
-  top: 20px;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-  animation: lanternSwing 3s ease-in-out infinite;
+  width: 35px;
+  height: 45px;
+  top: 0;
+  /* 需要抠图处理 */
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .lantern-decoration.left {
-  left: 20px;
+  left: 10px;
 }
 
 .lantern-decoration.right {
-  right: 20px;
+  right: 10px;
 }
 
 @keyframes lanternSwing {
@@ -3797,25 +3804,9 @@
   50% { transform: rotate(2deg); }
 }
 
-/* 招财猫主视觉 */
+/* 招财猫主视觉 - 暂时隐藏 */
 .hero-mascot {
-  text-align: center;
-  margin: 30px auto;
-  max-width: 400px;
-}
-
-.hero-mascot img {
-  width: 160px;
-  height: 160px;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.08));
-  margin-bottom: 16px;
-}
-
-.mascot-subtitle {
-  font-size: 15px;
-  color: #666;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  display: none;
 }
 
 /* 元宝装饰（礼包区） */

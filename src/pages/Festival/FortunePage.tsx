@@ -102,7 +102,6 @@ const FortunePage: React.FC = () => {
           {(stage === 'generating' || stage === 'complete') && (
             <ZJFullscreenLoader
               progress={progress}
-              narrativeTexts={narrativeTexts}
               stage="generating"
             />
           )}

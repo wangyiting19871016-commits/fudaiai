@@ -55,7 +55,7 @@
   z-index: 1;
   max-width: 480px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 12px;
 }
 
 /* ========================================
@@ -63,8 +63,8 @@
    ======================================== */
 
 .header-section {
-  padding: 32px 0 32px;
-  margin-bottom: 24px;
+  padding: 32px 0 0;
+  margin-bottom: 40px;
 }
 
 .date-badge {
@@ -508,8 +508,8 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 50;
-  width: calc(100% - 32px);
-  max-width: 440px;
+  width: calc(100% - 24px);
+  max-width: 456px;
 }
 
 .dock-container {

@@ -37,6 +37,7 @@
   background: radial-gradient(ellipse, rgba(229, 57, 53, 0.08) 0%, transparent 70%);
   border-radius: 50%;
   filter: blur(60px);
+  animation: breathe-glow-1 8s ease-in-out infinite;
 }
 
 .bg-aura::after {
@@ -49,6 +50,7 @@
   background: radial-gradient(ellipse, rgba(255, 107, 53, 0.06) 0%, transparent 70%);
   border-radius: 50%;
   filter: blur(60px);
+  animation: breathe-glow-2 10s ease-in-out infinite;
 }
 
 /* 内容容器 */
@@ -88,13 +90,11 @@
 }
 
 .main-title {
-  font-size: 24px;
-  font-weight: var(--font-bold);
-  color: var(--cny-gray-900);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--cny-gray-500);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
 }
 
 .text-gradient {
@@ -106,25 +106,26 @@
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: 36px;
-  font-weight: var(--font-black);
+  font-size: 48px;
+  font-weight: 900;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: var(--tracking-tight);
-  margin-bottom: 12px;
-  line-height: 1.3;
+  letter-spacing: -0.04em;
+  margin-bottom: 16px;
+  line-height: 1.1;
 }
 
 .subtitle {
-  font-size: var(--text-base);
-  font-weight: var(--font-light);
-  color: var(--cny-gray-600);
-  opacity: 0.8;
-  letter-spacing: var(--tracking-wide);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--cny-gray-500);
+  opacity: 0.9;
+  letter-spacing: 0.15em;
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
+  line-height: 1.8;
 }
 
 /* ========================================
@@ -427,6 +428,26 @@
   padding: 20px;
 }
 
+.vip-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-2xl);
+  padding: 2px;
+  background: linear-gradient(90deg,
+    var(--cny-gold-400) 0%,
+    var(--cny-orange-400) 25%,
+    var(--cny-red-400) 50%,
+    var(--cny-orange-400) 75%,
+    var(--cny-gold-400) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-beam 3s linear infinite;
+  opacity: 0.8;
+}
+
 .vip-banner:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 40px rgba(229, 57, 53, 0.25);
@@ -582,6 +603,44 @@
 /* ========================================
    无障碍
    ======================================== */
+
+/* ========================================
+   动画关键帧
+   ======================================== */
+
+/* 光晕呼吸动画 1 */
+@keyframes breathe-glow-1 {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+    opacity: 0.08;
+  }
+  50% {
+    transform: scale(1.05) translateY(-10px);
+    opacity: 0.12;
+  }
+}
+
+/* 光晕呼吸动画 2 */
+@keyframes breathe-glow-2 {
+  0%, 100% {
+    transform: scale(1) translateX(0);
+    opacity: 0.06;
+  }
+  50% {
+    transform: scale(1.08) translateX(10px);
+    opacity: 0.10;
+  }
+}
+
+/* 流光边框动画 */
+@keyframes border-beam {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   * {

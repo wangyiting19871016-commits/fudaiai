@@ -34,10 +34,8 @@ const HomePageGlass: React.FC = () => {
             <span>距除夕还有3天</span>
           </div>
 
-          <h1 className="main-title">
-            新年好！<span className="text-gradient">开启好运</span>
-          </h1>
-          <h2 className="hero-title">福袋AI · 马年大吉</h2>
+          <p className="main-title">马年限定版</p>
+          <h1 className="hero-title">福袋AI · 马年大吉</h1>
           <p className="subtitle">所愿皆所得，万事皆顺遂</p>
         </header>
 

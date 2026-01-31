@@ -57,7 +57,7 @@
   z-index: 1;
   max-width: 480px;
   margin: 0 auto;
-  padding: 0 12px;
+  padding: 0 8px;
 }
 
 /* ========================================
@@ -65,8 +65,8 @@
    ======================================== */
 
 .header-section {
-  padding: 32px 0 0 !important;
-  margin-bottom: 48px !important;
+  padding: 32px 4px 32px 4px !important;
+  margin-bottom: 0 !important;
   position: relative;
   z-index: 2;
 }
@@ -133,9 +133,11 @@
 
 .category-section {
   margin-bottom: 32px !important;
-  margin-top: 0 !important;
+  margin-top: 48px !important;
+  padding-top: 24px !important;
   position: relative;
   z-index: 1;
+  clear: both;
 }
 
 .category-grid {
@@ -515,8 +517,8 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 50;
-  width: calc(100% - 24px);
-  max-width: 456px;
+  width: calc(100% - 16px);
+  max-width: 464px;
 }
 
 .dock-container {

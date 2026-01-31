@@ -21,6 +21,7 @@ import { API_VAULT } from '../config/ApiVault';
 import { FESTIVAL_ASSET_TRIGGERS } from '../configs/festival/assetTriggers';
 import { TEMPLATE_CACHE } from '../configs/festival/templateCache';
 import { getEnabledWorkflows, LiblibWorkflowConfig } from '../configs/festival/liblibWorkflows';
+import { fastFortuneCardGenerator } from './FastFortuneCardGenerator';
 
 export interface MissionConfig {
   missionId: string;
@@ -1530,11 +1531,11 @@ export class MissionExecutor {
         message: '🎨 正在生成运势卡...'
       });
 
-      const { fortuneCardGenerator } = await import('./FortuneCardGenerator');
-      const cardImageDataUrl = await fortuneCardGenerator.generate({
-        fortuneResult,
-        userPhoto: input.image
-      });
+      // 使用快速生成器（2-3秒完成）
+      const cardImageDataUrl = await fastFortuneCardGenerator.generateCard(
+        fortuneResult.fortune,
+        fortuneResult.blessing
+      );
 
       this.updateProgress({
         stage: 'generating',

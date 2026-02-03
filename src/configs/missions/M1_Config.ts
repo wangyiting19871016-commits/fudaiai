@@ -132,12 +132,12 @@ BAD Examples (too vague):
 
   prompt_templates: {
     male: {
-      positive: "pks, (masterpiece), 3d pixar animation style, ({{QWEN_OUTPUT}}:2.6), (mature 35 adult man:1.8), adult male proportions, defined jawline, wearing a vibrant red traditional Chinese silk jacket with gold dragon patterns, holding a shiny golden ingot (Yuanbao), soft cinematic lighting, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
-      negative: "--no snake, reptile, low quality, distorted, baby face, youthful, teen, child, toddler, boy, kid, childish face, chibi, big head, small body, cute, kawaii"
+      positive: "pks, (masterpiece), 3d pixar animation style, ({{HAIR_AGE}}:4.0), ({{ACCESSORIES}}:3.2), ({{FACE}}:2.2), adult male proportions, wearing a vibrant red traditional Chinese silk jacket with gold dragon patterns, holding a shiny golden ingot (Yuanbao), soft cinematic lighting, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
+      negative: "--no snake, reptile, low quality, distorted, baby face, youthful, teen, child, toddler, boy, kid, childish face, chibi, big head, small body, cute, kawaii, wrong hairstyle, different hair color, different hair length, bald when should have hair"
     },
     female: {
-      positive: "pks, (masterpiece), 3d pixar animation style, ({{QWEN_OUTPUT}}:3.0), mature adult woman, refined facial proportions, wearing a vibrant red traditional Chinese silk jacket with gold dragon patterns, holding a shiny golden ingot (Yuanbao), character portrait, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
-      negative: "--no snake, reptile, low quality, distorted, baby face, youthful, smooth young skin, teen, child, cute innocent, chibi, big head, small body"
+      positive: "pks, (masterpiece), 3d pixar animation style, ({{HAIR_AGE}}:4.2), ({{ACCESSORIES}}:3.5), ({{FACE}}:2.0), refined facial proportions, wearing a vibrant red traditional Chinese silk jacket with gold dragon patterns, holding a shiny golden ingot (Yuanbao), character portrait, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
+      negative: "--no snake, reptile, low quality, distorted, baby face, youthful, smooth young skin, teen, child, cute innocent, chibi, big head, small body, wrong hairstyle, different hair color, different hair length, bald when should have hair"
     }
   }
 };

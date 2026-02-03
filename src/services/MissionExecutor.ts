@@ -599,14 +599,26 @@ export class MissionExecutor {
       if (config.missionId === 'M1') {
         // 验证性别参数
         const gender = input.gender || 'female';  // 默认female
-        
+
         console.log(`[MissionExecutor] M1任务 - 性别: ${gender}, DNA: ${dnaRawOutput}`);
 
         // 获取对应性别的prompt模板
         const template = M1_CONFIG.prompt_templates[gender];
-        
-        // 填充 {{QWEN_OUTPUT}} 占位符
-        prompt = template.positive.replace('{{QWEN_OUTPUT}}', dnaRawOutput || 'individual portrait');
+
+        // 🆕 分层权重处理：将DNA拆分成不同权重层级
+        const parsedDNA = this.parseAndWeightDNA(dnaRawOutput || '');
+
+        console.log('[MissionExecutor] 分层DNA解析:', {
+          hairAge: parsedDNA.hairAge,
+          accessories: parsedDNA.accessories,
+          face: parsedDNA.face
+        });
+
+        // 填充三层占位符
+        prompt = template.positive
+          .replace('{{HAIR_AGE}}', parsedDNA.hairAge)
+          .replace('{{ACCESSORIES}}', parsedDNA.accessories)
+          .replace('{{FACE}}', parsedDNA.face);
         negativePrompt = template.negative;
 
         console.log('[MissionExecutor] 填充后的Prompt:', prompt);
@@ -1688,6 +1700,82 @@ export class MissionExecutor {
     if (this.onProgress) {
       this.onProgress(progress);
     }
+  }
+
+  /**
+   * 🆕 分层权重DNA解析
+   * 将Qwen输出拆分成3个权重层级，提高关键特征（发型、年龄）的识别度
+   *
+   * @param dnaOutput Qwen原始输出，逗号分隔的特征列表
+   * @returns 分层后的DNA对象
+   */
+  private parseAndWeightDNA(dnaOutput: string): { hairAge: string; accessories: string; face: string } {
+    if (!dnaOutput || dnaOutput.trim() === '') {
+      return {
+        hairAge: 'individual portrait',
+        accessories: '',
+        face: ''
+      };
+    }
+
+    // 按逗号分割特征
+    const features = dnaOutput.split(',').map(f => f.trim()).filter(f => f.length > 0);
+
+    // 关键词匹配规则
+    const hairKeywords = ['hair', 'hairstyle', 'buzz cut', 'crew cut', 'bun', 'ponytail', 'braided', 'straight', 'wavy', 'curly', 'coily', 'bangs'];
+    const ageKeywords = ['young', 'mature', 'elder', 'senior', 'adult man', 'adult woman', '20s', '30s', '40s', '50s', '60s', '70s'];
+    const genderKeywords = ['male', 'female'];
+    const accessoryKeywords = ['headwear', 'hat', 'cap', 'beanie', 'fedora', 'glasses', 'earrings', 'earwear'];
+    const faceKeywords = ['face', 'jawline', 'cheekbones', 'cheeks'];
+
+    const hairAgeFeatures: string[] = [];
+    const accessoryFeatures: string[] = [];
+    const faceFeatures: string[] = [];
+
+    for (const feature of features) {
+      const lowerFeature = feature.toLowerCase();
+
+      // 判断是否包含发型关键词
+      if (hairKeywords.some(kw => lowerFeature.includes(kw))) {
+        hairAgeFeatures.push(feature);
+        continue;
+      }
+
+      // 判断是否包含年龄或性别关键词
+      if (ageKeywords.some(kw => lowerFeature.includes(kw)) || genderKeywords.some(kw => lowerFeature.includes(kw))) {
+        hairAgeFeatures.push(feature);
+        continue;
+      }
+
+      // 判断是否包含配饰关键词
+      if (accessoryKeywords.some(kw => lowerFeature.includes(kw))) {
+        accessoryFeatures.push(feature);
+        continue;
+      }
+
+      // 判断是否包含脸型关键词
+      if (faceKeywords.some(kw => lowerFeature.includes(kw))) {
+        faceFeatures.push(feature);
+        continue;
+      }
+
+      // 未匹配到的特征默认放入脸型（低权重）
+      faceFeatures.push(feature);
+    }
+
+    // 组装结果
+    const result = {
+      hairAge: hairAgeFeatures.length > 0 ? hairAgeFeatures.join(', ') : 'individual portrait',
+      accessories: accessoryFeatures.length > 0 ? accessoryFeatures.join(', ') : 'no accessories',
+      face: faceFeatures.length > 0 ? faceFeatures.join(', ') : 'balanced face'
+    };
+
+    console.log('[parseAndWeightDNA] 原始DNA:', dnaOutput);
+    console.log('[parseAndWeightDNA] 发型+年龄 (超高权重):', result.hairAge);
+    console.log('[parseAndWeightDNA] 配饰 (高权重):', result.accessories);
+    console.log('[parseAndWeightDNA] 脸型 (中权重):', result.face);
+
+    return result;
   }
 
   private saveToLocalStorage(taskId: string, result: MissionResult) {

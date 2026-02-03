@@ -244,7 +244,7 @@ const FestivalResultPage: React.FC = () => {
     if (!navigator.share || !navigator.canShare) {
       console.log('[Share] 不支持Web Share API');
       message.info({
-        content: '💡 请长按上方图片，选择"保存图片"',
+        content: '请长按上方图片，选择"保存图片"',
         duration: 3,
       });
       return;
@@ -277,7 +277,7 @@ const FestivalResultPage: React.FC = () => {
       } else {
         console.log('[Share] 浏览器不支持分享文件');
         message.info({
-          content: '💡 请长按上方图片，选择"保存图片"',
+          content: '请长按上方图片，选择"保存图片"',
           duration: 3,
         });
       }
@@ -289,7 +289,7 @@ const FestivalResultPage: React.FC = () => {
       } else {
         console.error('[Share] 系统分享失败:', error);
         message.warning({
-          content: '💡 请长按上方图片，选择"保存图片"',
+          content: '请长按上方图片，选择"保存图片"',
           duration: 3,
         });
       }
@@ -320,15 +320,15 @@ const FestivalResultPage: React.FC = () => {
       message.success({
         content: (
           <div style={{ textAlign: 'left', lineHeight: '1.6' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>✅ 保存成功！</div>
+            <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>保存成功！</div>
             <div style={{ fontSize: '13px', color: '#666' }}>
-              📁 保存位置：手机 → 文件管理器 → 下载文件夹
+              保存位置：手机 → 文件管理器 → 下载文件夹
             </div>
             <div style={{ fontSize: '13px', color: '#666', marginTop: '4px' }}>
-              📝 文件名：{fileName}
+              文件名：{fileName}
             </div>
             <div style={{ fontSize: '13px', color: '#E53935', marginTop: '8px', fontWeight: 'bold' }}>
-              💡 打开文件管理器 → 下载文件夹 → 分享到微信
+              提示：打开文件管理器 → 下载文件夹 → 分享到微信
             </div>
           </div>
         ),
@@ -395,13 +395,13 @@ const FestivalResultPage: React.FC = () => {
               className={`view-toggle-btn ${showComparison ? 'active' : ''}`}
               onClick={() => setShowComparison(true)}
             >
-              📊 对比图
+              对比图
             </button>
             <button
               className={`view-toggle-btn ${!showComparison ? 'active' : ''}`}
               onClick={() => setShowComparison(false)}
             >
-              🖼️ 修复后
+              修复后
             </button>
           </div>
         )}
@@ -430,7 +430,7 @@ const FestivalResultPage: React.FC = () => {
         {/* 判词 */}
         {result.caption && (
           <div className="festival-result-caption">
-            <div className="festival-result-caption-icon">💬</div>
+            <div className="festival-result-caption-icon">″</div>
             <div className="festival-result-caption-text">
               {result.caption}
             </div>
@@ -460,19 +460,19 @@ const FestivalResultPage: React.FC = () => {
                 cursor: isSaved ? 'default' : 'pointer'
               }}
             >
-              {isSaved ? '✅ 已保存' : '💾 保存'}
+              {isSaved ? '已保存' : '保存'}
             </button>
             <button
               className="festival-result-btn festival-result-btn-secondary"
               onClick={handleShare}
             >
-              📤 分享
+              分享
             </button>
             <button
               className="festival-result-btn festival-result-btn-secondary"
               onClick={handleRegenerate}
             >
-              🔄 重生成
+              重生成
             </button>
           </div>
 
@@ -534,7 +534,7 @@ const FestivalResultPage: React.FC = () => {
                 transition: 'all 0.2s'
               }}
             >
-              🏠 回到首页
+              回到首页
             </button>
           </div>
         </div>
@@ -550,7 +550,7 @@ const FestivalResultPage: React.FC = () => {
         <div className="festival-share-modal" onClick={() => setShowDownloadModal(false)}>
           <div className="festival-share-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="festival-share-modal-header">
-              <h3>💾 保存图片到相册</h3>
+              <h3>保存图片到相册</h3>
               <button className="festival-share-close-btn" onClick={() => setShowDownloadModal(false)}>
                 ✕
               </button>
@@ -577,7 +577,7 @@ const FestivalResultPage: React.FC = () => {
               borderRadius: '12px',
               marginTop: '16px'
             }}>
-              <div className="festival-share-tip-icon" style={{ fontSize: '32px' }}>👆</div>
+              <div className="festival-share-tip-icon" style={{ fontSize: '32px' }}>↑</div>
               <div style={{
                 fontSize: '16px',
                 fontWeight: '600',
@@ -603,7 +603,7 @@ const FestivalResultPage: React.FC = () => {
         <div className="festival-share-modal" onClick={() => setShowShareModal(false)}>
           <div className="festival-share-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="festival-share-modal-header">
-              <h3>📤 分享到微信</h3>
+              <h3>分享到微信</h3>
               <button className="festival-share-close-btn" onClick={() => setShowShareModal(false)}>
                 ✕
               </button>
@@ -615,7 +615,7 @@ const FestivalResultPage: React.FC = () => {
 
             {/* 保存提示 - 明显 */}
             <div className="festival-share-tip">
-              <div className="festival-share-tip-icon">👆</div>
+              <div className="festival-share-tip-icon">↑</div>
               <div className="festival-share-tip-text">长按图片保存到相册</div>
             </div>
           </div>

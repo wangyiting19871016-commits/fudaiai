@@ -37,6 +37,7 @@ const SmartReplyPage: React.FC = () => {
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [replyCard, setReplyCard] = useState<string>('');
   const [showMoreActions, setShowMoreActions] = useState(false);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
   // 生成回复
   const handleGenerate = async () => {
@@ -269,76 +270,127 @@ const SmartReplyPage: React.FC = () => {
                   borderRadius: '8px',
                   background: 'var(--glass-light)',
                   backdropFilter: 'blur(10px)',
-                  marginBottom: '16px',
+                  marginBottom: '12px',
                   resize: 'vertical',
                   fontFamily: 'inherit'
                 }}
               />
 
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: 'var(--cny-gray-800)'
-              }}>
-                对方是谁
-              </label>
-              <select
-                value={relation}
-                onChange={(e) => setRelation(e.target.value)}
+              {/* 高级选项折叠按钮 */}
+              <button
+                onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
                 style={{
                   width: '100%',
-                  padding: '12px 16px',
-                  fontSize: '16px',
-                  border: '1px solid rgba(0, 0, 0, 0.1)',
-                  borderRadius: '8px',
-                  background: 'var(--glass-light)',
-                  backdropFilter: 'blur(10px)',
-                  marginBottom: '16px',
+                  padding: '10px 16px',
+                  marginBottom: showAdvancedOptions ? '12px' : '24px',
+                  background: 'rgba(33, 150, 243, 0.05)',
+                  border: '1px solid rgba(33, 150, 243, 0.15)',
+                  borderRadius: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                   cursor: 'pointer',
-                  fontFamily: 'inherit'
+                  transition: 'all 0.2s'
                 }}
               >
-                <option value="远房亲戚">远房亲戚</option>
-                <option value="七大姑八大姨">七大姑八大姨</option>
-                <option value="父母">父母</option>
-                <option value="邻居">邻居</option>
-                <option value="朋友">朋友</option>
-                <option value="同事">同事</option>
-              </select>
+                <span style={{ fontSize: '13px', color: '#2196F3', fontWeight: '500' }}>
+                  ⚙️ 高级选项 <span style={{ fontSize: '12px', color: '#999' }}>（可选）</span>
+                </span>
+                <span style={{
+                  fontSize: '16px',
+                  color: '#2196F3',
+                  transition: 'transform 0.2s',
+                  transform: showAdvancedOptions ? 'rotate(180deg)' : 'rotate(0deg)'
+                }}>
+                  ▼
+                </span>
+              </button>
 
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: 'var(--cny-gray-800)'
-              }}>
-                当前场景
-              </label>
-              <select
-                value={scene}
-                onChange={(e) => setScene(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  fontSize: '16px',
-                  border: '1px solid rgba(0, 0, 0, 0.1)',
+              {/* 高级选项面板 */}
+              {showAdvancedOptions && (
+                <div style={{
+                  padding: '16px',
+                  marginBottom: '16px',
+                  background: 'rgba(33, 150, 243, 0.03)',
+                  border: '1px solid rgba(33, 150, 243, 0.1)',
                   borderRadius: '8px',
-                  background: 'var(--glass-light)',
-                  backdropFilter: 'blur(10px)',
-                  marginBottom: '24px',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit'
-                }}
-              >
-                <option value="饭桌上">饭桌上</option>
-                <option value="客厅聊天">客厅聊天</option>
-                <option value="路上偶遇">路上偶遇</option>
-                <option value="微信里">微信里</option>
-                <option value="电话里">电话里</option>
-              </select>
+                  animation: 'fadeIn 0.2s ease-in'
+                }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: 'var(--cny-gray-800)'
+                  }}>
+                    对方是谁
+                  </label>
+                  <select
+                    value={relation}
+                    onChange={(e) => setRelation(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '16px',
+                      border: '1px solid rgba(0, 0, 0, 0.1)',
+                      borderRadius: '8px',
+                      background: 'var(--glass-light)',
+                      backdropFilter: 'blur(10px)',
+                      marginBottom: '16px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit'
+                    }}
+                  >
+                    <option value="远房亲戚">远房亲戚</option>
+                    <option value="七大姑八大姨">七大姑八大姨</option>
+                    <option value="父母">父母</option>
+                    <option value="邻居">邻居</option>
+                    <option value="朋友">朋友</option>
+                    <option value="同事">同事</option>
+                  </select>
+
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: 'var(--cny-gray-800)'
+                  }}>
+                    当前场景
+                  </label>
+                  <select
+                    value={scene}
+                    onChange={(e) => setScene(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '16px',
+                      border: '1px solid rgba(0, 0, 0, 0.1)',
+                      borderRadius: '8px',
+                      background: 'var(--glass-light)',
+                      backdropFilter: 'blur(10px)',
+                      marginBottom: '0',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit'
+                    }}
+                  >
+                    <option value="饭桌上">饭桌上</option>
+                    <option value="客厅聊天">客厅聊天</option>
+                    <option value="路上偶遇">路上偶遇</option>
+                    <option value="微信里">微信里</option>
+                    <option value="电话里">电话里</option>
+                  </select>
+
+                  <p style={{
+                    marginTop: '12px',
+                    fontSize: '12px',
+                    color: '#999',
+                    lineHeight: '1.5'
+                  }}>
+                    💡 提示：默认设置为「远房亲戚」+「饭桌上」，适合大部分场景
+                  </p>
+                </div>
+              )}
 
               <FestivalButton
                 onClick={handleGenerate}

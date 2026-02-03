@@ -34,6 +34,7 @@ const VoicePageNew: React.FC = () => {
   const [recordTime, setRecordTime] = useState(0);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
+  const [showRecordTips, setShowRecordTips] = useState(false);
 
   // 文案输入
   const [text, setText] = useState('');
@@ -507,35 +508,65 @@ const VoicePageNew: React.FC = () => {
               </div>
             </section>
 
-            {/* 录音要求说明 */}
-            <section className="record-tips">
-              <div className="tip-card">
-                <div className="tip-icon">⏱️</div>
-                <div className="tip-content">
-                  <h3 className="tip-title">录音时长要求</h3>
-                  <p className="tip-desc">建议录制 <strong>10-30秒</strong>，时间越长克隆效果越好</p>
-                </div>
-              </div>
-              <div className="tip-card">
-                <div className="tip-icon">📝</div>
-                <div className="tip-content">
-                  <h3 className="tip-title">请照着下方文案朗读</h3>
-                  <p className="tip-desc">保持自然语速，清晰发音</p>
-                </div>
-              </div>
-            </section>
+            {/* 录音要求说明 - 可折叠 */}
+            <section className="record-tips-collapsible">
+              <button
+                className="tips-toggle-btn"
+                onClick={() => setShowRecordTips(!showRecordTips)}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  background: 'rgba(33, 150, 243, 0.08)',
+                  border: '1px solid rgba(33, 150, 243, 0.2)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  marginBottom: showRecordTips ? '12px' : '0'
+                }}
+              >
+                <span style={{ fontSize: '14px', color: '#2196F3', fontWeight: '500' }}>
+                  📋 查看录音要求和朗读文案
+                </span>
+                <span style={{ fontSize: '18px', color: '#2196F3', transition: 'transform 0.2s', transform: showRecordTips ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                  ▼
+                </span>
+              </button>
 
-            {/* 朗读文案 */}
-            <section className="reading-text-section">
-              <div className="reading-text-card">
-                <h3 className="reading-text-title">朗读文案</h3>
-                <div className="reading-text-content">
-                  <p>新春佳节到，祝您马年吉祥如意，心想事成！愿您在新的一年里身体健康，工作顺利，家庭幸福美满。祝福您财源广进，好运连连，事业蒸蒸日上，生活越来越美好！恭喜发财，大吉大利！</p>
+              {showRecordTips && (
+                <div style={{ animation: 'fadeIn 0.2s ease-in' }}>
+                  <div className="record-tips">
+                    <div className="tip-card">
+                      <div className="tip-icon">⏱️</div>
+                      <div className="tip-content">
+                        <h3 className="tip-title">录音时长要求</h3>
+                        <p className="tip-desc">建议录制 <strong>10-30秒</strong>，时间越长克隆效果越好</p>
+                      </div>
+                    </div>
+                    <div className="tip-card">
+                      <div className="tip-icon">📝</div>
+                      <div className="tip-content">
+                        <h3 className="tip-title">请照着下方文案朗读</h3>
+                        <p className="tip-desc">保持自然语速，清晰发音</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 朗读文案 */}
+                  <section className="reading-text-section">
+                    <div className="reading-text-card">
+                      <h3 className="reading-text-title">朗读文案</h3>
+                      <div className="reading-text-content">
+                        <p>新春佳节到，祝您马年吉祥如意，心想事成！愿您在新的一年里身体健康，工作顺利，家庭幸福美满。祝福您财源广进，好运连连，事业蒸蒸日上，生活越来越美好！恭喜发财，大吉大利！</p>
+                      </div>
+                      <div className="reading-text-meta">
+                        <span className="text-length">约68字 · 预计朗读时长15-20秒</span>
+                      </div>
+                    </div>
+                  </section>
                 </div>
-                <div className="reading-text-meta">
-                  <span className="text-length">约68字 · 预计朗读时长15-20秒</span>
-                </div>
-              </div>
+              )}
             </section>
 
             {/* 录音区域 */}

@@ -277,57 +277,14 @@ const FestivalTextPage: React.FC = () => {
             const imageUrl = await drawCouplet(parsedCouplet);
             setCoupletImage(imageUrl);
 
-            // 保存春联为素材
-            const coupletMaterial: MaterialAtom = {
-              id: `material_couplet_${Date.now()}`,
-              type: 'couplet',
-              data: { couplet: parsedCouplet },
-              metadata: {
-                createdAt: Date.now(),
-                featureId: 'M9',
-                featureName: 'AI春联',
-                textLength: parsedCouplet.upperLine.length + parsedCouplet.lowerLine.length,
-              },
-              connectors: {
-                roles: ['posterText', 'coupletDecoration'],
-                canCombineWith: ['image'],
-                constraints: { requiredWith: ['image'] },
-              },
-            };
-
-            MaterialService.saveMaterial(coupletMaterial);
-            console.log('[M9] 春联已保存到素材库');
+            // ⚠️ 不自动保存，用户需通过"生成海报"按钮手动保存
           }
         } catch (error) {
           console.error('[TextPage] 春联图片生成失败:', error);
         }
       }
 
-      // ✍️ 如果是拜年文案功能，自动保存为素材（支持联动）
-      if (featureId === 'text-blessing') {
-        try {
-          const blessingMaterial: MaterialAtom = {
-            id: `material_blessing_${Date.now()}`,
-            type: 'text',
-            data: { text: text.trim() },
-            metadata: {
-              createdAt: Date.now(),
-              featureId: 'text-blessing',
-              featureName: '拜年文案',
-              textLength: text.trim().length,
-            },
-            connectors: {
-              roles: ['posterText'],
-              canCombineWith: ['image', 'audio'], // 可以配图、配语音
-            },
-          };
-
-          MaterialService.saveMaterial(blessingMaterial);
-          console.log('[拜年文案] 已保存到素材库，可与图片/语音联动');
-        } catch (error) {
-          console.error('[TextPage] 拜年文案保存失败:', error);
-        }
-      }
+      // ⚠️ 拜年文案不自动保存，用户需通过复制或其他方式使用
 
     } catch (error: any) {
       console.error('[TextPage] 生成失败:', error);

@@ -55,9 +55,24 @@ const VoicePageNew: React.FC = () => {
     const navState = getNavigationState(location.state);
 
     if (navState) {
+      // ✅ 流转规则检查1: textType 验证（语音生成可以接受所有类型，但给出提示）
+      if (navState.textType) {
+        if (navState.textType === 'fortune' || navState.textType === 'couplet') {
+          message.warning('运势和春联文案通常较长，建议手动调整为50字以内');
+          console.warn('[VoicePageNew] 长文案类型：', navState.textType);
+        }
+      }
+
       // 接收文本（优先使用text，fallback到originalCaption）
-      const incomingText = navState.text || navState.originalCaption || '';
+      let incomingText = navState.text || navState.originalCaption || '';
       if (incomingText) {
+        // ✅ 流转规则检查2: 长文案自动截断（语音生成建议50字以内）
+        if (incomingText.length > 50) {
+          incomingText = incomingText.substring(0, 50);
+          message.warning('文案过长，已自动截取前50字（建议50字以内效果更佳）');
+          console.log('[VoicePageNew] 文案截断：原长度', navState.text?.length, '→ 50字');
+        }
+
         setText(incomingText);
         setTextSource(navState.textSource as any || 'user');
 
@@ -66,6 +81,11 @@ const VoicePageNew: React.FC = () => {
           message.success('已为您自动填充判词文案');
         } else {
           message.success('已为您自动填充文案');
+        }
+
+        // ✅ 流转规则检查3: 来源标注
+        if (navState.sourceFeatureId) {
+          console.log('[VoicePageNew] 文案来源:', navState.sourceFeatureId);
         }
       }
 
@@ -311,26 +331,7 @@ const VoicePageNew: React.FC = () => {
   const handleGoToVideo = () => {
     if (!generatedAudioUrl) return;
 
-    const material: MaterialAtom = {
-      id: `audio_${Date.now()}`,
-      type: 'audio',
-      data: {
-        url: generatedAudioUrl
-      },
-      metadata: {
-        format: 'audio/mp3',
-        createdAt: Date.now(),
-        featureId: 'M5',
-        featureName: '语音生成'
-      },
-      connectors: {
-        roles: ['videoAudio'],
-        canCombineWith: ['image']
-      }
-    };
-
-    MaterialService.saveMaterial(material);
-
+    // ⚠️ 不自动保存，用户需手动点击"保存到我的作品"
     // 传递NavigationState，包含音频、文本、图片
     const navState = createNavigationState({
       audio: generatedAudioUrl,
@@ -648,6 +649,22 @@ const VoicePageNew: React.FC = () => {
             <div className="audio-player-card">
               <audio src={generatedAudioUrl} controls className="audio-player" />
             </div>
+
+            {/* 保存提示 */}
+            {!isSaved && (
+              <div style={{
+                padding: '12px 16px',
+                margin: '16px 0',
+                background: 'rgba(255, 193, 7, 0.1)',
+                border: '1px solid rgba(255, 193, 7, 0.3)',
+                borderRadius: '8px',
+                fontSize: '13px',
+                color: '#FFC107',
+                textAlign: 'center'
+              }}>
+                💡 未保存的作品离开页面后将丢失，请点击"保存作品"
+              </div>
+            )}
 
             <div className="action-grid">
               <button className="action-card" onClick={handleDownload}>

@@ -47,6 +47,7 @@ const DigitalHumanPage: React.FC = () => {
     message: ''
   });
   const [videoUrl, setVideoUrl] = useState<string>('');
+  const [isSaved, setIsSaved] = useState<boolean>(false);
 
   // 新增：模式和来源数据
   const [mode, setMode] = useState<'text' | 'audio'>('text');
@@ -78,6 +79,13 @@ const DigitalHumanPage: React.FC = () => {
     if (navState) {
       console.log('[DigitalHuman] 收到NavigationState:', navState);
 
+      // ✅ 流转规则检查1: textType 验证
+      if (navState.textType && (navState.textType === 'fortune' || navState.textType === 'couplet')) {
+        message.error('运势和春联文案不支持生成视频');
+        console.warn('[DigitalHuman] 流转被阻止：textType =', navState.textType);
+        return;
+      }
+
       // 接收图片
       if (navState.image) {
         setUploadedImage(navState.image);
@@ -97,7 +105,15 @@ const DigitalHumanPage: React.FC = () => {
       }
       // 接收文本（文本模式）
       else if (navState.text || navState.originalCaption) {
-        const incomingText = navState.text || navState.originalCaption || '';
+        let incomingText = navState.text || navState.originalCaption || '';
+
+        // ✅ 流转规则检查2: 长文案自动截断（数字人视频字幕限制50字）
+        if (incomingText.length > 50) {
+          incomingText = incomingText.substring(0, 50);
+          message.warning('文案过长，已自动截取前50字（数字人视频字幕建议50字以内）');
+          console.log('[DigitalHuman] 文案截断：原长度', navState.text?.length, '→ 50字');
+        }
+
         setGreetingText(incomingText);
         setTextSource((navState.textSource as any) || 'user');
         setMode('text');
@@ -106,6 +122,11 @@ const DigitalHumanPage: React.FC = () => {
           message.success('已为您自动填充判词文案');
         } else {
           message.success('已为您自动填充文案');
+        }
+
+        // ✅ 流转规则检查3: 来源标注
+        if (navState.sourceFeatureId) {
+          console.log('[DigitalHuman] 文案来源:', navState.sourceFeatureId);
         }
       }
     }
@@ -427,6 +448,11 @@ const DigitalHumanPage: React.FC = () => {
   const handleSave = () => {
     if (!videoUrl) return;
 
+    if (isSaved) {
+      message.info('作品已保存到素材库');
+      return;
+    }
+
     const material: MaterialAtom = {
       id: `material_video_${Date.now()}`,
       type: 'video',
@@ -446,12 +472,14 @@ const DigitalHumanPage: React.FC = () => {
     };
 
     MaterialService.saveMaterial(material);
+    setIsSaved(true);
     message.success('已保存到【我的作品】');
   };
 
   // 重新生成
   const handleReset = () => {
     setVideoUrl('');
+    setIsSaved(false);
     setGenerationState({
       stage: 'idle',
       progress: 0,
@@ -495,8 +523,8 @@ const DigitalHumanPage: React.FC = () => {
               <button className="action-btn action-btn-primary" onClick={handleDownload}>
                 下载视频
               </button>
-              <button className="action-btn action-btn-secondary" onClick={handleSave}>
-                保存作品
+              <button className={`action-btn action-btn-secondary ${isSaved ? 'action-btn-saved' : ''}`} onClick={handleSave}>
+                {isSaved ? '已保存' : '保存作品'}
               </button>
               <button className="action-btn action-btn-secondary" onClick={handleReset}>
                 重新生成
@@ -504,9 +532,25 @@ const DigitalHumanPage: React.FC = () => {
               <HomeButton label="回到首页" />
             </div>
 
-            <div className="result-tip">
-              已保存到我的作品，可进行更多组装
-            </div>
+            {/* 保存提示 */}
+            {!isSaved ? (
+              <div style={{
+                padding: '12px 16px',
+                margin: '16px 0',
+                background: 'rgba(255, 193, 7, 0.1)',
+                border: '1px solid rgba(255, 193, 7, 0.3)',
+                borderRadius: '8px',
+                fontSize: '13px',
+                color: '#FFC107',
+                textAlign: 'center'
+              }}>
+                💡 未保存的作品离开页面后将丢失，请点击"保存作品"
+              </div>
+            ) : (
+              <div className="result-tip">
+                已保存到我的作品，可进行更多组装
+              </div>
+            )}
           </div>
         ) : (
           // 输入界面

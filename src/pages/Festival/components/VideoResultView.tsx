@@ -15,6 +15,7 @@ interface VideoResultViewProps {
   imageUrl?: string; // 原始图片
   onBack?: () => void;
   onSaveToLibrary?: () => void;
+  isSaved?: boolean;
 }
 
 const VideoResultView: React.FC<VideoResultViewProps> = ({
@@ -22,7 +23,8 @@ const VideoResultView: React.FC<VideoResultViewProps> = ({
   resultUrl,
   imageUrl,
   onBack,
-  onSaveToLibrary
+  onSaveToLibrary,
+  isSaved = false
 }) => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -147,6 +149,22 @@ const VideoResultView: React.FC<VideoResultViewProps> = ({
         </div>
       )}
 
+      {/* 保存提示 */}
+      {!isSaved && (
+        <div style={{
+          padding: '12px 16px',
+          margin: '0 0 16px 0',
+          background: 'rgba(255, 193, 7, 0.1)',
+          border: '1px solid rgba(255, 193, 7, 0.3)',
+          borderRadius: '8px',
+          fontSize: '13px',
+          color: '#FFC107',
+          textAlign: 'center'
+        }}>
+          💡 未保存的作品离开页面后将丢失，请点击"保存到素材库"
+        </div>
+      )}
+
       {/* 操作按钮 */}
       <div style={{
         display: 'flex',
@@ -178,11 +196,11 @@ const VideoResultView: React.FC<VideoResultViewProps> = ({
         {/* 保存到素材库 */}
         {onSaveToLibrary && (
           <button
-            className="cny-btn-gold"
+            className={isSaved ? "cny-btn-white" : "cny-btn-gold"}
             onClick={onSaveToLibrary}
             style={{ width: '100%' }}
           >
-            保存到素材库
+            {isSaved ? '已保存到素材库' : '保存到素材库'}
           </button>
         )}
 

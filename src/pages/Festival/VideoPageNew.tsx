@@ -57,6 +57,7 @@ const FestivalVideoPageNew: React.FC = () => {
   const [progressMessage, setProgressMessage] = useState('');
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
 
   // 初始化：从location.state或LocalStorage获取图片
   useEffect(() => {
@@ -272,12 +273,18 @@ const FestivalVideoPageNew: React.FC = () => {
     setSelectedAction(null);
     setResultUrl(null);
     setError(null);
+    setIsSaved(false);
   };
 
   // 保存到素材库
   const handleSaveToLibrary = () => {
     if (!resultUrl) {
       message.error('没有可保存的视频');
+      return;
+    }
+
+    if (isSaved) {
+      message.info('作品已保存到素材库');
       return;
     }
 
@@ -304,6 +311,7 @@ const FestivalVideoPageNew: React.FC = () => {
       };
 
       MaterialService.saveMaterial(material);
+      setIsSaved(true);
       message.success('已保存到素材库');
     } catch (error) {
       console.error('[VideoPageNew] Save to library failed:', error);
@@ -356,6 +364,7 @@ const FestivalVideoPageNew: React.FC = () => {
             imageUrl={pageState.image}
             onBack={handleRetry}
             onSaveToLibrary={handleSaveToLibrary}
+            isSaved={isSaved}
           />
         )}
 

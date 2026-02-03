@@ -52,7 +52,6 @@ const DigitalHumanPage: React.FC = () => {
   const [mode, setMode] = useState<'text' | 'audio'>('text');
   const [incomingAudioUrl, setIncomingAudioUrl] = useState<string>('');
   const [textSource, setTextSource] = useState<'template' | 'user'>('template');
-  const [quickMode, setQuickMode] = useState<boolean>(false);
 
   // 默认音色：男声-央视配音，女声-女大学生
   const defaultVoices = {
@@ -79,20 +78,10 @@ const DigitalHumanPage: React.FC = () => {
     if (navState) {
       console.log('[DigitalHuman] 收到NavigationState:', navState);
 
-      // 检测快捷模式
-      if (navState.quickMode) {
-        setQuickMode(true);
-        console.log('[DigitalHuman] 快捷模式已启用');
-      }
-
       // 接收图片
       if (navState.image) {
         setUploadedImage(navState.image);
-        if (quickMode) {
-          message.success('快速生成模式已启动');
-        } else {
-          message.success('已为您自动填充照片');
-        }
+        message.success('已为您自动填充照片');
       }
 
       // 接收音频（音频模式）

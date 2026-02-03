@@ -555,9 +555,76 @@ const DigitalHumanPage: React.FC = () => {
         ) : (
           // 输入界面
           <div className="digital-human-input">
+            {/* 步骤指示器 */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              marginBottom: '24px',
+              padding: '16px',
+              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 69, 0, 0.08))',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 165, 0, 0.2)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '500' }}>
+                <span style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: uploadedImage ? '#4CAF50' : '#FF9800',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: '600'
+                }}>
+                  {uploadedImage ? '✓' : '1'}
+                </span>
+                <span style={{ color: uploadedImage ? '#4CAF50' : '#FF9800' }}>上传照片</span>
+              </div>
+              <span style={{ color: '#ddd' }}>→</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '500' }}>
+                <span style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: greetingText.trim() ? '#4CAF50' : '#ccc',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: '600'
+                }}>
+                  {greetingText.trim() ? '✓' : '2'}
+                </span>
+                <span style={{ color: greetingText.trim() ? '#4CAF50' : '#999' }}>输入文案</span>
+              </div>
+              <span style={{ color: '#ddd' }}>→</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '500' }}>
+                <span style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: '#ccc',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: '600'
+                }}>
+                  3
+                </span>
+                <span style={{ color: '#999' }}>生成视频</span>
+              </div>
+            </div>
+
             {/* 照片上传 */}
             <div className="input-section">
-              <label className="input-label">上传照片</label>
+              <label className="input-label">① 上传照片</label>
               <div
                 className="photo-upload-area"
                 onClick={() => fileInputRef.current?.click()}
@@ -581,7 +648,7 @@ const DigitalHumanPage: React.FC = () => {
 
             {/* 模式选择 */}
             <div className="input-section">
-              <label className="input-label">生成模式</label>
+              <label className="input-label">② 输入祝福文案</label>
               <div className="mode-switch-group">
                 <button
                   className={`mode-switch-btn ${mode === 'text' ? 'active' : ''}`}
@@ -659,7 +726,7 @@ const DigitalHumanPage: React.FC = () => {
 
             {/* 音色选择 - 三个卡片同等优先级 */}
             <div className="input-section">
-              <label className="input-label">选择音色</label>
+              <label className="input-label">③ 选择音色（可选）</label>
               <div className="voice-selector-grid">
                 <button
                   className={`voice-card ${selectedGender === 'male' ? 'active' : ''}`}

@@ -222,6 +222,27 @@ export class MissionExecutor {
         return await this.executeMultiPersonPhoto(taskId, config, input, isM3 ? 2 : 3);
       }
 
+      // Step 0: 上传用户照片到COS（M1需要公网URL用于ControlNet Canny）
+      let userPhotoUrl: string | undefined;
+
+      if (config.missionId === 'M1' && input.image) {
+        this.updateProgress({
+          stage: 'uploading',
+          progress: 5,
+          message: '📤 正在上传照片到云端...'
+        });
+
+        console.log('[MissionExecutor] M1任务 - 上传照片到COS用于ControlNet');
+        userPhotoUrl = await this.uploadUserImageToPublicUrl(input.image);
+        console.log('[MissionExecutor] 照片URL:', userPhotoUrl);
+
+        this.updateProgress({
+          stage: 'uploading',
+          progress: 8,
+          message: '✅ 照片上传完成！'
+        });
+      }
+
       // Step 1: DNA提取（如果需要）
       if (config.requiresDNA && input.image) {
         const dnaMessages = [
@@ -235,7 +256,9 @@ export class MissionExecutor {
           message: dnaMessages[Math.floor(Math.random() * dnaMessages.length)]
         });
 
-        const dnaData = await this.extractDNA(input.image);
+        // M1使用已上传的URL，其他任务使用原始image
+        const imageForDNA = userPhotoUrl || input.image;
+        const dnaData = await this.extractDNA(imageForDNA);
         dnaDisplayTexts = dnaData.tags;
         dnaRawOutput = dnaData.rawOutput;
 
@@ -264,7 +287,7 @@ export class MissionExecutor {
         message: generatingMessages[Math.floor(Math.random() * generatingMessages.length)]
       });
 
-      imageResult = await this.generateImage(config, input, dnaRawOutput);
+      imageResult = await this.generateImage(config, input, dnaRawOutput, userPhotoUrl);
 
       this.updateProgress({
         stage: 'generating',
@@ -582,7 +605,8 @@ export class MissionExecutor {
   private async generateImage(
     config: MissionConfig,
     input: MissionInput,
-    dnaRawOutput?: string
+    dnaRawOutput?: string,
+    userPhotoUrl?: string
   ): Promise<string> {
     console.log('[MissionExecutor] 调用FLUX生成图像（使用M1完整配置）...');
 
@@ -632,25 +656,40 @@ export class MissionExecutor {
         ? M1_CONFIG.model_config.lora.male_weight
         : M1_CONFIG.model_config.lora.weight;
 
+      // 构建基础generateParams
+      const generateParams: any = {
+        prompt: prompt,
+        negativePrompt: negativePrompt,
+        width: 768,
+        height: 1024,
+        imgCount: 1,
+        steps: 25,
+        cfgScale: 3.5,
+        seed: -1,
+        sampler: 15,  // Euler
+        additionalNetwork: [
+          {
+            modelId: M1_CONFIG.model_config.lora.uuid,
+            weight: loraWeight
+          }
+        ]
+      };
+
+      // 🆕 M1任务：添加ControlNet Canny配置（使用照片URL控制发型轮廓）
+      if (config.missionId === 'M1' && userPhotoUrl) {
+        console.log('[MissionExecutor] M1任务 - 启用ControlNet Canny');
+        console.log('[MissionExecutor] ControlNet图片URL:', userPhotoUrl);
+
+        generateParams.controlnet = {
+          controlType: "line",  // Canny边缘检测
+          controlImage: userPhotoUrl,  // 使用上传到COS的照片URL
+          controlWeight: 0.7  // 控制强度，可根据效果调整（0.6-0.8）
+        };
+      }
+
       const requestBody = {
         templateUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
-        generateParams: {
-          prompt: prompt,
-          negativePrompt: negativePrompt,
-          width: 768,
-          height: 1024,
-          imgCount: 1,
-          steps: 25,
-          cfgScale: 3.5,
-          seed: -1,
-          sampler: 15,  // Euler
-          additionalNetwork: [
-            {
-              modelId: M1_CONFIG.model_config.lora.uuid,
-              weight: loraWeight
-            }
-          ]
-        }
+        generateParams: generateParams
       };
 
       console.log('[MissionExecutor] 发送FLUX请求:', JSON.stringify(requestBody, null, 2));

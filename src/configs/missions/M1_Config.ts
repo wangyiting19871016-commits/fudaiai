@@ -67,6 +67,8 @@ export const M1_CONFIG: M1Config = {
   qwen_config: {
     system_prompt: `Analyze this portrait photo. Describe ONLY these key features in EXTREME detail (they are critical for identity):
 
+⚠️ IMPORTANT: Do NOT describe hair/hairstyle - it will be controlled by ControlNet edge detection.
+
 1. HEADWEAR (帽子/头饰):
    - Type: baseball cap / beanie / fedora / sun hat / headband / hair clip / or "no headwear"
    - Color: black / gray / white / brown / etc.
@@ -84,50 +86,38 @@ export const M1_CONFIG: M1Config = {
    - Color/material: gold / silver / pearl / red / etc.
    - Example: "wearing gold hoop earrings" / "wearing red tassel earrings" / "no earrings"
 
-4. HAIR (发型 - 超级重要，必须极度详细):
-   - Length: very short (buzz/crew cut) / short cropped / medium / shoulder-length / long
-   - Style: how is it worn?
-     * Short: buzz cut / crew cut / cropped / spiky / slicked back / side-parted / messy
-     * Medium/Long: straight down / pulled back / in ponytail / in bun (high/low/messy) / braided / half-up
-   - Top/crown: use "flat on top" ONLY when hair is truly flat with no lift; if there is natural volume or lift, use "with some volume on top" or "slightly lifted on top"
-   - Texture: straight smooth / wavy / curly / coily
-   - Color: black / dark brown / light brown / gray / white / mixed gray-black
-   - Bangs/front: use "side-swept bangs" or "slight side-swept bangs" ONLY when there is clearly swept or longer front hair; if front hair is very short or styled up/forward with minimal fringe, use "short front hair" or "minimal bangs" or "no distinct bangs"
-   - Example: "medium length straight black hair pulled back in low messy bun with loose side strands"
-   - Example (true flat top): "very short dark brown buzz cut, flat on top, tapered sides"
-   - Example (volume on top): "very short black hair with some volume on top, tapered sides, short front hair"
-   - Example: "long wavy black hair flowing down, center-parted, no bangs"
-
-5. FACE SHAPE (脸型):
+4. FACE SHAPE (脸型):
    - Overall: round soft / oval balanced / square wide / elongated narrow / heart-shaped
    - Jawline: sharp defined / soft rounded / broad wide
    - Cheeks: high prominent cheekbones / flat soft / full rounded cheeks
 
-6. AGE (年龄 - 必须精准):
+5. AGE (年龄 - 必须精准):
    - For 20s: "young 20s"
    - For 30-40s female: "mature 30s" or "mature 40s"
    - For 30-40s male: use explicit adult terms e.g. "mature 35 adult man" or "male in his 30s" or "man with mature facial features" so the model keeps adult appearance
    - For 50-60s: "elder 50s senior woman/man" or "elder 60s senior woman/man"
    - For 70s+: "senior 70s elderly woman/man"
 
-7. GENDER: male or female
+6. GENDER: male or female
 
 OUTPUT FORMAT:
 - Return a single line.
 - Comma-separated detailed English description.
 - Do NOT wrap the output in quotes.
+- Do NOT describe hair/hairstyle (will be handled by ControlNet).
 - Mention gender only once (male OR female).
 - For male age, always include an explicit adult anchor phrase like: "mature 35 adult man" or "man with mature facial features".
 - NO explanations.
 
-GOOD Examples (super detailed):
-- "black baseball cap, wearing rectangular thick black-framed glasses, no earrings, medium length black hair with gray strands pulled under cap, square face, sharp jawline, high cheekbones, elder 60s senior woman, female"
-- "no headwear, wearing round thin gold-rimmed glasses, wearing small gold stud earrings, very short dark brown buzz cut flat on top with tapered sides, wide square face, broad jawline, mature 35 adult man, male"
-- "no hat, no glasses, wearing red tassel drop earrings, long straight black hair in high messy bun with loose side-swept bangs, oval face, soft rounded jawline, young 25, female"
+GOOD Examples (no hair description):
+- "black baseball cap, wearing rectangular thick black-framed glasses, no earrings, square face, sharp jawline, high cheekbones, elder 60s senior woman, female"
+- "no headwear, wearing round thin gold-rimmed glasses, wearing small gold stud earrings, wide square face, broad jawline, mature 35 adult man, male"
+- "no hat, no glasses, wearing red tassel drop earrings, oval face, soft rounded jawline, young 25, female"
 
-BAD Examples (too vague):
-- "hat, glasses, long hair, female" ← TOO VAGUE!
-- "short hair, male" ← TOO VAGUE!`
+BAD Examples (too vague or includes hair):
+- "hat, glasses, long hair, female" ← TOO VAGUE and has hair!
+- "short hair, male" ← TOO VAGUE and has hair!
+- "black hair, glasses, female" ← Has hair description!`
   },
 
   prompt_templates: {

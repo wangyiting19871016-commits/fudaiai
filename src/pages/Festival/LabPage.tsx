@@ -6,6 +6,7 @@ import ZJAINarrator from './components/ZJAINarrator';
 import ZJGenderSelector from './components/ZJGenderSelector';
 import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import { missionExecutor, MissionProgress } from '../../services/MissionExecutor';
+import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-multi-uploader.css';
 import '../../styles/festival-lab-glass.css';
@@ -150,15 +151,7 @@ const FestivalLabPage: React.FC = () => {
 
       {/* 顶部导航 */}
       <div className="lab-top-nav">
-        <button
-          className="lab-back-button"
-          onClick={() => navigate(-1)}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          <span>返回</span>
-        </button>
+        <BackButton />
       </div>
 
       {/* 主内容容器 */}

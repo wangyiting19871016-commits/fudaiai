@@ -6,6 +6,7 @@ import { useAPISlot } from '../../stores/APISlotStore';
 import { getAllVoices } from '../../configs/festival/voicePresets';
 import { uploadImage, uploadAudio } from '../../services/imageHosting';
 import { getNavigationState, type NavigationState } from '../../types/navigationState';
+import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-video.css';
 import '../../styles/festival-video-method.css';
 
@@ -156,7 +157,7 @@ const FestivalVideoPage: React.FC = () => {
     <div className="festival-video-page">
       {/* 顶部导航 */}
       <div className="video-header">
-        <button className="back-btn" onClick={handleBack}>← 返回</button>
+        <BackButton onClick={handleBack} />
         <h1 className="page-title">数字人拜年视频</h1>
         <div className="header-placeholder"></div>
       </div>

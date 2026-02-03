@@ -11,6 +11,7 @@ import { message } from 'antd';
 import { MaterialService, MaterialCombiner } from '../../services/MaterialService';
 import type { MaterialAtom, MaterialType } from '../../types/material';
 import { FestivalButton, FestivalButtonGroup } from '../../components/FestivalButton';
+import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-home-glass.css';
 
@@ -499,12 +500,7 @@ const MaterialLibraryPage: React.FC = () => {
         `}</style>
 
         {/* 返回按钮 */}
-        <div className="back-btn" onClick={() => navigate(-1)}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          <span>返回</span>
-        </div>
+        <BackButton />
 
         {/* 头部 */}
         <div className="material-library-header">

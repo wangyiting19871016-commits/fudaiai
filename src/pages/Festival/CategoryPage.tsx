@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getCategoryById } from '../../configs/festival/categories';
 import { getFeaturesByCategory, Feature, isLegacyFeature } from '../../configs/festival/features';
 import { BottomNav } from '../../components/BottomNav';
+import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-category-glass.css';
 
@@ -115,9 +116,7 @@ const FestivalCategoryPage: React.FC = () => {
       <div className="festival-category-page">
         {/* 顶部导航 */}
         <div className="category-header">
-          <button className="back-btn" onClick={() => navigate(-1)}>
-            ← 返回
-          </button>
+          <BackButton />
           <h1 className="category-title">{category.name}</h1>
           <button className="home-btn" onClick={() => navigate('/festival/home')}>
             首页

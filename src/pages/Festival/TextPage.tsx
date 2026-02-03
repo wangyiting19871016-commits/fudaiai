@@ -9,6 +9,7 @@ import { CLASSIC_COUPLET_POSTER } from '../../configs/festival/posterTemplates';
 import { MaterialService } from '../../services/MaterialService';
 import { CoupletEditor } from '../../components/CoupletEditor';
 import { FestivalButton, FestivalButtonGroup } from '../../components/FestivalButton';
+import { BackButton } from '../../components/BackButton';
 import type { MaterialAtom, CoupletData } from '../../types/material';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival.css';
@@ -446,7 +447,7 @@ const FestivalTextPage: React.FC = () => {
       <div className="festival-text-page">
         {/* 顶部导航 */}
         <div className="text-header">
-          <button className="text-back-btn" onClick={handleBack}>←</button>
+          <BackButton onClick={handleBack} />
           <h1 className="text-title">{feature.icon} {feature.name}</h1>
           <div className="text-header-placeholder"></div>
         </div>

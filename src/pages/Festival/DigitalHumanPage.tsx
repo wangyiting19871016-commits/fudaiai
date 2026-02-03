@@ -12,6 +12,7 @@ import type { MaterialAtom } from '../../types/material';
 import { diagnosisM11 } from '../../utils/m11Diagnosis';
 import { TextSelector } from '../../components/TextSelector';
 import { getNavigationState, type NavigationState } from '../../types/navigationState';
+import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-digital-human.css';
 
@@ -462,9 +463,7 @@ const DigitalHumanPage: React.FC = () => {
       <div className="digital-human-container">
         {/* 顶部导航 */}
         <div className="digital-human-header">
-          <button className="back-btn" onClick={() => navigate(-1)}>
-            ← 返回
-          </button>
+          <BackButton />
           <h1 className="page-title">数字人拜年</h1>
           <div className="header-placeholder"></div>
         </div>

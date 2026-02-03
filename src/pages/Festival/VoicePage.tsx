@@ -11,6 +11,7 @@ import {
   getDefaultVoice,
   getDefaultText
 } from '../../configs/festival/voicePresets';
+import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival.css';
 import '../../styles/festival-page-glass.css';
@@ -602,7 +603,7 @@ const FestivalVoicePage: React.FC = () => {
       <div className="festival-voice-page">
         {/* 顶部导航 */}
         <div className="voice-header">
-          <button className="voice-back-btn" onClick={handleBack}>←</button>
+          <BackButton onClick={handleBack} />
           <h1 className="voice-title">语音贺卡</h1>
           <div className="voice-header-placeholder"></div>
         </div>

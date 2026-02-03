@@ -22,6 +22,7 @@ import ModeSelector from './components/ModeSelector';
 import ActionPresetSelector from './components/ActionPresetSelector';
 import VideoResultView from './components/VideoResultView';
 import ZJFullscreenLoader from './components/ZJFullscreenLoader';
+import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-common.css';
 import '../../styles/festival-home-glass.css';
 
@@ -245,9 +246,7 @@ const FestivalVideoPageNew: React.FC = () => {
         {/* 顶部返回按钮（非生成状态时显示） */}
         {stage !== 'generating' && (
           <div style={{ padding: '24px 24px 0' }}>
-            <button className="back-btn-standard" onClick={handleBack}>
-              ← 返回
-            </button>
+            <BackButton onClick={handleBack} />
           </div>
         )}
 

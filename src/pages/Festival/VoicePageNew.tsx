@@ -12,6 +12,7 @@ import { MaterialService } from '../../services/MaterialService';
 import type { MaterialAtom } from '../../types/material';
 import { TextSelector } from '../../components/TextSelector';
 import { getNavigationState, createNavigationState, type NavigationState } from '../../types/navigationState';
+import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-voice-new.css';
 
 const VoicePageNew: React.FC = () => {
@@ -353,12 +354,7 @@ const VoicePageNew: React.FC = () => {
     <div className="voice-studio">
       {/* 顶部导航 */}
       <header className="voice-studio__header">
-        <button className="lab-back-button" onClick={() => navigate(-1)}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          <span>返回</span>
-        </button>
+        <BackButton />
         <h1 className="header-title">语音生成</h1>
         <div className="header-spacer"></div>
       </header>

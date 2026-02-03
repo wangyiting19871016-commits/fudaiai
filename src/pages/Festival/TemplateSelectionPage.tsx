@@ -7,6 +7,7 @@ import {
   TemplateItem
 } from '../../configs/festival/templateGallery';
 import { getFeatureById } from '../../configs/festival/features';
+import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-template-selection.css';
 import '../../styles/festival-template-glass.css';
@@ -100,15 +101,7 @@ const TemplateSelectionPage: React.FC = () => {
 
       {/* 顶部导航 */}
       <div className="template-top-nav">
-        <button
-          className="template-back-btn"
-          onClick={() => navigate(-1)}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          <span>返回</span>
-        </button>
+        <BackButton />
       </div>
 
       {/* 主内容 */}

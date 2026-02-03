@@ -50,8 +50,8 @@
 
 .text-selector-mode-switch .mode-btn.active {
   color: #fff;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
 }
 
 .text-selector-mode-switch .mode-btn:disabled {
@@ -87,9 +87,9 @@
 }
 
 .text-selector-scenes .scene-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
   border-color: transparent;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.4);
 }
 
 .text-selector-scenes .scene-btn.active .scene-icon {
@@ -129,8 +129,8 @@
 }
 
 .text-selector-input-wrapper:focus-within {
-  border-color: #667eea;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+  border-color: #e53935;
+  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.2);
 }
 
 .text-selector-textarea {
@@ -175,10 +175,10 @@
 
 .shuffle-btn:hover {
   color: #fff;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
   border-color: transparent;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
 }
 
 .shuffle-btn:active {

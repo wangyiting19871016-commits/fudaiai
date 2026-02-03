@@ -127,9 +127,14 @@ export const TextSelector: React.FC<TextSelectorProps> = ({
   const handleModeChange = (newMode: 'template' | 'custom') => {
     setMode(newMode);
 
-    // 切换到template模式时，如果没有值就生成一个
-    if (newMode === 'template' && !value) {
-      handleShuffle();
+    if (newMode === 'template') {
+      // 切换到template模式时，如果没有值就生成一个
+      if (!value) {
+        handleShuffle();
+      }
+    } else {
+      // 切换到自定义模式时，清空文案
+      onChange('', 'user');
     }
   };
 
@@ -207,7 +212,7 @@ export const TextSelector: React.FC<TextSelectorProps> = ({
           onChange={handleTextChange}
           placeholder={placeholder}
           autoFocus={autoFocus}
-          disabled={disabled || mode === 'template'}
+          disabled={disabled}
           rows={3}
         />
 

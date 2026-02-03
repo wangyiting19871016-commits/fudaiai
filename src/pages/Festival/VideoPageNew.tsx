@@ -153,61 +153,105 @@ const FestivalVideoPageNew: React.FC = () => {
 
   // 生成数字人说话视频
   const generateTalkVideo = async () => {
-    setProgressMessage('🎙️ 数字人正在准备...');
+    if (!pageState.image || !pageState.audioUrl) {
+      throw new Error('缺少图片或音频');
+    }
+
+    setProgressMessage('数字人正在准备...');
     setProgress(10);
 
-    // TODO: 调用MissionExecutor的M_VIDEO_TALK任务
-    // 模拟生成
-    await simulateVideoGeneration('数字人正在拍摄', 90);
+    try {
+      const executor = new MissionExecutor();
+      const result = await executor.execute(
+        'M_VIDEO_TALK',
+        {
+          image: pageState.image,
+          customParams: {
+            audioUrl: pageState.audioUrl,
+            resolution: '720P'
+          }
+        },
+        (progress) => {
+          setProgress(progress.progress);
+          setProgressMessage(progress.message);
+        }
+      );
 
-    // 模拟结果
-    setResultUrl('https://example.com/talk-video.mp4');
-    setStage('complete');
+      setResultUrl(result.image); // Video URL in image field
+      setStage('complete');
+    } catch (error) {
+      console.error('[VideoPageNew] Talk video generation failed:', error);
+      throw error;
+    }
   };
 
   // 生成动作视频
   const generateActionVideo = async (action: ActionPreset) => {
-    setProgressMessage(`🎭 AI演员正在表演${action.name}...`);
+    if (!pageState.image) {
+      throw new Error('缺少图片');
+    }
+
+    setProgressMessage(`AI演员正在表演${action.name}...`);
     setProgress(10);
 
-    // TODO: 调用MissionExecutor的M_VIDEO_ACTION任务
-    // 模拟生成
-    await simulateVideoGeneration(`正在生成${action.name}动作`, 90);
+    try {
+      const executor = new MissionExecutor();
+      const result = await executor.execute(
+        'M_VIDEO_ACTION',
+        {
+          image: pageState.image,
+          customParams: {
+            action: action.id,
+            actionName: action.name,
+            resolution: '720P'
+          }
+        },
+        (progress) => {
+          setProgress(progress.progress);
+          setProgressMessage(progress.message);
+        }
+      );
 
-    // 模拟结果
-    setResultUrl('https://example.com/action-video.mp4');
-    setStage('complete');
+      setResultUrl(result.image); // Video URL in image field
+      setStage('complete');
+    } catch (error) {
+      console.error('[VideoPageNew] Action video generation failed:', error);
+      throw error;
+    }
   };
 
   // 生成GIF表情包
   const generateGif = async () => {
-    setProgressMessage('🎨 正在制作表情包...');
+    if (!pageState.image) {
+      throw new Error('缺少图片');
+    }
+
+    setProgressMessage('正在制作表情包...');
     setProgress(20);
 
-    // TODO: 使用Canvas生成GIF
-    // 模拟生成
-    await simulateVideoGeneration('制作GIF', 5);
-
-    // 模拟结果
-    setResultUrl('https://example.com/emoji.gif');
-    setStage('complete');
-  };
-
-  // 模拟生成过程（实际应该是真实的API调用）
-  const simulateVideoGeneration = async (message: string, duration: number) => {
-    return new Promise<void>((resolve) => {
-      const interval = setInterval(() => {
-        setProgress(prev => {
-          const next = prev + 10;
-          if (next >= 100) {
-            clearInterval(interval);
-            resolve();
-            return 100;
+    try {
+      const executor = new MissionExecutor();
+      const result = await executor.execute(
+        'M_VIDEO_GIF',
+        {
+          image: pageState.image,
+          customParams: {
+            format: 'gif',
+            duration: 3 // 3 seconds
           }
-          return next;
-        });
-      }, duration * 100); // duration秒完成
-    });
+        },
+        (progress) => {
+          setProgress(progress.progress);
+          setProgressMessage(progress.message);
+        }
+      );
+
+      setResultUrl(result.image); // GIF URL in image field
+      setStage('complete');
+    } catch (error) {
+      console.error('[VideoPageNew] GIF generation failed:', error);
+      throw error;
+    }
   };
 
   // 返回
@@ -232,8 +276,39 @@ const FestivalVideoPageNew: React.FC = () => {
 
   // 保存到素材库
   const handleSaveToLibrary = () => {
-    // TODO: 实现保存到素材库
-    message.success('已保存到素材库');
+    if (!resultUrl) {
+      message.error('没有可保存的视频');
+      return;
+    }
+
+    try {
+      const { MaterialService } = require('../../services/MaterialService');
+
+      const material = {
+        id: `video_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type: selectedMode === 'gif' ? 'video' : 'video' as const,
+        data: {
+          url: resultUrl
+        },
+        metadata: {
+          format: selectedMode === 'gif' ? 'gif' : 'mp4',
+          createdAt: Date.now(),
+          featureId: 'M_VIDEO',
+          featureName: selectedMode === 'talk' ? '数字人说话' : selectedMode === 'action' ? '动作视频' : 'GIF表情包',
+          thumbnail: pageState.image
+        },
+        connectors: {
+          roles: ['videoImage' as const],
+          canCombineWith: ['text' as const, 'audio' as const]
+        }
+      };
+
+      MaterialService.saveMaterial(material);
+      message.success('已保存到素材库');
+    } catch (error) {
+      console.error('[VideoPageNew] Save to library failed:', error);
+      message.error('保存失败');
+    }
   };
 
   return (
@@ -293,7 +368,7 @@ const FestivalVideoPageNew: React.FC = () => {
             margin: '0 auto'
           }}>
             <div className="glass-card" style={{ padding: '32px' }}>
-              <div style={{ fontSize: '64px', marginBottom: '16px' }}>😅</div>
+              <div style={{ fontSize: '64px', marginBottom: '16px' }}></div>
               <h2 style={{
                 fontSize: '20px',
                 fontWeight: '600',

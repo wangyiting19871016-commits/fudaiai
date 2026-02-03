@@ -1,0 +1,307 @@
+/**
+ * 🎨 TextSelector组件样式
+ * 使用Glassmorphism风格，与项目统一
+ */
+
+.text-selector {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 标题 */
+.text-selector-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+/* 模式切换 */
+.text-selector-mode-switch {
+  display: flex;
+  gap: 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.text-selector-mode-switch .mode-btn {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.text-selector-mode-switch .mode-btn:hover {
+  color: #333;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.text-selector-mode-switch .mode-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.text-selector-mode-switch .mode-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 场景切换 */
+.text-selector-scenes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.text-selector-scenes .scene-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.text-selector-scenes .scene-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.text-selector-scenes .scene-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+}
+
+.text-selector-scenes .scene-btn.active .scene-icon {
+  transform: scale(1.2);
+}
+
+.text-selector-scenes .scene-btn.active .scene-name {
+  color: #fff;
+  font-weight: 600;
+}
+
+.text-selector-scenes .scene-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.text-selector-scenes .scene-icon {
+  display: none; /* 隐藏emoji图标 */
+}
+
+.text-selector-scenes .scene-name {
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+/* 文本输入区 */
+.text-selector-input-wrapper {
+  position: relative;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.text-selector-input-wrapper:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+}
+
+.text-selector-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1a1a1a;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: vertical;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+.text-selector-textarea::placeholder {
+  color: #999;
+}
+
+.text-selector-textarea:disabled {
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* 换一换按钮 */
+.shuffle-btn {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #667eea;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.shuffle-btn:hover {
+  color: #fff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.shuffle-btn:active {
+  transform: translateY(0);
+}
+
+.shuffle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 验证状态 */
+.text-selector-input-wrapper.text-selector-validation-error {
+  border-color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.05);
+}
+
+.text-selector-input-wrapper.text-selector-validation-warning {
+  border-color: #faad14;
+  background: rgba(250, 173, 20, 0.05);
+}
+
+.text-selector-input-wrapper.text-selector-validation-success {
+  border-color: #52c41a;
+  background: rgba(82, 196, 26, 0.05);
+}
+
+/* 底部信息 */
+.text-selector-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.length-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.length-hint {
+  color: #666;
+  font-weight: 500;
+}
+
+.validation-message {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.validation-message.error {
+  color: #ff4d4f;
+}
+
+.validation-message.warning {
+  color: #faad14;
+}
+
+.validation-message.success {
+  color: #52c41a;
+}
+
+/* 进度条 */
+.length-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.length-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .text-selector-scenes {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .text-selector-scenes .scene-btn {
+    padding: 10px 6px;
+  }
+
+  .text-selector-scenes .scene-icon {
+    font-size: 20px;
+  }
+
+  .text-selector-scenes .scene-name {
+    font-size: 11px;
+  }
+
+  .text-selector-textarea {
+    font-size: 15px;
+  }
+
+  .shuffle-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+/* 超小屏幕（<375px） */
+@media (max-width: 375px) {
+  .text-selector-scenes {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+
+  .text-selector-scenes .scene-btn {
+    padding: 8px 4px;
+  }
+
+  .text-selector-scenes .scene-icon {
+    font-size: 18px;
+  }
+
+  .text-selector-scenes .scene-name {
+    font-size: 10px;
+  }
+}

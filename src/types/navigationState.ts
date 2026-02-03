@@ -30,6 +30,7 @@ export interface NavigationState {
   sourcePagePath?: string;     // 来源页面路径
 
   // 流程控制
+  quickMode?: boolean;         // 快速生成模式（使用预设参数，跳过选择UI）
   autoGenerate?: boolean;      // 是否自动触发生成（用于一键流程）
   skipTextEdit?: boolean;      // 是否跳过文本编辑步骤
 

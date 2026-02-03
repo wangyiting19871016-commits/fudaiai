@@ -178,7 +178,7 @@ const TemplateSelectionPage: React.FC = () => {
             {/* 更多敬请期待占位卡片 */}
             <div className="template-card template-card-placeholder">
               <div className="template-preview template-preview-placeholder">
-                <div className="placeholder-icon">🔒</div>
+                <div className="placeholder-icon"></div>
               </div>
               <div className="template-info">
                 <h3 className="template-name">更多场景</h3>

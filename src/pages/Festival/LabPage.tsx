@@ -262,7 +262,7 @@ const FestivalLabPage: React.FC = () => {
               {/* 生成按钮 */}
               <button className="generate-button-modern" onClick={handleStartGeneration}>
                 <div className="button-glow"></div>
-                <span className="button-icon">✨</span>
+                <span className="button-icon"></span>
                 <span className="button-text">{isM2 ? '开始变身财神' : '开始炼成真迹'}</span>
               </button>
 

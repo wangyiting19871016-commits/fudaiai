@@ -491,7 +491,7 @@ const FestivalTextPage: React.FC = () => {
                         transition: 'all 0.2s',
                       }}
                     >
-                      📸 {uploadedImage ? '更换图片' : '点击上传图片'}
+                      {uploadedImage ? '更换图片' : '点击上传图片'}
                     </label>
 
                     {uploadedImage && (
@@ -515,7 +515,6 @@ const FestivalTextPage: React.FC = () => {
               <div className="text-action">
                 <FestivalButton
                   variant="primary"
-                  icon="✨"
                   onClick={handleGenerate}
                   disabled={isGenerating}
                   loading={isGenerating}
@@ -532,7 +531,7 @@ const FestivalTextPage: React.FC = () => {
               {posterUrl ? (
                 <div className="couplet-image-preview">
                   <div style={{ marginBottom: '12px', fontSize: '15px', fontWeight: '600', color: 'var(--cny-gray-900)' }}>
-                    🎨 春联海报
+                    春联海报
                   </div>
                   <img
                     src={posterUrl}
@@ -582,7 +581,6 @@ const FestivalTextPage: React.FC = () => {
               <FestivalButtonGroup grid gap={12}>
                 <FestivalButton
                   variant="primary"
-                  icon="📋"
                   onClick={handleCopy}
                 >
                   复制文案
@@ -591,7 +589,6 @@ const FestivalTextPage: React.FC = () => {
                 {coupletImage && !posterUrl && (
                   <FestivalButton
                     variant="primary"
-                    icon="🖼️"
                     onClick={() => downloadCoupletImage(coupletImage, `春联_${Date.now()}.png`)}
                   >
                     下载春联图
@@ -602,7 +599,6 @@ const FestivalTextPage: React.FC = () => {
                 {featureId === 'M9' && coupletData && uploadedImage && !posterUrl && (
                   <FestivalButton
                     variant="primary"
-                    icon="🏮"
                     onClick={handleGeneratePoster}
                     disabled={isGeneratingPoster}
                     loading={isGeneratingPoster}
@@ -615,7 +611,6 @@ const FestivalTextPage: React.FC = () => {
                 {posterUrl && (
                   <FestivalButton
                     variant="primary"
-                    icon="💾"
                     onClick={() => {
                       const link = document.createElement('a');
                       link.href = posterUrl;
@@ -630,7 +625,6 @@ const FestivalTextPage: React.FC = () => {
                 {feature.output.canAddAudio && (
                   <FestivalButton
                     variant="secondary"
-                    icon="🎤"
                     onClick={handleToVoice}
                   >
                     转为语音
@@ -639,7 +633,6 @@ const FestivalTextPage: React.FC = () => {
 
                 <FestivalButton
                   variant="ghost"
-                  icon="🔄"
                   onClick={handleRegenerate}
                   fullWidth
                   style={{ gridColumn: '1 / -1' }}

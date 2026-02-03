@@ -106,7 +106,7 @@ export const ContinueCreationPanel: React.FC<ContinueCreationPanelProps> = ({
       actions.push({
         id: 'from-library',
         label: '从素材库选择',
-        icon: '💼',
+        icon: '',
         description: `已有${compatibleMaterials.length}个可用素材`,
         path: '/festival/materials',
       });

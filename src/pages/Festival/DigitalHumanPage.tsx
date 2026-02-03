@@ -301,16 +301,51 @@ const DigitalHumanPage: React.FC = () => {
           throw new Error(`视频生成失败：${wanResult.output?.message || '未获取到视频URL'}`);
         }
 
-        const wanVideoUrl = wanResult.output.results.video_url;
+        let finalVideoUrl = wanResult.output.results.video_url;
 
-        // 步骤5: 完成
+        // 步骤5: 添加字幕（95% → 100%）
+        if (greetingText && greetingText.trim()) {
+          setGenerationState({
+            stage: 'subtitle',
+            progress: 95,
+            message: '添加字幕中...'
+          });
+
+          try {
+            const subtitleResponse = await fetch('http://localhost:3002/api/video/compose', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                inputUrl: finalVideoUrl,
+                type: 'video',
+                subtitle: greetingText,
+                outputFormat: 'mp4'
+              })
+            });
+
+            if (subtitleResponse.ok) {
+              const subtitleResult = await subtitleResponse.json();
+              if (subtitleResult.status === 'success' && subtitleResult.downloadUrl) {
+                finalVideoUrl = subtitleResult.downloadUrl;
+                console.log('[DigitalHuman] 字幕添加成功:', finalVideoUrl);
+              }
+            }
+          } catch (subtitleError) {
+            console.warn('[DigitalHuman] 字幕添加失败，使用原视频:', subtitleError);
+            // 字幕失败不影响主流程，使用原视频
+          }
+        }
+
+        // 步骤6: 完成
         setGenerationState({
           stage: 'complete',
           progress: 100,
           message: '生成完成！'
         });
 
-        setVideoUrl(wanVideoUrl);
+        setVideoUrl(finalVideoUrl);
 
       } catch (wanError: any) {
         // 详细错误日志

@@ -453,7 +453,7 @@ const FestivalResultPage: React.FC = () => {
               下载
             </button>
             <button
-              className={`festival-result-btn ${isSaved ? 'festival-result-btn-secondary' : 'festival-result-btn-primary'}`}
+              className="festival-result-btn festival-result-btn-primary"
               onClick={handleSave}
               style={{
                 opacity: isSaved ? 0.7 : 1,
@@ -463,13 +463,13 @@ const FestivalResultPage: React.FC = () => {
               {isSaved ? '已保存' : '保存'}
             </button>
             <button
-              className="festival-result-btn festival-result-btn-secondary"
+              className="festival-result-btn festival-result-btn-primary"
               onClick={handleShare}
             >
               分享
             </button>
             <button
-              className="festival-result-btn festival-result-btn-secondary"
+              className="festival-result-btn festival-result-btn-primary"
               onClick={handleRegenerate}
             >
               重生成

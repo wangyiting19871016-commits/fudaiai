@@ -176,8 +176,8 @@ const ZJFullscreenLoader: React.FC<ZJFullscreenLoaderProps> = ({
         </div>
 
       {/* 装饰性图标 */}
-      <div className="zj-deco-icon zj-deco-sparkles">✨</div>
-      <div className="zj-deco-icon zj-deco-zap">⚡</div>
+      <div className="zj-deco-icon zj-deco-sparkles"></div>
+      <div className="zj-deco-icon zj-deco-zap"></div>
 
       {/* 底部品牌 */}
       <div className="zj-loader-footer">

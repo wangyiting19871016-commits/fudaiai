@@ -108,7 +108,7 @@ const FortunePage: React.FC = () => {
 
           {stage === 'error' && (
             <div className="fortune-error">
-              <div className="error-icon">❌</div>
+              <div className="error-icon">×</div>
               <h3>生成失败</h3>
               <p>{errorMessage}</p>
               <button className="retry-btn" onClick={() => setStage('ready')}>

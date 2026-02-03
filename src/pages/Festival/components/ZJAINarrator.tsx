@@ -56,7 +56,7 @@ const ZJAINarrator: React.FC<ZJAINarratorProps> = ({
         {stage === 'dna' && (
           <div className="zj-narrator-section">
             <div className="zj-narrator-title">
-              🧬 DNA 提取中...
+              DNA 提取中...
             </div>
             <div className="zj-narrator-divider" />
             
@@ -78,7 +78,7 @@ const ZJAINarrator: React.FC<ZJAINarratorProps> = ({
         {stage === 'generation' && (
           <div className="zj-narrator-section">
             <div className="zj-narrator-title">
-              ✨ 真迹生成中...
+              真迹生成中...
             </div>
             <div className="zj-narrator-divider" />
             

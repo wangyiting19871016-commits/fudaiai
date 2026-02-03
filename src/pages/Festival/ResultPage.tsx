@@ -156,7 +156,7 @@ const FestivalResultPage: React.FC = () => {
       console.log('[ResultPage] 素材已保存到素材库:', currentMaterial.id);
 
       message.success({
-        content: '✅ 已保存到【我的作品】',
+        content: '已保存到【我的作品】',
         duration: 2,
       });
     } catch (error) {
@@ -271,7 +271,7 @@ const FestivalResultPage: React.FC = () => {
         // 分享成功
         console.log('[Share] 分享成功');
         message.success({
-          content: '✅ 操作成功！图片已保存到相册',
+          content: '操作成功！图片已保存到相册',
           duration: 3,
         });
         setTimeout(() => setShowShareModal(false), 1500);

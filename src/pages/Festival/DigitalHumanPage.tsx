@@ -446,7 +446,7 @@ const DigitalHumanPage: React.FC = () => {
     };
 
     MaterialService.saveMaterial(material);
-    message.success('✅ 已保存到【我的作品】');
+    message.success('已保存到【我的作品】');
   };
 
   // 重新生成

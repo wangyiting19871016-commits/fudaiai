@@ -12,6 +12,7 @@ import { generateSmartReplyCard } from '../../utils/smartReplyCanvas';
 import { MaterialService } from '../../services/MaterialService';
 import type { MaterialAtom } from '../../types/material';
 import { BackButton } from '../../components/BackButton';
+import { FestivalButton } from '../../components/FestivalButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-lab-glass.css';
 
@@ -171,7 +172,7 @@ const SmartReplyPage: React.FC = () => {
 
     try {
       await navigator.clipboard.writeText(selectedReply);
-      message.success('✅ 文字已复制到剪贴板');
+      message.success('文字已复制到剪贴板');
     } catch (error) {
       // 降级方案：使用传统方法
       const textarea = document.createElement('textarea');
@@ -182,7 +183,7 @@ const SmartReplyPage: React.FC = () => {
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
-      message.success('✅ 文字已复制');
+      message.success('文字已复制');
     }
   };
 
@@ -201,7 +202,7 @@ const SmartReplyPage: React.FC = () => {
   const handleDownload = () => {
     // 不做任何操作，图片已经显示，用户可以直接长按保存
     message.info({
-      content: '💡 长按上方图片，选择「保存图片」即可保存到相册',
+      content: '长按上方图片，选择「保存图片」即可保存到相册',
       duration: 3
     });
   };
@@ -236,7 +237,7 @@ const SmartReplyPage: React.FC = () => {
             {/* 标题 */}
             <div style={{ textAlign: 'center', marginBottom: '30px' }}>
               <h1 style={{ fontSize: '32px', fontWeight: '900', color: 'var(--cny-red-500)', marginBottom: '8px' }}>
-                💬 高情商回复
+                高情商回复
               </h1>
               <p style={{ fontSize: '16px', color: 'var(--cny-gray-600)' }}>
                 接住尬问不憋屈
@@ -339,26 +340,15 @@ const SmartReplyPage: React.FC = () => {
                 <option value="电话里">电话里</option>
               </select>
 
-              <button
+              <FestivalButton
                 onClick={handleGenerate}
-                disabled={isGenerating}
-                style={{
-                  width: '100%',
-                  padding: '14px 32px',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  background: isGenerating
-                    ? 'var(--cny-gray-300)'
-                    : 'linear-gradient(135deg, var(--cny-red-500), #D32F2F)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '12px',
-                  cursor: isGenerating ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s'
-                }}
+                variant="primary"
+                size="large"
+                loading={isGenerating}
+                fullWidth
               >
-                {isGenerating ? '生成中...' : '🎲 生成高情商回复'}
-              </button>
+                生成高情商回复
+              </FestivalButton>
             </div>
           </div>
         )}
@@ -394,7 +384,7 @@ const SmartReplyPage: React.FC = () => {
                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
-                <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>🔥 怼人版</div>
+                <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>怼人版</div>
                 <div style={{ fontSize: '18px', fontWeight: '600', lineHeight: '1.5' }}>{replies.duiren}</div>
               </button>
 
@@ -415,7 +405,7 @@ const SmartReplyPage: React.FC = () => {
                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
-                <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>😂 有梗版</div>
+                <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>有梗版</div>
                 <div style={{ fontSize: '18px', fontWeight: '600', lineHeight: '1.5' }}>{replies.yougen}</div>
               </button>
 
@@ -436,7 +426,7 @@ const SmartReplyPage: React.FC = () => {
                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
-                <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>😊 情商版</div>
+                <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>情商版</div>
                 <div style={{ fontSize: '18px', fontWeight: '600', lineHeight: '1.5' }}>{replies.qingshang}</div>
               </button>
             </div>
@@ -465,7 +455,7 @@ const SmartReplyPage: React.FC = () => {
                 if (!isGenerating) e.currentTarget.style.background = 'var(--glass-light)';
               }}
             >
-              {isGenerating ? '🔄 生成中...' : '🔄 不满意？换一批'}
+              {isGenerating ? '生成中...' : '不满意？换一批'}
             </button>
           </div>
         )}
@@ -545,7 +535,7 @@ const SmartReplyPage: React.FC = () => {
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
                 }}
               >
-                📋 复制文字
+                复制文字
               </button>
 
               <button
@@ -565,7 +555,7 @@ const SmartReplyPage: React.FC = () => {
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
                 }}
               >
-                🎙️ 配语音
+                配语音
               </button>
 
               <button
@@ -585,7 +575,7 @@ const SmartReplyPage: React.FC = () => {
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
                 }}
               >
-                🔄 换一个
+                换一个
               </button>
 
               <button
@@ -607,7 +597,7 @@ const SmartReplyPage: React.FC = () => {
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
                 }}
               >
-                🎨 更多玩法
+                更多玩法
               </button>
             </div>
 
@@ -667,7 +657,7 @@ const SmartReplyPage: React.FC = () => {
                       transition: 'all 0.2s'
                     }}
                   >
-                    💼 保存到我的作品
+                    保存到我的作品
                   </button>
                 </div>
               </div>

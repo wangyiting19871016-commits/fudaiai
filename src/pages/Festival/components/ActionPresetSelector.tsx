@@ -100,7 +100,7 @@ const ActionPresetSelector: React.FC<ActionPresetSelectorProps> = ({ onSelect, o
         margin: '32px auto 0'
       }}>
         <div style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>
-          <strong style={{ color: '#333' }}>💡 生成说明：</strong>
+          <strong style={{ color: '#333' }}>生成说明：</strong>
           <br />
           • 选择动作后会立即开始生成
           <br />

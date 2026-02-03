@@ -19,7 +19,7 @@ const ZJGenderSelector: React.FC<ZJGenderSelectorProps> = ({ onSelect, selected 
     <div className="zj-gender-selector-modern">
       {/* 精简标题区 */}
       <div className="title-section-modern">
-        <h2 className="page-title-modern">🎭 选择性别</h2>
+        <h2 className="page-title-modern">选择性别</h2>
       </div>
       
       {/* 性别选择卡片 */}

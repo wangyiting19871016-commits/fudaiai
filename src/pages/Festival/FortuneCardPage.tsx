@@ -14,6 +14,7 @@ import { MaterialService } from '../../services/MaterialService';
 import type { MaterialAtom } from '../../types/material';
 import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import { BackButton } from '../../components/BackButton';
+import { FestivalButton, FestivalButtonGroup } from '../../components/FestivalButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-lab-glass.css';
 
@@ -313,7 +314,7 @@ const FortuneCardPage: React.FC = () => {
                     onChange={handleImageUpload}
                     style={{ display: 'none' }}
                   />
-                  <div style={{ fontSize: '64px', marginBottom: '16px' }}>○</div>
+                  <div style={{ fontSize: '64px', marginBottom: '16px' }}></div>
                   <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#000' }}>
                     点击上传照片
                   </div>
@@ -366,39 +367,22 @@ const FortuneCardPage: React.FC = () => {
                     margin: '0 auto 20px'
                   }}
                 />
-                <div style={{ textAlign: 'center' }}>
-                  <button
+                <FestivalButtonGroup direction="horizontal" gap={12} style={{ justifyContent: 'center' }}>
+                  <FestivalButton
                     onClick={handleStartFortuneTelling}
-                    style={{
-                      padding: '14px 32px',
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      background: 'linear-gradient(135deg, var(--cny-red-500), #D32F2F)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '12px',
-                      cursor: 'pointer',
-                      marginRight: '12px'
-                    }}
+                    variant="primary"
+                    size="large"
                   >
                     开始算命
-                  </button>
-                  <button
+                  </FestivalButton>
+                  <FestivalButton
                     onClick={() => setUploadedImage('')}
-                    style={{
-                      padding: '14px 32px',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      background: 'var(--glass-light)',
-                      color: '#000',
-                      border: '1px solid rgba(0,0,0,0.1)',
-                      borderRadius: '12px',
-                      cursor: 'pointer'
-                    }}
+                    variant="secondary"
+                    size="large"
                   >
                     重新上传
-                  </button>
-                </div>
+                  </FestivalButton>
+                </FestivalButtonGroup>
               </div>
             )}
           </div>
@@ -473,7 +457,7 @@ const FortuneCardPage: React.FC = () => {
                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.4)';
                   }}
                 >
-                  ✨ 用「{fortuneData.keyword}」生成春联海报
+                  用「{fortuneData.keyword}」生成春联海报
                 </button>
               )}
 

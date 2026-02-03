@@ -88,7 +88,7 @@ const VideoResultView: React.FC<VideoResultViewProps> = ({
         textAlign: 'center',
         marginBottom: '24px'
       }}>
-        <div style={{ fontSize: '48px', marginBottom: '8px' }}>✨</div>
+        <div style={{ fontSize: '48px', marginBottom: '8px' }}></div>
         <h2 style={{
           fontSize: '24px',
           fontWeight: '600',
@@ -160,7 +160,7 @@ const VideoResultView: React.FC<VideoResultViewProps> = ({
             onClick={handleDownloadGif}
             style={{ width: '100%' }}
           >
-            💾 保存表情包
+            保存表情包
           </button>
         )}
 
@@ -171,7 +171,7 @@ const VideoResultView: React.FC<VideoResultViewProps> = ({
             onClick={handleShare}
             style={{ width: '100%' }}
           >
-            📤 分享到其他应用
+            分享到其他应用
           </button>
         )}
 
@@ -182,7 +182,7 @@ const VideoResultView: React.FC<VideoResultViewProps> = ({
             onClick={onSaveToLibrary}
             style={{ width: '100%' }}
           >
-            📚 保存到素材库
+            保存到素材库
           </button>
         )}
 
@@ -193,7 +193,7 @@ const VideoResultView: React.FC<VideoResultViewProps> = ({
             onClick={onBack}
             style={{ width: '100%' }}
           >
-            🔄 重新制作
+            重新制作
           </button>
         )}
       </div>
@@ -212,7 +212,7 @@ const VideoResultView: React.FC<VideoResultViewProps> = ({
             color: '#666',
             lineHeight: '1.8'
           }}>
-            <strong style={{ color: '#2196F3', fontSize: '14px' }}>📱 保存到相册步骤：</strong>
+            <strong style={{ color: '#2196F3', fontSize: '14px' }}>保存到相册步骤：</strong>
             <br />
             <br />
             <strong>iOS设备：</strong>

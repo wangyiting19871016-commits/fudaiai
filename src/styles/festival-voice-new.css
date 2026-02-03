@@ -654,6 +654,107 @@
   margin: 0;
 }
 
+/* ========== 录音要求说明 ========== */
+.record-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tip-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--glass-heavy);
+  backdrop-filter: blur(var(--blur-amount));
+  border-radius: var(--radius-md);
+  border: 1px solid var(--red-border);
+}
+
+.tip-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.tip-content {
+  flex: 1;
+}
+
+.tip-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin: 0 0 4px 0;
+}
+
+.tip-desc {
+  font-size: 14px;
+  color: var(--gray-700);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.tip-desc strong {
+  color: var(--red-primary);
+  font-weight: 700;
+}
+
+/* ========== 朗读文案区域 ========== */
+.reading-text-section {
+  margin-bottom: 20px;
+}
+
+.reading-text-card {
+  background: var(--glass-heavy);
+  backdrop-filter: blur(var(--blur-amount));
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--red-primary);
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.15);
+}
+
+.reading-text-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--red-primary);
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reading-text-content {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.reading-text-content p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--gray-900);
+  text-align: justify;
+  letter-spacing: 0.5px;
+}
+
+.reading-text-meta {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.text-length {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-600);
+  background: rgba(229, 57, 53, 0.08);
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
 /* ========== 录音区域 ========== */
 .record-area {
   background: var(--glass-heavy);

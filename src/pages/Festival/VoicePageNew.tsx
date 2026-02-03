@@ -510,6 +510,37 @@ const VoicePageNew: React.FC = () => {
               </div>
             </section>
 
+            {/* 录音要求说明 */}
+            <section className="record-tips">
+              <div className="tip-card">
+                <div className="tip-icon">⏱️</div>
+                <div className="tip-content">
+                  <h3 className="tip-title">录音时长要求</h3>
+                  <p className="tip-desc">建议录制 <strong>10-30秒</strong>，时间越长克隆效果越好</p>
+                </div>
+              </div>
+              <div className="tip-card">
+                <div className="tip-icon">📝</div>
+                <div className="tip-content">
+                  <h3 className="tip-title">请照着下方文案朗读</h3>
+                  <p className="tip-desc">保持自然语速，清晰发音</p>
+                </div>
+              </div>
+            </section>
+
+            {/* 朗读文案 */}
+            <section className="reading-text-section">
+              <div className="reading-text-card">
+                <h3 className="reading-text-title">朗读文案</h3>
+                <div className="reading-text-content">
+                  <p>新春佳节到，祝您马年吉祥如意，心想事成！愿您在新的一年里身体健康，工作顺利，家庭幸福美满。祝福您财源广进，好运连连，事业蒸蒸日上，生活越来越美好！恭喜发财，大吉大利！</p>
+                </div>
+                <div className="reading-text-meta">
+                  <span className="text-length">约68字 · 预计朗读时长15-20秒</span>
+                </div>
+              </div>
+            </section>
+
             {/* 录音区域 */}
             <section className="record-area">
               {!recordedUrl ? (

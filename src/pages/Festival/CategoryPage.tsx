@@ -2,7 +2,9 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getCategoryById } from '../../configs/festival/categories';
 import { getFeaturesByCategory, Feature, isLegacyFeature } from '../../configs/festival/features';
-import '../../styles/festival.css';
+import { BottomNav } from '../../components/BottomNav';
+import '../../styles/festival-design-system.css';
+import '../../styles/festival-category-glass.css';
 
 /**
  * 📂 分类页
@@ -37,6 +39,12 @@ const FestivalCategoryPage: React.FC = () => {
 
     // 图片类功能
     if (processType === 'image') {
+      // M11数字人拜年：跳转专用数字人页面
+      if (feature.id === 'M11') {
+        navigate('/festival/digital-human');
+        return;
+      }
+
       // M7运势抽卡：跳转专用运势页面
       if (feature.id === 'M7' || feature.input.type === 'none') {
         navigate(`/festival/fortune/${feature.id}`);
@@ -59,7 +67,23 @@ const FestivalCategoryPage: React.FC = () => {
 
     // 文案类功能
     if (processType === 'text') {
+      // M8赛博算命：跳转专用算命页面
+      if (feature.id === 'M8') {
+        navigate('/festival/fortune-card');
+        return;
+      }
+      // M10高情商回复：跳转专用回复页面
+      if (feature.id === 'M10') {
+        navigate('/festival/smart-reply');
+        return;
+      }
       navigate(`/festival/text/${feature.id}`);
+      return;
+    }
+
+    // 视频类功能
+    if (processType === 'video') {
+      navigate(`/festival/video-lab/${feature.id}`);
       return;
     }
 
@@ -94,9 +118,9 @@ const FestivalCategoryPage: React.FC = () => {
           <button className="back-btn" onClick={() => navigate(-1)}>
             ← 返回
           </button>
-          <h1 className="category-title">{category.icon} {category.name}</h1>
+          <h1 className="category-title">{category.name}</h1>
           <button className="home-btn" onClick={() => navigate('/festival/home')}>
-            🏠
+            首页
           </button>
         </div>
 
@@ -124,13 +148,10 @@ const FestivalCategoryPage: React.FC = () => {
             </div>
           ))}
         </div>
-
-        {/* 礼包提示 */}
-        <div className="package-tip">
-          <span>🎁 购买春节大礼包 ¥19.9，全部功能无限用</span>
-          <button onClick={() => navigate('/festival/vip')}>立即购买</button>
-        </div>
       </div>
+
+      {/* 底部导航栏 */}
+      <BottomNav />
     </div>
   );
 };

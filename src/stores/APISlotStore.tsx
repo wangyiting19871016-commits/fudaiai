@@ -672,9 +672,9 @@ const PRESET_SLOTS: APISlot[] = [
     baseUrl: '/api/dashscope/api/v1',
     authType: 'Bearer',
     authKey: API_VAULT.QWEN.MASTER_KEY,
-    models: ['qwen-vl-max', 'qwen-vl-plus'],
+    models: ['qwen-vl-max', 'qwen-vl-plus', 'wan2.2-s2v', 'wan2.2-animate-move'],
     isPreset: true,
-    capabilities: ['视觉理解 (Visual Understanding)', '多模态对话 (Multimodal Chat)'],
+    capabilities: ['视觉理解 (Visual Understanding)', '多模态对话 (Multimodal Chat)', '数字人视频 (Digital Human)', '动作视频 (Motion Video)'],
     modelOverrides: {
       'qwen-vl-max': {
         params_schema: [
@@ -686,6 +686,76 @@ const PRESET_SLOTS: APISlot[] = [
         params_schema: [
           { id: 'prompt', name: '提示词', type: 'text', required: true, defaultValue: '请描述这张图的内容。' },
           { id: 'image', name: '输入图片', type: 'image', required: true, description: '上传图片进行分析' }
+        ]
+      },
+      'wan2.2-s2v': {
+        adapterConfig: {
+          structure_template: {
+            model: "wan2.2-s2v",
+            input: {
+              image_url: "{{image_url}}",
+              audio_url: "{{audio_url}}"
+            },
+            parameters: {
+              resolution: "{{resolution}}"
+            }
+          },
+          headers: {
+            'X-DashScope-Async': 'enable'
+          },
+          routing: {
+            endpoint: "/api/dashscope/api/v1/services/aigc/image2video/video-synthesis"
+          },
+          response_path: {
+            task_id: "output.task_id",
+            status_endpoint: "/api/dashscope/api/v1/tasks/{{task_id}}",
+            status_path: "output.task_status",
+            success_value: "SUCCEEDED",
+            result_path: "output.results.video_url"
+          }
+        },
+        params_schema: [
+          { id: 'image_url', name: '角色图片', type: 'image', required: true, description: '上传你的照片' },
+          { id: 'audio_url', name: '语音音频', type: 'audio', required: true, description: '上传配音文件' },
+          { id: 'resolution', name: '分辨率', type: 'select', required: false, defaultValue: '720P', options: [
+            { label: '480P (经济)', value: '480P' },
+            { label: '720P (标准)', value: '720P' }
+          ]}
+        ]
+      },
+      'wan2.2-animate-move': {
+        adapterConfig: {
+          structure_template: {
+            model: "wan2.2-animate-move",
+            input: {
+              image_url: "{{image_url}}",
+              video_url: "{{reference_video_url}}"
+            },
+            parameters: {
+              mode: "{{mode}}"
+            }
+          },
+          headers: {
+            'X-DashScope-Async': 'enable'
+          },
+          routing: {
+            endpoint: "/api/dashscope/api/v1/services/aigc/image2video/video-synthesis"
+          },
+          response_path: {
+            task_id: "output.task_id",
+            status_endpoint: "/api/dashscope/api/v1/tasks/{{task_id}}",
+            status_path: "output.task_status",
+            success_value: "SUCCEEDED",
+            result_path: "output.results.video_url"
+          }
+        },
+        params_schema: [
+          { id: 'image_url', name: '角色图片', type: 'image', required: true, description: '上传你的照片' },
+          { id: 'reference_video_url', name: '动作参考视频', type: 'text', required: true, description: '参考视频URL' },
+          { id: 'mode', name: '服务模式', type: 'select', required: false, defaultValue: 'wan-std', options: [
+            { label: '标准模式 (经济)', value: 'wan-std' },
+            { label: '专业模式 (高质量)', value: 'wan-pro' }
+          ]}
         ]
       }
     },

@@ -1,0 +1,405 @@
+/**
+ * 🎨 春节特供统一样式系统
+ *
+ * 设计原则：
+ * 1. 8岁小孩都能看懂
+ * 2. 玻璃态+春节配色
+ * 3. 统一交互体验
+ */
+
+/* ============================================
+   配色变量
+   ============================================ */
+:root {
+  /* 春节配色 */
+  --cny-red: #DC143C;
+  --cny-gold: #FFD700;
+  --cny-red-light: #FF6B6B;
+  --cny-gold-light: #FFE55C;
+
+  /* 灰度 */
+  --cny-gray-50: #FAFAFA;
+  --cny-gray-100: #F5F5F5;
+  --cny-gray-200: #EEEEEE;
+  --cny-gray-300: #E0E0E0;
+  --cny-gray-400: #BDBDBD;
+  --cny-gray-500: #9E9E9E;
+  --cny-gray-600: #757575;
+  --cny-gray-700: #616161;
+  --cny-gray-800: #424242;
+  --cny-gray-900: #212121;
+
+  /* 语义颜色 */
+  --cny-success: #4CAF50;
+  --cny-warning: #FF9800;
+  --cny-error: #F44336;
+  --cny-info: #2196F3;
+
+  /* 间距 */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+
+  /* 字体 */
+  --font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 50%;
+}
+
+
+/* ============================================
+   统一返回按钮 - 标准样式
+   ============================================ */
+
+/* 浅色背景版本（默认） */
+.back-btn-standard {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cny-gray-700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-family: var(--font-family);
+  user-select: none;
+  white-space: nowrap;
+  position: relative;
+  z-index: 100;
+}
+
+.back-btn-standard:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn-standard:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* 深色背景版本 */
+.back-btn-standard.dark {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.back-btn-standard.dark:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ============================================
+   玻璃态卡片
+   ============================================ */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2);
+}
+
+.glass-card.clickable {
+  cursor: pointer;
+}
+
+.glass-card.clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 20px rgba(31, 38, 135, 0.15);
+}
+
+
+/* ============================================
+   春节按钮 - 主要按钮
+   ============================================ */
+
+.cny-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--cny-red) 0%, var(--cny-red-light) 100%);
+  border: none;
+  border-radius: var(--radius-xl);
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(220, 20, 60, 0.3);
+  font-family: var(--font-family);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.cny-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 20, 60, 0.4);
+}
+
+.cny-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(220, 20, 60, 0.3);
+}
+
+.cny-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 金色按钮（次要操作） */
+.cny-btn-gold {
+  background: linear-gradient(135deg, var(--cny-gold) 0%, var(--cny-gold-light) 100%);
+  color: var(--cny-gray-800);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.cny-btn-gold:hover {
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
+
+/* 白色按钮（辅助操作） */
+.cny-btn-white {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--cny-gray-700);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cny-btn-white:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ============================================
+   模式卡片（用于视频模式选择）
+   ============================================ */
+
+.mode-card {
+  position: relative;
+  padding: var(--spacing-md);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.mode-card .mode-icon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-sm);
+  transition: transform 0.3s ease;
+}
+
+.mode-card:hover .mode-icon {
+  transform: scale(1.1);
+}
+
+.mode-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--cny-gray-800);
+  margin: var(--spacing-sm) 0 var(--spacing-xs) 0;
+}
+
+.mode-card p {
+  font-size: 14px;
+  color: var(--cny-gray-600);
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.5;
+}
+
+.mode-card .mode-cost {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cny-gray-700);
+}
+
+.mode-card .mode-cost.free {
+  background: rgba(76, 175, 80, 0.1);
+  color: var(--cny-success);
+}
+
+/* 推荐标签 */
+.mode-card.recommended::before {
+  content: '推荐';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, var(--cny-red) 0%, var(--cny-red-light) 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mode-card.recommended {
+  border: 2px solid var(--cny-red);
+}
+
+
+/* ============================================
+   操作提示卡片（长按保存引导）
+   ============================================ */
+
+.tip-card {
+  padding: var(--spacing-md);
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%);
+  border: 2px dashed var(--cny-gold);
+}
+
+.tip-card .tip-icon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-sm);
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.tip-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--cny-gray-800);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.tip-card p {
+  font-size: 14px;
+  color: var(--cny-gray-600);
+  margin: 0;
+}
+
+
+/* ============================================
+   动作预设卡片
+   ============================================ */
+
+.action-preset-card {
+  position: relative;
+  padding: var(--spacing-sm);
+  text-align: center;
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+}
+
+.action-preset-card .action-preview {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  margin-bottom: var(--spacing-xs);
+}
+
+.action-preset-card .action-icon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.action-preset-card .action-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cny-gray-800);
+  margin: 0;
+}
+
+.action-preset-card.selected {
+  border: 2px solid var(--cny-red);
+  background: rgba(220, 20, 60, 0.05);
+}
+
+.action-preset-card.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: var(--cny-red);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+
+/* ============================================
+   加载状态
+   ============================================ */
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ============================================
+   响应式
+   ============================================ */
+
+@media (max-width: 768px) {
+  .mode-card h3 {
+    font-size: 16px;
+  }
+
+  .mode-card .mode-icon {
+    font-size: 40px;
+  }
+
+  .back-btn-standard {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .cny-btn-primary {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
+}

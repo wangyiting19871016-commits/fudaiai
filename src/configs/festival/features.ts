@@ -42,14 +42,14 @@ export interface Feature {
 
   // 输出配置
   output: {
-    type: 'image' | 'text' | 'audio';
+    type: 'image' | 'text' | 'audio' | 'video';
     canAddText?: boolean;    // 结果页可配文案
     canAddAudio?: boolean;   // 结果页可转语音
     canAddImage?: boolean;   // 结果页可配图片
   };
 
   // 处理配置
-  process: ImageProcess | TextProcess | AudioProcess;
+  process: ImageProcess | TextProcess | AudioProcess | VideoProcess;
 
   // 权限配置
   access: {
@@ -119,6 +119,17 @@ export interface AudioProcess {
     temperature: number;
     topP: number;
     speed: number;
+  };
+}
+
+// ===== 视频处理配置 =====
+export interface VideoProcess {
+  type: 'video';
+  provider: 'aliyun-wan';  // Aliyun DashScope WAN 模型
+  model: 'wan2.2-s2v' | 'wan2.2-animate-move';
+  slotId: string;  // APISlot ID
+  params: {
+    resolution?: '480P' | '720P';
   };
 }
 
@@ -198,6 +209,46 @@ export const FEATURES: Feature[] = [
       caption: { enabled: true, promptKey: 'caption_caishen' }
     },
     access: { freePerDay: 1, freeWatermark: true, vipOnly: false, price: '¥29.9' },
+    useLegacyExecutor: true
+  },
+
+  {
+    id: 'M11',
+    categoryId: 'avatar',
+    name: '数字人拜年',
+    subtitle: '你的照片会说话',
+    icon: '🎬',
+    previewImage: '/assets/showcase/digital-human.png',
+    order: 3,
+    enabled: true,
+    input: {
+      type: 'photo',
+      needGender: false,
+      needTemplate: false
+    },
+    output: {
+      type: 'image',
+      canAddText: true,
+      canAddAudio: true
+    },
+    process: {
+      type: 'image',
+      dna: { enabled: false, promptKey: '' },
+      generation: {
+        workflowType: 'comfyui',
+        templateUuid: '4df2efa0f18d46dc9758803e478eb51c',
+        promptTemplate: '',
+        negativePrompt: '',
+        params: {
+          width: 768,
+          height: 1024,
+          steps: 25,
+          cfgScale: 3.5,
+          sampler: 15
+        }
+      }
+    },
+    access: { freePerDay: 2, freeWatermark: false, vipOnly: false, price: '¥29.9' },
     useLegacyExecutor: true
   },
 
@@ -475,7 +526,7 @@ export const FEATURES: Feature[] = [
     output: {
       type: 'image',
       canAddText: true,
-      canAddAudio: true
+      canAddAudio: false  // 🔥 运势文案太长，不适合音频
     },
     process: {
       type: 'image',
@@ -502,87 +553,32 @@ export const FEATURES: Feature[] = [
   {
     id: 'M8',
     categoryId: 'fun',
-    name: 'AI运势占卜',
-    subtitle: '测测你的马年运势',
+    name: '赛博算命',
+    subtitle: '看面相，测运势',
     icon: '🔮',
     previewImage: '/assets/showcase/fortune-love.png',
     order: 2,
     enabled: true,
     input: {
-      type: 'text',
-      textFields: [
-        {
-          key: 'zodiac',
-          label: '你的生肖',
-          type: 'select',
-          required: true,
-          options: ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪']
-        }
-      ]
+      type: 'photo',
+      needGender: false,
+      needTemplate: false
     },
     output: {
-      type: 'text',
-      canAddImage: true,
-      canAddAudio: true
+      type: 'image',  // 输出关键词卡片
+      canAddImage: false,
+      canAddAudio: false
     },
     process: {
-      type: 'text',
+      type: 'text',  // 使用文案处理流程（QWEN + DeepSeek）
       model: 'deepseek-chat',
-      promptKey: 'fortune',
-      maxTokens: 300,
-      temperature: 0.9
+      promptKey: 'cyber_fortune',
+      maxTokens: 500,
+      temperature: 0.85
     },
     access: { freePerDay: -1, freeWatermark: false, vipOnly: false }
   },
 
-  {
-    id: 'M11',
-    categoryId: 'fun',
-    name: '隐形文字画',
-    subtitle: '藏在年味里的秘密',
-    icon: '🎨',
-    order: 3,
-    enabled: true,
-    input: {
-      type: 'text',
-      textFields: [
-        {
-          key: 'hiddenText',
-          label: '隐藏文字',
-          type: 'input',
-          placeholder: '例如：福、春、新年快乐',
-          required: true,
-          maxLength: 10
-        },
-        {
-          key: 'scene',
-          label: '画面场景',
-          type: 'select',
-          required: true,
-          options: ['森林鸟瞰', '城市夜景', '海边日落', '山水云雾', '繁花似锦']
-        }
-      ]
-    },
-    output: {
-      type: 'image',
-      canAddText: false,
-      canAddAudio: false
-    },
-    process: {
-      type: 'image',
-      dna: { enabled: false, promptKey: '' },
-      generation: {
-        workflowType: 'text2img',
-        templateUuid: 'xxx-qrcode-template',  // TODO: 填入实际 UUID
-        promptTemplate: '{{SCENE}}, hiding text "{{HIDDEN_TEXT}}", artistic',
-        negativePrompt: 'low quality, blurry',
-        params: { width: 1024, height: 1024, steps: 25, cfgScale: 7, sampler: 15 }
-      },
-      caption: { enabled: false, promptKey: '' }
-    },
-    access: { freePerDay: 1, freeWatermark: true, vipOnly: false, price: '¥9.9' },
-    useLegacyExecutor: true
-  },
 
   {
     id: 'M10',
@@ -632,7 +628,8 @@ export const FEATURES: Feature[] = [
       temperature: 0.85
     },
     access: { freePerDay: -1, freeWatermark: false, vipOnly: false }
-  }
+  },
+
 ];
 
 // ===== 辅助函数 =====

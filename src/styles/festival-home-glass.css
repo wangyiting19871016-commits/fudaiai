@@ -136,7 +136,7 @@
 .category-section {
   margin-bottom: 32px !important;
   margin-top: 48px !important;
-  padding-top: 24px !important;
+  padding-top: 0 !important;
   position: relative;
   z-index: 1;
   clear: both;
@@ -148,7 +148,7 @@
   gap: 12px;
 }
 
-/* 玻璃卡片 */
+/* 玻璃卡片 - H5适配尺寸 */
 .glass-card {
   position: relative;
   background: var(--glass-light);
@@ -157,14 +157,11 @@
   border: 1px solid var(--glass-border-light);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-sm);
-  padding: 20px;
+  padding: 0;
   cursor: pointer;
   transition: all var(--duration-normal) var(--ease-smooth);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 140px;
+  height: 200px;
 }
 
 .glass-card:hover {
@@ -180,18 +177,13 @@
 /* 大卡片 - 第一个 */
 .card-large {
   grid-column: span 2;
-  aspect-ratio: 1.8 / 1;
-  min-height: auto;
-  padding: 24px;
+  height: 220px;
 }
 
 /* 横向卡片 - 最后一个 */
 .card-wide {
   grid-column: span 2;
-  flex-direction: row;
-  align-items: center;
-  min-height: auto;
-  padding: 20px;
+  height: 160px;
 }
 
 /* 卡片背景渐变 */
@@ -241,12 +233,12 @@
 
 .hot-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 4px 10px;
   background: var(--cny-red-500);
   color: white;
-  font-size: var(--text-xs);
+  font-size: 11px;
   font-weight: var(--font-bold);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-red-glow);
 }
 
@@ -468,7 +460,7 @@
   align-items: center;
   justify-content: center;
   font-size: 32px;
-  opacity: 0.3;
+  background-color: var(--cny-gray-100);
 }
 
 .showcase-label {
@@ -601,7 +593,7 @@
 .new-price {
   font-size: 22px;
   font-weight: var(--font-black);
-  color: white;
+  color: var(--cny-red-700);
 }
 
 /* ========================================

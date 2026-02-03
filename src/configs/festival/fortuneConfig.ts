@@ -16,6 +16,7 @@ export interface FortuneType {
   rarity: FortuneRarity;          // 稀有度
   weight: number;                  // 抽取权重
   blessings: string[];             // 吉祥话文案池
+  verdicts: string[];              // 4字判词池（作为横批）
   icon: string;                    // emoji图标
 }
 
@@ -40,6 +41,12 @@ export const FORTUNE_TYPES: FortuneType[] = [
       '蛇去马来转乾坤，一击即中好运来！',
       '马蹄疾速夺先机，逢赌必赢财神笑！',
       '马年神准如有神，箭无虚发福满门！'
+    ],
+    verdicts: [
+      '百发百中',
+      '马到成功',
+      '神准无双',
+      '命中注定'
     ]
   },
 
@@ -60,6 +67,12 @@ export const FORTUNE_TYPES: FortuneType[] = [
       '紫气东来马蹄急，好运连连不断头！',
       '马踏祥云送吉祥，幸运值爆表到年底！',
       '马年天选之子，抽卡必出金！'
+    ],
+    verdicts: [
+      '鸿运当头',
+      '紫气东来',
+      '万事如意',
+      '天选之子'
     ]
   },
 
@@ -80,6 +93,12 @@ export const FORTUNE_TYPES: FortuneType[] = [
       '马踏金山万两来，财源广进福满堂！',
       '马蹄声声送财来，日进斗金乐开怀！',
       '马年招财进宝，富贵盈门！'
+    ],
+    verdicts: [
+      '财源广进',
+      '招财进宝',
+      '日进斗金',
+      '金玉满堂'
     ]
   },
 
@@ -99,6 +118,12 @@ export const FORTUNE_TYPES: FortuneType[] = [
       '马到春来花满枝，姻缘天定心相知！',
       '马蹄踏春桃花开，心上人儿缘份来！',
       '马年红鸾星动，佳偶天成！'
+    ],
+    verdicts: [
+      '良缘天定',
+      '桃花朵朵',
+      '佳偶天成',
+      '心心相印'
     ]
   },
 
@@ -119,6 +144,12 @@ export const FORTUNE_TYPES: FortuneType[] = [
       '马到成功平步起，青云直上展宏图！',
       '马蹄声声催奋进，加薪升职在眼前！',
       '马年贵人相助，事业如虹！'
+    ],
+    verdicts: [
+      '步步高升',
+      '青云直上',
+      '事业腾飞',
+      '贵人相助'
     ]
   },
 
@@ -138,6 +169,12 @@ export const FORTUNE_TYPES: FortuneType[] = [
       '马到健康体魄强，龙马精神乐安康！',
       '马蹄轻快活力足，百病不侵福寿长！',
       '马年身强体壮，生龙活虎！'
+    ],
+    verdicts: [
+      '身体健康',
+      '龙马精神',
+      '福寿安康',
+      '生龙活虎'
     ]
   }
 ];

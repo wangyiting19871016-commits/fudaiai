@@ -1,0 +1,49 @@
+/* 统一的返回按钮样式 */
+.festival-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cny-gray-700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+.festival-back-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.festival-back-btn:active {
+  transform: translateY(0);
+}
+
+.festival-back-btn svg {
+  flex-shrink: 0;
+}
+
+.festival-back-btn span {
+  white-space: nowrap;
+}
+
+/* 深色背景版本 */
+.dark-bg .festival-back-btn,
+.festival-back-btn.dark {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.dark-bg .festival-back-btn:hover,
+.festival-back-btn.dark:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+}

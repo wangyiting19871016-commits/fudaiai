@@ -22,11 +22,6 @@ const FestivalLayout: React.FC = () => {
       <main className="festival-main">
         <Outlet />
       </main>
-      
-      {/* 全局水印 */}
-      <div className="festival-watermark">
-        真迹AI · 新年福引
-      </div>
     </div>
   );
 };

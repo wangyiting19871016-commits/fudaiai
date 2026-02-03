@@ -1,0 +1,318 @@
+/**
+ * 🔥 AI炼金矩阵 - Glassmorphism风格增强
+ * 在保持原有布局和交互的基础上，添加玻璃态视觉效果
+ *
+ * ⚠️ VERSION 2.0 - 全黑色文字修复版本 2025-02-01
+ */
+
+.festival-lab-modern {
+  background: var(--cny-bg-cream);
+  font-family: var(--font-body);
+  color: #000000 !important;  /* 🔥 强制全局黑色文字 */
+}
+
+.festival-lab-modern * {
+  color: inherit;  /* 🔥 继承黑色 */
+}
+
+.lab-background-modern {
+  background: var(--cny-bg-cream);
+}
+
+/* ========================================
+   顶部导航增强
+   ======================================== */
+
+.lab-top-nav {
+  background: var(--glass-light);
+  backdrop-filter: blur(var(--blur-normal));
+  -webkit-backdrop-filter: blur(var(--blur-normal));
+  border-bottom: 1px solid var(--glass-border-light);
+}
+
+.lab-back-button {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: #000000 !important;
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+
+.lab-back-button svg {
+  color: #000000 !important;
+}
+
+.lab-back-button:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   进度步骤指示器
+   ======================================== */
+
+.progress-steps-modern {
+  background: var(--glass-light);
+  backdrop-filter: blur(var(--blur-normal));
+  -webkit-backdrop-filter: blur(var(--blur-normal));
+  border: 1px solid var(--glass-border-light);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.step-modern {
+  font-family: var(--font-body);
+}
+
+.step-number-modern {
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border-light);
+  font-weight: var(--font-bold);
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+
+.step-modern.active .step-number-modern {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  color: #000000 !important;
+  box-shadow: var(--shadow-red-glow);
+}
+
+.step-modern.completed .step-number-modern {
+  background: var(--color-success);
+  border-color: transparent;
+  color: white;
+}
+
+.step-text-modern {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: #000000 !important;
+}
+
+.step-modern.active .step-text-modern {
+  color: var(--cny-red-500);
+  font-weight: var(--font-bold);
+}
+
+/* ========================================
+   上传区域增强
+   ======================================== */
+
+.multi-uploader-title {
+  font-family: var(--font-body);
+  font-weight: var(--font-bold);
+  color: #000000 !important;
+  letter-spacing: var(--tracking-tight);
+}
+
+.multi-upload-slot {
+  background: var(--glass-light);
+  backdrop-filter: blur(var(--blur-normal));
+  -webkit-backdrop-filter: blur(var(--blur-normal));
+  border-color: var(--glass-border-medium);
+  border-radius: var(--radius-2xl);
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+
+.multi-upload-slot:hover {
+  background: var(--glass-medium);
+  border-color: var(--cny-red-300);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.multi-upload-slot.has-image {
+  border-color: var(--cny-gold-500);
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.2);
+}
+
+.placeholder-text {
+  font-family: var(--font-body);
+  font-weight: var(--font-semibold);
+  color: #000000 !important;
+}
+
+.placeholder-hint {
+  font-family: var(--font-body);
+  color: #000000 !important;
+}
+
+/* ========================================
+   预览确认区
+   ======================================== */
+
+.lab-preview-card {
+  background: var(--glass-light);
+  backdrop-filter: blur(var(--blur-strong));
+  -webkit-backdrop-filter: blur(var(--blur-strong));
+  border: 1px solid var(--glass-border-light);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.preview-title {
+  font-family: var(--font-body);
+  font-weight: var(--font-bold);
+  color: #000000 !important;
+  letter-spacing: var(--tracking-tight);
+}
+
+.preview-hint {
+  font-family: var(--font-body);
+  color: #000000 !important;
+  font-size: var(--text-sm);
+}
+
+/* ========================================
+   按钮增强
+   ======================================== */
+
+.lab-primary-button,
+.multi-upload-confirm {
+  background: var(--gradient-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 14px 32px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  color: white;
+  letter-spacing: 0.05em;
+  box-shadow: var(--shadow-red-glow);
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+
+.lab-primary-button:hover,
+.multi-upload-confirm:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(229, 57, 53, 0.35);
+}
+
+.lab-primary-button:active,
+.multi-upload-confirm:active {
+  transform: translateY(0) scale(1);
+}
+
+.lab-primary-button:disabled,
+.multi-upload-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.lab-secondary-button {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-full);
+  padding: 14px 32px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--cny-gray-700);
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+
+.lab-secondary-button:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   DNA扫描效果
+   ======================================== */
+
+.dna-container {
+  background: var(--glass-light);
+  backdrop-filter: blur(var(--blur-strong));
+  -webkit-backdrop-filter: blur(var(--blur-strong));
+  border: 1px solid var(--glass-border-light);
+  border-radius: var(--radius-2xl);
+}
+
+.dna-card-v2 {
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.dna-label-v2 {
+  font-family: var(--font-body);
+  font-weight: var(--font-bold);
+  color: var(--cny-gray-900);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* ========================================
+   加载和叙事流
+   ======================================== */
+
+.narrator-message {
+  background: var(--glass-light);
+  backdrop-filter: blur(var(--blur-normal));
+  -webkit-backdrop-filter: blur(var(--blur-normal));
+  border: 1px solid var(--glass-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-body);
+  color: var(--cny-gray-800);
+}
+
+.narrator-new {
+  animation: slideInNarrator var(--duration-slow) var(--ease-smooth);
+}
+
+@keyframes slideInNarrator {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   加载器
+   ======================================== */
+
+.fullscreen-loader-backdrop {
+  background: rgba(253, 251, 247, 0.95);
+  backdrop-filter: blur(var(--blur-ultra));
+  -webkit-backdrop-filter: blur(var(--blur-ultra));
+}
+
+.loader-content {
+  font-family: var(--font-body);
+}
+
+.loader-title {
+  font-weight: var(--font-bold);
+  color: var(--cny-gray-900);
+  letter-spacing: var(--tracking-tight);
+}
+
+.loader-subtitle {
+  color: var(--cny-gray-600);
+  font-size: var(--text-sm);
+}
+
+.progress-bar-container {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  background: var(--gradient-primary);
+  box-shadow: 0 0 20px rgba(229, 57, 53, 0.4);
+  transition: width var(--duration-normal) var(--ease-smooth);
+}

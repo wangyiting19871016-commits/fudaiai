@@ -15,11 +15,13 @@ export interface VoicePreset {
   name: string;                  // 显示名称
   gender: 'male' | 'female' | 'child' | 'neutral';
   tag?: string;                  // 风格标签
+  avatar?: string;               // 音色头像图片路径（相对于 public 或完整 URL）
   preview?: string;              // 试听音频路径（相对于 public）
   isDefault?: boolean;           // 是否默认选中
   isHot?: boolean;               // 是否热门
   isNew?: boolean;               // 是否新增
   description?: string;          // 音色描述
+  speed?: number;                // 语音速度（0.5-2.0，默认1.0）
 }
 
 // ===== 音色分类 =====
@@ -34,7 +36,7 @@ export interface VoiceCategory {
 
 // ===== 音色分类配置 =====
 export const VOICE_CATEGORIES: VoiceCategory[] = [
-  // ========== 推荐音色 ==========
+  // ========== 推荐音色（只保留真实可用的）==========
   {
     id: 'recommended',
     name: '推荐',
@@ -46,7 +48,7 @@ export const VOICE_CATEGORIES: VoiceCategory[] = [
         name: '央视配音',
         gender: 'male',
         tag: '权威',
-        preview: '/audio/previews/yangshi.mp3',
+        avatar: '/images/avatars/yangshi.jpg',
         isDefault: true,
         isHot: true,
         description: '标准播音腔，适合正式祝福'
@@ -56,14 +58,42 @@ export const VOICE_CATEGORIES: VoiceCategory[] = [
         name: '女大学生',
         gender: 'female',
         tag: '甜美',
-        preview: '/audio/previews/nvdaxuesheng.mp3',
+        avatar: '/images/avatars/nvdaxuesheng.jpg',
         isHot: true,
         description: '年轻甜美，适合朋友祝福'
+      },
+      {
+        id: 'aebaa2305aa2452fbdc8f41eec852a79',
+        name: '雷军',
+        gender: 'male',
+        tag: '亲和',
+        avatar: '/images/avatars/leijun.jpg',
+        isHot: true,
+        description: 'Are you OK?经典声音'
+      },
+      {
+        id: '4f201abba2574feeae11e5ebf737859e',
+        name: '王琨',
+        gender: 'male',
+        tag: '磁性',
+        avatar: '/images/avatars/wangkun.jpg',
+        isHot: true,
+        description: '低沉磁性，适合深情祝福',
+        speed: 0.8
+      },
+      {
+        id: '54a5170264694bfc8e9ad98df7bd89c3',
+        name: '丁真',
+        gender: 'male',
+        tag: '温暖',
+        avatar: '/images/avatars/dingzhen.jpg',
+        isHot: true,
+        description: '纯净温暖，适合真挚祝福'
       }
     ]
   },
 
-  // ========== 男声 ==========
+  // ========== 男声（只保留真实可用的）==========
   {
     id: 'male',
     name: '男声',
@@ -75,7 +105,7 @@ export const VOICE_CATEGORIES: VoiceCategory[] = [
         name: '央视配音',
         gender: 'male',
         tag: '权威',
-        preview: '/audio/previews/yangshi.mp3',
+        avatar: '/images/avatars/yangshi.jpg',
         description: '标准播音腔，适合正式祝福'
       },
       {
@@ -83,37 +113,13 @@ export const VOICE_CATEGORIES: VoiceCategory[] = [
         name: '雷军',
         gender: 'male',
         tag: '亲和',
-        preview: '/audio/previews/leijun.mp3',
-        description: 'Are you OK?'
-      },
-      {
-        id: '4f201abba2574feeae11e5ebf737859e',
-        name: '王琨',
-        gender: 'male',
-        tag: '磁性',
-        preview: '/audio/previews/wangkun.mp3',
-        description: '低沉磁性，适合深情祝福'
-      },
-      {
-        id: '54a5170264694bfc8e9ad98df7bd89c3',
-        name: '丁真',
-        gender: 'male',
-        tag: '温暖',
-        preview: '/audio/previews/dingzhen.mp3',
-        description: '纯净温暖，适合真挚祝福'
+        avatar: '/images/avatars/leijun.jpg',
+        description: 'Are you OK?经典声音'
       }
-      // 扩展位置：添加更多男声
-      // {
-      //   id: 'xxx',
-      //   name: '新音色',
-      //   gender: 'male',
-      //   tag: '标签',
-      //   preview: '/audio/previews/xxx.mp3'
-      // }
     ]
   },
 
-  // ========== 女声 ==========
+  // ========== 女声（只保留真实可用的）==========
   {
     id: 'female',
     name: '女声',
@@ -125,150 +131,36 @@ export const VOICE_CATEGORIES: VoiceCategory[] = [
         name: '女大学生',
         gender: 'female',
         tag: '甜美',
-        preview: '/audio/previews/nvdaxuesheng.mp3',
+        avatar: '/images/avatars/nvdaxuesheng.jpg',
         description: '年轻甜美，适合朋友祝福'
       }
-      // 扩展位置：添加更多女声
-      // {
-      //   id: 'xxx',
-      //   name: '温柔姐姐',
-      //   gender: 'female',
-      //   tag: '温柔',
-      //   preview: '/audio/previews/xxx.mp3'
-      // },
-      // {
-      //   id: 'xxx',
-      //   name: '知性女声',
-      //   gender: 'female',
-      //   tag: '知性',
-      //   preview: '/audio/previews/xxx.mp3'
-      // }
     ]
   },
 
-  // ========== 童声 ==========
-  {
-    id: 'child',
-    name: '童声',
-    icon: '👶',
-    order: 3,
-    voices: [
-      // 扩展位置：添加童声
-      // {
-      //   id: 'xxx',
-      //   name: '萌娃',
-      //   gender: 'child',
-      //   tag: '可爱',
-      //   preview: '/audio/previews/xxx.mp3',
-      //   description: '奶声奶气，超级可爱'
-      // },
-      // {
-      //   id: 'xxx',
-      //   name: '小学生',
-      //   gender: 'child',
-      //   tag: '活泼',
-      //   preview: '/audio/previews/xxx.mp3'
-      // }
-    ]
-  },
-
-  // ========== 方言 ==========
-  {
-    id: 'dialect',
-    name: '方言',
-    icon: '🗣️',
-    order: 4,
-    collapsed: true,
-    voices: [
-      // 扩展位置：添加方言音色
-      // {
-      //   id: 'xxx',
-      //   name: '粤语男声',
-      //   gender: 'male',
-      //   tag: '粤语',
-      //   preview: '/audio/previews/xxx.mp3'
-      // },
-      // {
-      //   id: 'xxx',
-      //   name: '四川话',
-      //   gender: 'male',
-      //   tag: '川渝',
-      //   preview: '/audio/previews/xxx.mp3'
-      // },
-      // {
-      //   id: 'xxx',
-      //   name: '东北话',
-      //   gender: 'male',
-      //   tag: '东北',
-      //   preview: '/audio/previews/xxx.mp3'
-      // },
-      // {
-      //   id: 'xxx',
-      //   name: '上海话',
-      //   gender: 'female',
-      //   tag: '吴语',
-      //   preview: '/audio/previews/xxx.mp3'
-      // },
-      // {
-      //   id: 'xxx',
-      //   name: '闽南语',
-      //   gender: 'male',
-      //   tag: '闽南',
-      //   preview: '/audio/previews/xxx.mp3'
-      // }
-    ]
-  },
-
-  // ========== 名人模仿 ==========
+  // ========== 名人（只保留真实可用的）==========
   {
     id: 'celebrity',
     name: '名人',
     icon: '🌟',
-    order: 5,
-    collapsed: true,
+    order: 3,
     voices: [
       {
-        id: 'aebaa2305aa2452fbdc8f41eec852a79',
-        name: '雷军',
+        id: '4f201abba2574feeae11e5ebf737859e',
+        name: '王琨',
         gender: 'male',
-        tag: '科技',
-        preview: '/audio/previews/leijun.mp3',
-        isHot: true
+        tag: '磁性',
+        avatar: '/images/avatars/wangkun.jpg',
+        description: '低沉磁性，适合深情祝福',
+        speed: 0.8
+      },
+      {
+        id: '54a5170264694bfc8e9ad98df7bd89c3',
+        name: '丁真',
+        gender: 'male',
+        tag: '温暖',
+        avatar: '/images/avatars/dingzhen.jpg',
+        description: '纯净温暖，适合真挚祝福'
       }
-      // 扩展位置：添加更多名人音色
-      // {
-      //   id: 'xxx',
-      //   name: '马云',
-      //   gender: 'male',
-      //   tag: '商业',
-      //   preview: '/audio/previews/xxx.mp3'
-      // }
-    ]
-  },
-
-  // ========== 特色音色 ==========
-  {
-    id: 'special',
-    name: '特色',
-    icon: '✨',
-    order: 6,
-    collapsed: true,
-    voices: [
-      // 扩展位置：添加特色音色（如 AI 合成、情感音色等）
-      // {
-      //   id: 'xxx',
-      //   name: '温暖治愈',
-      //   gender: 'neutral',
-      //   tag: '治愈',
-      //   preview: '/audio/previews/xxx.mp3'
-      // },
-      // {
-      //   id: 'xxx',
-      //   name: '激情解说',
-      //   gender: 'male',
-      //   tag: '解说',
-      //   preview: '/audio/previews/xxx.mp3'
-      // }
     ]
   }
 ];

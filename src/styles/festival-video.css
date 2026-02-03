@@ -24,10 +24,10 @@
 
 .video-header .back-btn {
   background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
   padding: 8px 16px;
-  color: white;
+  color: #FFFFFF !important;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -35,7 +35,8 @@
 
 .video-header .back-btn:hover {
   background: rgba(255, 255, 255, 0.25);
-  border-color: #FFD700;
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
 }
 
 .video-header .page-title {

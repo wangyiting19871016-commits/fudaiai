@@ -1,0 +1,328 @@
+/**
+ * 🎬 视频生成页面（全新版本）
+ *
+ * 架构设计：
+ * - 完全复用LabPage的Stage流程
+ * - 集成ZJFullscreenLoader
+ * - 玻璃态设计+春节配色
+ * - 8岁小孩都能用的交互
+ *
+ * Stage流程：
+ * upload → mode_select → param_config → generating → complete
+ */
+
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { message } from 'antd';
+import { VIDEO_MODES, type VideoModeId } from '../../configs/festival/videoModes';
+import { ACTION_PRESETS, type ActionPreset } from '../../configs/festival/actionPresets';
+import { QuotaService } from '../../services/QuotaService';
+import { MissionExecutor, type MissionResult } from '../../services/MissionExecutor';
+import ModeSelector from './components/ModeSelector';
+import ActionPresetSelector from './components/ActionPresetSelector';
+import VideoResultView from './components/VideoResultView';
+import ZJFullscreenLoader from './components/ZJFullscreenLoader';
+import '../../styles/festival-common.css';
+import '../../styles/festival-home-glass.css';
+
+type VideoStage =
+  | 'upload'
+  | 'mode_select'
+  | 'param_config'
+  | 'generating'
+  | 'complete'
+  | 'error';
+
+interface VideoPageState {
+  image?: string;
+  caption?: string;
+  audioUrl?: string;
+  taskId?: string;
+}
+
+const FestivalVideoPageNew: React.FC = () => {
+  const { taskId } = useParams<{ taskId?: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // 核心状态
+  const [stage, setStage] = useState<VideoStage>('mode_select');
+  const [pageState, setPageState] = useState<VideoPageState>({});
+  const [selectedMode, setSelectedMode] = useState<VideoModeId | null>(null);
+  const [selectedAction, setSelectedAction] = useState<ActionPreset | null>(null);
+
+  // 生成状态
+  const [progress, setProgress] = useState(0);
+  const [progressMessage, setProgressMessage] = useState('');
+  const [resultUrl, setResultUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // 初始化：从location.state或LocalStorage获取图片
+  useEffect(() => {
+    const state = location.state as VideoPageState | undefined;
+    if (state) {
+      setPageState(state);
+      return;
+    }
+
+    if (taskId) {
+      const savedResult = MissionExecutor.getResult(taskId);
+      if (savedResult) {
+        setPageState({
+          image: savedResult.image,
+          caption: savedResult.caption || '马年大吉',
+          taskId: taskId
+        });
+      }
+    }
+  }, [taskId, location.state]);
+
+  // 处理模式选择
+  const handleModeSelect = (modeId: VideoModeId) => {
+    setSelectedMode(modeId);
+
+    if (modeId === 'talk') {
+      // 数字人说话：需要检查是否有语音
+      if (!pageState.audioUrl) {
+        message.warning('需要先生成语音，即将跳转...');
+        setTimeout(() => {
+          navigate('/festival/voice', {
+            state: {
+              image: pageState.image,
+              caption: pageState.caption,
+              returnTo: 'video'
+            }
+          });
+        }, 1500);
+        return;
+      }
+      // 有语音，直接生成
+      handleGenerate(modeId);
+    } else if (modeId === 'action') {
+      // 动作视频：进入动作选择
+      setStage('param_config');
+    } else if (modeId === 'gif') {
+      // GIF表情包：直接生成
+      handleGenerate(modeId);
+    }
+  };
+
+  // 处理动作选择
+  const handleActionSelect = (action: ActionPreset) => {
+    setSelectedAction(action);
+    // 自动开始生成
+    handleGenerate('action', action);
+  };
+
+  // 开始生成
+  const handleGenerate = async (mode: VideoModeId, action?: ActionPreset) => {
+    if (!pageState.image) {
+      message.error('缺少图片');
+      return;
+    }
+
+    // 检查配额
+    if (!QuotaService.consumeQuota(mode)) {
+      const quotaMessage = QuotaService.getQuotaExceededMessage(mode);
+      message.error(quotaMessage);
+      return;
+    }
+
+    setStage('generating');
+    setProgress(0);
+    setError(null);
+
+    try {
+      if (mode === 'talk') {
+        // 数字人说话
+        await generateTalkVideo();
+      } else if (mode === 'action' && action) {
+        // 动作视频
+        await generateActionVideo(action);
+      } else if (mode === 'gif') {
+        // GIF表情包
+        await generateGif();
+      }
+    } catch (err) {
+      console.error('[VideoPageNew] 生成失败:', err);
+      setError(err instanceof Error ? err.message : '生成失败');
+      setStage('error');
+    }
+  };
+
+  // 生成数字人说话视频
+  const generateTalkVideo = async () => {
+    setProgressMessage('🎙️ 数字人正在准备...');
+    setProgress(10);
+
+    // TODO: 调用MissionExecutor的M_VIDEO_TALK任务
+    // 模拟生成
+    await simulateVideoGeneration('数字人正在拍摄', 90);
+
+    // 模拟结果
+    setResultUrl('https://example.com/talk-video.mp4');
+    setStage('complete');
+  };
+
+  // 生成动作视频
+  const generateActionVideo = async (action: ActionPreset) => {
+    setProgressMessage(`🎭 AI演员正在表演${action.name}...`);
+    setProgress(10);
+
+    // TODO: 调用MissionExecutor的M_VIDEO_ACTION任务
+    // 模拟生成
+    await simulateVideoGeneration(`正在生成${action.name}动作`, 90);
+
+    // 模拟结果
+    setResultUrl('https://example.com/action-video.mp4');
+    setStage('complete');
+  };
+
+  // 生成GIF表情包
+  const generateGif = async () => {
+    setProgressMessage('🎨 正在制作表情包...');
+    setProgress(20);
+
+    // TODO: 使用Canvas生成GIF
+    // 模拟生成
+    await simulateVideoGeneration('制作GIF', 5);
+
+    // 模拟结果
+    setResultUrl('https://example.com/emoji.gif');
+    setStage('complete');
+  };
+
+  // 模拟生成过程（实际应该是真实的API调用）
+  const simulateVideoGeneration = async (message: string, duration: number) => {
+    return new Promise<void>((resolve) => {
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          const next = prev + 10;
+          if (next >= 100) {
+            clearInterval(interval);
+            resolve();
+            return 100;
+          }
+          return next;
+        });
+      }, duration * 100); // duration秒完成
+    });
+  };
+
+  // 返回
+  const handleBack = () => {
+    if (stage === 'param_config') {
+      setStage('mode_select');
+    } else if (taskId) {
+      navigate(`/festival/result/${taskId}`);
+    } else {
+      navigate(-1);
+    }
+  };
+
+  // 重新制作
+  const handleRetry = () => {
+    setStage('mode_select');
+    setSelectedMode(null);
+    setSelectedAction(null);
+    setResultUrl(null);
+    setError(null);
+  };
+
+  // 保存到素材库
+  const handleSaveToLibrary = () => {
+    // TODO: 实现保存到素材库
+    message.success('已保存到素材库');
+  };
+
+  return (
+    <div className="festival-home-glass">
+      {/* 动态背景层 */}
+      <div className="bg-aura" />
+
+      {/* 内容区 */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* 顶部返回按钮（非生成状态时显示） */}
+        {stage !== 'generating' && (
+          <div style={{ padding: '24px 24px 0' }}>
+            <button className="back-btn-standard" onClick={handleBack}>
+              ← 返回
+            </button>
+          </div>
+        )}
+
+        {/* Stage: 模式选择 */}
+        {stage === 'mode_select' && (
+          <ModeSelector onSelect={handleModeSelect} />
+        )}
+
+        {/* Stage: 参数配置（动作选择） */}
+        {stage === 'param_config' && selectedMode === 'action' && (
+          <ActionPresetSelector
+            onSelect={handleActionSelect}
+            onBack={() => setStage('mode_select')}
+          />
+        )}
+
+        {/* Stage: 生成中 */}
+        {stage === 'generating' && (
+          <ZJFullscreenLoader
+            stage="generating"
+            progress={progress}
+            message={progressMessage}
+            uploadedImage={pageState.image}
+          />
+        )}
+
+        {/* Stage: 完成 */}
+        {stage === 'complete' && resultUrl && (
+          <VideoResultView
+            resultType={selectedMode === 'gif' ? 'gif' : 'video'}
+            resultUrl={resultUrl}
+            imageUrl={pageState.image}
+            onBack={handleRetry}
+            onSaveToLibrary={handleSaveToLibrary}
+          />
+        )}
+
+        {/* Stage: 错误 */}
+        {stage === 'error' && (
+          <div style={{
+            padding: '48px 24px',
+            textAlign: 'center',
+            maxWidth: '500px',
+            margin: '0 auto'
+          }}>
+            <div className="glass-card" style={{ padding: '32px' }}>
+              <div style={{ fontSize: '64px', marginBottom: '16px' }}>😅</div>
+              <h2 style={{
+                fontSize: '20px',
+                fontWeight: '600',
+                color: '#F44336',
+                margin: '0 0 8px 0'
+              }}>
+                生成失败
+              </h2>
+              <p style={{
+                fontSize: '14px',
+                color: '#666',
+                margin: '0 0 24px 0'
+              }}>
+                {error || '视频生成失败，请重试'}
+              </p>
+              <button
+                className="cny-btn-primary"
+                onClick={handleRetry}
+                style={{ width: '100%' }}
+              >
+                重新尝试
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FestivalVideoPageNew;

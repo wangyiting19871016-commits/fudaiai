@@ -693,6 +693,69 @@ const P4LabPage: React.FC = () => {
           }
         }
       }
+
+      // [FIX] 全面的音频上传逻辑 - 处理所有非公网 URL
+      const audioParams = (runtimeSchema || []).filter((p: any) => p.type === 'audio');
+      addDebugLog(`🔍 检测到 ${audioParams.length} 个音频参数`);
+
+      for (const p of audioParams) {
+        const rawVal = (inputValues as any)[p.id];
+        addDebugLog(`🔍 音频参数 [${p.id}]: ${typeof rawVal === 'string' ? rawVal.substring(0, 100) : typeof rawVal}`);
+
+        if (typeof rawVal !== 'string' || !rawVal.trim()) continue;
+
+        const needsUpload =
+          rawVal.startsWith('blob:') ||           // Fish Audio 生成的 blob URL
+          rawVal.startsWith('data:audio/') ||     // Base64 音频
+          rawVal.startsWith('file:') ||           // 本地文件路径
+          (!rawVal.startsWith('http://') && !rawVal.startsWith('https://')); // 没有协议的路径
+
+        if (needsUpload) {
+          addDebugLog(`🎵 检测到本地音频(${p.name || p.id})，正在上传到 COS...`);
+          addDebugLog(`📍 音频类型: ${rawVal.substring(0, 20)}...`);
+
+          try {
+            let blob: Blob;
+
+            if (rawVal.startsWith('blob:')) {
+              // Blob URL - 直接 fetch
+              const response = await fetch(rawVal);
+              blob = await response.blob();
+            } else if (rawVal.startsWith('data:audio/')) {
+              // Base64 - 转换为 Blob
+              const base64Data = rawVal.split(',')[1];
+              const byteCharacters = atob(base64Data);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+              blob = new Blob([byteArray], { type: 'audio/mpeg' });
+            } else {
+              throw new Error(`不支持的音频格式: ${rawVal.substring(0, 50)}`);
+            }
+
+            addDebugLog(`📦 音频 Blob 大小: ${(blob.size / 1024).toFixed(2)} KB`);
+
+            // 上传到 COS
+            const { uploadAudio } = await import('../services/imageHosting');
+            const uploadResult = await uploadAudio(blob, 'mp3');
+
+            if (uploadResult.success && uploadResult.url) {
+              (inputValues as any)[p.id] = uploadResult.url;
+              setInputValues(prev => ({ ...prev, [p.id]: uploadResult.url }));
+              addDebugLog(`✅ 音频已上传: ${uploadResult.url}`);
+            } else {
+              throw new Error(`音频上传失败: ${uploadResult.error || '未知错误'}`);
+            }
+          } catch (uploadError: any) {
+            addDebugLog(`❌ 音频上传异常: ${uploadError.message}`);
+            throw new Error(`音频上传失败: ${uploadError.message}`);
+          }
+        } else {
+          addDebugLog(`✓ 音频已是公网 URL，无需上传`);
+        }
+      }
       const missingRequired = (runtimeSchema || []).filter((p: any) => p.required && (inputValues[p.id] === undefined || inputValues[p.id] === null || (typeof inputValues[p.id] === 'string' && inputValues[p.id].trim() === '')));
       if (missingRequired.length > 0) {
         const first = missingRequired[0];
@@ -794,7 +857,26 @@ const P4LabPage: React.FC = () => {
       console.group('🚀 [Payload Audit]');
       console.log('Target Endpoint:', endpoint);
       console.log('Final Payload (Before Send):', JSON.stringify(finalPayload, null, 2));  // [FIX] 强制展开显示
-      
+
+      // [CRITICAL] WAN 模型音频 URL 检查
+      if (selectedModelId?.includes('wan')) {
+        const audioUrl = finalPayload?.input?.audio_url;
+        if (audioUrl) {
+          addDebugLog(`🎵 [WAN检查] 音频URL: ${audioUrl}`);
+          if (audioUrl.startsWith('blob:')) {
+            console.error('❌ CRITICAL: 音频仍是 blob URL，未上传到 COS！');
+            addDebugLog('❌ 致命错误：音频未上传，Aliyun 无法访问 blob URL');
+            throw new Error('音频未上传到 COS，请检查上传逻辑');
+          } else if (!audioUrl.startsWith('https://')) {
+            console.warn('⚠️ 音频 URL 不是 HTTPS，可能无法访问:', audioUrl);
+            addDebugLog(`⚠️ 警告：音频 URL 不是 HTTPS: ${audioUrl}`);
+          } else {
+            console.log('✅ 音频 URL 检查通过:', audioUrl);
+            addDebugLog(`✅ 音频 URL 正常: ${audioUrl.substring(0, 60)}...`);
+          }
+        }
+      }
+
       // [FIX] LiblibAI不需要顶层model字段（通过templateUuid识别）
       const isLiblibAPI = endpoint.includes('/api/liblib/');
       const isReplicateAPI = endpoint.includes('/replicate/v1/');
@@ -1630,20 +1712,20 @@ const P4LabPage: React.FC = () => {
                         )}
 
                         {/* 2. 图像响应 (Image Preview) */}
-                        {(previewImageUrl || runResult.images) && (!runResult.text || (typeof runResult.text === 'string' && runResult.text.trim().startsWith('http'))) && (
-                           <img 
-                             src={previewImageUrl || (runResult.images ? runResult.images[0].url : '')} 
-                             style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }} 
+                        {(previewImageUrl || runResult.images) && (!runResult.text || (typeof runResult.text === 'string' && runResult.text.trim().startsWith('http'))) && !runResult.output?.results?.video_url && (
+                           <img
+                             src={previewImageUrl || (runResult.images ? runResult.images[0].url : '')}
+                             style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }}
                            />
                         )}
 
                         {/* 3. 音频响应 (Waveform Player) */}
-                        {(runResult.audio || runResult.uri) && (
+                        {(runResult.audio || runResult.uri) && !runResult.output?.video_url && (
                             <div style={{ width: '100%', maxWidth: '400px', padding: '20px', background: 'var(--p4-bg-elevated)', borderRadius: '12px', textAlign: 'center', border: '1px solid var(--p4-border-subtle)' }}>
                                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎵</div>
-                                <audio 
-                                    controls 
-                                    src={runResult.audio || runResult.uri} 
+                                <audio
+                                    controls
+                                    src={runResult.audio || runResult.uri}
                                     style={{ width: '100%' }}
                                 />
                                 <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--p4-text-muted)' }}>
@@ -1652,8 +1734,82 @@ const P4LabPage: React.FC = () => {
                             </div>
                         )}
 
-                        {/* 4. 万能兜底：显示原始 JSON (Raw JSON Dump) */}
-                        {!runResult.text && !previewImageUrl && !runResult.images && !runResult.audio && !runResult.uri && (
+                        {/* 4. 视频响应 (Video Player) - WAN 模型 */}
+                        {(runResult.output?.results?.video_url || runResult.video_url) && (() => {
+                            const videoUrl = runResult.output?.results?.video_url || runResult.video_url;
+                            console.log('[视频预览] 视频URL:', videoUrl);
+                            console.log('[视频预览] runResult完整数据:', runResult);
+                            return (
+                            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', padding: '20px' }}>
+                                <video
+                                    controls
+                                    autoPlay
+                                    loop
+                                    src={videoUrl}
+                                    onError={(e) => {
+                                        console.error('[视频预览] 视频加载失败:', e);
+                                        console.error('[视频预览] 视频URL:', videoUrl);
+                                    }}
+                                    onLoadedMetadata={() => {
+                                        console.log('[视频预览] 视频加载成功');
+                                    }}
+                                    style={{
+                                        width: '100%',
+                                        maxWidth: '800px',
+                                        height: 'auto',
+                                        borderRadius: '8px',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                                        backgroundColor: '#000'
+                                    }}
+                                />
+                                <div style={{
+                                    padding: '12px 20px',
+                                    background: 'var(--p4-bg-elevated)',
+                                    borderRadius: '8px',
+                                    border: '1px solid var(--p4-border-subtle)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px',
+                                    width: '100%',
+                                    maxWidth: '800px'
+                                }}>
+                                    <div style={{ fontSize: '24px' }}>🎬</div>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ fontSize: '12px', color: 'var(--p4-text-secondary)', fontWeight: 'bold' }}>
+                                            数字人视频已生成
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: 'var(--p4-text-muted)', marginTop: '4px' }}>
+                                            Generated by {selectedModelId || 'WAN Model'}
+                                        </div>
+                                        <div style={{ fontSize: '10px', color: 'var(--p4-text-muted)', marginTop: '4px', wordBreak: 'break-all' }}>
+                                            {videoUrl}
+                                        </div>
+                                    </div>
+                                    <a
+                                        href={videoUrl}
+                                        download="digital-human-video.mp4"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            padding: '6px 12px',
+                                            background: 'var(--p4-primary)',
+                                            color: 'white',
+                                            borderRadius: '6px',
+                                            textDecoration: 'none',
+                                            fontSize: '12px',
+                                            fontWeight: 'bold',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
+                                        下载视频
+                                    </a>
+                                </div>
+                            </div>
+                            );
+                        })()}
+
+                        {/* 5. 万能兜底：显示原始 JSON (Raw JSON Dump) */}
+                        {!runResult.text && !previewImageUrl && !runResult.images && !runResult.audio && !runResult.uri && !runResult.output?.results?.video_url && !runResult.video_url && (
                             <div style={{ padding: '20px', color: 'var(--p4-text-secondary)', overflow: 'auto', width: '100%', maxHeight: '100%', background: 'var(--p4-bg-elevated)', borderRadius: '8px', border: '1px solid var(--p4-border-subtle)' }}>
                                 <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>⚠️ 返回结构未适配，已显示原始数据（可在此复制文本/URL）:</div>
                                 <pre style={{ fontSize: '12px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
@@ -1666,7 +1822,7 @@ const P4LabPage: React.FC = () => {
                      <div style={{ color: 'var(--p4-text-muted)', textAlign: 'center' }}>
                         <div style={{ fontSize: '32px', marginBottom: '10px' }}>⚡</div>
                         <div>等待点火 (Awaiting Ignition)</div>
-                        <div style={{ fontSize: '12px', marginTop: '8px', opacity: 0.5 }}>支持 文本 / 图像 / 音频 多模态响应</div>
+                        <div style={{ fontSize: '12px', marginTop: '8px', opacity: 0.5 }}>支持 文本 / 图像 / 音频 / 视频 多模态响应</div>
                      </div>
                   )}
               </div>

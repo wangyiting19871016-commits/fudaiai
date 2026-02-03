@@ -56,13 +56,34 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
     // 🔍 解析JSON
     const data = JSON.parse(responseText);
     console.log('[COS] 解析后的data对象:', JSON.stringify(data));
-    console.log('[COS] data.url的值:', data.url);
-    console.log('[COS] data.url的类型:', typeof data.url);
-    console.log('[COS] ✅ 上传成功:', data.url);
+
+    // 🔧 修复：如果URL重复，只取第一个
+    // 后端 Bug：返回的 URL 可能是 "https://...xxx.jpghttps://...xxx.jpg"
+    let finalUrl = data.url;
+    if (typeof finalUrl === 'string') {
+      console.log('[COS] 🔍 检测URL重复 - 原始长度:', finalUrl.length);
+      console.log('[COS] 🔍 检测URL重复 - 完整URL:', finalUrl);
+
+      // 简单粗暴的方法：直接查找 .jpg 后面的位置
+      const jpgIndex = finalUrl.indexOf('.jpg');
+      if (jpgIndex > 0) {
+        // 检查 .jpg 后面4个字符的位置是否还有 http
+        const afterJpg = finalUrl.substring(jpgIndex + 4);
+        console.log('[COS] 🔍 .jpg 后面的内容:', afterJpg.substring(0, 20));
+
+        if (afterJpg.startsWith('http')) {
+          console.log('[COS] ⚠️ 检测到URL重复！.jpg后面紧跟http');
+          finalUrl = finalUrl.substring(0, jpgIndex + 4);
+          console.log('[COS] ✅ 已截取第一个URL:', finalUrl);
+        }
+      }
+    }
+
+    console.log('[COS] ✅ 最终上传URL:', finalUrl);
 
     return {
       success: true,
-      url: data.url
+      url: finalUrl
     };
   } catch (error: any) {
     console.error('[COS] 上传失败:', error);
@@ -176,6 +197,77 @@ export async function uploadToCloudinary(
 }
 
 /**
+ * 上传音频到腾讯云COS（通过后端中间件）
+ * @param blob 音频Blob对象
+ * @param format 音频格式（mp3, wav等）
+ */
+export async function uploadAudioToTencentCOS(blob: Blob, format: string = 'mp3'): Promise<UploadResult> {
+  try {
+    console.log('[COS] 上传音频到腾讯云COS...', { size: blob.size, format });
+
+    // Blob转base64
+    const reader = new FileReader();
+    const base64Data = await new Promise<string>((resolve, reject) => {
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+    // 调用后端中间件上传（复用现有的 /api/upload-cos）
+    console.log('[COS] 🔍 发送音频上传请求...');
+    const response = await fetch('/api/upload-cos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        image: base64Data,  // 虽然参数名叫image，但实际支持所有base64数据
+        type: 'audio',
+        format: format
+      }),
+      cache: 'no-store'
+    });
+
+    console.log('[COS] 🔍 收到响应，status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`上传失败: ${errorText}`);
+    }
+
+    const responseText = await response.text();
+    console.log('[COS] 原始响应文本:', responseText);
+
+    const data = JSON.parse(responseText);
+    let finalUrl = data.url;
+
+    // 🔧 修复URL重复问题
+    if (typeof finalUrl === 'string') {
+      const extensionIndex = finalUrl.indexOf(`.${format}`);
+      if (extensionIndex > 0) {
+        const afterExtension = finalUrl.substring(extensionIndex + format.length + 1);
+        if (afterExtension.startsWith('http')) {
+          console.log('[COS] ⚠️ 检测到URL重复！');
+          finalUrl = finalUrl.substring(0, extensionIndex + format.length + 1);
+          console.log('[COS] ✅ 已截取第一个URL:', finalUrl);
+        }
+      }
+    }
+
+    console.log('[COS] ✅ 音频上传成功:', finalUrl);
+
+    return {
+      success: true,
+      url: finalUrl
+    };
+  } catch (error: any) {
+    console.error('[COS] 音频上传失败:', error);
+    return {
+      success: false,
+      error: error.message || '音频上传失败'
+    };
+  }
+}
+
+/**
  * 通用图片上传接口
  * 自动选择可用的图床服务（优先腾讯云COS）
  */
@@ -208,5 +300,25 @@ export async function uploadImage(file: File | string): Promise<UploadResult> {
   return {
     success: false,
     error: '未配置图床服务。请在.env文件中设置腾讯云COS或ImgBB配置'
+  };
+}
+
+/**
+ * 上传音频文件（通用接口）
+ * @param blob 音频Blob对象
+ * @param format 音频格式
+ */
+export async function uploadAudio(blob: Blob, format: string = 'mp3'): Promise<UploadResult> {
+  const cosSecretId = import.meta.env.VITE_TENCENT_COS_SECRET_ID;
+  const cosSecretKey = import.meta.env.VITE_TENCENT_COS_SECRET_KEY;
+
+  if (cosSecretId && cosSecretKey) {
+    console.log('[AudioHosting] Using Tencent COS...');
+    return uploadAudioToTencentCOS(blob, format);
+  }
+
+  return {
+    success: false,
+    error: '未配置音频上传服务。请在.env文件中设置腾讯云COS配置'
   };
 }

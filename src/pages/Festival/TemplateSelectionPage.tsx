@@ -7,7 +7,9 @@ import {
   TemplateItem
 } from '../../configs/festival/templateGallery';
 import { getFeatureById } from '../../configs/festival/features';
+import '../../styles/festival-design-system.css';
 import '../../styles/festival-template-selection.css';
+import '../../styles/festival-template-glass.css';
 
 /**
  * 🎨 智能模板选择页
@@ -126,15 +128,13 @@ const TemplateSelectionPage: React.FC = () => {
               className={`gender-tab ${selectedGender === 'male' ? 'active' : ''}`}
               onClick={() => handleGenderChange('male')}
             >
-              <span className="gender-icon">👨</span>
-              <span className="gender-label">男生</span>
+              <span className="gender-label">男</span>
             </button>
             <button
               className={`gender-tab ${selectedGender === 'female' ? 'active' : ''}`}
               onClick={() => handleGenderChange('female')}
             >
-              <span className="gender-icon">👩</span>
-              <span className="gender-label">女生</span>
+              <span className="gender-label">女</span>
             </button>
           </div>
         )}
@@ -195,7 +195,7 @@ const TemplateSelectionPage: React.FC = () => {
         {/* 底部按钮 */}
         <div className="template-footer">
           <button
-            className="template-continue-btn"
+            className={`template-continue-btn ${selectedTemplate ? 'selected' : ''}`}
             onClick={handleContinue}
             disabled={!selectedTemplate}
           >

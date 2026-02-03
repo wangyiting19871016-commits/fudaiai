@@ -158,9 +158,9 @@ const ZJMultiUploader: React.FC<ZJMultiUploaderProps> = ({
 
   const getPersonLabel = (index: number) => {
     if (personCount === 2) {
-      return index === 0 ? '👫 人物1' : '👫 人物2';
+      return index === 0 ? '人物1' : '人物2';
     } else {
-      return ['👨 人物1', '👩 人物2', '👶 人物3'][index];
+      return ['人物1', '人物2', '人物3'][index];
     }
   };
 

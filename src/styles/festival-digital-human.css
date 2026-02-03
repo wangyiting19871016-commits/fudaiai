@@ -1,0 +1,479 @@
+/**
+ * 🎬 数字人拜年页面样式
+ * 更新：统一三个音色卡片颜色
+ */
+
+.digital-human-page {
+  min-height: 100vh;
+  background: var(--cny-bg-cream);
+  font-family: var(--font-body);
+  padding: 0;
+}
+
+.digital-human-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+/* 顶部导航 */
+.digital-human-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 12px 0;
+}
+
+.digital-human-header .back-btn {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  color: var(--cny-gray-700);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
+}
+
+.digital-human-header .back-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.digital-human-header .page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--cny-gray-900);
+  margin: 0;
+}
+
+.digital-human-header .header-placeholder {
+  width: 60px;
+}
+
+/* 输入界面 */
+.digital-human-input {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cny-gray-800);
+}
+
+/* 照片上传 */
+.photo-upload-area {
+  width: 100%;
+  aspect-ratio: 3/4;
+  max-height: 300px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px dashed var(--cny-gray-300);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.photo-upload-area:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--cny-red-500);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-text {
+  font-size: 14px;
+  color: var(--cny-gray-600);
+}
+
+.uploaded-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 祝福语输入 */
+.greeting-input {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--cny-gray-300);
+  border-radius: 10px;
+  color: var(--cny-gray-900);
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  font-family: inherit;
+}
+
+.greeting-input:focus {
+  outline: none;
+  border-color: var(--cny-red-500);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.greeting-input::placeholder {
+  color: var(--cny-gray-400);
+}
+
+.char-count {
+  text-align: right;
+  font-size: 12px;
+  color: var(--cny-gray-500);
+}
+
+/* 音色选择 - 三卡片同等优先级 */
+.voice-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.voice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid var(--cny-gray-300);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s;
+  min-height: 70px;
+}
+
+.voice-card:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: var(--cny-gray-400);
+  transform: translateY(-2px);
+}
+
+.voice-card.active {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(255, 107, 53, 0.1));
+  border-color: var(--cny-red-500);
+  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.2);
+}
+
+.voice-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cny-gray-800);
+  line-height: 1.2;
+}
+
+.voice-card-desc {
+  font-size: 12px;
+  color: var(--cny-gray-600);
+  line-height: 1.2;
+}
+
+/* 错误提示 */
+.error-message {
+  padding: 16px;
+  background: rgba(229, 57, 53, 0.1);
+  border: 1px solid rgba(229, 57, 53, 0.3);
+  border-radius: 12px;
+  color: var(--cny-red-600);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 生成按钮 */
+.generate-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+}
+
+.generate-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
+
+.generate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 提示信息 */
+.input-tip {
+  text-align: center;
+  font-size: 13px;
+  color: var(--cny-gray-500);
+  line-height: 1.6;
+}
+
+/* 结果界面 */
+.digital-human-result {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.video-preview {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.result-video {
+  width: 100%;
+  display: block;
+}
+
+/* 结果按钮 */
+.result-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.action-btn {
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn-primary {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #000;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.action-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+}
+
+.action-btn-secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--cny-gray-700);
+  border: 1px solid var(--cny-gray-200);
+  backdrop-filter: blur(10px);
+}
+
+.action-btn-secondary:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: var(--cny-gray-300);
+}
+
+.action-btn-ghost {
+  grid-column: 1 / -1;
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--cny-gray-600);
+  border: 1px solid var(--cny-gray-200);
+}
+
+.action-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--cny-gray-700);
+}
+
+.result-tip {
+  text-align: center;
+  font-size: 13px;
+  color: var(--cny-gray-600);
+  padding: 12px;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* 模式切换 */
+.mode-switch-group {
+  display: flex;
+  gap: 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.mode-switch-btn {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cny-gray-700);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-switch-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.mode-switch-btn.active {
+  color: #000;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.mode-description {
+  font-size: 13px;
+  color: var(--cny-gray-600);
+  text-align: center;
+  padding: 8px;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 8px;
+  line-height: 1.4;
+}
+
+/* TextSelector包装器 */
+.text-selector-wrapper {
+  margin: 0;
+}
+
+/* 音频预览卡片 */
+.audio-preview-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--cny-gray-300);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.audio-preview-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.audio-preview-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.audio-preview-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.audio-preview-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cny-gray-800);
+}
+
+.audio-preview-subtitle {
+  font-size: 12px;
+  color: var(--cny-gray-600);
+}
+
+.audio-preview-player {
+  width: 100%;
+  max-width: 200px;
+  height: 32px;
+}
+
+/* 音频占位卡片 */
+.audio-placeholder-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px dashed var(--cny-gray-300);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.audio-placeholder-icon {
+  font-size: 48px;
+  opacity: 0.5;
+}
+
+.audio-placeholder-text {
+  font-size: 14px;
+  color: var(--cny-gray-600);
+}
+
+.audio-placeholder-btn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.audio-placeholder-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .digital-human-container {
+    padding: 12px;
+  }
+
+  .digital-human-header .page-title {
+    font-size: 18px;
+  }
+
+  .input-label {
+    font-size: 15px;
+  }
+
+  .photo-upload-area {
+    max-height: 350px;
+  }
+
+  .mode-switch-btn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .audio-preview-player {
+    max-width: 150px;
+  }
+}

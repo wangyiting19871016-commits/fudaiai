@@ -1,46 +1,116 @@
-/* 🎨 全屏加载器 - 科技感设计 */
-.zj-fullscreen-loader {
+/**
+ * 🎨 全屏加载器 - 浅色玻璃态设计
+ * 嫁接自REACT3的LoadingScreen样式
+ * 保持春节配色：Rose Red + Warm Orange + Gold
+ */
+
+/* ========== 容器 - 单层玻璃效果 ========== */
+.zj-fullscreen-loader-light {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-/* 背景遮罩 */
-.zj-loader-backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-  opacity: 0.98;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-/* 内容区 */
-.zj-loader-content {
-  position: relative;
-  z-index: 1;
+  /* 布局样式 - 左右不留白，上下留白 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
-  max-width: 90vw;
-  animation: zj-fade-in 0.4s ease-out;
+  justify-content: center;
+  padding: 70px 0 16px 0;  /* 上70px，左右0，下16px - 对应上传页 */
+  gap: 2.5rem;
+  overflow: hidden;
+  /* 全屏背景 - 占满屏幕 */
+  background: linear-gradient(135deg,
+    #FDFBF7 0%,
+    #FFFFFF 50%,
+    #FDFBF7 100%
+  );
+  border: none;
+  border-radius: 32px;  /* 保持圆角 */
+  box-shadow: none;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
 }
 
-@keyframes zj-fade-in {
+/* ========== 背景光球动画 - 淡化 ========== */
+.zj-loader-bg-ambience {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.zj-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px); /* 增加模糊，更柔和 */
+  opacity: 0.08; /* 大幅降低透明度 */
+  animation: orb-float 8s ease-in-out infinite;
+}
+
+.zj-orb-1 {
+  top: -10%;
+  left: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(229, 57, 53, 0.3), transparent 70%);
+  animation-delay: 0s;
+}
+
+.zj-orb-2 {
+  bottom: -10%;
+  right: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.3), transparent 70%);
+  animation-delay: 1s;
+}
+
+.zj-orb-3 {
+  top: 30%;
+  left: 60%;
+  width: 30vw;
+  height: 30vw;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent 70%);
+  animation-delay: 2s;
+}
+
+@keyframes orb-float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(20px, -20px) scale(1.1);
+    opacity: 0.3;
+  }
+}
+
+/* ========== 内容容器 - 完全透明，与外框重叠 ========== */
+.zj-glass-card {
+  position: absolute !important; /* 绝对定位 */
+  inset: 0 !important; /* 完全占满外框，与外框重叠 */
+  z-index: 10;
+  background: none !important; /* 强制透明 */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 1.5rem !important; /* 上下0（外框已有padding），左右1.5rem */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;  /* 内容在全屏内垂直居中 */
+  gap: 2.5rem;
+}
+
+@keyframes fade-in-zoom {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
   to {
     opacity: 1;
@@ -48,395 +118,300 @@
   }
 }
 
-/* 用户照片预览 */
-.zj-loader-avatar {
+/* ========== 进度环 + 头像容器 ========== */
+.zj-progress-container {
   position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid rgba(255, 201, 71, 0.3);
-  box-shadow: 0 8px 32px rgba(211, 47, 47, 0.3);
+  width: 10rem;  /* 160px - 更小更精致 */
+  height: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.zj-loader-avatar img {
+/* SVG进度环 */
+.zj-progress-svg-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+.zj-progress-ring-animated {
+  transition: stroke-dashoffset 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========== 头像容器 ========== */
+.zj-avatar-container {
+  position: relative;
+  width: 7rem; /* 112px - 对应圆环缩小 */
+  height: 7rem;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); /* 改为外阴影，去掉内阴影 */
+  border: none; /* 去掉边框 */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.zj-avatar-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(229, 57, 53, 0.1);
+  border-radius: 50%;
+}
+
+.zj-avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0.9;
 }
 
-/* DNA扫描线 */
-.zj-scan-line {
+/* DNA扫描线 - 科技感增强，分离设计 */
+.zj-scan-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255, 201, 71, 0.8) 50%,
-    transparent 100%
-  );
-  box-shadow: 0 0 10px rgba(255, 201, 71, 0.6);
-  animation: zj-scan 2s ease-in-out infinite;
-}
-
-@keyframes zj-scan {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(100px); }
-  100% { transform: translateY(0); }
-}
-
-/* 🎨 进度环容器 - 科技感设计 */
-.zj-progress-ring {
-  position: relative;
-  width: 220px;
-  height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-}
-
-/* 外圈装饰 - 持续旋转（表示"正在处理"） */
-.zj-outer-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  animation: zj-spin 3s linear infinite;
-}
-
-.zj-outer-ring-1 {
-  width: 190px;
-  height: 190px;
-  margin-top: -95px;
-  margin-left: -95px;
-  border-top-color: rgba(255, 201, 71, 0.4);
-  border-right-color: rgba(255, 111, 0, 0.3);
-}
-
-.zj-outer-ring-2 {
-  width: 200px;
-  height: 200px;
-  margin-top: -100px;
-  margin-left: -100px;
-  border-bottom-color: rgba(211, 47, 47, 0.3);
-  border-left-color: rgba(255, 201, 71, 0.2);
-  animation-duration: 4s;
-  animation-direction: reverse;
-}
-
-@keyframes zj-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* 呼吸光晕 */
-.zj-glow-effect {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 160px;
-  height: 160px;
-  margin-top: -80px;
-  margin-left: -80px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 201, 71, 0.2) 0%, transparent 70%);
-  animation: zj-glow-pulse 2s ease-in-out infinite;
-}
-
-@keyframes zj-glow-pulse {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(0.95);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
-/* SVG容器 */
-.zj-progress-svg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  filter: drop-shadow(0 0 8px rgba(255, 201, 71, 0.3));
-}
-
-/* 进度圆 - 流畅过渡 */
-.zj-progress-circle {
-  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 中心文字 - 绝对居中 */
-.zj-progress-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.zj-progress-percent {
-  font-size: 42px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #FFC947 0%, #FF6F00 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  animation: zj-number-pulse 2s ease-in-out infinite;
-}
-
-@keyframes zj-number-pulse {
-  0%, 100% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-  50% {
-    transform: scale(1.05);
-    filter: brightness(1.2);
-  }
-}
-
-/* 状态文案 */
-.zj-loader-message {
-  text-align: center;
-  color: #fff;
-  max-width: 300px;
-}
-
-.zj-stage-text {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  background: linear-gradient(135deg, #FFC947 0%, #FF6F00 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: zj-text-shimmer 3s ease-in-out infinite;
-}
-
-@keyframes zj-text-shimmer {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
-}
-
-.zj-detail-text {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.5;
-}
-
-/* 🌟 粒子装饰 - 科技感 */
-.zj-particles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: -20%; /* 扩大范围，不贴着图片 */
+  z-index: 20;
   pointer-events: none;
-  overflow: hidden;
 }
 
-.zj-particle {
+.zj-scan-gradient {
+  width: 120%; /* 超出圆环 */
+  left: -10%;
+  height: 40%;
+  background: linear-gradient(to bottom,
+    transparent,
+    rgba(229, 57, 53, 0.15),
+    rgba(255, 215, 0, 0.25),
+    rgba(255, 215, 0, 0.15),
+    transparent
+  );
   position: absolute;
-  width: 4px;
-  height: 4px;
-  background: radial-gradient(circle, rgba(255, 201, 71, 0.8) 0%, transparent 70%);
-  border-radius: 50%;
-  opacity: 0;
-  animation: zj-particle-float 8s ease-in-out infinite;
+  top: 0;
+  animation: scan-vertical 3s ease-in-out infinite;
+  filter: blur(8px);
 }
 
-.zj-particle:nth-child(1) {
-  left: 20%;
-  animation-delay: 0s;
-  animation-duration: 6s;
+.zj-scan-line-thin {
+  width: 120%; /* 超出圆环 */
+  left: -10%;
+  height: 3px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 215, 0, 0.3),
+    rgba(255, 215, 0, 0.8),
+    rgba(255, 215, 0, 0.3),
+    transparent
+  );
+  box-shadow:
+    0 0 15px rgba(255, 215, 0, 0.9),
+    0 0 30px rgba(255, 215, 0, 0.5);
+  position: absolute;
+  top: 20%;
+  animation: scan-vertical 3s ease-in-out infinite;
 }
 
-.zj-particle:nth-child(2) {
-  left: 50%;
-  animation-delay: 2s;
-  animation-duration: 8s;
-}
-
-.zj-particle:nth-child(3) {
-  left: 80%;
-  animation-delay: 4s;
-  animation-duration: 7s;
-}
-
-.zj-particle:nth-child(4) {
-  left: 35%;
-  animation-delay: 1s;
-  animation-duration: 9s;
-}
-
-@keyframes zj-particle-float {
-  0% {
-    bottom: -10px;
+@keyframes scan-vertical {
+  0%, 100% {
+    transform: translateY(-100%);
     opacity: 0;
-    transform: translateX(0) scale(0.5);
   }
-  20% {
+  10% {
     opacity: 1;
   }
-  80% {
-    opacity: 1;
+  50% {
+    transform: translateY(100%);
   }
-  100% {
-    bottom: 100%;
-    opacity: 0;
-    transform: translateX(20px) scale(1.5);
+  90% {
+    opacity: 1;
   }
 }
 
-/* 提示文本 */
-.zj-loader-tips {
+/* ========== 百分比浮动标签 ========== */
+.zj-progress-badge {
+  position: absolute;
+  bottom: -2.5rem; /* 移远，不挡住进度圆 */
+  background: rgba(255, 255, 255, 0.7); /* 降低不透明度 */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.375rem 1rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); /* 淡化阴影 */
+  border: none; /* 去掉边框 */
+}
+
+.zj-progress-number {
+  font-size: 1.5rem; /* 扩大到 24px */
+  font-weight: 700;
+  background: linear-gradient(135deg, rgb(229, 57, 53), rgb(255, 107, 53));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-variant-numeric: proportional-nums;
+}
+
+/* ========== 文字内容 ========== */
+.zj-text-content {
   text-align: center;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
-  max-width: 280px;
-  padding: 12px 20px;
-  background: rgba(255, 201, 71, 0.08);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 201, 71, 0.2);
-  animation: zj-float 3s ease-in-out infinite;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 90%;
+  max-width: 90%;
+  margin-top: 1.5rem;
 }
 
-@keyframes zj-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+.zj-status-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.zj-loader-tips p {
+.zj-spinner-icon {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgb(229, 57, 53);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.zj-status-title {
+  font-size: 1.5rem; /* 扩大到 24px */
+  font-weight: 700;
+  color: rgb(32, 32, 32);
+  letter-spacing: 0.025em;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
   margin: 0;
-  line-height: 1.4;
 }
 
-/* 📱 响应式调整 - 确保移动端完整显示 */
+.zj-status-subtitle {
+  font-size: 1rem; /* 扩大到 16px */
+  font-family: 'Noto Serif SC', serif;
+  color: rgb(127, 127, 127);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.zj-status-detail {
+  font-size: 0.75rem; /* 12px */
+  color: rgba(32, 32, 32, 0.6);
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+/* ========== 装饰性图标 ========== */
+.zj-deco-icon {
+  position: absolute;
+  font-size: 1.5rem; /* 扩大到 24px */
+  opacity: 0.8;
+}
+
+.zj-deco-sparkles {
+  top: 1.5rem;
+  right: 1.5rem;
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.zj-deco-zap {
+  bottom: 2.5rem;
+  left: 2rem;
+  opacity: 0.4;
+  transform: rotate(12deg);
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* ========== 底部品牌 ========== */
+.zj-loader-footer {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.zj-footer-text {
+  font-size: 0.75rem; /* 12px */
+  color: rgba(0, 0, 0, 0.2);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ========== 移动端适配 ========== */
 @media (max-width: 480px) {
-  .zj-loader-content {
-    gap: 20px !important;
+  .zj-fullscreen-loader-light {
+    padding: 0;
+    gap: 1.5rem;
   }
 
-  .zj-loader-avatar {
-    width: 70px !important;
-    height: 70px !important;
+  .zj-avatar-container {
+    border: none;
   }
 
-  /* 🎯 关键：容器必须大于最大元素 */
-  .zj-progress-ring {
-    width: 220px !important;    /* 确保容纳210px的outer-ring */
-    height: 220px !important;
-    margin: 0 auto !important;
+  .zj-progress-badge {
+    bottom: -2.5rem; /* 移动端也移远，不挡住进度圆 */
+    padding: 0.375rem 1rem;
   }
 
-  /* 外圈1：190px */
-  .zj-outer-ring-1 {
-    width: 190px !important;
-    height: 190px !important;
-    margin-top: -95px !important;
-    margin-left: -95px !important;
+  .zj-progress-number {
+    font-size: 1.375rem;
   }
 
-  /* 外圈2：200px */
-  .zj-outer-ring-2 {
-    width: 200px !important;
-    height: 200px !important;
-    margin-top: -100px !important;
-    margin-left: -100px !important;
+  .zj-status-title {
+    font-size: 1.375rem;
   }
 
-  /* 光晕 */
-  .zj-glow-effect {
-    width: 160px !important;
-    height: 160px !important;
-    margin-top: -80px !important;
-    margin-left: -80px !important;
+  .zj-status-subtitle {
+    font-size: 0.9375rem;
   }
 
-  /* SVG保持180px */
-  .zj-progress-svg {
-    width: 180px !important;
-    height: 180px !important;
-  }
-
-  .zj-progress-percent {
-    font-size: 36px !important;
-  }
-
-  .zj-stage-text {
-    font-size: 15px !important;
-  }
-
-  .zj-detail-text {
-    font-size: 12px !important;
-  }
-
-  .zj-loader-tips {
-    font-size: 12px !important;
-    padding: 10px 16px !important;
-    max-width: 260px !important;
+  .zj-deco-icon {
+    font-size: 1.25rem;
   }
 }
 
 /* 超小屏幕 */
 @media (max-width: 360px) {
-  .zj-progress-ring {
-    width: 180px;
-    height: 180px;
+  .zj-progress-container {
+    width: 10rem; /* 稍微大一点 */
+    height: 10rem;
   }
 
-  .zj-outer-ring-1 {
-    width: 150px;
-    height: 150px;
-    margin-top: -75px;
-    margin-left: -75px;
-    border-top-color: rgba(255, 201, 71, 0.4) !important;
-    border-right-color: rgba(255, 111, 0, 0.3) !important;
-  }
-
-  .zj-outer-ring-2 {
-    width: 160px;
-    height: 160px;
-    margin-top: -80px;
-    margin-left: -80px;
-    border-bottom-color: rgba(211, 47, 47, 0.3) !important;
-    border-left-color: rgba(255, 201, 71, 0.2) !important;
-  }
-
-  .zj-glow-effect {
-    width: 120px;
-    height: 120px;
-    margin-top: -60px;
-    margin-left: -60px;
-  }
-
-  .zj-progress-svg {
-    width: 140px !important;
-    height: 140px !important;
-  }
-
-  .zj-progress-percent {
-    font-size: 34px;
+  .zj-avatar-container {
+    width: 6.5rem; /* 稍微大一点 */
+    height: 6.5rem;
   }
 }
 
-/* ⚡ 性能优化 */
-.zj-progress-circle,
-.zj-outer-ring,
-.zj-glow-effect,
-.zj-particle {
+/* ========== 性能优化 ========== */
+.zj-progress-ring-animated,
+.zj-orb,
+.zj-spinner-icon,
+.zj-deco-sparkles {
   will-change: transform, opacity;
 }

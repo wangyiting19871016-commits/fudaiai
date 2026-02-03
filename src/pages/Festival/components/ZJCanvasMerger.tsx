@@ -83,7 +83,7 @@ const ZJCanvasMerger: React.FC<ZJCanvasMergerProps> = ({
         ctx.fillStyle = '#FFD700';
         ctx.font = 'bold 60px Arial, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('真迹AI', canvas.width / 2, 100);
+        ctx.fillText('福袋AI', canvas.width / 2, 100);
         
         ctx.font = 'bold 40px Arial, sans-serif';
         ctx.fillText('马年大吉', canvas.width / 2, 160);
@@ -115,7 +115,7 @@ const ZJCanvasMerger: React.FC<ZJCanvasMergerProps> = ({
         ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.font = '16px Arial, sans-serif';
         ctx.textAlign = 'right';
-        ctx.fillText('真迹AI · 2026', canvas.width - 20, canvas.height - 20);
+        ctx.fillText('福袋AI · 2026', canvas.width - 20, canvas.height - 20);
       }
 
       // 输出最终图片

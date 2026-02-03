@@ -1,0 +1,156 @@
+/**
+ * 🎬 视频方法选择器样式
+ * Canvas vs WAN 数字人
+ */
+
+.video-method-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.method-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.method-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.method-btn.active {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border-color: #FFD700;
+  color: #000;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+}
+
+.method-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.method-name {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.method-desc {
+  font-size: 12px;
+  opacity: 0.8;
+  line-height: 1.2;
+}
+
+/* WAN输入区域 */
+.wan-inputs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.greeting-input {
+  width: 100%;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.greeting-input:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+.greeting-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.char-count {
+  text-align: right;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.voice-selector {
+  width: 100%;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.voice-selector:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+.voice-selector option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .video-method-selector {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .method-btn {
+    padding: 12px 8px;
+  }
+
+  .method-icon {
+    font-size: 28px;
+  }
+
+  .method-name {
+    font-size: 14px;
+  }
+
+  .method-desc {
+    font-size: 11px;
+  }
+}

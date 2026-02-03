@@ -5,16 +5,18 @@
 
 .zj-multi-uploader {
   width: 100%;
+  max-width: 460px;
   padding: 20px;
+  margin: 0 auto;
 }
 
 .multi-uploader-title {
   font-size: 18px;
   font-weight: 600;
-  color: white;
+  color: var(--cny-gray-900);
   text-align: center;
   margin-bottom: 20px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
 }
 
 .multi-uploader-grid {
@@ -25,6 +27,8 @@
 }
 
 .multi-upload-slot {
+  width: 100%;
+  max-width: 350px;
   aspect-ratio: 3 / 4;
   border-radius: 16px;
   overflow: hidden;
@@ -33,6 +37,7 @@
   cursor: pointer;
   transition: all 0.3s;
   position: relative;
+  margin: 0 auto;
 }
 
 .multi-upload-slot:hover {
@@ -59,7 +64,7 @@
   justify-content: center;
   height: 100%;
   padding: 20px;
-  color: white;
+  color: var(--cny-gray-800);
 }
 
 .placeholder-icon {
@@ -92,7 +97,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: white;
+  color: var(--cny-gray-800);
 }
 
 .upload-spinner {
@@ -111,7 +116,7 @@
 
 .upload-text {
   font-size: 14px;
-  color: white;
+  color: var(--cny-gray-800);
 }
 
 /* 预览状态 */
@@ -136,7 +141,7 @@
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.7);
   border: none;
-  color: white;
+  color: white; /* 深色背景上的白色按钮，保持 */
   font-size: 16px;
   cursor: pointer;
   display: flex;
@@ -157,7 +162,7 @@
   left: 0;
   right: 0;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-  color: white;
+  color: white; /* 深色渐变背景上的白色文字，保持 */
   padding: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -168,9 +173,9 @@
 .multi-uploader-tip {
   text-align: center;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--cny-gray-700);
   padding: 12px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.04);
   border-radius: 12px;
   backdrop-filter: blur(10px);
 }

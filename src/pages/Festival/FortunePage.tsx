@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import { missionExecutor, MissionProgress } from '../../services/MissionExecutor';
+import '../../styles/festival-design-system.css';
+import '../../styles/festival-fortune-glass.css';
 
 /**
  * 🎴 运势抽卡专用页面
@@ -62,9 +64,9 @@ const FortunePage: React.FC = () => {
           <button className="back-btn" onClick={() => navigate(-1)}>
             ← 返回
           </button>
-          <h1 className="fortune-title">🎴 运势抽卡</h1>
+          <h1 className="fortune-title">运势抽卡</h1>
           <button className="home-btn" onClick={() => navigate('/festival/home')}>
-            🏠
+            首页
           </button>
         </div>
 
@@ -73,28 +75,27 @@ const FortunePage: React.FC = () => {
           {stage === 'ready' && (
             <div className="fortune-ready">
               <div className="fortune-card-stack">
-                <div className="card-back card-1">🎴</div>
-                <div className="card-back card-2">🎴</div>
-                <div className="card-back card-3">🎴</div>
+                <div className="card-back card-1"></div>
+                <div className="card-back card-2"></div>
+                <div className="card-back card-3"></div>
               </div>
               
               <h2 className="fortune-prompt">抽一张马年运势卡</h2>
               <p className="fortune-desc">测测你的2026运势</p>
               
               <button className="fortune-draw-btn" onClick={handleDrawFortune}>
-                <span className="btn-icon">✨</span>
                 <span className="btn-text">抽取运势</span>
               </button>
 
               <div className="fortune-tips">
-                <p>💡 每日免费3次</p>
+                <p>每日免费3次</p>
               </div>
             </div>
           )}
 
           {stage === 'drawing' && (
             <div className="fortune-drawing">
-              <div className="card-flip-animation">🎴</div>
+              <div className="card-flip-animation"></div>
               <p className="drawing-text">正在抽取运势...</p>
             </div>
           )}

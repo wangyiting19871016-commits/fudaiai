@@ -60,6 +60,7 @@ export interface MissionResult {
     missionId: string;
     timestamp: number;
     cost?: number;            // 消耗点数
+    [key: string]: any;       // 允许任务特定的额外元数据
   };
 }
 
@@ -103,12 +104,12 @@ const MISSION_CONFIGS: Record<string, MissionConfig> = {
   },
   M11: {
     missionId: 'M11',
-    name: '隐形文字画',
+    name: '数字人拜年',
     requiresDNA: false,
     requiresCaption: false,
     requiresGender: false,
     apiSlot: 'liblib-controlnet',
-    modelId: 'liblib-qrcode'
+    modelId: 'liblib-face-swap-hd'
   },
   M5: {
     missionId: 'M5',
@@ -136,6 +137,33 @@ const MISSION_CONFIGS: Record<string, MissionConfig> = {
     requiresGender: false,
     apiSlot: 'liblib-controlnet',
     modelId: 'liblib-flux-dev'
+  },
+  M_VIDEO_TALK: {
+    missionId: 'M_VIDEO_TALK',
+    name: '数字人说话',
+    requiresDNA: false,
+    requiresCaption: false,
+    requiresGender: false,
+    apiSlot: 'qwen-primary',
+    modelId: 'wan2.2-s2v'
+  },
+  M_VIDEO_ACTION: {
+    missionId: 'M_VIDEO_ACTION',
+    name: '动作视频',
+    requiresDNA: false,
+    requiresCaption: false,
+    requiresGender: false,
+    apiSlot: 'qwen-primary',
+    modelId: 'wan2.2-animate-move'
+  },
+  M_VIDEO_GIF: {
+    missionId: 'M_VIDEO_GIF',
+    name: '表情包GIF',
+    requiresDNA: false,
+    requiresCaption: false,
+    requiresGender: false,
+    apiSlot: 'local',  // 本地Canvas生成
+    modelId: 'canvas-gif'
   }
 };
 

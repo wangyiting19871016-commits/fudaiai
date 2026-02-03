@@ -20,12 +20,16 @@ import FestivalLayout from './pages/Festival/Layout';
 import HomePageGlass from './pages/Festival/HomePageGlass';
 import FestivalLabPage from './pages/Festival/LabPage';
 import FestivalResultPage from './pages/Festival/ResultPage';
-import FestivalVoicePage from './pages/Festival/VoicePage';
+import FestivalVoicePage from './pages/Festival/VoicePageNew';
 import FestivalTextPage from './pages/Festival/TextPage';
 import FestivalCategoryPage from './pages/Festival/CategoryPage';
 import FestivalVideoPage from './pages/Festival/VideoPage';
 import TemplateSelectionPage from './pages/Festival/TemplateSelectionPage';
 import FortunePage from './pages/Festival/FortunePage';
+import MaterialLibraryPage from './pages/Festival/MaterialLibraryPage';
+import FortuneCardPage from './pages/Festival/FortuneCardPage';
+import SmartReplyPage from './pages/Festival/SmartReplyPage';
+import DigitalHumanPage from './pages/Festival/DigitalHumanPage';
 
 // 布局组件，用于处理路由相关的布局逻辑
 const AppLayout: React.FC = () => {
@@ -56,6 +60,7 @@ const AppLayout: React.FC = () => {
           <Route path="/p4" element={<EditorPage />} />
           <Route path="/editor" element={<EditorPage />} />
           <Route path="/p4-lab" element={<P4LabPage />} />
+          <Route path="/p4lab" element={<P4LabPage />} />
           
           {/* 🧧 春节H5（全新独立） */}
           <Route path="/festival" element={<FestivalLayout />}>
@@ -71,6 +76,10 @@ const AppLayout: React.FC = () => {
             <Route path="text/:featureId" element={<FestivalTextPage />} />
             <Route path="video/:taskId" element={<FestivalVideoPage />} />
             <Route path="video" element={<FestivalVideoPage />} />
+            <Route path="materials" element={<MaterialLibraryPage />} />
+            <Route path="fortune-card" element={<FortuneCardPage />} />
+            <Route path="smart-reply" element={<SmartReplyPage />} />
+            <Route path="digital-human" element={<DigitalHumanPage />} />
           </Route>
         </Routes>
       </div>

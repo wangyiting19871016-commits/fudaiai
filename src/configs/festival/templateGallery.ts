@@ -282,6 +282,24 @@ export const M2_TEMPLATES: TemplateItem[] = [
   }
 ];
 
+// ========== M11 数字人拜年模板 ==========
+export const M11_TEMPLATES: TemplateItem[] = [
+  {
+    id: 'm11-realistic-default',
+    featureId: 'M11',
+    name: '真实风格',
+    subtitle: '保留原貌',
+    coverUrl: 'https://files.codelife.cc/temp/20250130/m11-realistic-preview.jpg',
+    workflowConfig: {
+      workflowUuid: '4df2efa0f18d46dc9758803e478eb51c',
+      templateImageUrl: undefined
+    },
+    tags: ['数字人', '真实', '拜年'],
+    order: 1,
+    enabled: true
+  }
+];
+
 // ========== M3 情侣合照模板（2人）==========
 // 使用LiblibAI专业双人换脸工作流：多人换脸_双人换脸_多人合照
 export const COUPLE_PHOTO_TEMPLATES: TemplateItem[] = [
@@ -379,6 +397,7 @@ export const FAMILY_TEMPLATES: TemplateItem[] = [
 export const ALL_TEMPLATES: TemplateItem[] = [
   ...M1_TEMPLATES,
   ...M2_TEMPLATES,
+  ...M11_TEMPLATES,
   ...COUPLE_PHOTO_TEMPLATES,
   ...FAMILY_TEMPLATES
 ];

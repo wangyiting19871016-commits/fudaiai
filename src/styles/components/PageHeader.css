@@ -1,0 +1,113 @@
+/* 统一的页面头部样式 */
+.festival-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left,
+.header-right {
+  flex: 0 0 auto;
+  min-width: 80px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cny-gray-900);
+  margin: 0;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+.header-placeholder {
+  width: 80px;
+}
+
+.home-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--cny-gray-700);
+}
+
+.home-icon-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: var(--cny-red-500);
+  color: var(--cny-red-500);
+  transform: scale(1.05);
+}
+
+.home-icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* 深色背景版本 */
+.dark-bg .festival-page-header {
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-bg .header-title {
+  color: #ffffff;
+}
+
+.dark-bg .home-icon-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.dark-bg .home-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .festival-page-header {
+    padding: 12px 16px;
+  }
+
+  .header-title {
+    font-size: 16px;
+  }
+
+  .header-left,
+  .header-right,
+  .header-placeholder {
+    min-width: 60px;
+  }
+
+  .home-icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+}

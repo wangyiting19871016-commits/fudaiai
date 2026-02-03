@@ -9,13 +9,10 @@ interface ZJFullscreenLoaderProps {
 }
 
 /**
- * 🎨 全屏加载组件 - 科技感设计
+ * 🎨 全屏加载组件 - 浅色玻璃态设计
  *
- * 特点：
- * - 持续旋转的外圈装饰（表示"正在处理"）
- * - 流畅的进度圆环动画
- * - 呼吸光效
- * - 绝对居中的百分比显示
+ * 嫁接自REACT3的LoadingScreen设计
+ * 保留原有业务逻辑，仅替换视觉呈现
  */
 const ZJFullscreenLoader: React.FC<ZJFullscreenLoaderProps> = ({
   stage,
@@ -77,104 +74,114 @@ const ZJFullscreenLoader: React.FC<ZJFullscreenLoaderProps> = ({
 
   // 阶段文案
   const stageText = {
-    dna: '🧬 正在分析面部特征...',
-    generating: '🎁 福袋AI正在为您生成...',
-    enhancing: '✨ 福袋AI正在精修画质...'
+    dna: '正在分析面部特征...',
+    generating: '福袋AI正在为您生成...',
+    enhancing: '福袋AI正在精修画质...'
   };
 
-  // 计算圆环参数
-  const radius = 70;
+  // 计算圆环参数（REACT3样式）
+  const radius = 80;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference * (1 - displayedProgress / 100);
+  const strokeDashoffset = circumference - (displayedProgress / 100) * circumference;
 
   return (
-    <div className="zj-fullscreen-loader">
-      {/* 背景遮罩 */}
-      <div className="zj-loader-backdrop" />
+    <div className="zj-fullscreen-loader-light">
+      {/* 背景光球效果 */}
+      <div className="zj-loader-bg-ambience">
+        <div className="zj-orb zj-orb-1" />
+        <div className="zj-orb zj-orb-2" />
+        <div className="zj-orb zj-orb-3" />
+      </div>
 
-      {/* 内容区（居中） */}
-      <div className="zj-loader-content">
-        {/* 用户照片预览（小尺寸） */}
-        {uploadedImage && (
-          <div className="zj-loader-avatar">
-            <img src={uploadedImage} alt="照片" />
-            {stage === 'dna' && <div className="zj-scan-line" />}
-          </div>
-        )}
+      {/* 内容直接放在外层容器，不要内层div */}
 
-        {/* 🎨 进度环 - 科技感设计 */}
-        <div className="zj-progress-ring">
-          {/* 外圈装饰 - 持续旋转 */}
-          <div className="zj-outer-ring zj-outer-ring-1"></div>
-          <div className="zj-outer-ring zj-outer-ring-2"></div>
+        {/* 进度环 + 头像容器 */}
+        <div className="zj-progress-container">
 
-          {/* 呼吸光晕 */}
-          <div className="zj-glow-effect"></div>
+          {/* SVG进度环 */}
+          <svg className="zj-progress-svg-ring" viewBox="0 0 200 200">
+            <defs>
+              <linearGradient id="zj-gradient-ring" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="rgb(229, 57, 53)" />
+                <stop offset="50%" stopColor="rgb(255, 107, 53)" />
+                <stop offset="100%" stopColor="rgb(255, 215, 0)" />
+              </linearGradient>
+            </defs>
 
-          <svg width="180" height="180" className="zj-progress-svg">
-            {/* 背景圆 */}
+            {/* 背景轨道 */}
             <circle
-              cx="90"
-              cy="90"
+              cx="100"
+              cy="100"
               r={radius}
+              stroke="rgba(255,255,255,0.4)"
+              strokeWidth="4"
               fill="none"
-              stroke="rgba(255,201,71,0.15)"
-              strokeWidth="8"
+              strokeLinecap="round"
             />
 
             {/* 进度圆 */}
             <circle
-              cx="90"
-              cy="90"
+              cx="100"
+              cy="100"
               r={radius}
+              stroke="url(#zj-gradient-ring)"
+              strokeWidth="4"
               fill="none"
-              stroke="url(#zj-progress-gradient)"
-              strokeWidth="8"
-              strokeLinecap="round"
               strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              transform="rotate(-90 90 90)"
-              className="zj-progress-circle"
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              className="zj-progress-ring-animated"
             />
-
-            <defs>
-              <linearGradient id="zj-progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFC947" />
-                <stop offset="50%" stopColor="#FF6F00" />
-                <stop offset="100%" stopColor="#D32F2F" />
-              </linearGradient>
-            </defs>
           </svg>
 
-          {/* 中心文字 - 绝对居中 */}
-          <div className="zj-progress-text">
-            <div className="zj-progress-percent">{Math.floor(displayedProgress)}%</div>
+          {/* 头像容器 */}
+          {uploadedImage && (
+            <div className="zj-avatar-container">
+              <div className="zj-avatar-inner">
+                <img src={uploadedImage} alt="User" className="zj-avatar-img" />
+              </div>
+
+              {/* DNA扫描线效果 */}
+              {stage === 'dna' && (
+                <div className="zj-scan-overlay">
+                  <div className="zj-scan-gradient" />
+                  <div className="zj-scan-line-thin" />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 百分比浮动标签 */}
+          <div className="zj-progress-badge">
+            <span className="zj-progress-number">
+              {Math.round(displayedProgress)}%
+            </span>
           </div>
         </div>
 
-        {/* 状态文案 */}
-        <div className="zj-loader-message">
-          <div className="zj-stage-text">{stageText[stage]}</div>
-          <div className="zj-detail-text">{formatTime(dynamicTime)}</div>
+        {/* 文字内容 */}
+        <div className="zj-text-content">
+          <div className="zj-status-line">
+            <div className="zj-spinner-icon" />
+            <h2 className="zj-status-title">
+              {stageText[stage]}
+            </h2>
+          </div>
+          <p className="zj-status-subtitle">
+            {formatTime(dynamicTime)}
+          </p>
           {message && message !== stageText[stage] && (
-            <div className="zj-detail-text" style={{ marginTop: '4px', opacity: 0.7 }}>{message}</div>
+            <p className="zj-status-detail">{message}</p>
           )}
         </div>
 
-        {/* 粒子装饰 */}
-        <div className="zj-particles">
-          <div className="zj-particle"></div>
-          <div className="zj-particle"></div>
-          <div className="zj-particle"></div>
-          <div className="zj-particle"></div>
-        </div>
+      {/* 装饰性图标 */}
+      <div className="zj-deco-icon zj-deco-sparkles">✨</div>
+      <div className="zj-deco-icon zj-deco-zap">⚡</div>
 
-        {/* 提示文本 */}
-        <div className="zj-loader-tips">
-          {dynamicTime > 60 && <p>💡 请耐心等待</p>}
-          {dynamicTime <= 30 && dynamicTime > 10 && <p>🎨 马上就好</p>}
-          {dynamicTime <= 10 && <p>✨ 即将完成</p>}
-        </div>
+      {/* 底部品牌 */}
+      <div className="zj-loader-footer">
+        <p className="zj-footer-text">福袋AI Generation</p>
       </div>
     </div>
   );

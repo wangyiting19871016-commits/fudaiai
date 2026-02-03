@@ -479,7 +479,7 @@ export const sendRequest = async (config: RequestConfig, authKey: string) => {
           };
 
           const pollTask = async (tid: string): Promise<any> => {
-              const maxRetries = 120; // 60s timeout (0.5s * 120)
+              const maxRetries = 300; // 300s = 5分钟超时（更长时间等待WAN生成）
               let attempts = 0;
 
               const cleanUrl = (url: string) => String(url || '').trim().replace(/^`+|`+$/g, '').replace(/\s+/g, '');
@@ -523,18 +523,18 @@ export const sendRequest = async (config: RequestConfig, authKey: string) => {
               };
               
               while (attempts < maxRetries) {
-                  await new Promise(r => setTimeout(r, 1000)); // Wait 1s
+                  await new Promise(r => setTimeout(r, 3000)); // Wait 3s（更稳定的轮询间隔）
                   attempts++;
-                  
+
                   // 2. 构造轮询 URL (支持 {{task_id}} 模板)
                   let pollUrl = config.polling.status_endpoint.replace('{{task_id}}', tid);
                   if (pollUrl.includes('timestamp=0')) {
                     pollUrl = pollUrl.replace(/timestamp=0/g, `timestamp=${Date.now()}`);
                   }
-                  
+
                   // 物理修正: N1N MJ Polling 必须是完整 URL 或通过代理?
                   // 如果是 /mj 开头，通常可以直接访问 (如果配置了 Proxy)
-                  // 或者如果是 N1N，需要 Base URL? 
+                  // 或者如果是 N1N，需要 Base URL?
                   // 假设 config.url 的 Base 部分可以复用，或者 pollUrl 是绝对路径
                   if (!pollUrl.startsWith('http')) {
                       // 尝试复用原始 URL 的 Origin
@@ -550,16 +550,51 @@ export const sendRequest = async (config: RequestConfig, authKey: string) => {
 
                   const pollMethod = (config.polling.method || 'GET') as RequestConfig['method'];
                   const pollBody = renderPollBody(config.polling.body_template, tid);
-                  const pollData = await sendRequest(
-                    { method: pollMethod, url: pollUrl, body: pollBody },
-                    authKey
-                  );
+
+                  // [FIX] 添加连接重试逻辑，处理 ECONNRESET 错误
+                  let pollData: any;
+                  let retryCount = 0;
+                  const maxPollRetries = 3;
+
+                  while (retryCount < maxPollRetries) {
+                    try {
+                      pollData = await sendRequest(
+                        { method: pollMethod, url: pollUrl, body: pollBody },
+                        authKey
+                      );
+                      break; // 成功，跳出重试循环
+                    } catch (pollError: any) {
+                      retryCount++;
+                      const isConnectionError = pollError.message?.includes('ECONNRESET') ||
+                                               pollError.message?.includes('ETIMEDOUT') ||
+                                               pollError.message?.includes('ECONNREFUSED') ||
+                                               pollError.message?.includes('fetch failed') ||
+                                               pollError.message?.includes('500');
+
+                      if (isConnectionError && retryCount < maxPollRetries) {
+                        console.warn(`[Polling] ⚠️ 连接错误，重试 ${retryCount}/${maxPollRetries}:`, pollError.message);
+                        await new Promise(r => setTimeout(r, 2000)); // 等待2秒后重试
+                        continue;
+                      } else {
+                        // 非连接错误或已达最大重试次数，直接抛出
+                        console.error('[Polling] ❌ 轮询请求失败:', pollError);
+                        throw pollError;
+                      }
+                    }
+                  }
+
+                  // [诊断日志] 输出完整的轮询响应
+                  console.log('[Polling] 📥 轮询响应完整数据:', JSON.stringify(pollData, null, 2));
+
                   const statusPath = config.polling.status_path;
                   const hasSuccessValue =
                     config.polling.success_value !== undefined &&
                     config.polling.success_value !== null &&
                     config.polling.success_value !== '';
                   const status = statusPath ? getNestedValue(pollData, statusPath) : undefined;
+
+                  console.log('[Polling] 🔍 当前任务状态:', status);
+                  console.log('[Polling] 🔍 期望成功值:', config.polling.success_value);
 
                   const resolveResult = () => {
                     if (config.polling.result_path === '$AUTO_IMAGE_URL') {
@@ -571,6 +606,7 @@ export const sendRequest = async (config: RequestConfig, authKey: string) => {
                   if (hasSuccessValue) {
                     if (status === config.polling.success_value) {
                       const resultValue = resolveResult();
+                      console.log('[Polling] ✅ 任务成功！结果:', resultValue);
                       if (Array.isArray(resultValue)) {
                         return { images: resultValue.map((v: any) => ({ url: cleanUrl(v?.imageUrl || v?.url || v) })), ...pollData };
                       }
@@ -589,9 +625,16 @@ export const sendRequest = async (config: RequestConfig, authKey: string) => {
                       status === 'Request Moderated' ||
                       status === 'Content Moderated'
                     ) {
-                      throw new Error(
-                        `Task Failed: ${getNestedValue(pollData, config.polling.fail_path || 'failReason') || 'Unknown error'}`
-                      );
+                      const failReason = getNestedValue(pollData, config.polling.fail_path || 'failReason') ||
+                                       getNestedValue(pollData, 'output.message') ||
+                                       getNestedValue(pollData, 'message') ||
+                                       JSON.stringify(pollData);
+                      console.error('[Polling] ❌ 任务失败！', {
+                        status,
+                        failReason,
+                        fullResponse: pollData
+                      });
+                      throw new Error(`Task Failed: ${failReason}`);
                     }
                   } else {
                     const resultValue = resolveResult();

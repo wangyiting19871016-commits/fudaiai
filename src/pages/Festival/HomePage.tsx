@@ -82,28 +82,28 @@ const FestivalHomePage: React.FC = () => {
 
         {/* 用户作品展示区 */}
         <div className="showcase-section">
-          <h3 className="section-title">🎉 用户精彩作品</h3>
+          <h3 className="section-title">用户精彩作品</h3>
           <div className="showcase-carousel">
             <div className="showcase-item">
-              <div className="showcase-placeholder">🖼️</div>
+              <div className="showcase-placeholder"></div>
               <div className="showcase-overlay">
                 <span className="user-name">@小明</span>
               </div>
             </div>
             <div className="showcase-item">
-              <div className="showcase-placeholder">🖼️</div>
+              <div className="showcase-placeholder"></div>
               <div className="showcase-overlay">
                 <span className="user-name">@小红</span>
               </div>
             </div>
             <div className="showcase-item">
-              <div className="showcase-placeholder">🖼️</div>
+              <div className="showcase-placeholder"></div>
               <div className="showcase-overlay">
                 <span className="user-name">@小刚</span>
               </div>
             </div>
             <div className="showcase-item">
-              <div className="showcase-placeholder">🖼️</div>
+              <div className="showcase-placeholder"></div>
               <div className="showcase-overlay">
                 <span className="user-name">@小美</span>
               </div>
@@ -131,15 +131,12 @@ const FestivalHomePage: React.FC = () => {
         <div className="footer-section">
           <div className="footer-nav">
             <button className="footer-btn">
-              <span>📱</span>
               <span>我的作品</span>
             </button>
             <button className="footer-btn">
-              <span>❓</span>
               <span>使用帮助</span>
             </button>
             <button className="footer-btn">
-              <span>💬</span>
               <span>联系客服</span>
             </button>
           </div>

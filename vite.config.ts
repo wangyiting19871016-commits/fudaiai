@@ -45,7 +45,7 @@ function cosUploadMiddleware() {
 
           try {
             console.log('[COS Middleware] 🔍 开始处理，body长度:', body.length);
-            const { image } = JSON.parse(body);
+            const { image, type, format } = JSON.parse(body);
 
             if (!image) {
               res.statusCode = 400;
@@ -60,11 +60,24 @@ function cosUploadMiddleware() {
               SecretKey: secretKey
             });
 
-            // Base64转Buffer
-            const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+            // Base64转Buffer（支持图片和音频）
+            let base64Data: string;
+            let fileExtension: string;
+
+            if (type === 'audio') {
+              // 音频文件处理
+              base64Data = image.replace(/^data:audio\/\w+;base64,/, '');
+              fileExtension = format || 'mp3';
+            } else {
+              // 图片文件处理（默认）
+              base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+              fileExtension = 'jpg';
+            }
+
             const buffer = Buffer.from(base64Data, 'base64');
 
-            const fileName = `festival/user/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+            const fileName = `festival/user/${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExtension}`;
+            console.log('[COS Middleware] 📁 文件名:', fileName, '类型:', type || 'image');
 
             // 上传到COS
             cos.putObject(

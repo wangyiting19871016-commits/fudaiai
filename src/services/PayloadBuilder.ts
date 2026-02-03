@@ -695,7 +695,12 @@ export class PayloadBuilder {
                     };
                 }
             } else if (provider === 'Qwen') {
-                if (payload.model && payload.model.includes('vl')) {
+                // [FIX] 如果已经通过 adapterConfig 处理过（例如 WAN 视频模型），不要再重复处理
+                if (effectiveAdapterConfig && effectiveAdapterConfig.structure_template) {
+                    console.log('[PayloadBuilder] ✅ Qwen 模型已通过 adapterConfig 处理（structure_template 存在），跳过硬编码逻辑');
+                    // WAN 模型 (wan2.2-s2v, wan2.2-animate-move) 会走这里
+                    // payload 和 endpoint 已经在前面通过模板构建好了，不需要重复处理
+                } else if (payload.model && payload.model.includes('vl')) {
                     endpoint = '/api/dashscope/api/v1/services/aigc/multimodal-generation/generation';
 
                     const promptText = payload.prompt || 'Describe this image';

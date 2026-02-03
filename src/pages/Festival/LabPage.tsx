@@ -6,7 +6,9 @@ import ZJAINarrator from './components/ZJAINarrator';
 import ZJGenderSelector from './components/ZJGenderSelector';
 import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import { missionExecutor, MissionProgress } from '../../services/MissionExecutor';
+import '../../styles/festival-design-system.css';
 import '../../styles/festival-multi-uploader.css';
+import '../../styles/festival-lab-glass.css';
 
 /**
  * 🔥 AI炼金矩阵 (Lab Page) - 春节H5实操页
@@ -39,11 +41,10 @@ const FestivalLabPage: React.FC = () => {
   // 从 TemplateSelectionPage 传来的 state
   const initialGender = location.state?.gender || 'male';
   const templateConfig = location.state?.templateConfig;
-  const needsGenderSelection = (isM1 || isM2) && !location.state?.gender;
 
   // 防止重复执行的锁
   const isExecutingRef = React.useRef(false);
-  const [stage, setStage] = useState<Stage>(needsGenderSelection ? 'gender' : 'upload');
+  const [stage, setStage] = useState<Stage>('upload');  // 🔥 移除废弃的性别选择，直接进入上传
   const [gender, setGender] = useState<'male' | 'female'>(initialGender);
   const [uploadedImage, setUploadedImage] = useState<string>('');
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
@@ -53,11 +54,7 @@ const FestivalLabPage: React.FC = () => {
   const [estimatedTime, setEstimatedTime] = useState<number>(0); // 预估剩余时间(秒)
   const taskStartTimeRef = React.useRef<number>(0);
 
-  const handleGenderSelect = (selectedGender: 'male' | 'female') => {
-    console.log('[Festival Lab] 性别选择:', selectedGender);
-    setGender(selectedGender);
-    setStage('upload');
-  };
+  // 🔥 废弃：性别选择逻辑已移除，gender 现在从 state 或默认值获取
 
   const handleUploadComplete = async (base64: string) => {
     setUploadedImage(base64);
@@ -167,13 +164,7 @@ const FestivalLabPage: React.FC = () => {
       {/* 主内容容器 */}
       <div className="lab-content-container">
 
-        {/* Step 0: 性别选择（M1任务） */}
-        {stage === 'gender' && (
-          <ZJGenderSelector
-            onSelect={handleGenderSelect}
-            selected={gender}
-          />
-        )}
+        {/* 🔥 废弃：性别选择页面已移除 */}
 
         {/* Step 1: 上传区 */}
         {stage === 'upload' && (
@@ -256,7 +247,7 @@ const FestivalLabPage: React.FC = () => {
                   <img src={uploadedImage} alt="Preview" className="preview-image" />
                   {!isMultiPerson && gender && (
                     <div className="preview-badge">
-                      {gender === 'male' ? '👨 男生' : gender === 'female' ? '👩 女生' : '👶 小孩'}
+                      {gender === 'male' ? '男' : gender === 'female' ? '女' : '小孩'}
                     </div>
                   )}
                 </div>

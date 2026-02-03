@@ -18,7 +18,7 @@ export const CATEGORIES: Category[] = [
   {
     id: 'avatar',
     name: '新年形象',
-    icon: '🎭',
+    icon: '',
     description: 'AI生成专属新年头像',
     gradient: ['#D32F2F', '#FF6B6B'],
     previewImage: '/assets/showcase/avatar-animated.png',
@@ -27,7 +27,7 @@ export const CATEGORIES: Category[] = [
   {
     id: 'family',
     name: '家庭相册',
-    icon: '👨‍👩‍👧',
+    icon: '',
     description: '情侣合照 · 老照片修复',
     gradient: ['#FF6B6B', '#FFA07A'],
     previewImage: '/assets/showcase/couple-photo.png',
@@ -36,7 +36,7 @@ export const CATEGORIES: Category[] = [
   {
     id: 'blessing',
     name: '拜年祝福',
-    icon: '💬',
+    icon: '',
     description: '文案 · 语音 · 春联',
     gradient: ['#FFD700', '#FFA000'],
     previewImage: '/assets/showcase/blessing-example.jpg',
@@ -45,7 +45,7 @@ export const CATEGORIES: Category[] = [
   {
     id: 'fun',
     name: '运势玩法',
-    icon: '🎴',
+    icon: '',
     description: '马年运势 · 趣味占卜',
     gradient: ['#9C27B0', '#E1BEE7'],
     previewImage: '/assets/showcase/fortune-wealth.png',

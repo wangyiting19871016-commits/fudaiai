@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { message } from 'antd';
 import { MissionExecutor, MissionResult } from '../../services/MissionExecutor';
 import { API_VAULT } from '../../config/ApiVault';
@@ -11,7 +11,9 @@ import {
   getDefaultVoice,
   getDefaultText
 } from '../../configs/festival/voicePresets';
+import '../../styles/festival-design-system.css';
 import '../../styles/festival.css';
+import '../../styles/festival-page-glass.css';
 
 /**
  * 🎤 语音贺卡页面 (VoicePage)
@@ -28,6 +30,7 @@ type VoiceMode = 'preset' | 'cloned' | 'raw_recording';
 const FestivalVoicePage: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { state: voiceState, addVoice, updateVoice } = useVoiceStore();
 
   // 状态
@@ -37,6 +40,10 @@ const FestivalVoicePage: React.FC = () => {
   const [text, setText] = useState<string>(getDefaultText());
   const [isGenerating, setIsGenerating] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
+  // 音色试听状态
+  const [previewingVoiceId, setPreviewingVoiceId] = useState<string | null>(null);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // 原声录制状态
   const [showRawRecorder, setShowRawRecorder] = useState(false);
@@ -81,6 +88,15 @@ const FestivalVoicePage: React.FC = () => {
     }
   }, [taskId]);
 
+  // 自动填充传递的文案
+  useEffect(() => {
+    const prefillText = location.state?.prefillText;
+    if (prefillText && prefillText.trim()) {
+      setText(prefillText);
+      console.log('[VoicePage] 自动填充文案:', prefillText);
+    }
+  }, [location.state]);
+
   // 清理
   useEffect(() => {
     return () => {
@@ -107,6 +123,66 @@ const FestivalVoicePage: React.FC = () => {
       // 清除原声录制
       setRawRecordedUrl(null);
       setRawRecordedBlob(null);
+    }
+  };
+
+  // 音色试听
+  const handlePreviewVoice = async (voice: VoicePreset, e: React.MouseEvent) => {
+    e.stopPropagation();  // 防止触发卡片选择
+
+    // 如果正在播放同一个音色，停止播放
+    if (previewingVoiceId === voice.id && previewAudioRef.current) {
+      previewAudioRef.current.pause();
+      setPreviewingVoiceId(null);
+      return;
+    }
+
+    // 停止之前的试听
+    if (previewAudioRef.current) {
+      previewAudioRef.current.pause();
+    }
+
+    setPreviewingVoiceId(voice.id);
+
+    try {
+      // 用固定文本生成试听音频
+      const response = await fetch('/api/fish/v1/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_VAULT.FISH_AUDIO.API_KEY}`,
+          'model': 's1'
+        },
+        body: JSON.stringify({
+          text: '祝您新春快乐，万事如意！',
+          reference_id: voice.id,
+          format: 'mp3',
+          latency: 'normal',
+          temperature: 0.9,
+          top_p: 0.9,
+          prosody: { speed: voice.speed || 1.0, volume: 0 }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('试听生成失败');
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      const audio = new Audio(audioUrl);
+      previewAudioRef.current = audio;
+
+      audio.onended = () => {
+        setPreviewingVoiceId(null);
+        URL.revokeObjectURL(audioUrl);
+      };
+
+      audio.play();
+    } catch (error: any) {
+      message.error(`试听失败: ${error.message}`);
+      setPreviewingVoiceId(null);
     }
   };
 
@@ -451,7 +527,7 @@ const FestivalVoicePage: React.FC = () => {
           latency: 'normal',
           temperature: 0.9,
           top_p: 0.9,
-          prosody: { speed: 1.0, volume: 0 }
+          prosody: { speed: selectedVoice.speed || 1.0, volume: 0 }
         })
       });
 
@@ -547,6 +623,15 @@ const FestivalVoicePage: React.FC = () => {
                     {getGenderLabel(voice.gender)}
                   </div>
                   {voice.tag && <div className="voice-card-tag">{voice.tag}</div>}
+
+                  {/* 试听按钮 */}
+                  <button
+                    className="voice-preview-btn"
+                    onClick={(e) => handlePreviewVoice(voice, e)}
+                    disabled={previewingVoiceId === voice.id}
+                  >
+                    {previewingVoiceId === voice.id ? '⏸' : '▶'}
+                  </button>
                 </div>
               ))}
             </div>

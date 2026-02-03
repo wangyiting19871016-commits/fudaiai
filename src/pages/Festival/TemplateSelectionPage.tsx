@@ -8,6 +8,7 @@ import {
 } from '../../configs/festival/templateGallery';
 import { getFeatureById } from '../../configs/festival/features';
 import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-template-selection.css';
 import '../../styles/festival-template-glass.css';
@@ -80,7 +81,7 @@ const TemplateSelectionPage: React.FC = () => {
     return (
       <div className="template-selection-error">
         <p>功能不存在</p>
-        <button onClick={() => navigate('/festival/home')}>返回首页</button>
+        <HomeButton />
       </div>
     );
   }
@@ -89,7 +90,7 @@ const TemplateSelectionPage: React.FC = () => {
     return (
       <div className="template-selection-error">
         <p>暂无可用模板</p>
-        <button onClick={() => navigate('/festival/home')}>返回首页</button>
+        <HomeButton />
       </div>
     );
   }
@@ -102,6 +103,8 @@ const TemplateSelectionPage: React.FC = () => {
       {/* 顶部导航 */}
       <div className="template-top-nav">
         <BackButton />
+        <h1 className="template-page-title" style={{ flex: 1, textAlign: 'center', margin: 0 }}>选择模板</h1>
+        <HomeButton />
       </div>
 
       {/* 主内容 */}

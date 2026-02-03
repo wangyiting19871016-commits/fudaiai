@@ -13,6 +13,7 @@ import { diagnosisM11 } from '../../utils/m11Diagnosis';
 import { TextSelector } from '../../components/TextSelector';
 import { getNavigationState, type NavigationState } from '../../types/navigationState';
 import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-digital-human.css';
 
@@ -465,7 +466,7 @@ const DigitalHumanPage: React.FC = () => {
         <div className="digital-human-header">
           <BackButton />
           <h1 className="page-title">数字人拜年</h1>
-          <div className="header-placeholder"></div>
+          <HomeButton />
         </div>
 
         {generationState.stage !== 'idle' && generationState.stage !== 'complete' && generationState.stage !== 'error' ? (
@@ -500,9 +501,7 @@ const DigitalHumanPage: React.FC = () => {
               <button className="action-btn action-btn-secondary" onClick={handleReset}>
                 重新生成
               </button>
-              <button className="action-btn action-btn-ghost" onClick={() => navigate('/festival/home')}>
-                🏠 回到首页
-              </button>
+              <HomeButton label="回到首页" />
             </div>
 
             <div className="result-tip">

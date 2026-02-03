@@ -10,6 +10,7 @@ import { MaterialService } from '../../services/MaterialService';
 import { CoupletEditor } from '../../components/CoupletEditor';
 import { FestivalButton, FestivalButtonGroup } from '../../components/FestivalButton';
 import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
 import type { MaterialAtom, CoupletData } from '../../types/material';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival.css';
@@ -50,7 +51,7 @@ const FestivalTextPage: React.FC = () => {
         <div className="festival-text-page">
           <div className="text-error">
             <h2>功能未找到</h2>
-            <button onClick={() => navigate('/festival/home')}>返回首页</button>
+            <HomeButton />
           </div>
         </div>
       </div>
@@ -449,7 +450,7 @@ const FestivalTextPage: React.FC = () => {
         <div className="text-header">
           <BackButton onClick={handleBack} />
           <h1 className="text-title">{feature.icon} {feature.name}</h1>
-          <div className="text-header-placeholder"></div>
+          <HomeButton />
         </div>
 
         {/* 主内容 */}

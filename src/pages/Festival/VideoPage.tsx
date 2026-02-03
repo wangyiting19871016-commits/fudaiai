@@ -7,6 +7,7 @@ import { getAllVoices } from '../../configs/festival/voicePresets';
 import { uploadImage, uploadAudio } from '../../services/imageHosting';
 import { getNavigationState, type NavigationState } from '../../types/navigationState';
 import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
 import '../../styles/festival-video.css';
 import '../../styles/festival-video-method.css';
 
@@ -159,7 +160,7 @@ const FestivalVideoPage: React.FC = () => {
       <div className="video-header">
         <BackButton onClick={handleBack} />
         <h1 className="page-title">数字人拜年视频</h1>
-        <div className="header-placeholder"></div>
+        <HomeButton />
       </div>
 
       {/* 主内容区 */}

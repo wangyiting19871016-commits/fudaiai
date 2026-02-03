@@ -36,6 +36,9 @@
   position: relative;
   z-index: 10;
   padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .template-back-btn {

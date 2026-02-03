@@ -5,6 +5,7 @@ import { MissionExecutor, MissionResult } from '../../services/MissionExecutor';
 import { addWatermark } from '../../utils/addWatermark';
 import { MaterialService } from '../../services/MaterialService';
 import { ContinueCreationPanel } from '../../components/ContinueCreationPanel';
+import { HomeButton } from '../../components/HomeButton';
 import type { MaterialAtom } from '../../types/material';
 import { createNavigationState, type NavigationState } from '../../types/navigationState';
 import '../../styles/festival-design-system.css';
@@ -518,24 +519,7 @@ const FestivalResultPage: React.FC = () => {
             justifyContent: 'center',
             marginTop: '12px'
           }}>
-            <button
-              onClick={handleChangeTask}
-              style={{
-                padding: '10px 24px',
-                background: 'rgba(255, 255, 255, 0.9)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
-                borderRadius: '10px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: 'var(--cny-gray-700)',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-            >
-              回到首页
-            </button>
+            <HomeButton onClick={handleChangeTask} />
           </div>
         </div>
 

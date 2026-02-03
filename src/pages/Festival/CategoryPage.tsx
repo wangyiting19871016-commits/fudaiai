@@ -4,6 +4,7 @@ import { getCategoryById } from '../../configs/festival/categories';
 import { getFeaturesByCategory, Feature, isLegacyFeature } from '../../configs/festival/features';
 import { BottomNav } from '../../components/BottomNav';
 import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-category-glass.css';
 
@@ -27,7 +28,7 @@ const FestivalCategoryPage: React.FC = () => {
         <div className="festival-category-page">
           <div className="category-error">
             <h2>分类未找到</h2>
-            <button onClick={() => navigate('/festival/home')}>返回首页</button>
+            <HomeButton />
           </div>
         </div>
       </div>
@@ -118,9 +119,7 @@ const FestivalCategoryPage: React.FC = () => {
         <div className="category-header">
           <BackButton />
           <h1 className="category-title">{category.name}</h1>
-          <button className="home-btn" onClick={() => navigate('/festival/home')}>
-            首页
-          </button>
+          <HomeButton />
         </div>
 
         {/* 功能列表 */}

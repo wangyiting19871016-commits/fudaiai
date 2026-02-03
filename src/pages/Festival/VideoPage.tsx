@@ -1,150 +1,77 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { VideoComposer, ComposerProgress, ComposerResult } from '../../services/VideoComposer';
-import { getDefaultVideoTemplate, getVideoTemplateById, VideoTemplate, VIDEO_TEMPLATES } from '../../configs/festival/videoTemplates';
-import { MissionExecutor, MissionResult } from '../../services/MissionExecutor';
-import VideoTemplatePicker from './components/VideoTemplatePicker';
+import { MissionExecutor } from '../../services/MissionExecutor';
+import { FestivalButton, FestivalButtonGroup } from '../../components/FestivalButton';
+import { useAPISlot } from '../../stores/APISlotStore';
+import { getAllVoices } from '../../configs/festival/voicePresets';
+import { uploadImage, uploadAudio } from '../../services/imageHosting';
+import { getNavigationState, type NavigationState } from '../../types/navigationState';
 import '../../styles/festival-video.css';
+import '../../styles/festival-video-method.css';
 
 /**
- * 🎬 视频生成页面
+ * 数字人视频生成页面（WAN API）
  *
  * 功能：
- * 1. 选择视频模板
- * 2. 预览效果
- * 3. 生成视频（图片+语音+文案合成）
- * 4. 下载/分享
+ * 1. 接收图片和文本
+ * 2. 生成语音（Fish Audio TTS）
+ * 3. 生成数字人视频（WAN API）
+ * 4. 下载视频
  */
-
-interface VideoPageState {
-  image?: string;
-  caption?: string;
-  audioUrl?: string;
-  taskId?: string;
-}
 
 const FestivalVideoPage: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
 
+  // API和语音配置
+  const { executeSlot } = useAPISlot();
+  const voicePresets = getAllVoices();
+
   // 状态
-  const [pageState, setPageState] = useState<VideoPageState>({});
-  const [selectedTemplate, setSelectedTemplate] = useState<VideoTemplate>(getDefaultVideoTemplate());
+  const [incomingImage, setIncomingImage] = useState<string>('');
+  const [incomingText, setIncomingText] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [progress, setProgress] = useState<ComposerProgress | null>(null);
-  const [result, setResult] = useState<ComposerResult | null>(null);
+  const [progress, setProgress] = useState<{ progress: number; message: string; stage: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isSupported, setIsSupported] = useState(true);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const composerRef = useRef<VideoComposer | null>(null);
+  // WAN数字人专用状态
+  const [greetingText, setGreetingText] = useState('新年快乐，恭喜发财！祝您身体健康，万事如意！');
+  const [selectedVoiceId, setSelectedVoiceId] = useState('59cb5986671546eaa6ca8ae6f29f6d22');
+  const [wanVideoUrl, setWanVideoUrl] = useState<string | null>(null);
 
-  // 初始化：获取图片、文案、语音数据
+  // 初始化：获取NavigationState数据
   useEffect(() => {
-    // 检查浏览器支持
-    setIsSupported(VideoComposer.isSupported());
+    // 从location.state获取NavigationState
+    const navState = getNavigationState(location.state);
+    if (navState) {
+      console.log('[VideoPage] 收到NavigationState:', navState);
 
-    // 从location.state获取数据（从结果页跳转过来）
-    const state = location.state as VideoPageState | undefined;
-    if (state) {
-      setPageState(state);
+      // 接收图片
+      if (navState.image) {
+        setIncomingImage(navState.image);
+      }
+
+      // 接收文本
+      if (navState.text) {
+        setIncomingText(navState.text);
+        setGreetingText(navState.text);
+      }
+
       return;
     }
 
-    // 从LocalStorage获取任务结果
+    // 兼容旧版：从LocalStorage获取任务结果
     if (taskId) {
       const savedResult = MissionExecutor.getResult(taskId);
       if (savedResult) {
-        setPageState({
-          image: savedResult.image,
-          caption: savedResult.caption || '马年大吉，恭喜发财！',
-          taskId: taskId
-        });
+        setIncomingImage(savedResult.image || '');
+        setIncomingText(savedResult.caption || '马年大吉，恭喜发财！');
+        setGreetingText(savedResult.caption || '马年大吉，恭喜发财！');
       }
     }
   }, [taskId, location.state]);
 
-  // 处理模板选择
-  const handleTemplateSelect = (template: VideoTemplate) => {
-    setSelectedTemplate(template);
-    setResult(null);  // 清除之前的结果
-    setError(null);
-  };
-
-  // 生成视频
-  const handleGenerate = async () => {
-    if (!pageState.image) {
-      setError('缺少图片，请先生成图片');
-      return;
-    }
-
-    if (!pageState.audioUrl) {
-      setError('缺少语音，请先生成语音');
-      return;
-    }
-
-    setIsGenerating(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const composer = new VideoComposer();
-      composerRef.current = composer;
-
-      const videoResult = await composer.compose(
-        {
-          image: pageState.image,
-          caption: pageState.caption || '马年大吉，恭喜发财！',
-          audioUrl: pageState.audioUrl,
-          template: selectedTemplate
-        },
-        (p) => setProgress(p)
-      );
-
-      setResult(videoResult);
-    } catch (err) {
-      console.error('[VideoPage] 生成失败:', err);
-      setError(err instanceof Error ? err.message : '视频生成失败');
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  // 下载视频
-  const handleDownload = () => {
-    if (!result) return;
-
-    const link = document.createElement('a');
-    link.href = result.url;
-    link.download = `福袋AI_${selectedTemplate.name}_${Date.now()}.webm`;
-    link.click();
-  };
-
-  // 分享视频
-  const handleShare = async () => {
-    if (!result) return;
-
-    // 尝试使用Web Share API
-    if (navigator.share && navigator.canShare) {
-      try {
-        const file = new File([result.blob], '福袋AI祝福视频.webm', { type: result.format });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: '福袋AI祝福视频',
-            text: '我用福袋AI生成了新年祝福视频，快来看看！'
-          });
-          return;
-        }
-      } catch (err) {
-        console.log('[VideoPage] Web Share失败，降级处理');
-      }
-    }
-
-    // 降级：提示用户手动分享
-    alert('请长按视频保存后分享到朋友圈或抖音');
-  };
 
   // 返回结果页
   const handleBack = () => {
@@ -155,37 +82,82 @@ const FestivalVideoPage: React.FC = () => {
     }
   };
 
-  // 去生成语音
-  const handleGoVoice = () => {
-    navigate(`/festival/voice/${taskId || ''}`, {
-      state: {
-        image: pageState.image,
-        caption: pageState.caption,
-        returnTo: 'video'
-      }
-    });
-  };
+  // WAN数字人视频生成
+  const handleGenerateWAN = async () => {
+    if (!incomingImage) {
+      setError('缺少图片，请先生成图片');
+      return;
+    }
 
-  // 不支持的浏览器
-  if (!isSupported) {
-    return (
-      <div className="festival-video-page">
-        <div className="video-unsupported">
-          <div className="unsupported-icon">😅</div>
-          <h2>当前浏览器不支持视频录制</h2>
-          <p>请使用 Chrome、Edge 或 Firefox 浏览器</p>
-          <button className="back-btn" onClick={handleBack}>返回</button>
-        </div>
-      </div>
-    );
-  }
+    if (!greetingText.trim()) {
+      setError('请输入拜年祝福语');
+      return;
+    }
+
+    setIsGenerating(true);
+    setError(null);
+    setWanVideoUrl(null);
+
+    try {
+      // 步骤1: 上传图片到COS
+      setProgress({ progress: 10, message: '上传照片中...', stage: 'uploading' });
+      const imageUploadResult = await uploadImage(incomingImage);
+      if (!imageUploadResult.success) {
+        throw new Error(imageUploadResult.error || '图片上传失败');
+      }
+
+      // 步骤2: 使用Fish Audio生成TTS音频
+      setProgress({ progress: 30, message: '生成语音中...', stage: 'generating' });
+      const ttsResult = await executeSlot('fish-audio-tts', {
+        reference_id: selectedVoiceId,
+        text: greetingText,
+        format: 'mp3'
+      });
+
+      if (!ttsResult.success || !ttsResult.data?.audio) {
+        throw new Error('语音生成失败');
+      }
+
+      // 步骤3: 将TTS音频转换为Blob并上传
+      setProgress({ progress: 50, message: '上传语音中...', stage: 'uploading' });
+      const audioBase64 = ttsResult.data.audio;
+      const audioBlob = await fetch(`data:audio/mp3;base64,${audioBase64}`).then(r => r.blob());
+      const audioUploadResult = await uploadAudio(audioBlob, 'mp3');
+
+      if (!audioUploadResult.success) {
+        throw new Error(audioUploadResult.error || '语音上传失败');
+      }
+
+      // 步骤4: 调用WAN数字人API
+      setProgress({ progress: 70, message: '生成数字人视频中（约1-2分钟）...', stage: 'generating' });
+      const wanResult = await executeSlot('wan2.2-s2v', {
+        input: {
+          portrait_image_url: imageUploadResult.url,
+          audio_url: audioUploadResult.url
+        }
+      });
+
+      if (!wanResult.success || !wanResult.data?.output?.results?.video_url) {
+        throw new Error(wanResult.error || 'WAN视频生成失败');
+      }
+
+      setProgress({ progress: 100, message: '视频生成完成！', stage: 'complete' });
+      setWanVideoUrl(wanResult.data.output.results.video_url);
+
+    } catch (err) {
+      console.error('[VideoPage] WAN生成失败:', err);
+      setError(err instanceof Error ? err.message : 'WAN视频生成失败');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="festival-video-page">
       {/* 顶部导航 */}
       <div className="video-header">
         <button className="back-btn" onClick={handleBack}>← 返回</button>
-        <h1 className="page-title">🎬 生成视频</h1>
+        <h1 className="page-title">数字人拜年视频</h1>
         <div className="header-placeholder"></div>
       </div>
 
@@ -193,12 +165,11 @@ const FestivalVideoPage: React.FC = () => {
       <div className="video-content">
         {/* 预览区域 */}
         <div className="preview-section">
-          {result ? (
-            // 显示生成的视频
+          {wanVideoUrl ? (
+            // 显示生成的数字人视频
             <div className="video-preview">
               <video
-                ref={videoRef}
-                src={result.url}
+                src={wanVideoUrl}
                 controls
                 autoPlay
                 loop
@@ -207,28 +178,53 @@ const FestivalVideoPage: React.FC = () => {
               />
             </div>
           ) : (
-            // 显示模板预览
-            <div
-              className="template-preview-large"
-              style={{
-                background: selectedTemplate.background.type === 'gradient'
-                  ? selectedTemplate.background.value
-                  : selectedTemplate.background.value
-              }}
-            >
-              {pageState.image ? (
-                <img src={pageState.image} alt="预览" className="preview-image" />
+            // 显示图片预览
+            <div className="template-preview-large">
+              {incomingImage ? (
+                <img src={incomingImage} alt="预览" className="preview-image" />
               ) : (
                 <div className="preview-placeholder">
-                  <span className="placeholder-icon">🖼️</span>
+                  <span className="placeholder-icon">□</span>
                   <span className="placeholder-text">暂无图片</span>
                 </div>
               )}
-              <div className="preview-caption">{pageState.caption || '祝福文案'}</div>
-              <div className="preview-template-name">{selectedTemplate.icon} {selectedTemplate.name}</div>
+              <div className="preview-caption">{incomingText || '祝福文案'}</div>
             </div>
           )}
         </div>
+
+        {/* 输入控件 */}
+        {!wanVideoUrl && (
+          <div className="wan-inputs-section">
+            <div className="input-group">
+              <label className="input-label">拜年祝福语</label>
+              <textarea
+                className="greeting-input"
+                value={greetingText}
+                onChange={(e) => setGreetingText(e.target.value)}
+                placeholder="例如：新年快乐，恭喜发财！祝您身体健康，万事如意！"
+                maxLength={200}
+                rows={3}
+              />
+              <div className="char-count">{greetingText.length}/200</div>
+            </div>
+
+            <div className="input-group">
+              <label className="input-label">选择音色</label>
+              <select
+                className="voice-selector"
+                value={selectedVoiceId}
+                onChange={(e) => setSelectedVoiceId(e.target.value)}
+              >
+                {voicePresets.map(voice => (
+                  <option key={voice.id} value={voice.id}>
+                    {voice.name} - {voice.description}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
 
         {/* 进度条 */}
         {isGenerating && progress && (
@@ -246,67 +242,58 @@ const FestivalVideoPage: React.FC = () => {
         {/* 错误提示 */}
         {error && (
           <div className="error-section">
-            <span className="error-icon">⚠️</span>
+            <span className="error-icon">!</span>
             <span className="error-text">{error}</span>
           </div>
         )}
 
-        {/* 缺少语音提示 */}
-        {!pageState.audioUrl && !result && (
-          <div className="missing-audio-tip">
-            <p>⚠️ 还没有生成语音，视频需要语音才能合成</p>
-            <button className="go-voice-btn" onClick={handleGoVoice}>
-              🎙️ 去生成语音
-            </button>
-          </div>
-        )}
-
-        {/* 模板选择器 */}
-        {!result && (
-          <VideoTemplatePicker
-            selectedId={selectedTemplate.id}
-            onSelect={handleTemplateSelect}
-          />
-        )}
-
         {/* 操作按钮 */}
         <div className="action-section">
-          {result ? (
+          {wanVideoUrl ? (
             // 生成完成后的按钮
-            <>
-              <button className="action-btn primary" onClick={handleDownload}>
-                💾 保存视频
-              </button>
-              <button className="action-btn secondary" onClick={handleShare}>
-                📤 分享
-              </button>
-              <button className="action-btn ghost" onClick={() => setResult(null)}>
-                🔄 重新选择模板
-              </button>
-            </>
+            <FestivalButtonGroup grid>
+              <FestivalButton
+                variant="primary"
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = wanVideoUrl;
+                  link.download = `数字人拜年_${Date.now()}.mp4`;
+                  link.click();
+                }}
+              >
+                保存视频
+              </FestivalButton>
+              <FestivalButton
+                variant="ghost"
+                onClick={() => setWanVideoUrl(null)}
+                fullWidth
+                style={{ gridColumn: '1 / -1' }}
+              >
+                重新生成
+              </FestivalButton>
+            </FestivalButtonGroup>
           ) : (
             // 生成前的按钮
-            <button
-              className={`action-btn primary generate-btn ${isGenerating ? 'loading' : ''}`}
-              onClick={handleGenerate}
-              disabled={isGenerating || !pageState.image || !pageState.audioUrl}
+            <FestivalButton
+              variant="primary"
+              fullWidth
+              loading={isGenerating}
+              onClick={handleGenerateWAN}
+              disabled={
+                isGenerating ||
+                !incomingImage ||
+                !greetingText.trim()
+              }
             >
-              {isGenerating ? (
-                <>
-                  <span className="loading-spinner"></span>
-                  生成中...
-                </>
-              ) : (
-                '🎬 生成视频'
-              )}
-            </button>
+              {isGenerating ? '生成中...' : '生成数字人视频'}
+            </FestivalButton>
           )}
         </div>
 
         {/* 提示信息 */}
         <div className="tips-section">
-          <p className="tip">💡 视频时长与语音时长一致，建议15秒以内效果最佳</p>
-          <p className="tip">💡 生成的视频可以直接发送到朋友圈或抖音</p>
+          <p className="tip">视频时长与语音时长一致，建议15秒以内效果最佳</p>
+          <p className="tip">生成的视频可以直接发送到朋友圈或抖音</p>
         </div>
       </div>
     </div>

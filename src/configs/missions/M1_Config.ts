@@ -65,7 +65,8 @@ export const M1_CONFIG: M1Config = {
   },
 
   qwen_config: {
-    system_prompt: `Analyze this portrait photo. Describe ONLY these key features in EXTREME detail (they are critical for identity):
+    system_prompt: `CRITICAL TASK: Analyze this portrait photo to PRESERVE the person's identity in 3D rendering.
+Describe ONLY these key features in EXTREME detail (they are CRITICAL for maintaining facial similarity and hairstyle):
 
 1. HEADWEAR (帽子/头饰):
    - Type: baseball cap / beanie / fedora / sun hat / headband / hair clip / or "no headwear"
@@ -84,7 +85,8 @@ export const M1_CONFIG: M1Config = {
    - Color/material: gold / silver / pearl / red / etc.
    - Example: "wearing gold hoop earrings" / "wearing red tassel earrings" / "no earrings"
 
-4. HAIR (发型 - 超级重要，必须极度详细):
+4. HAIR (发型 - 超级重要，必须极度详细，这是保持相似度的关键):
+   - ⚠️ PRIORITY: Hair is THE MOST IMPORTANT feature for identity preservation!
    - Length: very short (buzz/crew cut) / short cropped / medium / shoulder-length / long
    - Style: how is it worn?
      * Short: buzz cut / crew cut / cropped / spiky / slicked back / side-parted / messy
@@ -132,12 +134,12 @@ BAD Examples (too vague):
 
   prompt_templates: {
     male: {
-      positive: "pks, (masterpiece), 3d pixar animation style, ({{QWEN_OUTPUT}}:2.6), (mature 35 adult man:1.8), adult male proportions, defined jawline, wearing a vibrant red traditional Chinese silk jacket with gold dragon patterns, holding a shiny golden ingot (Yuanbao), soft cinematic lighting, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
-      negative: "--no snake, reptile, low quality, distorted, baby face, youthful, teen, child, toddler, boy, kid, childish face, chibi, big head, small body, cute, kawaii"
+      positive: "pks, (masterpiece), 3d pixar animation style, (maintaining exact facial features and hairstyle from source photo:2.2), ({{QWEN_OUTPUT}}:1.9), (mature 35 adult man:1.6), (preserve original face and hair:1.8), adult male proportions, defined jawline, (wearing vibrant red traditional Chinese silk jacket with gold dragon patterns:1.3), (holding shiny golden ingot Yuanbao:1.2), soft cinematic lighting, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
+      negative: "--no snake, reptile, low quality, distorted, baby face, youthful, teen, child, toddler, boy, kid, childish face, chibi, big head, small body, cute, kawaii, different hairstyle, altered face, wrong hair color, changed facial features"
     },
     female: {
-      positive: "pks, (masterpiece), 3d pixar animation style, ({{QWEN_OUTPUT}}:3.0), mature adult woman, refined facial proportions, wearing a vibrant red traditional Chinese silk jacket with gold dragon patterns, holding a shiny golden ingot (Yuanbao), character portrait, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
-      negative: "--no snake, reptile, low quality, distorted, baby face, youthful, smooth young skin, teen, child, cute innocent, chibi, big head, small body"
+      positive: "pks, (masterpiece), 3d pixar animation style, (maintaining exact facial features and hairstyle from source photo:2.2), ({{QWEN_OUTPUT}}:1.9), (preserve original face and hair:1.8), mature adult woman, refined facial proportions, (wearing vibrant red traditional Chinese silk jacket with gold dragon patterns:1.3), (holding shiny golden ingot Yuanbao:1.2), character portrait, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
+      negative: "--no snake, reptile, low quality, distorted, baby face, youthful, smooth young skin, teen, child, cute innocent, chibi, big head, small body, different hairstyle, altered face, wrong hair color, changed facial features"
     }
   }
 };

@@ -250,43 +250,55 @@ export const callAliVision = async (request: VisionAnalysisRequest): Promise<Ali
     try {
       // 1. 物理提取：先提取 output.choices[0].message.content[0].text
       const text = jsonResponse.output.choices[0].message.content[0].text;
-      
+
       // 2. 物理清洗：使用正则移除所有 ```json 和 ``` 标签
       let cleanedText = text.replace(/```json|```/g, '').trim();
-      
+
       // 3. 智能映射字段
       const parsedJson = JSON.parse(cleanedText);
-      
+
       // 智能映射：如果包含 "主要内容和主题"，则使用其描述
       if (parsedJson["主要内容和主题"] && parsedJson["主要内容和主题"]["描述"]) {
         contentText = parsedJson["主要内容和主题"]["描述"];
-      } 
+      }
       // 否则使用传统的 description 字段
       else if (parsedJson.description && typeof parsedJson.description === 'string') {
         contentText = parsedJson.description;
+      }
+      // 🆕 赛博算命场景：如果是中文字段的JSON对象（性别、肤色等），则合并成字符串
+      else if (parsedJson["性别"] || parsedJson["肤色"] || parsedJson["穿着"]) {
+        // 将所有字段按格式化方式拼接
+        const lines: string[] = [];
+        Object.entries(parsedJson).forEach(([key, value]) => {
+          if (value && value !== '看不清') {
+            lines.push(`${key}: ${value}`);
+          }
+        });
+        contentText = lines.join('\n');
+        console.log('[AliVision] 检测到赛博算命场景，已格式化中文字段');
       }
       // 兜底：使用原始文本的前 500 字符
       else {
         contentText = cleanedText.substring(0, 500);
       }
-      
+
       // 智能映射：如果存在 "色彩搭配"，则转换为 visual_features.color_palette
       if (parsedJson["色彩搭配"] && Array.isArray(parsedJson["色彩搭配"])) {
         parsedResult.visual_features.color_palette = parsedJson["色彩搭配"];
       } else if (parsedJson.color_palette && Array.isArray(parsedJson.color_palette)) {
         parsedResult.visual_features.color_palette = parsedJson.color_palette;
       }
-      
+
       // 填充其他字段
       if (parsedJson.style_tags && Array.isArray(parsedJson.style_tags)) {
         parsedResult.style_tags = parsedJson.style_tags;
       }
-      
+
       console.log(`[AliVision] AI 生成的描述: ${contentText.substring(0, 200)}...`);
     } catch (error) {
       console.error('[AliVision] 提取内容失败，使用兜底逻辑:', error);
       console.log('[AliVision] 原始数据结构:', jsonResponse);
-      
+
       // 4. 兜底保护：即使解析失败，也必须保留一个最简化的 description
       try {
         // 尝试从原始响应中提取一些文本作为兜底

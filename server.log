@@ -1,0 +1,174 @@
+[dotenv@17.2.3] injecting env (16) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+✅ 物理保存路径已锁定: F:/project_kuajing/temp_processing
+✅ 下载目录已初始化: F:\project_kuajing\downloads
+🔥 [核心监听启动] 后端心脏已跳动，端口: 3002
+🔥 物理进程已开启，PID: 30388
+
+🚀 Server is running on http://localhost:3002
+📡 API endpoints available at:
+   - Health check: http://localhost:3002/api/health
+   - FFmpeg check: http://localhost:3002/api/ffmpeg-check
+   - Audio separate: http://localhost:3002/api/audio/separate
+   - AI Triple Split: http://localhost:3002/api/audio/process-triple-split
+   - Traditional Split: http://localhost:3002/api/audio/split-traditional
+   - Video Compose: http://localhost:3002/api/video/compose
+
+🎯 Frontend available at: http://localhost:3002
+🚀 后端服务已在 3002 端口就绪，准备调用 FFmpeg
+
+🔍 Checking FFmpeg installation...
+
+✅ FFmpeg FOUND:
+   Path: ffmpeg
+   Version: 2025-12-31-git-38e89fe502-full_build-www.gyan.dev
+   FFmpeg service is now active and reachable
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: POST -> /api/payment/create-order
+✨ [3002 信号] 成功接收到来自网页的请求！
+💰 [支付信息]
+   AppID: 201906176646
+   订单号: ord_1770375605709_4bw7w0m
+   金额: ¥9.9
+   回调URL: https://your-ngrok-url.ngrok-free.app/api/payment/notify
+🔗 [请求虎皮椒] https://api.xunhupay.com/payment/do.html?version=1.1&lang=zh-CN&plugins=festival-ai&appid=201906176646&trade_order_id=ord_1770375605709_4bw7w0m&total_fee=9.90&title=%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80%20-%20500%E7%A7%AF%E5%88%86&time=1770375605&notify_url=https%3A%2F%2Fyour-ngrok-url.ngrok-free.app%2Fapi%2Fpayment%2Fnotify&return_url=http%3A%2F%2F192.168.2.2%3A5173%2Fpayment-success%3ForderId%3Dord_1770375605709_4bw7w0m&callback_url=http%3A%2F%2F192.168.2.2%3A5173%2Fpayment-success%3ForderId%3Dord_1770375605709_4bw7w0m&hash=e734d3833215e0e4e41dc1a6832f0889
+✅ [虎皮椒响应] {
+  openid: 20292884063,
+  url_qrcode: 'https://api.xunhupay.com/plugins/newQrcode?data=aHR0cHM6Ly9hcGkueHVuaHVwYXkuY29tL3BheW1lbnRzL2FsaXBheS9uZXdRcmNvZGU/aWQ9MjAyOTI4ODQwNjMmbm9uY2Vfc3RyPTMwODA3NzE1NzYmdGltZT0xNzcwMzc1NjA4JmFwcGlkPTIwMTkwNjE3NjY0NiZoYXNoPTc0YThkNWMxNDc2OWMyZmRmZjBkZTI5ZDBmNmU1Mjk4',
+  url: 'https://api.xunhupay.com/payments/alipay/newQrcode?id=20292884063&nonce_str=3080771576&time=1770375608&appid=201906176646&hash=74a8d5c14769c2fdff0de29d0f6e5298',
+  errcode: 0,
+  errmsg: 'success!',
+  hash: '25a8ee719ba5a7475aed0caa04529777'
+}
+💰 [订单创建] ord_1770375605709_4bw7w0m - 小试牛刀 - ¥9.9 - 500积分
+📡 [雷达捕捉到信号]: POST -> /api/payment/create-order
+✨ [3002 信号] 成功接收到来自网页的请求！
+💰 [支付信息]
+   AppID: 201906176646
+   订单号: ord_1770376508295_ebla5ed
+   金额: ¥9.9
+   回调URL: https://your-ngrok-url.ngrok-free.app/api/payment/notify
+🔗 [请求虎皮椒] https://api.xunhupay.com/payment/do.html?version=1.1&lang=zh-CN&plugins=festival-ai&appid=201906176646&trade_order_id=ord_1770376508295_ebla5ed&total_fee=9.90&title=%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80%20-%20500%E7%A7%AF%E5%88%86&time=1770376508&notify_url=https%3A%2F%2Fyour-ngrok-url.ngrok-free.app%2Fapi%2Fpayment%2Fnotify&return_url=http%3A%2F%2F192.168.2.2%3A5173%2Fpayment-success%3ForderId%3Dord_1770376508295_ebla5ed&callback_url=http%3A%2F%2F192.168.2.2%3A5173%2Fpayment-success%3ForderId%3Dord_1770376508295_ebla5ed&hash=86852255e1a2a5b09eb2a0f29b92b670
+✅ [虎皮椒响应] {
+  openid: 20292884299,
+  url_qrcode: 'https://api.xunhupay.com/plugins/newQrcode?data=aHR0cHM6Ly9hcGkueHVuaHVwYXkuY29tL3BheW1lbnRzL2FsaXBheS9uZXdRcmNvZGU/aWQ9MjAyOTI4ODQyOTkmbm9uY2Vfc3RyPTczMDU2NzExMTcmdGltZT0xNzcwMzc2NTExJmFwcGlkPTIwMTkwNjE3NjY0NiZoYXNoPTM1Y2UyN2Y0NjdiYTAxMTdjMmY4ZDcxYTc3OTA0MTg1',
+  url: 'https://api.xunhupay.com/payments/alipay/newQrcode?id=20292884299&nonce_str=7305671117&time=1770376511&appid=201906176646&hash=35ce27f467ba0117c2f8d71a77904185',
+  errcode: 0,
+  errmsg: 'success!',
+  hash: 'afa8939e7d67761ab724b951edf65236'
+}
+💰 [订单创建] ord_1770376508295_ebla5ed - 小试牛刀 - ¥9.9 - 500积分
+📡 [雷达捕捉到信号]: POST -> /api/payment/create-order
+✨ [3002 信号] 成功接收到来自网页的请求！
+💰 [支付信息]
+   AppID: 201906176646
+   订单号: ord_1770376532430_u8crm4p
+   金额: ¥9.9
+   回调URL: https://your-ngrok-url.ngrok-free.app/api/payment/notify
+🔗 [请求虎皮椒] https://api.xunhupay.com/payment/do.html?version=1.1&lang=zh-CN&plugins=festival-ai&appid=201906176646&trade_order_id=ord_1770376532430_u8crm4p&total_fee=9.90&title=%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80%20-%20500%E7%A7%AF%E5%88%86&time=1770376532&notify_url=https%3A%2F%2Fyour-ngrok-url.ngrok-free.app%2Fapi%2Fpayment%2Fnotify&return_url=http%3A%2F%2F192.168.2.2%3A5173%2Fpayment-success%3ForderId%3Dord_1770376532430_u8crm4p&callback_url=http%3A%2F%2F192.168.2.2%3A5173%2Fpayment-success%3ForderId%3Dord_1770376532430_u8crm4p&hash=8d92bee9dd30cc87bd8835d66278aa7d
+✅ [虎皮椒响应] {
+  openid: 20292884302,
+  url_qrcode: 'https://api.xunhupay.com/plugins/newQrcode?data=aHR0cHM6Ly9hcGkueHVuaHVwYXkuY29tL3BheW1lbnRzL2FsaXBheS9uZXdRcmNvZGU/aWQ9MjAyOTI4ODQzMDImbm9uY2Vfc3RyPTczNTA0NzM3NjEmdGltZT0xNzcwMzc2NTM0JmFwcGlkPTIwMTkwNjE3NjY0NiZoYXNoPWQ1YjgyZWI4NWMyMWNmOTg2OTJhZDBhYzFiNGJlYzA5',
+  url: 'https://api.xunhupay.com/payments/alipay/newQrcode?id=20292884302&nonce_str=7350473761&time=1770376534&appid=201906176646&hash=d5b82eb85c21cf98692ad0ac1b4bec09',
+  errcode: 0,
+  errmsg: 'success!',
+  hash: '76426d3550a045e2628db7c4a31265ea'
+}
+💰 [订单创建] ord_1770376532430_u8crm4p - 小试牛刀 - ¥9.9 - 500积分
+📡 [雷达捕捉到信号]: POST -> /api/payment/create-order
+✨ [3002 信号] 成功接收到来自网页的请求！
+💰 [支付信息]
+   AppID: 201906176646
+   订单号: ord_1770376830297_qqbo9m3
+   金额: ¥59.9
+   回调URL: https://your-ngrok-url.ngrok-free.app/api/payment/notify
+🔗 [请求虎皮椒] https://api.xunhupay.com/payment/do.html?version=1.1&lang=zh-CN&plugins=festival-ai&appid=201906176646&trade_order_id=ord_1770376830297_qqbo9m3&total_fee=59.90&title=%E6%98%A5%E8%8A%82%E8%B1%AA%E7%A4%BC%20-%205000%E7%A7%AF%E5%88%86&time=1770376830&notify_url=https%3A%2F%2Fyour-ngrok-url.ngrok-free.app%2Fapi%2Fpayment%2Fnotify&return_url=http%3A%2F%2F192.168.2.2%3A5173%2Fpayment-success%3ForderId%3Dord_1770376830297_qqbo9m3&callback_url=http%3A%2F%2F192.168.2.2%3A5173%2Fpayment-success%3ForderId%3Dord_1770376830297_qqbo9m3&hash=8079c60549f9cc1cf009b4687547d688
+✅ [虎皮椒响应] {
+  openid: 20292884374,
+  url_qrcode: 'https://api.xunhupay.com/plugins/newQrcode?data=aHR0cHM6Ly9hcGkueHVuaHVwYXkuY29tL3BheW1lbnRzL2FsaXBheS9uZXdRcmNvZGU/aWQ9MjAyOTI4ODQzNzQmbm9uY2Vfc3RyPTA4NjE3MzMzNzcmdGltZT0xNzcwMzc2ODMzJmFwcGlkPTIwMTkwNjE3NjY0NiZoYXNoPWQ5ODUyZjJmY2I4NTQxMDFmODBmN2ZhMWZmZjdiNzZj',
+  url: 'https://api.xunhupay.com/payments/alipay/newQrcode?id=20292884374&nonce_str=0861733377&time=1770376833&appid=201906176646&hash=d9852f2fcb854101f80f7fa1fff7b76c',
+  errcode: 0,
+  errmsg: 'success!',
+  hash: 'afb23203ac60fc60305a7745cad93fb1'
+}
+💰 [订单创建] ord_1770376830297_qqbo9m3 - 春节豪礼 - ¥59.9 - 5000积分
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770387941529_fyid74edpwo.jpg 类型: image 大小: 128027
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770387941529_fyid74edpwo.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770387941529_fyid74edpwo.jpg"}
+[COS Backend] 🔍 URL长度: 99
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770388395707_1m35vhrspoc.jpg 类型: image 大小: 109428
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770388395707_1m35vhrspoc.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770388395707_1m35vhrspoc.jpg"}
+[COS Backend] 🔍 URL长度: 99
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770389081444_eqshex6l5m.jpg 类型: image 大小: 128027
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770389081444_eqshex6l5m.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770389081444_eqshex6l5m.jpg"}
+[COS Backend] 🔍 URL长度: 98
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770392243535_it0f9f49y9.jpg 类型: image 大小: 109428
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392243535_it0f9f49y9.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392243535_it0f9f49y9.jpg"}
+[COS Backend] 🔍 URL长度: 98
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770392318979_uh2q42nt06c.jpg 类型: image 大小: 109428
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392318979_uh2q42nt06c.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392318979_uh2q42nt06c.jpg"}
+[COS Backend] 🔍 URL长度: 99
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770392481641_3pfr56km88.jpg 类型: image 大小: 159943
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392481641_3pfr56km88.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392481641_3pfr56km88.jpg"}
+[COS Backend] 🔍 URL长度: 98
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770392485061_yx5dpa6en9i.jpg 类型: image 大小: 7860627
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392485061_yx5dpa6en9i.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392485061_yx5dpa6en9i.jpg"}
+[COS Backend] 🔍 URL长度: 99
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770392593341_rtiladbmcg.jpg 类型: image 大小: 7860627
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392593341_rtiladbmcg.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392593341_rtiladbmcg.jpg"}
+[COS Backend] 🔍 URL长度: 98
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770392675946_pt8w7w6csgb.jpg 类型: image 大小: 7860627
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392675946_pt8w7w6csgb.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392675946_pt8w7w6csgb.jpg"}
+[COS Backend] 🔍 URL长度: 99
+📡 [雷达捕捉到信号]: POST -> /api/upload-cos
+✨ [3002 信号] 成功接收到来自网页的请求！
+[COS Backend] 上传文件: festival/user/1770392727119_kpsrz2cerq8.jpg 类型: image 大小: 128027
+[COS Backend] ✅ 上传成功: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392727119_kpsrz2cerq8.jpg
+[COS Backend] 🔍 准备发送的响应: {"url":"https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival/user/1770392727119_kpsrz2cerq8.jpg"}
+[COS Backend] 🔍 URL长度: 99
+📡 [雷达捕捉到信号]: GET -> /health
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/m2-templates?gender=male
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/m2-templates?gender=male
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/m2-templates?gender=male
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/m2-templates?gender=male
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/m2-templates?gender=female
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/m2-templates?gender=child
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/m2-templates?gender=male
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/m2-templates?gender=male
+✨ [3002 信号] 成功接收到来自网页的请求！
+📡 [雷达捕捉到信号]: GET -> /api/health
+✨ [3002 信号] 成功接收到来自网页的请求！

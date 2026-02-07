@@ -1,0 +1,1127 @@
+===== 上传对照表 =====
+
+上传时间: 2026/2/7 03:44:08
+总数: 140 张
+成功: 140 张
+失败: 0 张
+
+1. Asset ID: asset_1770400284937_qxalb71e9
+   本地文件: asset_1770400284937_qxalb71e9_现代装-手持道具-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770400284937_qxalb71e9_现代装-手持道具-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/male/asset_1770400284937_qxalb71e9.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400284937_qxalb71e9.jpg
+   MD5校验: 1783dc353366e84ad2722a4561e2207e
+   性别: male
+
+2. Asset ID: asset_1770400300048_bmuovslqb
+   本地文件: asset_1770400300048_bmuovslqb_财神装-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770400300048_bmuovslqb_财神装-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/male/asset_1770400300048_bmuovslqb.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400300048_bmuovslqb.png
+   MD5校验: e14872068f0543bac32b1bc8db05b863
+   性别: male
+
+3. Asset ID: asset_1770400330367_b37k1cfus
+   本地文件: asset_1770400330367_b37k1cfus_现代装-手持道具-喜庆风-彩龙饰品.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770400330367_b37k1cfus_现代装-手持道具-喜庆风-彩龙饰品.jpg
+   COS路径: festival-templates/m2/male/asset_1770400330367_b37k1cfus.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400330367_b37k1cfus.jpg
+   MD5校验: 0ab8ec1d20c25eb2e7679c398edece2e
+   性别: male
+
+4. Asset ID: asset_1770400338653_s1bpmq7he
+   本地文件: asset_1770400338653_s1bpmq7he_现代装-手持道具-喜庆风-福饰.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770400338653_s1bpmq7he_现代装-手持道具-喜庆风-福饰.jpg
+   COS路径: festival-templates/m2/male/asset_1770400338653_s1bpmq7he.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400338653_s1bpmq7he.jpg
+   MD5校验: 05e67639d8323ee1c68b443a5f90c7c3
+   性别: male
+
+5. Asset ID: asset_1770400346704_vukuo6lhr
+   本地文件: asset_1770400346704_vukuo6lhr_财神装-持道具-喜庆风-春联.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770400346704_vukuo6lhr_财神装-持道具-喜庆风-春联.jpg
+   COS路径: festival-templates/m2/male/asset_1770400346704_vukuo6lhr.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400346704_vukuo6lhr.jpg
+   MD5校验: 054293732be0a0da844a42578f5258d1
+   性别: male
+
+6. Asset ID: asset_1770400359567_ekaj849ai
+   本地文件: asset_1770400359567_ekaj849ai_现代装-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770400359567_ekaj849ai_现代装-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/male/asset_1770400359567_ekaj849ai.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400359567_ekaj849ai.png
+   MD5校验: 92a9833e610c61bafa6c6fa4d4369010
+   性别: male
+
+7. Asset ID: asset_1770400370739_k9o9sw515
+   本地文件: asset_1770400370739_k9o9sw515_现代装-手持道具-喜庆风-吉祥物.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770400370739_k9o9sw515_现代装-手持道具-喜庆风-吉祥物.png
+   COS路径: festival-templates/m2/male/asset_1770400370739_k9o9sw515.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400370739_k9o9sw515.png
+   MD5校验: 8f53d75a6c58f3ce856dc7579148e49d
+   性别: male
+
+8. Asset ID: asset_1770402708625_5h75yng24
+   本地文件: asset_1770402708625_5h75yng24_现代装-站立-喜庆风-喜庆道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770402708625_5h75yng24_现代装-站立-喜庆风-喜庆道具.png
+   COS路径: festival-templates/m2/male/asset_1770402708625_5h75yng24.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402708625_5h75yng24.png
+   MD5校验: 8576478ea2ef7384fa803bce2f946187
+   性别: male
+
+9. Asset ID: asset_1770402719548_ixmbpewoz
+   本地文件: asset_1770402719548_ixmbpewoz_现代装-拜年姿势-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770402719548_ixmbpewoz_现代装-拜年姿势-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/male/asset_1770402719548_ixmbpewoz.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402719548_ixmbpewoz.png
+   MD5校验: e7f7ac13e4192f8515e175deb5ddcd73
+   性别: male
+
+10. Asset ID: asset_1770402734171_m4pm0uj46
+   本地文件: asset_1770402734171_m4pm0uj46_现代装-其他-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770402734171_m4pm0uj46_现代装-其他-喜庆风-无道具.png
+   COS路径: festival-templates/m2/male/asset_1770402734171_m4pm0uj46.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402734171_m4pm0uj46.png
+   MD5校验: 2d261bf48c7684a5f6dfe7cdb6b45dfa
+   性别: male
+
+11. Asset ID: asset_1770402748006_64u98vjl3
+   本地文件: asset_1770402748006_64u98vjl3_现代装-其他-喜庆风-福字灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770402748006_64u98vjl3_现代装-其他-喜庆风-福字灯笼.png
+   COS路径: festival-templates/m2/male/asset_1770402748006_64u98vjl3.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402748006_64u98vjl3.png
+   MD5校验: dffa38023b269a4f542908b3eeb88257
+   性别: male
+
+12. Asset ID: asset_1770402771361_ji78u3ium
+   本地文件: asset_1770402771361_ji78u3ium_现代装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770402771361_ji78u3ium_现代装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/male/asset_1770402771361_ji78u3ium.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402771361_ji78u3ium.png
+   MD5校验: 26845a8d4bc024b2c7cf3462962080f7
+   性别: male
+
+13. Asset ID: asset_1770402911144_ax42lburc
+   本地文件: asset_1770402911144_ax42lburc_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770402911144_ax42lburc_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/male/asset_1770402911144_ax42lburc.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402911144_ax42lburc.png
+   MD5校验: 3124e559a6fa78bb542033afa4c590e3
+   性别: male
+
+14. Asset ID: asset_1770403048355_tcdr52u5r
+   本地文件: asset_1770403048355_tcdr52u5r_唐装-坐姿-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770403048355_tcdr52u5r_唐装-坐姿-喜庆风-春联.png
+   COS路径: festival-templates/m2/male/asset_1770403048355_tcdr52u5r.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403048355_tcdr52u5r.png
+   MD5校验: 9db8fe4045b456c6d233b49fe77eb1df
+   性别: male
+
+15. Asset ID: asset_1770403168031_ulvauihdl
+   本地文件: asset_1770403168031_ulvauihdl_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770403168031_ulvauihdl_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/male/asset_1770403168031_ulvauihdl.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403168031_ulvauihdl.png
+   MD5校验: ccb1e890e74d1d578fa624f7eb0e89cf
+   性别: male
+
+16. Asset ID: asset_1770403222446_4lz47tu4w
+   本地文件: asset_1770403222446_4lz47tu4w_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770403222446_4lz47tu4w_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/male/asset_1770403222446_4lz47tu4w.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403222446_4lz47tu4w.png
+   MD5校验: f6051090c0daeab2658bd53d1581d800
+   性别: male
+
+17. Asset ID: asset_1770403244947_bc0rfmxa0
+   本地文件: asset_1770403244947_bc0rfmxa0_财神装-站立-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770403244947_bc0rfmxa0_财神装-站立-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/male/asset_1770403244947_bc0rfmxa0.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403244947_bc0rfmxa0.png
+   MD5校验: 0113e59c488f038a9277e40af163050e
+   性别: male
+
+18. Asset ID: asset_1770403272937_99ujqz9ir
+   本地文件: asset_1770403272937_99ujqz9ir_财神装-站立-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770403272937_99ujqz9ir_财神装-站立-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/male/asset_1770403272937_99ujqz9ir.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403272937_99ujqz9ir.png
+   MD5校验: 4ac555f24ceade97de5116149971a6ac
+   性别: male
+
+19. Asset ID: asset_1770403303453_t8lcb3tpl
+   本地文件: asset_1770403303453_t8lcb3tpl_财神装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770403303453_t8lcb3tpl_财神装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/male/asset_1770403303453_t8lcb3tpl.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403303453_t8lcb3tpl.png
+   MD5校验: 29f810680adf8d2c1d8fbd07b9f54cde
+   性别: male
+
+20. Asset ID: asset_1770403342777_w1fz1ih3t
+   本地文件: asset_1770403342777_w1fz1ih3t_财神装-站立-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770403342777_w1fz1ih3t_财神装-站立-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/male/asset_1770403342777_w1fz1ih3t.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403342777_w1fz1ih3t.png
+   MD5校验: 2cde565674a8b8b8fb0ea2e5f3df2b54
+   性别: male
+
+21. Asset ID: asset_1770403486380_4ld2kf32a
+   本地文件: asset_1770403486380_4ld2kf32a_汉服-坐姿-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770403486380_4ld2kf32a_汉服-坐姿-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/male/asset_1770403486380_4ld2kf32a.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403486380_4ld2kf32a.png
+   MD5校验: 29a1639c33416119e08a08b7058f3e4f
+   性别: male
+
+22. Asset ID: asset_1770403535321_suacdp86k
+   本地文件: asset_1770403535321_suacdp86k_汉服-站立-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\male\asset_1770403535321_suacdp86k_汉服-站立-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/male/asset_1770403535321_suacdp86k.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403535321_suacdp86k.png
+   MD5校验: 488920970ceb1d0904e1515d6b81e425
+   性别: male
+
+23. Asset ID: asset_1770400382571_t7wluemks
+   本地文件: asset_1770400382571_t7wluemks_汉服-站立-传统风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400382571_t7wluemks_汉服-站立-传统风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770400382571_t7wluemks.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400382571_t7wluemks.png
+   MD5校验: 68106769315afd5c5414d3a66138688c
+   性别: female
+
+24. Asset ID: asset_1770400403239_c4vj793v6
+   本地文件: asset_1770400403239_c4vj793v6_现代装-坐姿-喜庆风-福饰.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400403239_c4vj793v6_现代装-坐姿-喜庆风-福饰.jpg
+   COS路径: festival-templates/m2/female/asset_1770400403239_c4vj793v6.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400403239_c4vj793v6.jpg
+   MD5校验: 873828b281b463ae2304b93c4d40d9b9
+   性别: female
+
+25. Asset ID: asset_1770400424958_05c1pt8oh
+   本地文件: asset_1770400424958_05c1pt8oh_现代装-其他-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400424958_05c1pt8oh_现代装-其他-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400424958_05c1pt8oh.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400424958_05c1pt8oh.jpg
+   MD5校验: e706f85d655cecf6e56b221502f2f816
+   性别: female
+
+26. Asset ID: asset_1770400450869_0igp9780i
+   本地文件: asset_1770400450869_0igp9780i_现代装-坐姿-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400450869_0igp9780i_现代装-坐姿-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770400450869_0igp9780i.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400450869_0igp9780i.jpg
+   MD5校验: ba16eff1b323574fd123b58b325e8405
+   性别: female
+
+27. Asset ID: asset_1770400473300_umbd225j5
+   本地文件: asset_1770400473300_umbd225j5_现代装-坐姿-喜庆风.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400473300_umbd225j5_现代装-坐姿-喜庆风.jpg
+   COS路径: festival-templates/m2/female/asset_1770400473300_umbd225j5.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400473300_umbd225j5.jpg
+   MD5校验: fdacafc4a06e18d055bec57cf8ad9d35
+   性别: female
+
+28. Asset ID: asset_1770400491008_aewab5o0s
+   本地文件: asset_1770400491008_aewab5o0s_现代装-手持道具-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400491008_aewab5o0s_现代装-手持道具-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770400491008_aewab5o0s.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400491008_aewab5o0s.jpg
+   MD5校验: b919d177d98bae3a6699a08f12c71118
+   性别: female
+
+29. Asset ID: asset_1770400509863_e0deucuqd
+   本地文件: asset_1770400509863_e0deucuqd_现代装-坐姿-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400509863_e0deucuqd_现代装-坐姿-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400509863_e0deucuqd.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400509863_e0deucuqd.jpg
+   MD5校验: ff745244fc9477a0e713c703e790a4e3
+   性别: female
+
+30. Asset ID: asset_1770400533283_uo2vuszl4
+   本地文件: asset_1770400533283_uo2vuszl4_现代装-手持道具-喜庆风-福饰.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400533283_uo2vuszl4_现代装-手持道具-喜庆风-福饰.jpg
+   COS路径: festival-templates/m2/female/asset_1770400533283_uo2vuszl4.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400533283_uo2vuszl4.jpg
+   MD5校验: 6eb141271f3e8d42dcf15389edd7faa6
+   性别: female
+
+31. Asset ID: asset_1770400556519_0ztjb43gu
+   本地文件: asset_1770400556519_0ztjb43gu_现代装-坐姿-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400556519_0ztjb43gu_现代装-坐姿-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770400556519_0ztjb43gu.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400556519_0ztjb43gu.jpg
+   MD5校验: 87cb41aab2f9fa85d5d96269716fc336
+   性别: female
+
+32. Asset ID: asset_1770400575615_0q5u7lctr
+   本地文件: asset_1770400575615_0q5u7lctr_现代装-坐姿-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400575615_0q5u7lctr_现代装-坐姿-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770400575615_0q5u7lctr.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400575615_0q5u7lctr.jpg
+   MD5校验: 0726cbef1cc63fb235a92b9abec2b5bc
+   性别: female
+
+33. Asset ID: asset_1770400593387_mezab46mo
+   本地文件: asset_1770400593387_mezab46mo_现代装-坐姿-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400593387_mezab46mo_现代装-坐姿-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400593387_mezab46mo.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400593387_mezab46mo.jpg
+   MD5校验: c2fbf0f73eebdad212db7b13e6b1d36b
+   性别: female
+
+34. Asset ID: asset_1770400615954_7kx7h4i0q
+   本地文件: asset_1770400615954_7kx7h4i0q_现代装-手持道具-活泼风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400615954_7kx7h4i0q_现代装-手持道具-活泼风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400615954_7kx7h4i0q.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400615954_7kx7h4i0q.jpg
+   MD5校验: dabceee9f811dc1126ab822a662f52b2
+   性别: female
+
+35. Asset ID: asset_1770400638257_0uwh3sga5
+   本地文件: asset_1770400638257_0uwh3sga5_现代装-手持道具-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400638257_0uwh3sga5_现代装-手持道具-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400638257_0uwh3sga5.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400638257_0uwh3sga5.jpg
+   MD5校验: 63f15ffb21ff41ac262ab0bd42194e88
+   性别: female
+
+36. Asset ID: asset_1770400655631_6jtkqa44g
+   本地文件: asset_1770400655631_6jtkqa44g_现代装-坐姿-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400655631_6jtkqa44g_现代装-坐姿-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400655631_6jtkqa44g.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400655631_6jtkqa44g.jpg
+   MD5校验: cd399b32f9d610590e92357550fdd2f8
+   性别: female
+
+37. Asset ID: asset_1770400680728_l7os94y2r
+   本地文件: asset_1770400680728_l7os94y2r_现代装-手持道具-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400680728_l7os94y2r_现代装-手持道具-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400680728_l7os94y2r.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400680728_l7os94y2r.jpg
+   MD5校验: 319274b4a854ff49d5425cfa44e249e2
+   性别: female
+
+38. Asset ID: asset_1770400701355_np052m7mw
+   本地文件: asset_1770400701355_np052m7mw_现代装-其他-活泼风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400701355_np052m7mw_现代装-其他-活泼风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400701355_np052m7mw.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400701355_np052m7mw.jpg
+   MD5校验: 657302b57e943a645fe261a28374cdb3
+   性别: female
+
+39. Asset ID: asset_1770400724498_rworkpkcj
+   本地文件: asset_1770400724498_rworkpkcj_现代装-手持物品-优雅风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400724498_rworkpkcj_现代装-手持物品-优雅风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400724498_rworkpkcj.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400724498_rworkpkcj.jpg
+   MD5校验: a44eaa30d3669813b02422a5cadc60ec
+   性别: female
+
+40. Asset ID: asset_1770400768498_phfv7xpjo
+   本地文件: asset_1770400768498_phfv7xpjo_现代装-手持道具-喜庆风-红包.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400768498_phfv7xpjo_现代装-手持道具-喜庆风-红包.jpg
+   COS路径: festival-templates/m2/female/asset_1770400768498_phfv7xpjo.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400768498_phfv7xpjo.jpg
+   MD5校验: 00065f8f53ba19aa73aa016ad90d4309
+   性别: female
+
+41. Asset ID: asset_1770400777376_i0dgqiytu
+   本地文件: asset_1770400777376_i0dgqiytu_现代装-手持道具-喜庆风-红包.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400777376_i0dgqiytu_现代装-手持道具-喜庆风-红包.png
+   COS路径: festival-templates/m2/female/asset_1770400777376_i0dgqiytu.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400777376_i0dgqiytu.png
+   MD5校验: 2ea74e6d8321116271a8bdd0db87776d
+   性别: female
+
+42. Asset ID: asset_1770400790904_r6s3whvdq
+   本地文件: asset_1770400790904_r6s3whvdq_旗袍-坐姿-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400790904_r6s3whvdq_旗袍-坐姿-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400790904_r6s3whvdq.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400790904_r6s3whvdq.jpg
+   MD5校验: 607c7bf9372f4edd3c2b2a73b13efe63
+   性别: female
+
+43. Asset ID: asset_1770400807009_4wiahg653
+   本地文件: asset_1770400807009_4wiahg653_旗袍-手持道具-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400807009_4wiahg653_旗袍-手持道具-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400807009_4wiahg653.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400807009_4wiahg653.jpg
+   MD5校验: 791447634c9282032c692a14d6a0abd5
+   性别: female
+
+44. Asset ID: asset_1770400817623_5tcfrj28z
+   本地文件: asset_1770400817623_5tcfrj28z_旗袍-手持道具-喜庆风-红包.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400817623_5tcfrj28z_旗袍-手持道具-喜庆风-红包.png
+   COS路径: festival-templates/m2/female/asset_1770400817623_5tcfrj28z.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400817623_5tcfrj28z.png
+   MD5校验: c722723da2b96fcaba0ccfb0adbeccec
+   性别: female
+
+45. Asset ID: asset_1770400831370_5s1uqpevc
+   本地文件: asset_1770400831370_5s1uqpevc_旗袍-站立-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400831370_5s1uqpevc_旗袍-站立-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400831370_5s1uqpevc.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400831370_5s1uqpevc.jpg
+   MD5校验: 94ea6e4bb2f58c516ccb29b181d1d418
+   性别: female
+
+46. Asset ID: asset_1770400845764_zvcl79sbu
+   本地文件: asset_1770400845764_zvcl79sbu_旗袍-坐姿-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400845764_zvcl79sbu_旗袍-坐姿-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770400845764_zvcl79sbu.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400845764_zvcl79sbu.jpg
+   MD5校验: 9077786061aa0aa1ecfdd237cd867407
+   性别: female
+
+47. Asset ID: asset_1770400860110_t8ccuyt72
+   本地文件: asset_1770400860110_t8ccuyt72_旗袍-站立-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400860110_t8ccuyt72_旗袍-站立-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770400860110_t8ccuyt72.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400860110_t8ccuyt72.jpg
+   MD5校验: 83828768befaaa6e9d983ed6dd66aa00
+   性别: female
+
+48. Asset ID: asset_1770400874546_hf7k9pb11
+   本地文件: asset_1770400874546_hf7k9pb11_旗袍-手持道具-喜庆风-红包.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400874546_hf7k9pb11_旗袍-手持道具-喜庆风-红包.jpg
+   COS路径: festival-templates/m2/female/asset_1770400874546_hf7k9pb11.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400874546_hf7k9pb11.jpg
+   MD5校验: c754026a70e850f1105fe3b6957907a4
+   性别: female
+
+49. Asset ID: asset_1770400893942_tlb9vmhrd
+   本地文件: asset_1770400893942_tlb9vmhrd_旗袍-手持道具-喜庆风-红包.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400893942_tlb9vmhrd_旗袍-手持道具-喜庆风-红包.jpg
+   COS路径: festival-templates/m2/female/asset_1770400893942_tlb9vmhrd.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400893942_tlb9vmhrd.jpg
+   MD5校验: e0385792e457b8c590e5c6dc359676b8
+   性别: female
+
+50. Asset ID: asset_1770400906199_ahmqz0mip
+   本地文件: asset_1770400906199_ahmqz0mip_现代装-手持道具-喜庆风-红包.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400906199_ahmqz0mip_现代装-手持道具-喜庆风-红包.jpg
+   COS路径: festival-templates/m2/female/asset_1770400906199_ahmqz0mip.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400906199_ahmqz0mip.jpg
+   MD5校验: cd02d26906163e5ae30e50d01ca5157c
+   性别: female
+
+51. Asset ID: asset_1770400920406_471kosv52
+   本地文件: asset_1770400920406_471kosv52_旗袍-坐姿-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400920406_471kosv52_旗袍-坐姿-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770400920406_471kosv52.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400920406_471kosv52.jpg
+   MD5校验: 7ab299c8099b37eec140fbff4aaec433
+   性别: female
+
+52. Asset ID: asset_1770400931749_oall0ui2z
+   本地文件: asset_1770400931749_oall0ui2z_旗袍-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400931749_oall0ui2z_旗袍-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/female/asset_1770400931749_oall0ui2z.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400931749_oall0ui2z.png
+   MD5校验: 090850cabd9a7c5b45da61ee146941e0
+   性别: female
+
+53. Asset ID: asset_1770400942504_rkde9pvm0
+   本地文件: asset_1770400942504_rkde9pvm0_汉服-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400942504_rkde9pvm0_汉服-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/female/asset_1770400942504_rkde9pvm0.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400942504_rkde9pvm0.png
+   MD5校验: 9ec30d376f5ad8e1f52995d07f918c1a
+   性别: female
+
+54. Asset ID: asset_1770400957084_uuxcev16o
+   本地文件: asset_1770400957084_uuxcev16o_现代装-站立-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400957084_uuxcev16o_现代装-站立-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770400957084_uuxcev16o.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400957084_uuxcev16o.png
+   MD5校验: c1ccd9583b6605f06115fe25bc55cdde
+   性别: female
+
+55. Asset ID: asset_1770400984185_qelu09oqz
+   本地文件: asset_1770400984185_qelu09oqz_现代装-手持道具-喜庆风-吉祥物.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400984185_qelu09oqz_现代装-手持道具-喜庆风-吉祥物.png
+   COS路径: festival-templates/m2/female/asset_1770400984185_qelu09oqz.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400984185_qelu09oqz.png
+   MD5校验: 94b4542a43e9265542b7a38d0cb15908
+   性别: female
+
+56. Asset ID: asset_1770400995878_d4ke535d0
+   本地文件: asset_1770400995878_d4ke535d0_唐装-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770400995878_d4ke535d0_唐装-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/female/asset_1770400995878_d4ke535d0.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400995878_d4ke535d0.png
+   MD5校验: 900e7b6d9bace41074f7c59a5f020855
+   性别: female
+
+57. Asset ID: asset_1770401023156_stxahq8vj
+   本地文件: asset_1770401023156_stxahq8vj_汉服-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401023156_stxahq8vj_汉服-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/female/asset_1770401023156_stxahq8vj.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401023156_stxahq8vj.png
+   MD5校验: 3eb453e90e2049204798368cc9366854
+   性别: female
+
+58. Asset ID: asset_1770401039079_azx6h14nu
+   本地文件: asset_1770401039079_azx6h14nu_财神装-手持对联-喜庆风-对联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401039079_azx6h14nu_财神装-手持对联-喜庆风-对联.png
+   COS路径: festival-templates/m2/female/asset_1770401039079_azx6h14nu.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401039079_azx6h14nu.png
+   MD5校验: 8b09360bc2237e35a482f2a1e677836c
+   性别: female
+
+59. Asset ID: asset_1770401063594_zgniw0irc
+   本地文件: asset_1770401063594_zgniw0irc_现代装-手持道具-喜庆风-吉祥物.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401063594_zgniw0irc_现代装-手持道具-喜庆风-吉祥物.jpg
+   COS路径: festival-templates/m2/female/asset_1770401063594_zgniw0irc.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401063594_zgniw0irc.jpg
+   MD5校验: e53579c9a9f1e2c42331603a3a438b33
+   性别: female
+
+60. Asset ID: asset_1770401072054_ymjweq3sy
+   本地文件: asset_1770401072054_ymjweq3sy_现代装-其他-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401072054_ymjweq3sy_现代装-其他-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770401072054_ymjweq3sy.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401072054_ymjweq3sy.jpg
+   MD5校验: 3a8cbb6bd976f5e0a9023b4b693ad13b
+   性别: female
+
+61. Asset ID: asset_1770401083903_ckaje6v7y
+   本地文件: asset_1770401083903_ckaje6v7y_现代装-手持道具-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401083903_ckaje6v7y_现代装-手持道具-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770401083903_ckaje6v7y.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401083903_ckaje6v7y.jpg
+   MD5校验: 802b97868c81d265ce56b0d1b5fa6d61
+   性别: female
+
+62. Asset ID: asset_1770401093703_rxe0ae0hp
+   本地文件: asset_1770401093703_rxe0ae0hp_现代装-手持道具-喜庆风-福字挂饰.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401093703_rxe0ae0hp_现代装-手持道具-喜庆风-福字挂饰.jpg
+   COS路径: festival-templates/m2/female/asset_1770401093703_rxe0ae0hp.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401093703_rxe0ae0hp.jpg
+   MD5校验: 5600e93057509b969748f4b79f3b040d
+   性别: female
+
+63. Asset ID: asset_1770401107547_h5oknw7pk
+   本地文件: asset_1770401107547_h5oknw7pk_现代装-手持道具-喜庆风-吉祥物.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401107547_h5oknw7pk_现代装-手持道具-喜庆风-吉祥物.jpg
+   COS路径: festival-templates/m2/female/asset_1770401107547_h5oknw7pk.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401107547_h5oknw7pk.jpg
+   MD5校验: 5178db95cc3a5a10c6b48cd64fca0f86
+   性别: female
+
+64. Asset ID: asset_1770401118086_a12ysu90j
+   本地文件: asset_1770401118086_a12ysu90j_现代装-手持道具-喜庆风-春联.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401118086_a12ysu90j_现代装-手持道具-喜庆风-春联.jpg
+   COS路径: festival-templates/m2/female/asset_1770401118086_a12ysu90j.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401118086_a12ysu90j.jpg
+   MD5校验: 1733f8b3abd6525ae7bbafa592de7a05
+   性别: female
+
+65. Asset ID: asset_1770401128822_fbeqh2yip
+   本地文件: asset_1770401128822_fbeqh2yip_现代装-坐姿-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401128822_fbeqh2yip_现代装-坐姿-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770401128822_fbeqh2yip.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401128822_fbeqh2yip.jpg
+   MD5校验: 10d3e56eedf2ab0cbcce4ee16b167341
+   性别: female
+
+66. Asset ID: asset_1770401139399_kw739931d
+   本地文件: asset_1770401139399_kw739931d_旗袍-手持道具-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401139399_kw739931d_旗袍-手持道具-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770401139399_kw739931d.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401139399_kw739931d.jpg
+   MD5校验: ad8d1d915a990f037f2cc2fb6dbfd998
+   性别: female
+
+67. Asset ID: asset_1770401151346_9yumhojci
+   本地文件: asset_1770401151346_9yumhojci_旗袍-手持灯笼-喜庆风-红色.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401151346_9yumhojci_旗袍-手持灯笼-喜庆风-红色.jpg
+   COS路径: festival-templates/m2/female/asset_1770401151346_9yumhojci.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401151346_9yumhojci.jpg
+   MD5校验: c91558be0c68b97ea93abe6dbb8ce72a
+   性别: female
+
+68. Asset ID: asset_1770401162141_y37d2byzd
+   本地文件: asset_1770401162141_y37d2byzd_旗袍-手持道具-喜庆风-红包.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401162141_y37d2byzd_旗袍-手持道具-喜庆风-红包.jpg
+   COS路径: festival-templates/m2/female/asset_1770401162141_y37d2byzd.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401162141_y37d2byzd.jpg
+   MD5校验: 035aea8ea2c5e5df916b4c7c500f4f01
+   性别: female
+
+69. Asset ID: asset_1770401173933_za6kbmg3o
+   本地文件: asset_1770401173933_za6kbmg3o_唐装-其他-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401173933_za6kbmg3o_唐装-其他-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770401173933_za6kbmg3o.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401173933_za6kbmg3o.jpg
+   MD5校验: 6381873c434002b0978486653aea7145
+   性别: female
+
+70. Asset ID: asset_1770401184933_yge9py180
+   本地文件: asset_1770401184933_yge9py180_旗袍-手持道具-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401184933_yge9py180_旗袍-手持道具-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770401184933_yge9py180.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401184933_yge9py180.jpg
+   MD5校验: 1c754b75d75d6860ca4e2b9dd33395d1
+   性别: female
+
+71. Asset ID: asset_1770401198508_pahaf6sod
+   本地文件: asset_1770401198508_pahaf6sod_旗袍-站立-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401198508_pahaf6sod_旗袍-站立-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770401198508_pahaf6sod.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401198508_pahaf6sod.jpg
+   MD5校验: 8d5382c52903ee9e5884872bae279bcc
+   性别: female
+
+72. Asset ID: asset_1770401209409_yhz5rtlgj
+   本地文件: asset_1770401209409_yhz5rtlgj_现代装-手持道具-喜庆风-灯笼.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401209409_yhz5rtlgj_现代装-手持道具-喜庆风-灯笼.jpg
+   COS路径: festival-templates/m2/female/asset_1770401209409_yhz5rtlgj.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401209409_yhz5rtlgj.jpg
+   MD5校验: df33530703d93492ba4bf7d311d5a75e
+   性别: female
+
+73. Asset ID: asset_1770401223269_om14ipaa0
+   本地文件: asset_1770401223269_om14ipaa0_旗袍-手持道具-喜庆风-红包.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401223269_om14ipaa0_旗袍-手持道具-喜庆风-红包.jpg
+   COS路径: festival-templates/m2/female/asset_1770401223269_om14ipaa0.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401223269_om14ipaa0.jpg
+   MD5校验: 13a57e78a01d97f5c69364f18b0311ce
+   性别: female
+
+74. Asset ID: asset_1770401236521_nhkrsv6xo
+   本地文件: asset_1770401236521_nhkrsv6xo_现代装-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401236521_nhkrsv6xo_现代装-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/female/asset_1770401236521_nhkrsv6xo.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401236521_nhkrsv6xo.png
+   MD5校验: becc9f818f17d25f5a675c5387ea6711
+   性别: female
+
+75. Asset ID: asset_1770401254979_dvbuqgi1e
+   本地文件: asset_1770401254979_dvbuqgi1e_唐装-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401254979_dvbuqgi1e_唐装-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/female/asset_1770401254979_dvbuqgi1e.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401254979_dvbuqgi1e.png
+   MD5校验: b2dd545303d8cdb6981eb69aba465733
+   性别: female
+
+76. Asset ID: asset_1770401270946_k75ii701x
+   本地文件: asset_1770401270946_k75ii701x_唐装-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401270946_k75ii701x_唐装-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/female/asset_1770401270946_k75ii701x.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401270946_k75ii701x.png
+   MD5校验: f89a288e2de8fb22dda8a7269b56f12e
+   性别: female
+
+77. Asset ID: asset_1770401278132_d8gym0b23
+   本地文件: asset_1770401278132_d8gym0b23_现代装-持道具-喜庆风-元宝.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401278132_d8gym0b23_现代装-持道具-喜庆风-元宝.png
+   COS路径: festival-templates/m2/female/asset_1770401278132_d8gym0b23.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401278132_d8gym0b23.png
+   MD5校验: 50c6d450bba3fcddbd9c7bb9882cbbf8
+   性别: female
+
+78. Asset ID: asset_1770401292267_553xdche7
+   本地文件: asset_1770401292267_553xdche7_旗袍-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401292267_553xdche7_旗袍-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770401292267_553xdche7.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401292267_553xdche7.png
+   MD5校验: f6e7303c4b5f8a93ef2a611abf734ae3
+   性别: female
+
+79. Asset ID: asset_1770401303735_e2zn3t090
+   本地文件: asset_1770401303735_e2zn3t090_现代装-手持春联-喜庆风-红色.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401303735_e2zn3t090_现代装-手持春联-喜庆风-红色.png
+   COS路径: festival-templates/m2/female/asset_1770401303735_e2zn3t090.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401303735_e2zn3t090.png
+   MD5校验: 0d623351a41a51f314d2f3129c484154
+   性别: female
+
+80. Asset ID: asset_1770401324280_7fc21nlzm
+   本地文件: asset_1770401324280_7fc21nlzm_现代装-其他-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401324280_7fc21nlzm_现代装-其他-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770401324280_7fc21nlzm.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401324280_7fc21nlzm.png
+   MD5校验: 77d071e9d323416141cf530a222c9e24
+   性别: female
+
+81. Asset ID: asset_1770401346693_0aa517q55
+   本地文件: asset_1770401346693_0aa517q55_旗袍-手持道具-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770401346693_0aa517q55_旗袍-手持道具-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770401346693_0aa517q55.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401346693_0aa517q55.png
+   MD5校验: 516c041004a8aa292987cef952df3ed3
+   性别: female
+
+82. Asset ID: asset_1770402697273_fppskd5jr
+   本地文件: asset_1770402697273_fppskd5jr_现代装-手持道具-活泼风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402697273_fppskd5jr_现代装-手持道具-活泼风-无道具.jpg
+   COS路径: festival-templates/m2/female/asset_1770402697273_fppskd5jr.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402697273_fppskd5jr.jpg
+   MD5校验: 4dafaf45f1925de13e47bf4743469e97
+   性别: female
+
+83. Asset ID: asset_1770402785224_i0fnrfgmh
+   本地文件: asset_1770402785224_i0fnrfgmh_唐装-站立-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402785224_i0fnrfgmh_唐装-站立-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770402785224_i0fnrfgmh.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402785224_i0fnrfgmh.png
+   MD5校验: 2dd23bc751d58722d63d5075390dae88
+   性别: female
+
+84. Asset ID: asset_1770402796449_rd84hlhfc
+   本地文件: asset_1770402796449_rd84hlhfc_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402796449_rd84hlhfc_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770402796449_rd84hlhfc.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402796449_rd84hlhfc.png
+   MD5校验: 98bded8084b152c2688c56993715b778
+   性别: female
+
+85. Asset ID: asset_1770402810952_uunkzv8p7
+   本地文件: asset_1770402810952_uunkzv8p7_旗袍-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402810952_uunkzv8p7_旗袍-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770402810952_uunkzv8p7.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402810952_uunkzv8p7.png
+   MD5校验: af9ecc4078da37fa0e0902006be658d9
+   性别: female
+
+86. Asset ID: asset_1770402825596_3waj9rwqp
+   本地文件: asset_1770402825596_3waj9rwqp_财神装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402825596_3waj9rwqp_财神装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770402825596_3waj9rwqp.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402825596_3waj9rwqp.png
+   MD5校验: a6b742e1cbac8335ec3c843e7521a817
+   性别: female
+
+87. Asset ID: asset_1770402838465_kdfp5ai1e
+   本地文件: asset_1770402838465_kdfp5ai1e_现代装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402838465_kdfp5ai1e_现代装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770402838465_kdfp5ai1e.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402838465_kdfp5ai1e.png
+   MD5校验: 4aa0ab572a892ed71a6e89c54a81f2cc
+   性别: female
+
+88. Asset ID: asset_1770402850135_iiewx93v7
+   本地文件: asset_1770402850135_iiewx93v7_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402850135_iiewx93v7_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770402850135_iiewx93v7.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402850135_iiewx93v7.png
+   MD5校验: 074434058e1ea43f538557b7a49a2a9a
+   性别: female
+
+89. Asset ID: asset_1770402862435_6vtthhb20
+   本地文件: asset_1770402862435_6vtthhb20_旗袍-坐姿-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402862435_6vtthhb20_旗袍-坐姿-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770402862435_6vtthhb20.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402862435_6vtthhb20.png
+   MD5校验: c0c34c8e18a5d1a99e69f678bc2fa988
+   性别: female
+
+90. Asset ID: asset_1770402874041_smal3rety
+   本地文件: asset_1770402874041_smal3rety_旗袍-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402874041_smal3rety_旗袍-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770402874041_smal3rety.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402874041_smal3rety.png
+   MD5校验: 4e4e7dd0db7bd3284fe33c22490e692f
+   性别: female
+
+91. Asset ID: asset_1770402886453_av7vzxzv8
+   本地文件: asset_1770402886453_av7vzxzv8_现代装-站立-喜庆风-福字装饰.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402886453_av7vzxzv8_现代装-站立-喜庆风-福字装饰.png
+   COS路径: festival-templates/m2/female/asset_1770402886453_av7vzxzv8.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402886453_av7vzxzv8.png
+   MD5校验: 15793d6bb242bcc9cb6694128ff247db
+   性别: female
+
+92. Asset ID: asset_1770402898605_u3f6bx6ad
+   本地文件: asset_1770402898605_u3f6bx6ad_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402898605_u3f6bx6ad_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770402898605_u3f6bx6ad.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402898605_u3f6bx6ad.png
+   MD5校验: cdf27a5f888244eacbe7c25741bb6dea
+   性别: female
+
+93. Asset ID: asset_1770402925058_xz6w21ck4
+   本地文件: asset_1770402925058_xz6w21ck4_旗袍-手持道具-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770402925058_xz6w21ck4_旗袍-手持道具-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770402925058_xz6w21ck4.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402925058_xz6w21ck4.png
+   MD5校验: 4f181fc9306a2ade03b85ca0da3ad87e
+   性别: female
+
+94. Asset ID: asset_1770403181946_v6ag4f0c3
+   本地文件: asset_1770403181946_v6ag4f0c3_唐装-坐姿-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403181946_v6ag4f0c3_唐装-坐姿-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770403181946_v6ag4f0c3.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403181946_v6ag4f0c3.png
+   MD5校验: 9d710abf5b3aabd409a3fa3c62539f59
+   性别: female
+
+95. Asset ID: asset_1770403192900_9gx9zt08p
+   本地文件: asset_1770403192900_9gx9zt08p_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403192900_9gx9zt08p_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770403192900_9gx9zt08p.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403192900_9gx9zt08p.png
+   MD5校验: 912519ddc2741126a6068f81f2fc2ec3
+   性别: female
+
+96. Asset ID: asset_1770403207298_f5612tpw8
+   本地文件: asset_1770403207298_f5612tpw8_汉服-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403207298_f5612tpw8_汉服-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770403207298_f5612tpw8.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403207298_f5612tpw8.png
+   MD5校验: caa967405f1a2ecd212def8ca199e6a5
+   性别: female
+
+97. Asset ID: asset_1770403232022_ehjfdtnkr
+   本地文件: asset_1770403232022_ehjfdtnkr_汉服-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403232022_ehjfdtnkr_汉服-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770403232022_ehjfdtnkr.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403232022_ehjfdtnkr.png
+   MD5校验: 19e32eb94a05ab458d9526d8ecab62d5
+   性别: female
+
+98. Asset ID: asset_1770403255942_typay458y
+   本地文件: asset_1770403255942_typay458y_汉服-站立-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403255942_typay458y_汉服-站立-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770403255942_typay458y.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403255942_typay458y.png
+   MD5校验: 84e937c45c110a87b86e11940a71cb6c
+   性别: female
+
+99. Asset ID: asset_1770403287443_1i0zp3nvg
+   本地文件: asset_1770403287443_1i0zp3nvg_汉服-站立-传统风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403287443_1i0zp3nvg_汉服-站立-传统风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770403287443_1i0zp3nvg.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403287443_1i0zp3nvg.png
+   MD5校验: 7654fa8dfd69173df2126131cea7b381
+   性别: female
+
+100. Asset ID: asset_1770403317704_7o61o87s7
+   本地文件: asset_1770403317704_7o61o87s7_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403317704_7o61o87s7_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770403317704_7o61o87s7.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403317704_7o61o87s7.png
+   MD5校验: 21eb962d2556ccbea6337f8e624fffbb
+   性别: female
+
+101. Asset ID: asset_1770403329828_t52sb42rp
+   本地文件: asset_1770403329828_t52sb42rp_汉服-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403329828_t52sb42rp_汉服-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/female/asset_1770403329828_t52sb42rp.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403329828_t52sb42rp.png
+   MD5校验: 4583fce672c46bd259faf90212a54014
+   性别: female
+
+102. Asset ID: asset_1770403357216_s5mx1g370
+   本地文件: asset_1770403357216_s5mx1g370_汉服-站立-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403357216_s5mx1g370_汉服-站立-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770403357216_s5mx1g370.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403357216_s5mx1g370.png
+   MD5校验: 375d11bb56792e6195773dd3c11a02e6
+   性别: female
+
+103. Asset ID: asset_1770403498211_7rb0rdo35
+   本地文件: asset_1770403498211_7rb0rdo35_汉服-坐姿-喜庆风-灯笼.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403498211_7rb0rdo35_汉服-坐姿-喜庆风-灯笼.png
+   COS路径: festival-templates/m2/female/asset_1770403498211_7rb0rdo35.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403498211_7rb0rdo35.png
+   MD5校验: 82079a55020bdceb5450d8640080aa15
+   性别: female
+
+104. Asset ID: asset_1770403510833_uiqqn9f5n
+   本地文件: asset_1770403510833_uiqqn9f5n_唐装-坐姿-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403510833_uiqqn9f5n_唐装-坐姿-喜庆风-春联.png
+   COS路径: festival-templates/m2/female/asset_1770403510833_uiqqn9f5n.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403510833_uiqqn9f5n.png
+   MD5校验: 78f757a4981e2d5ac3175e43cc203110
+   性别: female
+
+105. Asset ID: asset_1770403523099_h8y68l7up
+   本地文件: asset_1770403523099_h8y68l7up_汉服-手持道具-喜庆风-春联.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770403523099_h8y68l7up_汉服-手持道具-喜庆风-春联.png
+   COS路径: festival-templates/m2/female/asset_1770403523099_h8y68l7up.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403523099_h8y68l7up.png
+   MD5校验: a3d8025cdb670496b985ea1cd8afa24f
+   性别: female
+
+106. Asset ID: asset_1770405154421_4oij6us3z
+   本地文件: asset_1770405154421_4oij6us3z_现代装-手持灯笼-喜庆风-红色.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\female\asset_1770405154421_4oij6us3z_现代装-手持灯笼-喜庆风-红色.png
+   COS路径: festival-templates/m2/female/asset_1770405154421_4oij6us3z.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770405154421_4oij6us3z.png
+   MD5校验: 992777c6218fedc4d8188f050e93d2a6
+   性别: female
+
+107. Asset ID: asset_1770401364364_bhll8xlhf
+   本地文件: asset_1770401364364_bhll8xlhf_汉服-手持道具-喜庆风-金球.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770401364364_bhll8xlhf_汉服-手持道具-喜庆风-金球.png
+   COS路径: festival-templates/m2/child/asset_1770401364364_bhll8xlhf.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401364364_bhll8xlhf.png
+   MD5校验: 323391f44401d8c5d26a696cef563e3b
+   性别: child
+
+108. Asset ID: asset_1770401383719_7ntu2dumo
+   本地文件: asset_1770401383719_7ntu2dumo_汉服-坐姿-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770401383719_7ntu2dumo_汉服-坐姿-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770401383719_7ntu2dumo.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401383719_7ntu2dumo.png
+   MD5校验: 0aecf4aecb2561b150866f17e485dafe
+   性别: child
+
+109. Asset ID: asset_1770401390497_2sh05jjhc
+   本地文件: asset_1770401390497_2sh05jjhc_儿童装-手持福字-喜庆风-福字.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770401390497_2sh05jjhc_儿童装-手持福字-喜庆风-福字.jpg
+   COS路径: festival-templates/m2/child/asset_1770401390497_2sh05jjhc.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401390497_2sh05jjhc.jpg
+   MD5校验: 71c61fc9719e93990927d4092ba5b13a
+   性别: child
+
+110. Asset ID: asset_1770401403977_bjhx1doh7
+   本地文件: asset_1770401403977_bjhx1doh7_儿童装-手持道具-喜庆风-无道具.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770401403977_bjhx1doh7_儿童装-手持道具-喜庆风-无道具.jpg
+   COS路径: festival-templates/m2/child/asset_1770401403977_bjhx1doh7.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401403977_bjhx1doh7.jpg
+   MD5校验: df6f2308d9ab0bfb2551dec40c889526
+   性别: child
+
+111. Asset ID: asset_1770401412562_vz35i5t76
+   本地文件: asset_1770401412562_vz35i5t76_儿童装-手持道具-喜庆风-吉祥物.jpg
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770401412562_vz35i5t76_儿童装-手持道具-喜庆风-吉祥物.jpg
+   COS路径: festival-templates/m2/child/asset_1770401412562_vz35i5t76.jpg
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401412562_vz35i5t76.jpg
+   MD5校验: 72ff9cac56de474ff6e0c66686dc9cff
+   性别: child
+
+112. Asset ID: asset_1770401431560_2dvir57la
+   本地文件: asset_1770401431560_2dvir57la_唐装-手持道具-喜庆风-福字装饰.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770401431560_2dvir57la_唐装-手持道具-喜庆风-福字装饰.png
+   COS路径: festival-templates/m2/child/asset_1770401431560_2dvir57la.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401431560_2dvir57la.png
+   MD5校验: 91e84b34f07395157c362868cab5d88e
+   性别: child
+
+113. Asset ID: asset_1770401447094_dqrs5ad03
+   本地文件: asset_1770401447094_dqrs5ad03_儿童装-手持道具-喜庆风-吉祥物.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770401447094_dqrs5ad03_儿童装-手持道具-喜庆风-吉祥物.png
+   COS路径: festival-templates/m2/child/asset_1770401447094_dqrs5ad03.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401447094_dqrs5ad03.png
+   MD5校验: bcd2350b4305dcf4164d017599a270fb
+   性别: child
+
+114. Asset ID: asset_1770402937604_cdz42mpke
+   本地文件: asset_1770402937604_cdz42mpke_汉服-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770402937604_cdz42mpke_汉服-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770402937604_cdz42mpke.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402937604_cdz42mpke.png
+   MD5校验: a0c57d74fc27eab931fa847bc028fd00
+   性别: child
+
+115. Asset ID: asset_1770402949622_pl4nv2zjg
+   本地文件: asset_1770402949622_pl4nv2zjg_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770402949622_pl4nv2zjg_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770402949622_pl4nv2zjg.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402949622_pl4nv2zjg.png
+   MD5校验: 0d1500be46ac4e1c52860478b4514aae
+   性别: child
+
+116. Asset ID: asset_1770402961739_oi1md2rvm
+   本地文件: asset_1770402961739_oi1md2rvm_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770402961739_oi1md2rvm_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770402961739_oi1md2rvm.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402961739_oi1md2rvm.png
+   MD5校验: 2e95e10043e1443b09772b2602273352
+   性别: child
+
+117. Asset ID: asset_1770402973496_7rwxzt2dz
+   本地文件: asset_1770402973496_7rwxzt2dz_财神装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770402973496_7rwxzt2dz_财神装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770402973496_7rwxzt2dz.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402973496_7rwxzt2dz.png
+   MD5校验: ed5926f9f5349f57e8621f28ead0941c
+   性别: child
+
+118. Asset ID: asset_1770402985804_3j8ch8c1r
+   本地文件: asset_1770402985804_3j8ch8c1r_汉服-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770402985804_3j8ch8c1r_汉服-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770402985804_3j8ch8c1r.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402985804_3j8ch8c1r.png
+   MD5校验: 23fd1ede27c58c4d7313a6c1572b21aa
+   性别: child
+
+119. Asset ID: asset_1770402999161_vmrn4pea0
+   本地文件: asset_1770402999161_vmrn4pea0_财神装-拜年姿势-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770402999161_vmrn4pea0_财神装-拜年姿势-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770402999161_vmrn4pea0.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402999161_vmrn4pea0.png
+   MD5校验: 00c67305526e0bf4d3573b3d9205a94c
+   性别: child
+
+120. Asset ID: asset_1770403010444_plfwykqkc
+   本地文件: asset_1770403010444_plfwykqkc_儿童装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403010444_plfwykqkc_儿童装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403010444_plfwykqkc.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403010444_plfwykqkc.png
+   MD5校验: 1f97166f7d8b63a4c8854612fc089f48
+   性别: child
+
+121. Asset ID: asset_1770403024062_dq75mlhzf
+   本地文件: asset_1770403024062_dq75mlhzf_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403024062_dq75mlhzf_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403024062_dq75mlhzf.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403024062_dq75mlhzf.png
+   MD5校验: aacb314978d1b46849c5d1ca0dfd04df
+   性别: child
+
+122. Asset ID: asset_1770403036594_awdvhbr7g
+   本地文件: asset_1770403036594_awdvhbr7g_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403036594_awdvhbr7g_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403036594_awdvhbr7g.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403036594_awdvhbr7g.png
+   MD5校验: 7491e0e5b97c77919900ef8232b8ac46
+   性别: child
+
+123. Asset ID: asset_1770403065093_3gtxknw6d
+   本地文件: asset_1770403065093_3gtxknw6d_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403065093_3gtxknw6d_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403065093_3gtxknw6d.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403065093_3gtxknw6d.png
+   MD5校验: 4a53aa300dcf796010ce523670408a46
+   性别: child
+
+124. Asset ID: asset_1770403076450_ld4vqq0ns
+   本地文件: asset_1770403076450_ld4vqq0ns_汉服-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403076450_ld4vqq0ns_汉服-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403076450_ld4vqq0ns.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403076450_ld4vqq0ns.png
+   MD5校验: f8cb2efeb7a49adc43fc7ebbb8536946
+   性别: child
+
+125. Asset ID: asset_1770403088392_c0yafh37a
+   本地文件: asset_1770403088392_c0yafh37a_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403088392_c0yafh37a_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403088392_c0yafh37a.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403088392_c0yafh37a.png
+   MD5校验: da842aae0efc1dc8318219742b2fa49e
+   性别: child
+
+126. Asset ID: asset_1770403102252_nb4fg8fd8
+   本地文件: asset_1770403102252_nb4fg8fd8_汉服-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403102252_nb4fg8fd8_汉服-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403102252_nb4fg8fd8.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403102252_nb4fg8fd8.png
+   MD5校验: e3f17b51b6d90642438e6dcc4f1c5162
+   性别: child
+
+127. Asset ID: asset_1770403113549_upp5gpg3k
+   本地文件: asset_1770403113549_upp5gpg3k_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403113549_upp5gpg3k_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403113549_upp5gpg3k.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403113549_upp5gpg3k.png
+   MD5校验: ba9e798c0655027e3e39b38ae42172fd
+   性别: child
+
+128. Asset ID: asset_1770403125653_tgwy3td0l
+   本地文件: asset_1770403125653_tgwy3td0l_汉服-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403125653_tgwy3td0l_汉服-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403125653_tgwy3td0l.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403125653_tgwy3td0l.png
+   MD5校验: 99ea0a189bba3ee7d6ebb1e3988ede33
+   性别: child
+
+129. Asset ID: asset_1770403139042_zqe9cqjjy
+   本地文件: asset_1770403139042_zqe9cqjjy_儿童装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403139042_zqe9cqjjy_儿童装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403139042_zqe9cqjjy.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403139042_zqe9cqjjy.png
+   MD5校验: 593627112169e627425072ac799f4036
+   性别: child
+
+130. Asset ID: asset_1770403155535_7mimhmwbf
+   本地文件: asset_1770403155535_7mimhmwbf_儿童装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403155535_7mimhmwbf_儿童装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403155535_7mimhmwbf.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403155535_7mimhmwbf.png
+   MD5校验: 1976fbe50c5f9bc61ae9879d4b38e6a2
+   性别: child
+
+131. Asset ID: asset_1770403367064_wh0j54d1f
+   本地文件: asset_1770403367064_wh0j54d1f_儿童服装-拜年姿势-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403367064_wh0j54d1f_儿童服装-拜年姿势-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403367064_wh0j54d1f.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403367064_wh0j54d1f.png
+   MD5校验: da194b5c9f9894ed883608b256304114
+   性别: child
+
+132. Asset ID: asset_1770403378881_2trxtc5e8
+   本地文件: asset_1770403378881_2trxtc5e8_唐装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403378881_2trxtc5e8_唐装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403378881_2trxtc5e8.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403378881_2trxtc5e8.png
+   MD5校验: 0b39e133d772fed0bd7ac78a40725925
+   性别: child
+
+133. Asset ID: asset_1770403389470_4v2igtmwu
+   本地文件: asset_1770403389470_4v2igtmwu_儿童装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403389470_4v2igtmwu_儿童装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403389470_4v2igtmwu.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403389470_4v2igtmwu.png
+   MD5校验: 7f0c7760a2e5e1564bfa4601c52bf434
+   性别: child
+
+134. Asset ID: asset_1770403401824_lra5ha74y
+   本地文件: asset_1770403401824_lra5ha74y_儿童装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403401824_lra5ha74y_儿童装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403401824_lra5ha74y.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403401824_lra5ha74y.png
+   MD5校验: 42b0d2a77b41c7188e33d3b37e416937
+   性别: child
+
+135. Asset ID: asset_1770403413591_ggna8yp0v
+   本地文件: asset_1770403413591_ggna8yp0v_儿童装-拜年姿势-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403413591_ggna8yp0v_儿童装-拜年姿势-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403413591_ggna8yp0v.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403413591_ggna8yp0v.png
+   MD5校验: c795d9da88cd3b7659faf6838e88ad9f
+   性别: child
+
+136. Asset ID: asset_1770403426280_7lyr16p8v
+   本地文件: asset_1770403426280_7lyr16p8v_儿童装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403426280_7lyr16p8v_儿童装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403426280_7lyr16p8v.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403426280_7lyr16p8v.png
+   MD5校验: 75060e64910ff04caed8fcd905fe9edf
+   性别: child
+
+137. Asset ID: asset_1770403439666_qwe54h80j
+   本地文件: asset_1770403439666_qwe54h80j_唐装-拜年姿势-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403439666_qwe54h80j_唐装-拜年姿势-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403439666_qwe54h80j.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403439666_qwe54h80j.png
+   MD5校验: e3ffde5669f8fad6485245cbc16a2245
+   性别: child
+
+138. Asset ID: asset_1770403452302_5d4u8wcbd
+   本地文件: asset_1770403452302_5d4u8wcbd_财神装-站立-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403452302_5d4u8wcbd_财神装-站立-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403452302_5d4u8wcbd.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403452302_5d4u8wcbd.png
+   MD5校验: e23de197c980bde69d920b9f37bcb848
+   性别: child
+
+139. Asset ID: asset_1770403463239_0ezomuj5v
+   本地文件: asset_1770403463239_0ezomuj5v_儿童装-招财手势-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403463239_0ezomuj5v_儿童装-招财手势-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403463239_0ezomuj5v.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403463239_0ezomuj5v.png
+   MD5校验: 122b163f181246fdccb8c516fcddd671
+   性别: child
+
+140. Asset ID: asset_1770403475166_e121b74jw
+   本地文件: asset_1770403475166_e121b74jw_儿童装-拜年姿势-喜庆风-无道具.png
+   本地路径: C:\Users\Administrator\Desktop\M2模板素材\child\asset_1770403475166_e121b74jw_儿童装-拜年姿势-喜庆风-无道具.png
+   COS路径: festival-templates/m2/child/asset_1770403475166_e121b74jw.png
+   COS URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403475166_e121b74jw.png
+   MD5校验: 4958bea99676f8ef3fa057494568d122
+   性别: child
+

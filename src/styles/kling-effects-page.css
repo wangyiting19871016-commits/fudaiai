@@ -1,0 +1,142 @@
+/* 可灵特效页面 - 舒适版样式（不挤压） */
+
+.kling-effects-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* 模板选择区域 - 舒适版 */
+.template-selection-compact {
+  padding: 20px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.template-selection-compact .section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--cny-gray-900);
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+/* 模板网格 - 舒适布局（2列，间距大） */
+.template-grid-comfortable {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* 模板卡片 - 舒适版（不挤压） */
+.template-card-comfortable {
+  position: relative;
+  background: #fff;
+  border: 2px solid #e8e8e8;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.template-card-comfortable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: #FF6B6B;
+}
+
+.template-card-comfortable.selected {
+  border-color: #FF6B6B;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+}
+
+/* 模板缩略图 - 舒适版（懒加载） */
+.template-thumbnail-comfortable {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+  background: #f5f5f5;
+}
+
+/* 模板信息 - 舒适版（不挤压） */
+.template-info-comfortable {
+  padding: 12px;
+}
+
+.template-name-comfortable {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cny-gray-900);
+  margin-bottom: 4px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.template-desc-comfortable {
+  font-size: 11px;
+  color: var(--cny-gray-600);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 选中标记 - 舒适版 */
+.template-selected-badge-comfortable {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  background: #FF6B6B;
+  color: #fff;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
+  letter-spacing: 0.02em;
+}
+
+/* 响应式优化 */
+@media (max-width: 480px) {
+  .template-grid-comfortable {
+    gap: 14px;
+  }
+
+  .template-thumbnail-comfortable {
+    height: 120px;
+  }
+
+  .template-info-comfortable {
+    padding: 10px;
+  }
+
+  .template-name-comfortable {
+    font-size: 13px;
+  }
+
+  .template-desc-comfortable {
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .template-grid-comfortable {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .template-thumbnail-comfortable {
+    height: 160px;
+  }
+
+  .template-info-comfortable {
+    padding: 14px;
+  }
+}

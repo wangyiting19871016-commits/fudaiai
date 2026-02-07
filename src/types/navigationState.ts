@@ -23,6 +23,7 @@ export interface NavigationState {
   // 文本内容
   text?: string;               // 当前使用的文本（用户输入、模板、AI生成）
   originalCaption?: string;    // 原始判词（10字以内，来自FortunePage/FortuneCardPage）
+  textType?: string;           // 文案类型（fortune, couplet 等）
 
   // 元数据
   textSource?: TextSource;     // 文本来源标识
@@ -33,6 +34,7 @@ export interface NavigationState {
   quickMode?: boolean;         // 快速生成模式（使用预设参数，跳过选择UI）
   autoGenerate?: boolean;      // 是否自动触发生成（用于一键流程）
   skipTextEdit?: boolean;      // 是否跳过文本编辑步骤
+  returnTo?: string;           // 返回目标页面路径（用于生成页完成后返回制作页）
 
   // 场景上下文
   scene?: string;              // 场景类型（general, elder, friend等）

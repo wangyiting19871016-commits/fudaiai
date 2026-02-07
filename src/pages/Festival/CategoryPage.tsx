@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getCategoryById } from '../../configs/festival/categories';
 import { getFeaturesByCategory, Feature, isLegacyFeature } from '../../configs/festival/features';
 import { BottomNav } from '../../components/BottomNav';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
+import { useCredits, useCreditActions } from '../../stores/creditStore';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-category-glass.css';
 
@@ -22,6 +23,12 @@ const FestivalCategoryPage: React.FC = () => {
   const category = getCategoryById(categoryId || '');
   const features = getFeaturesByCategory(categoryId || '');
 
+  // 积分状态
+  const currentCredits = useCredits();
+  const { checkCredits } = useCreditActions();
+  const [showInsufficientModal, setShowInsufficientModal] = useState(false);
+  const [requiredCredits, setRequiredCredits] = useState(0);
+
   if (!category) {
     return (
       <div className="festival-layout">
@@ -37,13 +44,21 @@ const FestivalCategoryPage: React.FC = () => {
 
   // 点击功能进入功能页
   const handleFeatureClick = (feature: Feature) => {
+    // 临时关闭积分检查，方便测试
+    // const creditsRequired = feature.access.credits || 0;
+    // if (creditsRequired > 0 && !checkCredits(creditsRequired)) {
+    //   setRequiredCredits(creditsRequired);
+    //   setShowInsufficientModal(true);
+    //   return;
+    // }
+
     const processType = feature.process.type;
 
     // 图片类功能
     if (processType === 'image') {
-      // M11数字人拜年：跳转专用数字人页面
+      // M11数字人拜年：跳转视频制作页
       if (feature.id === 'M11') {
-        navigate('/festival/digital-human');
+        navigate('/festival/video');
         return;
       }
 
@@ -55,7 +70,17 @@ const FestivalCategoryPage: React.FC = () => {
 
       // 判断是否需要模板选择
       if (feature.input.needTemplate) {
-        // 需要模板选择：M1/M2/M3/M4
+        // M2写真：使用新版模板选择页
+        if (feature.id === 'M2') {
+          navigate('/festival/m2-template-select');
+          return;
+        }
+        // M3情侣：使用新版模板选择页
+        if (feature.id === 'M3') {
+          navigate('/festival/m3-template-select');
+          return;
+        }
+        // M1/M4：使用旧版模板选择页
         navigate(`/festival/template-select/${feature.id}`);
       } else if (isLegacyFeature(feature.id)) {
         // 旧版遗留功能
@@ -85,7 +110,7 @@ const FestivalCategoryPage: React.FC = () => {
 
     // 视频类功能
     if (processType === 'video') {
-      navigate(`/festival/video-lab/${feature.id}`);
+      navigate('/festival/category/video');
       return;
     }
 
@@ -99,17 +124,15 @@ const FestivalCategoryPage: React.FC = () => {
   // 获取功能的免费次数显示
   const renderFreeQuota = (feature: Feature) => {
     const { access } = feature;
+    const creditsRequired = access.credits || 0;
 
-    if (access.freePerDay === -1) {
-      return <span className="feature-quota free">免费无限</span>;
-    }
+    // 不显示积分，保持原有布局
+    return null;
 
-    return (
-      <span className="feature-quota">
-        免费{access.freePerDay}次/天
-        {access.freeWatermark && '，带水印'}
-      </span>
-    );
+    // 如果需要显示，使用小标签在右下角
+    // return creditsRequired > 0 ? (
+    //   <span className="feature-credits-small">{creditsRequired}</span>
+    // ) : null;
   };
 
   return (
@@ -150,6 +173,31 @@ const FestivalCategoryPage: React.FC = () => {
 
       {/* 底部导航栏 */}
       <BottomNav />
+
+      {/* 积分不足弹窗 */}
+      {showInsufficientModal && (
+        <div className="modal-overlay" onClick={() => setShowInsufficientModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>💰 积分不足</h2>
+            <p>此功能需要 <strong>{requiredCredits}</strong> 积分</p>
+            <p>当前积分: <strong>{currentCredits}</strong></p>
+            <div className="modal-actions">
+              <button
+                className="btn-secondary"
+                onClick={() => setShowInsufficientModal(false)}
+              >
+                取消
+              </button>
+              <button
+                className="btn-primary"
+                onClick={() => navigate('/festival/recharge')}
+              >
+                去充值
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

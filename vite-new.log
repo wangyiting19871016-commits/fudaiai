@@ -1,0 +1,103 @@
+
+> trinity-mirror@1.0.0 dev
+> node ./node_modules/vite/bin/vite.js
+
+[dotenv@17.2.3] injecting env (16) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+  [32m[1mVITE[22m v4.5.14[39m  [2mready in [0m[1m573[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://26.26.26.1:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.2.2:[1m5173[22m/[39m
+[2m19:17:49[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/RechargePage.css[22m
+[2m19:17:53[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/RechargePage.css[22m
+[2m19:18:06[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/RechargePage.tsx[22m
+[2m19:20:33[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/RechargePage.css[22m
+[2m19:22:07[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/RechargePage.css[22m
+[2m19:59:00[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m19:59:07[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m19:59:31[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m19:59:35[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m21:14:45[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m22:16:02[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m22:16:14[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m22:16:25[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m22:16:37[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m22:16:46[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m22:16:52[22m [36m[1m[vite][22m[39m [32m✨ new dependencies optimized: [33mfabric[32m[39m
+[2m22:16:52[22m [36m[1m[vite][22m[39m [32m✨ optimized dependencies changed. reloading[39m
+[2m22:22:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/AdvancedComposerEditor.tsx[22m
+(node:31804) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m22:30:04[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/AdvancedComposerEditor.tsx[22m
+[2m22:31:58[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/AdvancedComposerEditor.tsx[22m
+[2m22:54:53[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m23:11:24[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m23:31:57[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m23:32:14[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m23:32:21[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m23:39:48[22m [31m[1m[vite][22m[39m [31mhttp proxy error at /api/generate/comfy/status?AccessKey=z8_g6KeL5Vac48fUL6am2A&Signature=EpvKyh6OO2wVKJGnKMQGBd05Scw&Timestamp=1770392369139&SignatureNonce=9e2d4390-65ac-49eb-b1a6-24512ca5bdc9:[39m
+Error: Client network socket disconnected before secure TLS connection was established
+    at TLSSocket.onConnectEnd (node:_tls_wrap:1684:19)
+    at TLSSocket.emit (node:events:520:35)
+    at endReadableNT (node:internal/streams/readable:1701:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m23:40:04[22m [31m[1m[vite][22m[39m [31mhttp proxy error at /api/generate/comfyui/app?AccessKey=z8_g6KeL5Vac48fUL6am2A&Signature=PUlK6P3STnX9s8GQLlMaMtf95i4&Timestamp=1770392389055&SignatureNonce=d5f15681-cb67-426b-8a29-fb712d14b72f:[39m
+Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m23:40:32[22m [31m[1m[vite][22m[39m [31mhttp proxy error at /api/generate/comfy/status?AccessKey=z8_g6KeL5Vac48fUL6am2A&Signature=CrQw7YV1uKLVnahjIn1ii-MtkeM&Timestamp=1770392415551&SignatureNonce=fc72b678-605c-4801-965d-55cb26f3152f:[39m
+Error: Client network socket disconnected before secure TLS connection was established
+    at TLSSocket.onConnectEnd (node:_tls_wrap:1684:19)
+    at TLSSocket.emit (node:events:520:35)
+    at endReadableNT (node:internal/streams/readable:1701:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m23:41:21[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m23:42:26[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx[22m
+[2m23:42:41[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m23:42:46[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m23:42:49[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m23:44:35[22m [31m[1m[vite][22m[39m [31mhttp proxy error at /api/generate/comfy/status?AccessKey=z8_g6KeL5Vac48fUL6am2A&Signature=Z_xSy_R3LL6ccfdWE3eSkyHnXwU&Timestamp=1770392660357&SignatureNonce=e4240ca3-5547-4160-9e47-75dd7a46d87a:[39m
+Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m23:45:08[22m [31m[1m[vite][22m[39m [31mhttp proxy error at /api/generate/comfyui/app?AccessKey=z8_g6KeL5Vac48fUL6am2A&Signature=pQVHAvNu3wy15cMibjN042tMdYw&Timestamp=1770392684532&SignatureNonce=7a8d65e3-ff20-4b18-bf6e-c209a55d896e:[39m
+Error: socket hang up
+    at TLSSocket.socketOnEnd (node:_http_client:599:25)
+    at TLSSocket.emit (node:events:520:35)
+    at endReadableNT (node:internal/streams/readable:1701:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m23:49:42[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m23:49:54[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m23:51:36[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m03:47:07[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m03:47:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m03:59:09[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m03:59:25[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m04:00:11[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m04:07:37[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/FortunePage.tsx, /src/pages/Festival/VideoPage.tsx[22m
+[2m04:09:04[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/FortunePage.tsx, /src/pages/Festival/VideoPage.tsx[22m
+[2m04:15:19[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/LabPage.tsx[22m
+[2m04:15:54[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/CategoryPage.tsx, /src/pages/Festival/TemplateSelectionPage.tsx, /src/pages/Festival/TextPage.tsx[22m
+[2m04:26:33[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/FortunePage.tsx, /src/pages/Festival/VideoPage.tsx[22m
+[2m04:26:45[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/ResultPage.tsx, /src/pages/Festival/LabPage.tsx, /src/pages/Festival/FortunePage.tsx, /src/pages/Festival/VideoPage.tsx[22m
+[2m04:34:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m05:35:20[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
+[2m05:39:09[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m05:39:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m05:39:39[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mdist/index.html[22m
+[2m05:41:53[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m05:44:31[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m05:44:58[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mdist/index.html[22m
+[2m05:49:12[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m05:49:13[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M2TemplateSelectionPage.tsx[22m
+[2m05:49:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mdist/index.html[22m
+[2m05:54:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/components/ZJMultiUploader.tsx[22m
+[2m05:54:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/components/ZJMultiUploader.tsx[22m
+[2m05:54:50[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/festival-multi-uploader.css[22m
+[2m05:55:18[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mdist/index.html[22m
+[2m06:10:28[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.tsx?v=1770376484473[22m
+[2m06:10:37[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.tsx?v=1770376484473[22m
+[2m06:10:54[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/CategoryPage.tsx[22m
+[2m06:18:28[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoCategoryPage.tsx[22m
+[2m06:18:46[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mdist/index.html[22m
+[2m06:25:42[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/M3TemplateSelectionPage.tsx[22m
+[2m06:26:00[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Festival/VideoCategoryPage.tsx[22m

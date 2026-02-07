@@ -5,7 +5,7 @@
 
 .digital-human-page {
   min-height: 100vh;
-  background: var(--cny-bg-cream);
+  background: var(--cny-bg-cream) !important;
   font-family: var(--font-body);
   padding: 0;
 }
@@ -256,6 +256,28 @@
 
 /* 结果按钮 */
 .result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.result-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--cny-gray-900);
+  text-align: center;
+  margin: 0;
+}
+
+.result-subtitle {
+  font-size: 14px;
+  color: var(--cny-gray-600);
+  text-align: center;
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.action-buttons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
@@ -292,6 +314,17 @@
 .action-btn-secondary:hover {
   background: rgba(255, 255, 255, 1);
   border-color: var(--cny-gray-300);
+}
+
+.action-btn-secondary.action-btn-saved {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.action-btn-secondary.action-btn-saved:hover {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: #4CAF50;
 }
 
 .action-btn-ghost {

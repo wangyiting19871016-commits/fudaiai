@@ -45,32 +45,47 @@ export const ContinueCreationPanel: React.FC<ContinueCreationPanelProps> = ({
       state?: any;
     }> = [];
 
-    // 如果是图片，快捷生成数字人拜年视频（带字幕）
-    if (currentMaterial.type === 'image') {
-      actions.push({
-        id: 'quick-digital-human',
-        label: '快速生成拜年视频',
-        icon: '',
-        description: '一键生成数字人拜年视频（自动配音+字幕）',
-        path: '/festival/digital-human',
-        state: createNavigationState({
-          image: currentMaterial.data.url,
-          text: currentMaterial.metadata.text || currentMaterial.metadata.caption || '',
-          quickMode: true,
-          sourceFeatureId: 'continue-panel',
-          sourcePagePath: '/festival/result'
-        })
-      });
+    const isFortuneCard = currentMaterial.metadata.featureId === 'M7';
+
+    if (isFortuneCard) {
+      actions.push(
+        {
+          id: 'go-avatar',
+          label: '生成新年头像',
+          icon: '🧧',
+          description: '用一张照片生成新年头像/写真',
+          path: '/festival/category/avatar',
+        },
+        {
+          id: 'go-blessing',
+          label: '写拜年文案',
+          icon: '✍️',
+          description: '生成一段走心祝福，适合微信发送',
+          path: '/festival/text/text-blessing',
+          state: createNavigationState({
+            sourceFeatureId: 'continue-panel',
+            sourcePagePath: '/festival/result',
+            textSource: 'ai',
+          }),
+        },
+        {
+          id: 'go-smart-reply',
+          label: '高情商回复',
+          icon: '💬',
+          description: '接住尬问不憋屈',
+          path: '/festival/smart-reply',
+        }
+      );
     }
 
-    // 如果是图片，建议自定义视频
-    if (currentMaterial.type === 'image') {
+    // 如果是图片，建议制作视频
+    if (currentMaterial.type === 'image' && !isFortuneCard) {
       actions.push({
         id: 'make-video',
-        label: '自定义视频',
-        icon: '',
-        description: '自定义设置生成视频',
-        path: '/festival/video',
+        label: '制作拜年视频',
+        icon: '🎬',
+        description: '生成数字人拜年视频（自动配音+字幕）',
+        path: '/festival/category/video',
         state: createNavigationState({
           image: currentMaterial.data.url,
           text: currentMaterial.metadata.text || currentMaterial.metadata.caption || '',
@@ -83,11 +98,11 @@ export const ContinueCreationPanel: React.FC<ContinueCreationPanelProps> = ({
     }
 
     // 如果是图片或海报，建议配音
-    if (currentMaterial.connectors.roles.includes('videoImage')) {
+    if (currentMaterial.connectors.roles.includes('videoImage') && !isFortuneCard) {
       actions.push({
         id: 'add-voice',
         label: '录制祝福语音',
-        icon: '',
+        icon: '🎙️',
         description: '为作品配上你的声音',
         path: '/festival/voice',
         state: createNavigationState({
@@ -106,7 +121,7 @@ export const ContinueCreationPanel: React.FC<ContinueCreationPanelProps> = ({
       actions.push({
         id: 'from-library',
         label: '从素材库选择',
-        icon: '',
+        icon: '📦',
         description: `已有${compatibleMaterials.length}个可用素材`,
         path: '/festival/materials',
       });

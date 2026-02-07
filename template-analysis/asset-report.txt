@@ -1,0 +1,1648 @@
+===== 图片资产管理报告 =====
+生成时间: 2026/2/7 03:12:35
+数据库版本: 1.0
+总资产数: 162 张
+
+【状态统计】
+  已分类: 162 张
+
+【分类统计】
+  modern (female): 40 张
+  qipao (female): 23 张
+  hanfu (female): 14 张
+  child_costume (child): 14 张
+  modern (male): 12 张
+  tangzhuang (female): 12 张
+  tangzhuang (child): 10 张
+  couple_costume (couple): 8 张
+  hanfu (child): 7 张
+  caishen (male): 6 张
+  modern (couple): 4 张
+  tangzhuang (male): 4 张
+  caishen (female): 3 张
+  caishen (child): 3 张
+  hanfu (male): 2 张
+
+【详细资产列表】
+================================================================================
+
+1. ID: asset_1770400284937_qxalb71e9
+   文件: 1 (1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸男\1 (1).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:51:24
+   备注: 人物穿着红色毛衣，手持红色装饰盒，周围有灯笼和喜庆元素，整体风格偏现代且喜庆。
+
+2. ID: asset_1770400300048_bmuovslqb
+   文件: a76d54130ba053ce2377bf1a34643382d10b175e2884371f19a1c56803841457.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸男\a76d54130ba053ce2377bf1a34643382d10b175e2884371f19a1c56803841457.png
+   分类: caishen > holding_item > festive
+   名称: 财神装-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 01:51:40
+   备注: 人物穿着红色华丽的财神装，手持春联，背景有金色元宝和灯笼装饰，整体呈现喜庆风格。
+
+3. ID: asset_1770400312603_45f1e926w
+   文件: AirPods Max 无蓝牙连接电脑 (2).png
+   位置: C:\Users\Administrator\Desktop\素材\换脸男\AirPods Max 无蓝牙连接电脑 (2).png
+   分类: modern > standing > elegant
+   名称: 现代装-站立-优雅风-无道具
+   道具: none | 颜色: mixed
+   状态: classified | 置信度: 0.92
+   添加: 2026/2/7 01:51:52
+   备注: 人物穿着现代装，搭配红白格纹围巾，背景为烟花和夜空，整体呈现优雅风格。
+
+4. ID: asset_1770400322463_tlh1csm0p
+   文件: AirPods Max 无蓝牙连接电脑 (3).png
+   位置: C:\Users\Administrator\Desktop\素材\换脸男\AirPods Max 无蓝牙连接电脑 (3).png
+   分类: modern > standing > festive
+   名称: 现代装-站立-喜庆风
+   道具: none | 颜色: mixed
+   状态: classified | 置信度: 0.9
+   添加: 2026/2/7 01:52:02
+   备注: 人物穿着现代装，背景有烟花，整体色调喜庆，围巾为红白格子，手持烟花棒。
+
+5. ID: asset_1770400330367_b37k1cfus
+   文件: s` (347)(1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸男\s` (347)(1).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-彩龙饰品
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:52:10
+   备注: 人物身穿红色毛衣，手持彩龙装饰，背景为黑色，具有浓厚的喜庆氛围。
+
+6. ID: asset_1770400338653_s1bpmq7he
+   文件: 微信图片_20260130225122_249_2540.jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸男\微信图片_20260130225122_249_2540.jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-福饰
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:52:18
+   备注: 人物穿着红色毛衣，背景和道具均为喜庆元素，手持糖葫芦，桌上有福字装饰和其他节庆物品。
+
+7. ID: asset_1770400346704_vukuo6lhr
+   文件: 微信图片_20260130225357_255_2540.jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸男\微信图片_20260130225357_255_2540.jpg
+   分类: caishen > holding_item > festive
+   名称: 财神装-持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 01:52:26
+   备注: 人物穿着红色华丽的财神装，持有春联和红包，背景充满春节元素，整体风格喜庆。
+
+8. ID: asset_1770400359567_ekaj849ai
+   文件: 春节真人_男_16.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸男\春节真人_男_16.png
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:52:39
+   备注: 人物穿着红色现代毛衣，手持红色春联与玫瑰花，背景为红色，整体呈现喜庆风格。
+
+9. ID: asset_1770400370739_k9o9sw515
+   文件: 春节真人_男_23.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸男\春节真人_男_23.png
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-吉祥物
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:52:50
+   备注: 人物穿着红色毛衣，背景为红色搭配金色马元素，手持金色马吉祥物，整体呈现喜庆风格。
+
+10. ID: asset_1770400382571_t7wluemks
+   文件: 12345.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\12345.png
+   分类: hanfu > standing > traditional
+   名称: 汉服-站立-传统风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 01:53:02
+   备注: 人物身穿红色宽袍大袖的汉服，背景为橙色，整体呈现传统古典风格。
+
+11. ID: asset_1770400403239_c4vj793v6
+   文件: 3 (1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\3 (1).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-福饰
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:53:23
+   备注: 人物穿着现代红色服装，背景和道具具有浓厚的喜庆元素，包括福字装饰和红色挂饰。
+
+12. ID: asset_1770400424958_05c1pt8oh
+   文件: 3 (2).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\3 (2).jpg
+   分类: modern > other > festive
+   名称: 现代装-其他-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.92
+   添加: 2026/2/7 01:53:44
+   备注: 人物穿着红色现代装，背景有红色装饰元素，整体风格偏喜庆。
+
+13. ID: asset_1770400450869_0igp9780i
+   文件: 3 (3).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\3 (3).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:54:10
+   备注: 人物穿着红色现代服装，背景有灯笼装饰，整体呈现喜庆氛围。
+
+14. ID: asset_1770400473300_umbd225j5
+   文件: 3 (4).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\3 (4).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:54:33
+   备注: 人物穿着红色现代装，坐姿，背景有喜庆装饰。
+
+15. ID: asset_1770400491008_aewab5o0s
+   文件: 3 (5).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\3 (5).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:54:51
+   备注: 穿着红色现代服装，手持红色灯笼，背景有红色装饰，整体呈现喜庆氛围。
+
+16. ID: asset_1770400509863_e0deucuqd
+   文件: 3 (6).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\3 (6).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:55:09
+   备注: 人物穿着现代红色套装，背景有喜庆元素（灯笼和福字装饰），姿势为坐姿，未持有道具。
+
+17. ID: asset_1770400533283_uo2vuszl4
+   文件: 3 (7).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\3 (7).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-福饰
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:55:33
+   备注: 人物穿着红色现代服装，手持红色福饰，背景有灯笼装饰，整体呈现喜庆风格。
+
+18. ID: asset_1770400556519_0ztjb43gu
+   文件: 3 (8).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\3 (8).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:55:56
+   备注: 人物穿着红色现代毛衣，背景有灯笼装饰，整体呈现喜庆风格。
+
+19. ID: asset_1770400575615_0q5u7lctr
+   文件: 3 (9).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\3 (9).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:56:15
+   备注: 人物穿着现代红色毛衣套装，背景和装饰以红色为主，包含灯笼和喜庆元素。
+
+20. ID: asset_1770400593387_mezab46mo
+   文件: 4 (1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\4 (1).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:56:33
+   备注: 图片中人物穿着红色毛衣，坐姿，背景简洁，整体风格偏喜庆。
+
+21. ID: asset_1770400615954_7kx7h4i0q
+   文件: 4 (2).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\4 (2).jpg
+   分类: modern > holding_item > playful
+   名称: 现代装-手持道具-活泼风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:56:55
+   备注: 人物穿着红色现代毛衣，手持红色苹果，动作活泼，风格偏现代且无传统元素。
+
+22. ID: asset_1770400638257_0uwh3sga5
+   文件: 4 (3).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\4 (3).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:57:18
+   备注: 人物穿着红色现代装，手持红色苹果，整体风格偏喜庆。
+
+23. ID: asset_1770400655631_6jtkqa44g
+   文件: 4 (4).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\4 (4).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:57:35
+   备注: 人物穿着红色毛衣，坐姿，背景简洁，整体风格偏喜庆。
+
+24. ID: asset_1770400680728_l7os94y2r
+   文件: 4 (5).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\4 (5).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:58:00
+   备注: 人物穿着红色毛衣，手持三个红苹果，整体风格偏喜庆。
+
+25. ID: asset_1770400701355_np052m7mw
+   文件: 4 (6).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\4 (6).jpg
+   分类: modern > other > playful
+   名称: 现代装-其他-活泼风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:58:21
+   备注: 穿着红色毛衣，动作活泼，整体风格现代且轻松。
+
+26. ID: asset_1770400724498_rworkpkcj
+   文件: 4 (7).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\4 (7).jpg
+   分类: modern > holding_item > elegant
+   名称: 现代装-手持物品-优雅风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:58:44
+   备注: 人物穿着红色现代毛衣，手持红苹果，整体风格优雅，未使用其他道具。
+
+27. ID: asset_1770400768498_phfv7xpjo
+   文件: 5 (1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (1).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:59:28
+   备注: 人物穿着红色亮片连衣裙，手持红包，背景有新年装饰，整体风格为喜庆风。
+
+28. ID: asset_1770400777376_i0dgqiytu
+   文件: 5 (1).png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (1).png
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:59:37
+   备注: 人物穿着红色亮片现代服装，手持红包，整体风格偏喜庆。
+
+29. ID: asset_1770400790904_r6s3whvdq
+   文件: 5 (10).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (10).jpg
+   分类: qipao > sitting > festive
+   名称: 旗袍-坐姿-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 01:59:50
+   备注: 图片中人物穿着红色亮片旗袍，坐姿，背景和装饰元素具有喜庆风格。
+
+30. ID: asset_1770400807009_4wiahg653
+   文件: 5 (2).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (2).jpg
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:00:07
+   备注: 人物穿着红色亮片旗袍，手持彩色装饰物，整体风格喜庆，符合节日氛围。
+
+31. ID: asset_1770400817623_5tcfrj28z
+   文件: 5 (2).png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (2).png
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:00:17
+   备注: 人物穿着红色旗袍，手持两个红包，整体风格喜庆，适合春节主题。
+
+32. ID: asset_1770400831370_5s1uqpevc
+   文件: 5 (3).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (3).jpg
+   分类: qipao > standing > festive
+   名称: 旗袍-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:00:31
+   备注: 人物穿着红色亮片旗袍，搭配喜庆发饰，整体风格偏向节庆氛围。
+
+33. ID: asset_1770400845764_zvcl79sbu
+   文件: 5 (4).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (4).jpg
+   分类: qipao > sitting > festive
+   名称: 旗袍-坐姿-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:00:45
+   备注: 人物穿着红色亮片旗袍，背景和服饰均以红色为主，搭配灯笼等传统春节元素，整体风格喜庆。
+
+34. ID: asset_1770400860110_t8ccuyt72
+   文件: 5 (5).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (5).jpg
+   分类: qipao > standing > festive
+   名称: 旗袍-站立-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:01:00
+   备注: 图片中人物穿着红色亮片旗袍，搭配喜庆装饰，背景有灯笼和红布，整体呈现浓厚的节日氛围。
+
+35. ID: asset_1770400874546_hf7k9pb11
+   文件: 5 (6).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (6).jpg
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:01:14
+   备注: 人物穿着红色亮片旗袍，手持红包，背景有灯笼和福字装饰，整体呈现浓厚的新年喜庆氛围。
+
+36. ID: asset_1770400893942_tlb9vmhrd
+   文件: 5 (7).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (7).jpg
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:01:33
+   备注: 人物身穿红色亮片旗袍，手持红包，背景有红色灯笼和喜庆装饰，整体风格为春节喜庆主题。
+
+37. ID: asset_1770400906199_ahmqz0mip
+   文件: 5 (8).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (8).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:01:46
+   备注: 人物穿着红色现代风格服饰，手持红包，背景有红色灯笼装饰，整体呈现喜庆风格。
+
+38. ID: asset_1770400920406_471kosv52
+   文件: 5 (9).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\5 (9).jpg
+   分类: qipao > sitting > festive
+   名称: 旗袍-坐姿-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:02:00
+   备注: 人物穿着红色亮片旗袍，搭配喜庆风格装饰，坐姿呈现优雅氛围。
+
+39. ID: asset_1770400931749_oall0ui2z
+   文件: 690872624-71ee668d691c87aafbefd14813a00f651caeab6a1961f0f66fb1d5bb0d9eb339.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\690872624-71ee668d691c87aafbefd14813a00f651caeab6a1961f0f66fb1d5bb0d9eb339.png
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-春联
+   道具: couplet | 颜色: gold
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:02:11
+   备注: 人物穿着金色旗袍，手持红色春联，背景有节庆装饰，整体风格喜庆。
+
+40. ID: asset_1770400942504_rkde9pvm0
+   文件: 99480dd3ed5fb7ab5c4f4cdcaf54ef2d618459260e57e83d6b45cc3540bda0fd.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\99480dd3ed5fb7ab5c4f4cdcaf54ef2d618459260e57e83d6b45cc3540bda0fd.png
+   分类: hanfu > holding_item > festive
+   名称: 汉服-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:02:22
+   备注: 人物穿着红色汉服，背景有灯笼和春联，手持“新年快乐”春联和红包，整体呈现浓厚的节日氛围。
+
+41. ID: asset_1770400957084_uuxcev16o
+   文件: ab5d31452bf410d5454266b4e93850085b874830c0129a671b045cf3830a3199.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\ab5d31452bf410d5454266b4e93850085b874830c0129a671b045cf3830a3199.png
+   分类: modern > standing > festive
+   名称: 现代装-站立-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:02:37
+   备注: 人物穿着红色毛衣，背景有灯笼和春联，整体氛围喜庆。
+
+42. ID: asset_1770400971485_0ss3hnayg
+   文件: AirPods Max 无蓝牙连接电脑 (1).png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\AirPods Max 无蓝牙连接电脑 (1).png
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:02:51
+   备注: 人物穿着现代红色毛衣，手持红色灯笼，背景有福字和对联，整体呈现喜庆风格。
+
+43. ID: asset_1770400984185_qelu09oqz
+   文件: AirPods Max 无蓝牙连接电脑.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\AirPods Max 无蓝牙连接电脑.png
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-吉祥物
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:03:04
+   备注: 人物穿着红色毛衣搭配白色围巾，手持红色吉祥物，背景有福字装饰，整体呈现喜庆风格。
+
+44. ID: asset_1770400995878_d4ke535d0
+   文件: ca55e4895f27a14214673ec3a60c37a6b335c001596e5ad15a70153fd24fe4e2.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\ca55e4895f27a14214673ec3a60c37a6b335c001596e5ad15a70153fd24fe4e2.png
+   分类: tangzhuang > holding_item > festive
+   名称: 唐装-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:03:15
+   备注: 人物穿着红色唐装，手持春联和红包，背景有金元宝和灯笼装饰，整体呈现浓厚的春节喜庆氛围。
+
+45. ID: asset_1770401006736_7bjxep229
+   文件: e05d4b5b19f2f5e3400e043813c03872d1249d9b99b47593cfa84df69974a060.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\e05d4b5b19f2f5e3400e043813c03872d1249d9b99b47593cfa84df69974a060.png
+   分类: hanfu > holding_item > festive
+   名称: 汉服-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:03:26
+   备注: 人物身穿红色汉服，头戴华丽头饰，手持春联，背景有灯笼和元宝，整体呈现浓厚的喜庆氛围。
+
+46. ID: asset_1770401023156_stxahq8vj
+   文件: ea886347c2f8abf0e0735a6cd5dbf68e2e542faf19c2e50bb661b8c8c6366f77.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\ea886347c2f8abf0e0735a6cd5dbf68e2e542faf19c2e50bb661b8c8c6366f77.png
+   分类: hanfu > holding_item > festive
+   名称: 汉服-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:03:43
+   备注: 人物身穿红色汉服，手持春联，背景有红灯笼和飘落的纸屑，整体呈现浓厚的春节喜庆氛围。
+
+47. ID: asset_1770401039079_azx6h14nu
+   文件: f4ebde653597b2cdc1d1821e615445f3e421f4b4984175b82f7858dd0643406c.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\f4ebde653597b2cdc1d1821e615445f3e421f4b4984175b82f7858dd0643406c.png
+   分类: caishen > holding_item > festive
+   名称: 财神装-手持对联-喜庆风-对联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:03:59
+   备注: 人物穿着红色华丽的财神装，手持‘恭喜发财’对联，背景有金元宝和灯笼等喜庆元素。
+
+48. ID: asset_1770401051885_eccvye9m7
+   文件: Gemini_Generated_Image_i5pjhfi5pjhfi5pj.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\Gemini_Generated_Image_i5pjhfi5pjhfi5pj.png
+   分类: caishen > holding_item > festive
+   名称: 财神装-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:04:11
+   备注: 人物穿着华丽的红色财神装，头戴金色装饰，手持写有‘恭喜发财’的春联，背景为红色喜庆布置，包含金元宝和灯笼等元素。
+
+49. ID: asset_1770401063594_zgniw0irc
+   文件: s` (349)(1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\s` (349)(1).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-吉祥物
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:04:23
+   备注: 人物穿着红色现代毛衣，手持彩色龙形吉祥物，背景为喜庆风格。
+
+50. ID: asset_1770401072054_ymjweq3sy
+   文件: 微信图片_20260130223342_197_2540.jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\微信图片_20260130223342_197_2540.jpg
+   分类: modern > other > festive
+   名称: 现代装-其他-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.92
+   添加: 2026/2/7 02:04:32
+   备注: 人物穿着红色毛衣，背景为新年主题红色装饰，动作为伸手姿势，未持有道具。
+
+51. ID: asset_1770401083903_ckaje6v7y
+   文件: 微信图片_20260130224146_208_2540.jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\微信图片_20260130224146_208_2540.jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:04:43
+   备注: 人物穿着红色毛衣，手持烟花和玫瑰花束，背景为2026字样和烟花，整体呈现喜庆氛围。
+
+52. ID: asset_1770401093703_rxe0ae0hp
+   文件: 微信图片_20260130225002_242_2540.jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\微信图片_20260130225002_242_2540.jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-福字挂饰
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:04:53
+   备注: 人物穿着红色现代毛衣，背景和道具以红色和金色为主，手持糖葫芦，桌面有福字挂饰和其他喜庆装饰。
+
+53. ID: asset_1770401107547_h5oknw7pk
+   文件: 新年写真 (10).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (10).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-吉祥物
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.93
+   添加: 2026/2/7 02:05:07
+   备注: 人物穿着红色亮片现代装，手持红色吉祥物，背景和整体风格偏喜庆。
+
+54. ID: asset_1770401118086_a12ysu90j
+   文件: 新年写真 (11).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (11).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:05:18
+   备注: 人物身穿红色现代装，背景及道具均为喜庆元素，手持‘新年快乐’字样的春联。
+
+55. ID: asset_1770401128822_fbeqh2yip
+   文件: 新年写真 (12).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (12).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:05:28
+   备注: 人物穿着现代风格红色亮片服饰，背景及道具以红色灯笼和喜庆元素为主，整体呈现节日氛围。
+
+56. ID: asset_1770401139399_kw739931d
+   文件: 新年写真 (13).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (13).jpg
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:05:39
+   备注: 图片中人物穿着红色亮片旗袍，手持灯笼，背景和道具均为喜庆风格，整体呈现传统节日氛围。
+
+57. ID: asset_1770401151346_9yumhojci
+   文件: 新年写真 (14).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (14).jpg
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持灯笼-喜庆风-红色
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:05:51
+   备注: 女性穿着红色亮片旗袍，手持红色灯笼装饰，背景及道具呈现浓厚的喜庆风格。
+
+58. ID: asset_1770401162141_y37d2byzd
+   文件: 新年写真 (16).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (16).jpg
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:06:02
+   备注: 人物穿着红色亮片旗袍，手持红包，背景为红色，整体呈现喜庆风格。
+
+59. ID: asset_1770401173933_za6kbmg3o
+   文件: 新年写真 (17).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (17).jpg
+   分类: tangzhuang > other > festive
+   名称: 唐装-其他-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:06:13
+   备注: 图片中人物穿着红色唐装，背景为红色，整体风格喜庆。未见明显道具或特定姿势。
+
+60. ID: asset_1770401184933_yge9py180
+   文件: 新年写真 (18).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (18).jpg
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.97
+   添加: 2026/2/7 02:06:24
+   备注: 人物穿着红色旗袍，手持红色灯笼，背景和服饰均体现浓厚的喜庆氛围。
+
+61. ID: asset_1770401198508_pahaf6sod
+   文件: 新年写真 (19).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (19).jpg
+   分类: qipao > standing > festive
+   名称: 旗袍-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:06:38
+   备注: 图片中人物穿着红色亮片旗袍，背景为红色，整体呈现喜庆风格，无明显道具。
+
+62. ID: asset_1770401209409_yhz5rtlgj
+   文件: 新年写真 (20).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (20).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:06:49
+   备注: 人物穿着红色现代装，手持灯笼，背景和装饰物呈现浓厚的喜庆氛围。
+
+63. ID: asset_1770401223269_om14ipaa0
+   文件: 新年写真 (21).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\新年写真 (21).jpg
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:07:03
+   备注: 人物穿着红色旗袍，手持红包，背景和道具均为喜庆风格，突出传统春节氛围。
+
+64. ID: asset_1770401236521_nhkrsv6xo
+   文件: 春节真人_女_01.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_01.png
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:07:16
+   备注: 人物穿着现代冬装，手持红色春联，背景有灯笼和雪景，整体呈现喜庆氛围。
+
+65. ID: asset_1770401254979_dvbuqgi1e
+   文件: 春节真人_女_04.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_04.png
+   分类: tangzhuang > holding_item > festive
+   名称: 唐装-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:07:34
+   备注: 人物穿着红色唐装，手持春联，背景有灯笼和福字装饰，整体呈现浓厚的节日氛围。
+
+66. ID: asset_1770401270946_k75ii701x
+   文件: 春节真人_女_07.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_07.png
+   分类: tangzhuang > holding_item > festive
+   名称: 唐装-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:07:50
+   备注: 人物穿着红色唐装，手持春联，背景为冬季雪景，整体呈现喜庆氛围。
+
+67. ID: asset_1770401278132_d8gym0b23
+   文件: 春节真人_女_09.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_09.png
+   分类: modern > holding_item > festive
+   名称: 现代装-持道具-喜庆风-元宝
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:07:58
+   备注: 人物穿着红色现代毛衣，手持金色元宝，背景为红色，整体呈现喜庆风格。
+
+68. ID: asset_1770401292267_553xdche7
+   文件: 春节真人_女_16.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_16.png
+   分类: qipao > standing > festive
+   名称: 旗袍-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:08:12
+   备注: 人物穿着红色旗袍，背景为新年主题装饰，整体风格喜庆，未持有任何道具。
+
+69. ID: asset_1770401303735_e2zn3t090
+   文件: 春节真人_女_18.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_18.png
+   分类: modern > holding_item > festive
+   名称: 现代装-手持春联-喜庆风-红色
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:08:23
+   备注: 人物穿着红色现代毛衣，手持春联，背景有金色数字和红色灯笼，整体呈现喜庆风格。
+
+70. ID: asset_1770401313568_24khsaawk
+   文件: 春节真人_女_22.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_22.png
+   分类: hanfu > standing > traditional
+   名称: 汉服-站立-传统风-无道具
+   道具: none | 颜色: orange
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:08:33
+   备注: 人物穿着宽袍大袖的汉服，背景为传统建筑，整体风格古典优雅。
+
+71. ID: asset_1770401324280_7fc21nlzm
+   文件: 春节真人_女_25.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_25.png
+   分类: modern > other > festive
+   名称: 现代装-其他-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:08:44
+   备注: 图片中人物穿着红色现代毛衣，背景为新年主题，整体风格喜庆。
+
+72. ID: asset_1770401333740_6va5o1omn
+   文件: 春节真人_女_35.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_35.png
+   分类: qipao > standing > elegant
+   名称: 旗袍-站立-优雅风-无道具
+   道具: none | 颜色: black
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:08:53
+   备注: 人物穿着黑色旗袍，金色刺绣花纹，整体风格优雅，背景为室内中式装饰。
+
+73. ID: asset_1770401346693_0aa517q55
+   文件: 春节真人_女_57.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\春节真人_女_57.png
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:09:06
+   备注: 人物穿着红色旗袍，手持福字灯笼，背景有红色装饰，整体呈现喜庆风格。
+
+74. ID: asset_1770401364364_bhll8xlhf
+   文件: 0e651d3ac759739b9d556be65160fcb165d6b5a9a80df6e204ac08d9997744f1.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸儿童\0e651d3ac759739b9d556be65160fcb165d6b5a9a80df6e204ac08d9997744f1.png
+   分类: hanfu > holding_item > festive
+   名称: 汉服-手持道具-喜庆风-金球
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:09:24
+   备注: 图片中为儿童穿着红色汉服，手持金色道具，背景为喜庆布置。
+
+75. ID: asset_1770401383719_7ntu2dumo
+   文件: fe5ab0bdacd924ba46e31c4e7259a83a611c84babde511ce280fa62764b79fa4.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸儿童\fe5ab0bdacd924ba46e31c4e7259a83a611c84babde511ce280fa62764b79fa4.png
+   分类: hanfu > sitting > festive
+   名称: 汉服-坐姿-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:09:43
+   备注: 图片中的服饰为红色传统汉服，带有金色刺绣龙凤图案，背景为喜庆风格的红色灯笼和花卉装饰。
+
+76. ID: asset_1770401390497_2sh05jjhc
+   文件: 微信图片_20260130224148_211_2540.jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸儿童\微信图片_20260130224148_211_2540.jpg
+   分类: child_costume > holding_item > festive
+   名称: 儿童装-手持福字-喜庆风-福字
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:09:50
+   备注: 儿童穿红色毛衣，背景为红色，手持福字装饰，整体呈现喜庆风格。
+
+77. ID: asset_1770401403977_bjhx1doh7
+   文件: 微信图片_20260130224152_215_2540.jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸儿童\微信图片_20260130224152_215_2540.jpg
+   分类: child_costume > holding_item > festive
+   名称: 儿童装-手持道具-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:10:03
+   备注: 儿童穿着红色喜庆服装，手持糖葫芦，背景有灯笼装饰，整体氛围为新年节庆风格。
+
+78. ID: asset_1770401412562_vz35i5t76
+   文件: 微信图片_20260130225722_267_2540.jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸儿童\微信图片_20260130225722_267_2540.jpg
+   分类: child_costume > holding_item > festive
+   名称: 儿童装-手持道具-喜庆风-吉祥物
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:10:12
+   备注: 图片中为儿童装，红色为主色调，手持红色吉祥物，整体风格喜庆。
+
+79. ID: asset_1770401420231_tfivt8qi4
+   文件: 春节真人_童_04.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸儿童\春节真人_童_04.png
+   分类: modern > other > elegant
+   名称: 现代装-其他-优雅风-无道具
+   道具: none | 颜色: black
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:10:20
+   备注: 人物穿着现代风格黑色无袖上衣，搭配黑色贝雷帽，整体风格简约优雅。
+
+80. ID: asset_1770401431560_2dvir57la
+   文件: 春节真人_童_08.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸儿童\春节真人_童_08.png
+   分类: tangzhuang > holding_item > festive
+   名称: 唐装-手持道具-喜庆风-福字装饰
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:10:31
+   备注: 儿童穿着红色唐装，手持福字装饰，整体呈现喜庆风格。
+
+81. ID: asset_1770401447094_dqrs5ad03
+   文件: 春节真人_童_18.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸儿童\春节真人_童_18.png
+   分类: child_costume > holding_item > festive
+   名称: 儿童装-手持道具-喜庆风-吉祥物
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:10:47
+   备注: 图片中儿童穿着红色毛衣和白色裙子，手持吉祥物玩偶，背景有福字装饰，整体呈现喜庆风格。
+
+82. ID: asset_1770401460920_6kdisicbl
+   文件: 1 (2).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\1 (2).jpg
+   分类: couple_costume > couple_interaction > festive
+   名称: 情侣装-情侣互动-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:11:00
+   备注: 两人穿着红色服装，手持红包，背景和道具均为喜庆元素，体现节日氛围。
+
+83. ID: asset_1770401476040_2gzfcedy8
+   文件: 1 (3).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\1 (3).jpg
+   分类: couple_costume > holding_item > festive
+   名称: 情侣装-手持道具-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:11:16
+   备注: 两人穿着红色情侣装，手持红包，背景有春节装饰，整体氛围喜庆。
+
+84. ID: asset_1770401489486_56qbkl6v0
+   文件: 1 (4).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\1 (4).jpg
+   分类: couple_costume > couple_interaction > festive
+   名称: 情侣装-情侣互动-喜庆风-红包
+   道具: red_envelope | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:11:29
+   备注: 两人穿着红色衣服，手持红包，背景有喜庆元素。
+
+85. ID: asset_1770401509566_de5enlrea
+   文件: 1 (5).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\1 (5).jpg
+   分类: couple_costume > couple_interaction > festive
+   名称: 情侣装-互动-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:11:49
+   备注: 两人穿着红色现代服装，搭配节庆背景，表现出新年喜庆氛围，手持带有‘福’字的装饰盒。
+
+86. ID: asset_1770401524206_3kaklvb5a
+   文件: 1 (6).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\1 (6).jpg
+   分类: modern > holding_item > festive
+   名称: 现代装-手持道具-喜庆风-福字盒
+   道具: lucky_charm | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:12:04
+   备注: 两人穿着红色现代服装，手持带有福字的盒子，背景为新年主题设计，整体风格为喜庆风。
+
+87. ID: asset_1770401534161_pu3ic74ga
+   文件: s` (348)(1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\s` (348)(1).jpg
+   分类: couple_costume > couple_interaction > playful
+   名称: 情侣装-情侣互动-活泼风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:12:14
+   备注: 图片中两人穿着红色毛衣，动作活泼，背景有喜庆元素，整体风格偏向节日气氛。
+
+88. ID: asset_1770401542909_nfgnpx6ka
+   文件: s` (350)(1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\s` (350)(1).jpg
+   分类: couple_costume > couple_interaction > festive
+   名称: 情侣装-情侣互动-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:12:22
+   备注: 两人穿着红色毛衣，搭配红色袜子和帽子，呈现喜庆风格，互动姿势明显。
+
+89. ID: asset_1770401559180_of8j5i9g4
+   文件: s` (351)(1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\s` (351)(1).jpg
+   分类: modern > other > festive
+   名称: 现代装-其他-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:12:39
+   备注: 两人穿着红色毛衣，搭配喜庆背景，呈现节日氛围。
+
+90. ID: asset_1770401568023_qg12r2zdl
+   文件: s` (352)(1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\s` (352)(1).jpg
+   分类: couple_costume > standing > festive
+   名称: 情侣装-站立-喜庆风
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:12:48
+   备注: 两人穿着红色毛衣和袜子，背景有新年祝福文字，整体呈现喜庆氛围。
+
+91. ID: asset_1770401577489_xanfp7fe2
+   文件: s` (353)(1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\s` (353)(1).jpg
+   分类: couple_costume > holding_item > festive
+   名称: 情侣装-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:12:57
+   备注: 两人穿着红色毛衣，手持春联，坐姿，整体风格喜庆，背景有‘福’字和‘万事兴隆’字样。
+
+92. ID: asset_1770401587587_44wvqc3f5
+   文件: s` (354)(1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\s` (354)(1).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:13:07
+   备注: 两人身穿红色毛衣，坐姿，背景有喜庆元素，地面有福字春联和红包道具。
+
+93. ID: asset_1770401598894_f40h4c7qw
+   文件: s` (355)(1).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸情侣\s` (355)(1).jpg
+   分类: modern > sitting > festive
+   名称: 现代装-坐姿-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:13:18
+   备注: 两人穿着红色毛衣，背景有‘万事兴隆’字样，地上摆放春联和福字，整体呈现春节喜庆氛围。
+
+94. ID: asset_1770402697273_fppskd5jr
+   文件: 4 (8).jpg
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\4 (8).jpg
+   分类: modern > holding_item > playful
+   名称: 现代装-手持道具-活泼风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:31:37
+   备注: 人物穿着红色现代毛衣，手持苹果，姿势活泼，整体风格偏向现代与活泼风格。
+
+95. ID: asset_1770402708625_5h75yng24
+   文件: 1.png
+   位置: C:\Users\Administrator\Desktop\素材1\1.png
+   分类: modern > standing > festive
+   名称: 现代装-站立-喜庆风-喜庆道具
+   道具: lucky_charm | 颜色: black
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:31:48
+   备注: 人物穿着现代黑色西装，背景和道具充满喜庆元素，红色的喜庆道具为主要装饰。
+
+96. ID: asset_1770402719548_ixmbpewoz
+   文件: 2.png
+   位置: C:\Users\Administrator\Desktop\素材1\2.png
+   分类: modern > greeting > festive
+   名称: 现代装-拜年姿势-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:31:59
+   备注: 人物穿着现代装，背景和道具具有浓厚的春节喜庆氛围，红色灯笼和装饰突出节日主题。
+
+97. ID: asset_1770402734171_m4pm0uj46
+   文件: 3.png
+   位置: C:\Users\Administrator\Desktop\素材1\3.png
+   分类: modern > other > festive
+   名称: 现代装-其他-喜庆风-无道具
+   道具: none | 颜色: black
+   状态: classified | 置信度: 0.92
+   添加: 2026/2/7 02:32:14
+   备注: 人物穿着黑色现代服装，背景有喜庆元素（金色纸屑和‘福马贺岁’字样）。
+
+98. ID: asset_1770402748006_64u98vjl3
+   文件: 4.png
+   位置: C:\Users\Administrator\Desktop\素材1\4.png
+   分类: modern > other > festive
+   名称: 现代装-其他-喜庆风-福字灯笼
+   道具: lucky_charm | 颜色: black
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:32:28
+   备注: 人物穿着现代装（黑色西装），背景有红色福字装饰和灯笼，整体呈现喜庆风格。
+
+99. ID: asset_1770402760345_o5iim780u
+   文件: 5.png
+   位置: C:\Users\Administrator\Desktop\素材1\5.png
+   分类: modern > standing > festive
+   名称: 现代装-站立-喜庆风-喜庆道具
+   道具: lucky_charm | 颜色: black
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:32:40
+   备注: 人物穿着现代黑色西装，背景有红色喜庆元素和金色纸片装饰，手势和道具表现节日氛围。
+
+100. ID: asset_1770402771361_ji78u3ium
+   文件: 6.png
+   位置: C:\Users\Administrator\Desktop\素材1\6.png
+   分类: modern > standing > festive
+   名称: 现代装-站立-喜庆风-无道具
+   道具: none | 颜色: black
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:32:51
+   备注: 人物穿着现代黑色衬衫和裤子，背景有金色和红色的喜庆元素装饰，整体风格偏向节日庆祝。
+
+101. ID: asset_1770402785224_i0fnrfgmh
+   文件: 图片元素替换与裁剪 (10).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (10).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:33:05
+   备注: 人物穿着红色唐装，背景有灯笼和喜庆元素，整体风格偏向传统与节日气氛。
+
+102. ID: asset_1770402796449_rd84hlhfc
+   文件: 图片元素替换与裁剪 (11).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (11).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:33:16
+   备注: 人物穿着红色中式唐装，背景为喜庆红色，整体风格偏传统与节日氛围。无明显道具。
+
+103. ID: asset_1770402810952_uunkzv8p7
+   文件: 图片元素替换与裁剪 (12).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (12).png
+   分类: qipao > standing > festive
+   名称: 旗袍-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:33:30
+   备注: 人物穿着红色传统旗袍，背景为喜庆的红色金色装饰，整体风格突出节日氛围。
+
+104. ID: asset_1770402825596_3waj9rwqp
+   文件: 图片元素替换与裁剪 (13).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (13).png
+   分类: caishen > standing > festive
+   名称: 财神装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:33:45
+   备注: 人物穿着红色华丽的财神装，背景有元宝和灯笼装饰，整体风格喜庆。
+
+105. ID: asset_1770402838465_kdfp5ai1e
+   文件: 图片元素替换与裁剪 (14).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (14).png
+   分类: modern > standing > festive
+   名称: 现代装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:33:58
+   备注: 人物穿着现代风格的红色连衣裙，装饰有金色刺绣，背景为喜庆的红色和金色元素。
+
+106. ID: asset_1770402850135_iiewx93v7
+   文件: 图片元素替换与裁剪 (15).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (15).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:34:10
+   备注: 人物穿着红色唐装，背景为喜庆风格，带有金色装饰元素。
+
+107. ID: asset_1770402862435_6vtthhb20
+   文件: 图片元素替换与裁剪 (16).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (16).png
+   分类: qipao > sitting > festive
+   名称: 旗袍-坐姿-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:34:22
+   备注: 人物穿着红色旗袍，背景和服饰充满喜庆元素，搭配红色灯笼道具，整体呈现春节氛围。
+
+108. ID: asset_1770402874041_smal3rety
+   文件: 图片元素替换与裁剪 (17).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (17).png
+   分类: qipao > standing > festive
+   名称: 旗袍-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:34:34
+   备注: 人物穿着红色金纹旗袍，背景有金色和红色装饰元素，整体呈现喜庆风格。
+
+109. ID: asset_1770402886453_av7vzxzv8
+   文件: 图片元素替换与裁剪 (18).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (18).png
+   分类: modern > standing > festive
+   名称: 现代装-站立-喜庆风-福字装饰
+   道具: lucky_charm | 颜色: mixed
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:34:46
+   备注: 人物穿着现代装，背景有福字装饰和红色喜庆元素，整体风格偏向节日庆祝。
+
+110. ID: asset_1770402898605_u3f6bx6ad
+   文件: 图片元素替换与裁剪 (19).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (19).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:34:58
+   备注: 人物穿着红色唐装，背景有金色装饰，整体呈现喜庆风格。
+
+111. ID: asset_1770402911144_ax42lburc
+   文件: 图片元素替换与裁剪 (2).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (2).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:35:11
+   备注: 人物穿着红色唐装，背景和整体风格偏喜庆，未见明显道具。
+
+112. ID: asset_1770402925058_xz6w21ck4
+   文件: 图片元素替换与裁剪 (20).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (20).png
+   分类: qipao > holding_item > festive
+   名称: 旗袍-手持道具-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:35:25
+   备注: 人物穿着红色刺绣旗袍，搭配金色披肩，手持红色灯笼，背景有新年装饰元素，整体呈现喜庆风格。
+
+113. ID: asset_1770402937604_cdz42mpke
+   文件: 图片元素替换与裁剪 (21).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (21).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:35:37
+   备注: 儿童身穿红色汉服，服装上有金色福字装饰，背景为喜庆风格。
+
+114. ID: asset_1770402949622_pl4nv2zjg
+   文件: 图片元素替换与裁剪 (22).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (22).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:35:49
+   备注: 儿童身穿红色唐装，服饰上有金色刺绣图案，背景为暖黄色，整体呈现喜庆风格。
+
+115. ID: asset_1770402961739_oi1md2rvm
+   文件: 图片元素替换与裁剪 (23).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (23).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:36:01
+   备注: 儿童身穿红色唐装，服饰带有金色刺绣，背景为暖色调，整体呈现喜庆风格。
+
+116. ID: asset_1770402973496_7rwxzt2dz
+   文件: 图片元素替换与裁剪 (24).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (24).png
+   分类: caishen > standing > festive
+   名称: 财神装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:36:13
+   备注: 儿童穿着红色带福字装饰的财神服，背景为喜庆元素。
+
+117. ID: asset_1770402985804_3j8ch8c1r
+   文件: 图片元素替换与裁剪 (25).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (25).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:36:25
+   备注: 儿童穿着红色汉服，服装上有福字和传统纹样，背景为喜庆风格。
+
+118. ID: asset_1770402999161_vmrn4pea0
+   文件: 图片元素替换与裁剪 (26).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (26).png
+   分类: caishen > greeting > festive
+   名称: 财神装-拜年姿势-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:36:39
+   备注: 儿童穿着红色为主的财神装，双手作揖，背景与服饰均体现喜庆氛围。
+
+119. ID: asset_1770403010444_plfwykqkc
+   文件: 图片元素替换与裁剪 (27).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (27).png
+   分类: child_costume > standing > festive
+   名称: 儿童装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:36:50
+   备注: 儿童身穿红色传统服饰，服装上有明显的福字装饰，整体风格喜庆，站立姿势，无明显道具。
+
+120. ID: asset_1770403024062_dq75mlhzf
+   文件: 图片元素替换与裁剪 (28).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (28).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:37:04
+   备注: 图片中的儿童身穿红色唐装，服饰上有金色刺绣，背景为暖色调，整体风格喜庆。
+
+121. ID: asset_1770403036594_awdvhbr7g
+   文件: 图片元素替换与裁剪 (29).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (29).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.97
+   添加: 2026/2/7 02:37:16
+   备注: 图片中展示儿童穿着红色唐装，服装上有福字和花卉刺绣装饰，背景为暖色调，整体风格喜庆。
+
+122. ID: asset_1770403048355_tcdr52u5r
+   文件: 图片元素替换与裁剪 (3).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (3).png
+   分类: tangzhuang > sitting > festive
+   名称: 唐装-坐姿-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:37:28
+   备注: 人物身穿红色唐装，背景和服饰均为喜庆风格，手边有春联装饰，整体呈现节日氛围。
+
+123. ID: asset_1770403065093_3gtxknw6d
+   文件: 图片元素替换与裁剪 (30).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (30).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:37:45
+   备注: 图片中的服装为红色唐装，具有传统中式设计，适合儿童，整体风格喜庆。
+
+124. ID: asset_1770403076450_ld4vqq0ns
+   文件: 图片元素替换与裁剪 (31).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (31).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:37:56
+   备注: 图片中的儿童穿着红色传统汉服，搭配喜庆装饰，背景有福字元素。
+
+125. ID: asset_1770403088392_c0yafh37a
+   文件: 图片元素替换与裁剪 (32).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (32).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:38:08
+   备注: 儿童穿着红色唐装，背景为暖色调，整体风格喜庆。
+
+126. ID: asset_1770403102252_nb4fg8fd8
+   文件: 图片元素替换与裁剪 (33).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (33).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:38:22
+   备注: 儿童身穿红色汉服，服饰上有金色刺绣和传统花纹，整体风格喜庆，背景为暖色调。
+
+127. ID: asset_1770403113549_upp5gpg3k
+   文件: 图片元素替换与裁剪 (34).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (34).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:38:33
+   备注: 图片中展示一名儿童穿着红色唐装，背景为喜庆风格，未持有道具。
+
+128. ID: asset_1770403125653_tgwy3td0l
+   文件: 图片元素替换与裁剪 (35).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (35).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:38:45
+   备注: 儿童穿着红色汉服，服饰上有传统刺绣图案，背景为暖色调，整体呈现喜庆风格。
+
+129. ID: asset_1770403139042_zqe9cqjjy
+   文件: 图片元素替换与裁剪 (36).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (36).png
+   分类: child_costume > standing > festive
+   名称: 儿童装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:38:59
+   备注: 图片中为儿童穿着红色喜庆风格的传统服饰，站立姿势，未持有道具。
+
+130. ID: asset_1770403155535_7mimhmwbf
+   文件: 图片元素替换与裁剪 (37).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (37).png
+   分类: child_costume > standing > festive
+   名称: 儿童装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:39:15
+   备注: 图片中是一名儿童穿着红色喜庆风格的传统服饰，衣服上有金色刺绣花纹，搭配毛绒装饰，整体风格喜庆。
+
+131. ID: asset_1770403168031_ulvauihdl
+   文件: 图片元素替换与裁剪 (39).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (39).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:39:28
+   备注: 图片中人物穿着红色唐装，带有传统龙纹装饰，整体风格喜庆，适合春节场景。
+
+132. ID: asset_1770403181946_v6ag4f0c3
+   文件: 图片元素替换与裁剪 (4).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (4).png
+   分类: tangzhuang > sitting > festive
+   名称: 唐装-坐姿-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:39:41
+   备注: 人物穿着红色唐装，坐在竹椅上，背景和服饰充满喜庆元素，旁边有灯笼和金色装饰物。
+
+133. ID: asset_1770403192900_9gx9zt08p
+   文件: 图片元素替换与裁剪 (40).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (40).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:39:52
+   备注: 人物穿着红色唐装，金色刺绣装饰，背景为红色，整体风格喜庆传统。
+
+134. ID: asset_1770403207298_f5612tpw8
+   文件: 图片元素替换与裁剪 (41).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (41).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:40:07
+   备注: 人物穿着红色为主的汉服，服饰上有金色刺绣，背景有春节相关的字样和图案，整体风格喜庆。
+
+135. ID: asset_1770403222446_4lz47tu4w
+   文件: 图片元素替换与裁剪 (42).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (42).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:40:22
+   备注: 人物穿着红色唐装，带有金色刺绣图案，背景为红色‘福’字装饰，整体呈现喜庆风格。
+
+136. ID: asset_1770403232022_ehjfdtnkr
+   文件: 图片元素替换与裁剪 (43).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (43).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:40:32
+   备注: 人物穿着红色汉服，服装设计华丽，具有传统和喜庆元素。背景有福字装饰，增强节日氛围。
+
+137. ID: asset_1770403244947_bc0rfmxa0
+   文件: 图片元素替换与裁剪 (44).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (44).png
+   分类: caishen > standing > festive
+   名称: 财神装-站立-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:40:44
+   备注: 人物穿着红色金色为主的财神装，背景有红色灯笼和福字装饰，整体呈现喜庆氛围。
+
+138. ID: asset_1770403255942_typay458y
+   文件: 图片元素替换与裁剪 (45).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (45).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:40:55
+   备注: 人物穿着红色汉服，背景有灯笼及金色圆形装饰，整体风格喜庆且传统。
+
+139. ID: asset_1770403272937_99ujqz9ir
+   文件: 图片元素替换与裁剪 (46).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (46).png
+   分类: caishen > standing > festive
+   名称: 财神装-站立-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:41:12
+   备注: 人物身穿红色金色刺绣的财神装，背景有灯笼装饰，整体呈现浓厚的喜庆氛围。
+
+140. ID: asset_1770403287443_1i0zp3nvg
+   文件: 图片元素替换与裁剪 (47).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (47).png
+   分类: hanfu > standing > traditional
+   名称: 汉服-站立-传统风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.97
+   添加: 2026/2/7 02:41:27
+   备注: 人物穿着红色汉服，背景有灯笼装饰，整体呈现传统风格。
+
+141. ID: asset_1770403303453_t8lcb3tpl
+   文件: 图片元素替换与裁剪 (48).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (48).png
+   分类: caishen > standing > festive
+   名称: 财神装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.97
+   添加: 2026/2/7 02:41:43
+   备注: 人物穿着红色金龙纹饰的华丽财神装，背景为红色，整体呈现浓厚的喜庆氛围。
+
+142. ID: asset_1770403317704_7o61o87s7
+   文件: 图片元素替换与裁剪 (49).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (49).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:41:57
+   备注: 人物穿着红色唐装，背景为喜庆风格，未持有任何道具。
+
+143. ID: asset_1770403329828_t52sb42rp
+   文件: 图片元素替换与裁剪 (5).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (5).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:42:09
+   备注: 人物穿着红色为主的汉服，背景为喜庆的红色，整体风格传统且节日气息浓厚。
+
+144. ID: asset_1770403342777_w1fz1ih3t
+   文件: 图片元素替换与裁剪 (50).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (50).png
+   分类: caishen > standing > festive
+   名称: 财神装-站立-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:42:22
+   备注: 人物穿着红色华丽的财神装，衣服上有福字和龙纹装饰，背景有灯笼，整体呈现喜庆风格。
+
+145. ID: asset_1770403357216_s5mx1g370
+   文件: 图片元素替换与裁剪 (51).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (51).png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.97
+   添加: 2026/2/7 02:42:37
+   备注: 人物穿着红色汉服，服饰上有金色龙纹装饰，背景有红色灯笼，整体呈现喜庆传统风格。
+
+146. ID: asset_1770403367064_wh0j54d1f
+   文件: 图片元素替换与裁剪 (52).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (52).png
+   分类: child_costume > greeting > festive
+   名称: 儿童服装-拜年姿势-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:42:47
+   备注: 儿童身着红色喜庆服装，双手抱拳作揖，背景有‘福’字装饰，整体呈现新年喜庆氛围。
+
+147. ID: asset_1770403378881_2trxtc5e8
+   文件: 图片元素替换与裁剪 (53).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (53).png
+   分类: tangzhuang > standing > festive
+   名称: 唐装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:42:58
+   备注: 儿童身穿红色唐装，搭配喜庆元素，姿势为站立，未携带道具。
+
+148. ID: asset_1770403389470_4v2igtmwu
+   文件: 图片元素替换与裁剪 (54).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (54).png
+   分类: child_costume > standing > festive
+   名称: 儿童装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:43:09
+   备注: 儿童装以红色为主，带有福字装饰，整体风格喜庆，适合节日场景。
+
+149. ID: asset_1770403401824_lra5ha74y
+   文件: 图片元素替换与裁剪 (55).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (55).png
+   分类: child_costume > standing > festive
+   名称: 儿童装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:43:21
+   备注: 图片中为儿童穿着红色喜庆风格的传统服饰，站立姿势，背景有‘好运’字样和福字图案装饰。
+
+150. ID: asset_1770403413591_ggna8yp0v
+   文件: 图片元素替换与裁剪 (56).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (56).png
+   分类: child_costume > greeting > festive
+   名称: 儿童装-拜年姿势-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:43:33
+   备注: 图片中儿童穿着红色喜庆风格的传统服装，做出拜年姿势，背景有福字装饰，整体风格突出春节氛围。
+
+151. ID: asset_1770403426280_7lyr16p8v
+   文件: 图片元素替换与裁剪 (57).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (57).png
+   分类: child_costume > standing > festive
+   名称: 儿童装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.97
+   添加: 2026/2/7 02:43:46
+   备注: 儿童穿着红色为主的传统服饰，背景有新年元素装饰，整体风格喜庆。
+
+152. ID: asset_1770403439666_qwe54h80j
+   文件: 图片元素替换与裁剪 (58).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (58).png
+   分类: tangzhuang > greeting > festive
+   名称: 唐装-拜年姿势-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:43:59
+   备注: 儿童身穿红色唐装，双手抱拳作揖，背景有‘富贵’字样及传统纹饰，整体呈现喜庆氛围。
+
+153. ID: asset_1770403452302_5d4u8wcbd
+   文件: 图片元素替换与裁剪 (59).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (59).png
+   分类: caishen > standing > festive
+   名称: 财神装-站立-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:44:12
+   备注: 儿童穿着红色和金色装饰的财神服装，整体风格喜庆，符合传统春节氛围。
+
+154. ID: asset_1770403463239_0ezomuj5v
+   文件: 图片元素替换与裁剪 (60).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (60).png
+   分类: child_costume > lucky_gesture > festive
+   名称: 儿童装-招财手势-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:44:23
+   备注: 图片中为儿童穿着红色传统服装，做出招财手势，背景和服饰均体现喜庆风格。
+
+155. ID: asset_1770403475166_e121b74jw
+   文件: 图片元素替换与裁剪 (61).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (61).png
+   分类: child_costume > greeting > festive
+   名称: 儿童装-拜年姿势-喜庆风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.98
+   添加: 2026/2/7 02:44:35
+   备注: 图片中儿童穿着红色喜庆服装，双手抱拳作揖，背景有福字装饰，整体呈现新年氛围。
+
+156. ID: asset_1770403486380_4ld2kf32a
+   文件: 图片元素替换与裁剪 (62).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (62).png
+   分类: hanfu > sitting > festive
+   名称: 汉服-坐姿-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:44:46
+   备注: 人物穿着红色华丽汉服，背景为喜庆装饰，手边有灯笼，整体风格偏向传统与喜庆。
+
+157. ID: asset_1770403498211_7rb0rdo35
+   文件: 图片元素替换与裁剪 (7).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (7).png
+   分类: hanfu > sitting > festive
+   名称: 汉服-坐姿-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:44:58
+   备注: 人物穿着红色汉服，背景和道具充满新年喜庆元素，包含灯笼和卷轴。
+
+158. ID: asset_1770403510833_uiqqn9f5n
+   文件: 图片元素替换与裁剪 (8).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (8).png
+   分类: tangzhuang > sitting > festive
+   名称: 唐装-坐姿-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:45:10
+   备注: 人物穿着红色唐装，背景和道具以春节喜庆元素为主，手持春联。
+
+159. ID: asset_1770403523099_h8y68l7up
+   文件: 图片元素替换与裁剪 (9).png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪 (9).png
+   分类: hanfu > holding_item > festive
+   名称: 汉服-手持道具-喜庆风-春联
+   道具: couplet | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:45:23
+   备注: 人物穿着红色汉服，手持木制道具装饰有春联，背景及整体风格以喜庆红色为主。
+
+160. ID: asset_1770403535321_suacdp86k
+   文件: 图片元素替换与裁剪.png
+   位置: C:\Users\Administrator\Desktop\素材1\图片元素替换与裁剪.png
+   分类: hanfu > standing > festive
+   名称: 汉服-站立-喜庆风-灯笼
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 02:45:35
+   备注: 人物穿着红色传统汉服，背景装饰有灯笼和喜庆元素，整体风格偏向节日庆祝。
+
+161. ID: asset_1770405136526_66oqctnkt
+   文件: 12345.png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\12345.png
+   分类: hanfu > standing > traditional
+   名称: 汉服-站立-传统风-无道具
+   道具: none | 颜色: red
+   状态: classified | 置信度: 0.97
+   添加: 2026/2/7 03:12:16
+   备注: 人物穿着红色宽袍大袖汉服，背景为橙色，整体呈现传统风格。
+
+162. ID: asset_1770405154421_4oij6us3z
+   文件: AirPods Max 无蓝牙连接电脑 (1).png
+   位置: C:\Users\Administrator\Desktop\素材\换脸女\AirPods Max 无蓝牙连接电脑 (1).png
+   分类: modern > holding_item > festive
+   名称: 现代装-手持灯笼-喜庆风-红色
+   道具: lantern | 颜色: red
+   状态: classified | 置信度: 0.95
+   添加: 2026/2/7 03:12:34
+   备注: 人物穿着现代红色毛衣，搭配白色围巾，手持红色灯笼，背景有福字和春联装饰，整体呈现喜庆风格。
+

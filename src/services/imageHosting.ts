@@ -18,7 +18,9 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
     // 处理base64
     let base64Data: string;
     if (typeof file === 'string') {
+      // 🔧 直接使用传入的字符串（VideoPage已经验证过数据干净）
       base64Data = file;
+      console.log('[COS] ✅ 使用原始data URL，长度:', base64Data.length);
     } else {
       // File对象转base64
       const reader = new FileReader();
@@ -27,15 +29,17 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
+      console.log('[COS] 🔍 File转base64完成，长度:', base64Data.length);
     }
 
-    // 调用后端中间件上传
-    console.log('[COS] 🔍 发送请求到 /api/upload-cos...');
-    const response = await fetch('/api/upload-cos', {
+    // 🔧 直接调用后端，绕过Vite proxy（避免proxy损坏响应）
+    console.log('[COS] 🔍 base64Data长度:', base64Data.length);
+    console.log('[COS] 🔍 直接调用后端 http://localhost:3002/api/upload-cos...');
+    const response = await fetch('http://localhost:3002/api/upload-cos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ image: base64Data }),
-      cache: 'no-store'  // 🔧 强制绕过缓存
+      cache: 'no-store'
     });
 
     console.log('[COS] 🔍 收到响应，status:', response.status);
@@ -47,39 +51,48 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
       throw new Error(`上传失败: ${errorText}`);
     }
 
-    // 🔍 先读取原始响应文本
-    console.log('[COS] 🔍 准备读取响应文本...');
-    const responseText = await response.text();
-    console.log('[COS] 🔍 响应文本长度:', responseText.length);
-    console.log('[COS] 原始响应文本:', responseText);
+    // 🔧 直接用response.json()避免文本处理bug
+    console.log('[COS] 🔍 准备读取JSON响应...');
+    const data = await response.json();
+    console.log('[COS] 📦 收到响应数据:', JSON.stringify(data));
 
-    // 🔍 解析JSON
-    const data = JSON.parse(responseText);
-    console.log('[COS] 解析后的data对象:', JSON.stringify(data));
+    // 🔧 直接从data中提取，不做任何处理
+    if (!data.url) {
+      throw new Error('后端返回的数据中没有url字段');
+    }
 
-    // 🔧 修复：如果URL重复，只取第一个
-    // 后端 Bug：返回的 URL 可能是 "https://...xxx.jpghttps://...xxx.jpg"
     let finalUrl = data.url;
+
+    // 🔧 强制清理URL：只保留从第一个https://到第一个文件扩展名
     if (typeof finalUrl === 'string') {
-      console.log('[COS] 🔍 检测URL重复 - 原始长度:', finalUrl.length);
-      console.log('[COS] 🔍 检测URL重复 - 完整URL:', finalUrl);
+      const extensions = ['.jpg', '.jpeg', '.png', '.mp3', '.wav', '.mp4'];
 
-      // 简单粗暴的方法：直接查找 .jpg 后面的位置
-      const jpgIndex = finalUrl.indexOf('.jpg');
-      if (jpgIndex > 0) {
-        // 检查 .jpg 后面4个字符的位置是否还有 http
-        const afterJpg = finalUrl.substring(jpgIndex + 4);
-        console.log('[COS] 🔍 .jpg 后面的内容:', afterJpg.substring(0, 20));
+      // 查找第一个https://的位置
+      const firstHttpsIndex = finalUrl.indexOf('https://');
+      if (firstHttpsIndex === -1) {
+        throw new Error('无效的URL：不包含https://');
+      }
 
-        if (afterJpg.startsWith('http')) {
-          console.log('[COS] ⚠️ 检测到URL重复！.jpg后面紧跟http');
-          finalUrl = finalUrl.substring(0, jpgIndex + 4);
-          console.log('[COS] ✅ 已截取第一个URL:', finalUrl);
+      // 从第一个https://开始查找扩展名
+      for (const ext of extensions) {
+        const extIndex = finalUrl.indexOf(ext, firstHttpsIndex);
+        if (extIndex > 0) {
+          // 截取从第一个https://到第一个扩展名结束
+          const cleanUrl = finalUrl.substring(firstHttpsIndex, extIndex + ext.length);
+
+          if (cleanUrl !== finalUrl) {
+            console.log('[COS] 🔧 URL已修复');
+            console.log('[COS] 原URL长度:', finalUrl.length);
+            console.log('[COS] 新URL长度:', cleanUrl.length);
+          }
+
+          finalUrl = cleanUrl;
+          break;
         }
       }
     }
 
-    console.log('[COS] ✅ 最终上传URL:', finalUrl);
+    console.log('[COS] ✅ 最终URL:', finalUrl);
 
     return {
       success: true,
@@ -213,9 +226,9 @@ export async function uploadAudioToTencentCOS(blob: Blob, format: string = 'mp3'
       reader.readAsDataURL(blob);
     });
 
-    // 调用后端中间件上传（复用现有的 /api/upload-cos）
-    console.log('[COS] 🔍 发送音频上传请求...');
-    const response = await fetch('/api/upload-cos', {
+    // 🔧 直接调用后端，绕过Vite proxy
+    console.log('[COS] 🔍 发送音频上传请求到后端...');
+    const response = await fetch('http://localhost:3002/api/upload-cos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -233,26 +246,37 @@ export async function uploadAudioToTencentCOS(blob: Blob, format: string = 'mp3'
       throw new Error(`上传失败: ${errorText}`);
     }
 
-    const responseText = await response.text();
-    console.log('[COS] 原始响应文本:', responseText);
+    // 🔧 直接用response.json()
+    const data = await response.json();
 
-    const data = JSON.parse(responseText);
+    if (!data.url) {
+      throw new Error('后端返回的数据中没有url字段');
+    }
+
     let finalUrl = data.url;
 
-    // 🔧 修复URL重复问题
+    // 🔧 强制清理URL
     if (typeof finalUrl === 'string') {
-      const extensionIndex = finalUrl.indexOf(`.${format}`);
-      if (extensionIndex > 0) {
-        const afterExtension = finalUrl.substring(extensionIndex + format.length + 1);
-        if (afterExtension.startsWith('http')) {
-          console.log('[COS] ⚠️ 检测到URL重复！');
-          finalUrl = finalUrl.substring(0, extensionIndex + format.length + 1);
-          console.log('[COS] ✅ 已截取第一个URL:', finalUrl);
+      const extensions = ['.mp3', '.wav', '.m4a', '.ogg'];
+      const firstHttpsIndex = finalUrl.indexOf('https://');
+      if (firstHttpsIndex === -1) {
+        throw new Error('无效的音频URL');
+      }
+
+      for (const ext of extensions) {
+        const extIndex = finalUrl.indexOf(ext, firstHttpsIndex);
+        if (extIndex > 0) {
+          const cleanUrl = finalUrl.substring(firstHttpsIndex, extIndex + ext.length);
+          if (cleanUrl !== finalUrl) {
+            console.log('[COS Audio] 🔧 URL已修复');
+          }
+          finalUrl = cleanUrl;
+          break;
         }
       }
     }
 
-    console.log('[COS] ✅ 音频上传成功:', finalUrl);
+    console.log('[COS] ✅ 音频最终URL:', finalUrl);
 
     return {
       success: true,

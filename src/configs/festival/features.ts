@@ -57,6 +57,7 @@ export interface Feature {
     freeWatermark: boolean;
     vipOnly: boolean;
     price?: string;
+    credits: number;         // 积分消耗（0 = 免费）
   };
 
   // 是否使用旧版 MissionExecutor（兼容现有功能）
@@ -139,16 +140,16 @@ export const FEATURES: Feature[] = [
   {
     id: 'M1',
     categoryId: 'avatar',
-    name: '新年3D头像',
+    name: '新年数字头像',
     subtitle: '重塑数字分身',
     icon: '🎭',
-    previewImage: '/assets/showcase/avatar-3d.png',
+    previewImage: '/assets/showcase/new-year-avatar-latest.png',
     order: 1,
     enabled: true,
     input: {
       type: 'photo',
       needGender: true,
-      needTemplate: false
+      needTemplate: true  // 🆕 启用模板选择（支持多风格）
     },
     output: {
       type: 'image',
@@ -173,7 +174,7 @@ export const FEATURES: Feature[] = [
       },
       caption: { enabled: true, promptKey: 'caption_3d_avatar' }
     },
-    access: { freePerDay: 1, freeWatermark: true, vipOnly: false, price: '¥19.9' },
+    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥19.9', credits: 50 },
     useLegacyExecutor: true
   },
 
@@ -208,7 +209,7 @@ export const FEATURES: Feature[] = [
       },
       caption: { enabled: true, promptKey: 'caption_caishen' }
     },
-    access: { freePerDay: 1, freeWatermark: true, vipOnly: false, price: '¥29.9' },
+    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥29.9', credits: 50 },
     useLegacyExecutor: true
   },
 
@@ -220,7 +221,7 @@ export const FEATURES: Feature[] = [
     icon: '🎬',
     previewImage: '/assets/showcase/digital-human.png',
     order: 3,
-    enabled: true,
+    enabled: false,  // 🔥 已禁用：从新年头像入口移除
     input: {
       type: 'photo',
       needGender: false,
@@ -248,7 +249,7 @@ export const FEATURES: Feature[] = [
         }
       }
     },
-    access: { freePerDay: 2, freeWatermark: false, vipOnly: false, price: '¥29.9' },
+    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, price: '¥29.9', credits: 350 },
     useLegacyExecutor: true
   },
 
@@ -290,7 +291,7 @@ export const FEATURES: Feature[] = [
         }
       }
     },
-    access: { freePerDay: 1, freeWatermark: true, vipOnly: false, price: '¥29.9' },
+    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥29.9', credits: 60 },
     useLegacyExecutor: false
   },
 
@@ -331,7 +332,7 @@ export const FEATURES: Feature[] = [
         }
       }
     },
-    access: { freePerDay: 1, freeWatermark: true, vipOnly: false, price: '¥29.9' },
+    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥29.9', credits: 60 },
     useLegacyExecutor: false
   },
 
@@ -372,10 +373,11 @@ export const FEATURES: Feature[] = [
       }
     },
     access: {
-      freePerDay: -1,        // VIP无限次
-      freeWatermark: false,  // VIP无水印
-      vipOnly: true,         // 必须VIP或单次付费
-      price: '¥8.8'          // 非VIP单次付费
+      freePerDay: -1,        // 无限次
+      freeWatermark: false,  // 无水印
+      vipOnly: false,        // 不限VIP
+      price: '¥8.8',         // 单次付费价格
+      credits: 300           // 老照片修复成本高 (¥2.5成本，确保盈利)
     },
     useLegacyExecutor: false
   },
@@ -397,20 +399,20 @@ export const FEATURES: Feature[] = [
           label: '发给谁',
           type: 'select',
           required: true,
-          options: ['领导', '长辈', '朋友', '爱人', '同事', '客户']
+          options: ['父母', '长辈', '兄弟姐妹', '七大姑八大姨', '闺蜜/兄弟', '朋友', '爱人', '同事', '领导', '老师', '客户', '合作伙伴']
         },
         {
           key: 'style',
           label: '风格',
           type: 'select',
           required: true,
-          options: ['正式', '温暖', '幽默', '文艺']
+          options: ['温暖', '正式', '幽默', '文艺', '简短', '深情', '励志', '创意', '轻松']
         },
         {
           key: 'extra',
           label: '补充说明',
           type: 'textarea',
-          placeholder: '例如：领导姓王，喜欢打高尔夫（选填）',
+          placeholder: '例如：对方姓王，喜欢打高尔夫（选填）',
           required: false,
           maxLength: 100
         }
@@ -428,7 +430,7 @@ export const FEATURES: Feature[] = [
       maxTokens: 200,
       temperature: 0.8
     },
-    access: { freePerDay: -1, freeWatermark: false, vipOnly: false }
+    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, credits: 0 }
   },
 
   {
@@ -469,7 +471,7 @@ export const FEATURES: Feature[] = [
       defaultVoiceId: '59cb5986671546eaa6ca8ae6f29f6d22',
       params: { temperature: 0.9, topP: 0.9, speed: 1.0 }
     },
-    access: { freePerDay: 3, freeWatermark: false, vipOnly: false }
+    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, credits: 30 }
   },
 
   // ========== 拜年祝福 ==========
@@ -481,7 +483,7 @@ export const FEATURES: Feature[] = [
     icon: '🏮',
     previewImage: '/assets/showcase/couplet.png',
     order: 3,
-    enabled: true,
+    enabled: false,  // 🔥 2026-02-07 暂时下线：时间不够开发，等后续有时间再上线
     input: {
       type: 'text',
       textFields: [
@@ -507,7 +509,7 @@ export const FEATURES: Feature[] = [
       maxTokens: 100,
       temperature: 0.7
     },
-    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, price: '¥9.9' }
+    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, price: '¥9.9', credits: 0 }
   },
 
   // ========== 运势玩法 ==========
@@ -546,7 +548,7 @@ export const FEATURES: Feature[] = [
       },
       caption: { enabled: true, promptKey: 'fortune_blessing' }
     },
-    access: { freePerDay: 3, freeWatermark: false, vipOnly: false },
+    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, credits: 0 },
     useLegacyExecutor: true
   },
 
@@ -576,7 +578,7 @@ export const FEATURES: Feature[] = [
       maxTokens: 500,
       temperature: 0.85
     },
-    access: { freePerDay: -1, freeWatermark: false, vipOnly: false }
+    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, credits: 0 }
   },
 
 
@@ -627,7 +629,7 @@ export const FEATURES: Feature[] = [
       maxTokens: 300,
       temperature: 0.85
     },
-    access: { freePerDay: -1, freeWatermark: false, vipOnly: false }
+    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, credits: 0 }
   },
 
 ];

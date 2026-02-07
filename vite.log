@@ -2,22 +2,10 @@
 > trinity-mirror@1.0.0 dev
 > node ./node_modules/vite/bin/vite.js
 
-[dotenv@17.2.3] injecting env (13) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
-[COS Middleware] 初始化配置: {
-  bucket: 'fudaiai-1400086527',
-  region: 'ap-shanghai',
-  hasSecretId: true,
-  hasSecretKey: true
-}
-Port 5173 is in use, trying another one...
-Port 5174 is in use, trying another one...
-Port 5175 is in use, trying another one...
-Port 5176 is in use, trying another one...
-Port 5177 is in use, trying another one...
+[dotenv@17.2.3] injecting env (16) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
 
-  [32m[1mVITE[22m v4.5.14[39m  [2mready in [0m[1m542[22m[2m[0m ms[22m
+  [32m[1mVITE[22m v4.5.14[39m  [2mready in [0m[1m471[22m[2m[0m ms[22m
 
-  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5178[22m/[39m
-  [32m➜[39m  [1mNetwork[22m: [36mhttp://26.26.26.1:[1m5178[22m/[39m
-  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.2.2:[1m5178[22m/[39m
-  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.23.0.1:[1m5178[22m/[39m
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://26.26.26.1:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.2.2:[1m5173[22m/[39m

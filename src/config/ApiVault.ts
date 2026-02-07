@@ -1,21 +1,32 @@
+/**
+ * API配置 - 安全版本
+ *
+ * 🔒 安全说明：
+ * - 所有API密钥已移除，改为通过后端代理调用
+ * - LiblibAI和Fish Audio的密钥只在后端环境变量中
+ * - 前端通过后端代理端点调用，无法看到真实密钥
+ */
+
 export const API_VAULT = {
   N1N: {
     BASE_URL: 'https://api.n1n.ai/v1',
-    MASTER_KEY: 'sk-tTHj1OFcBEgEEQ8oi3kkKUHpjpluQzo0ySRZ8o8vY5EX68fN' // [NEW] n1n Ultimate Key
+    // ✅ 密钥已移除，如需使用请通过后端代理
   },
   SILICONFLOW: {
     BASE_URL: 'https://api.siliconflow.cn/v1',
-    MASTER_KEY: 'sk-tpcfhwsckdrngcfeymudxjgnuhxadegbqzjztnakfceutvwy', // 从指令中获取的密钥
+    // ✅ 密钥已移除，如需使用请通过后端代理
     DEFAULT_ENDPOINT: '/images/generations'
   },
   LIBLIB: {
-    BASE_URL: 'https://api.liblibai.com/api/www/v1',
-    ACCESS_KEY: 'z8_g6KeL5Vac48fUL6am2A',
-    SECRET_KEY: 'FbPajEW5edStMVxBJuRUDu7fwr1Hy5Up'
+    // ✅ 改为通过后端代理调用
+    PROXY_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002',
+    PROXY_TEXT2IMG: '/api/liblib/text2img',
+    PROXY_QUERY: '/api/liblib/query'
   },
   FISH_AUDIO: {
-    BASE_URL: '/api/fish/v1',
-    API_KEY: '58864427d9e44e4ca76febe5b50639e6'
+    // ✅ 改为通过后端代理调用
+    PROXY_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002',
+    PROXY_TTS: '/api/fish/tts'
   },
   QWEN: {
     MASTER_KEY: import.meta.env.VITE_DASHSCOPE_API_KEY // 动态读取 .env 环境变量

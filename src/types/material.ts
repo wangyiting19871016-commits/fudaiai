@@ -12,6 +12,7 @@ export type MaterialRole =
   | 'coupletDecoration'   // 作为春联装饰
   | 'videoImage'          // 作为视频画面
   | 'videoAudio'          // 作为视频音频
+  | 'videoResult'         // 作为生成的视频结果
   | 'fortuneCard';        // 作为命理卡片（M8）
 
 /**
@@ -47,6 +48,8 @@ export interface MaterialAtom {
     featureId: string;      // 来源功能（M1, M9, M5...）
     featureName: string;    // 功能名称（显示用）
     thumbnail?: string;     // 缩略图
+    greetingText?: string;  // 祝福文案（数字人视频）
+    [key: string]: any;     // 允许额外的元数据字段
   };
 
   // 连接器接口（核心！）

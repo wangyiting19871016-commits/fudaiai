@@ -1,0 +1,31 @@
+🤖 ===== 自动图片分类和上传工具 (N1N API) =====
+
+📊 源目录:
+   male: C:\Users\Administrator\Desktop\素材\换脸男
+   female: C:\Users\Administrator\Desktop\素材\换脸女
+   child: C:\Users\Administrator\Desktop\素材\换脸儿童
+   couple: C:\Users\Administrator\Desktop\素材\换脸情侣
+   template: C:\Users\Administrator\Desktop\素材\换脸模板
+
+
+📂 处理目录: C:\Users\Administrator\Desktop\素材\换脸男 (male)
+   找到 10 张图片
+
+   [1/10] 分析中: 1 (1).jpg
+      ✅ 现代装-坐姿 (置信度: 0.95)
+   [2/10] 分析中: 4 (73).jpeg
+❌ N1N分析失败: Request failed with status code 429
+   状态码: 429
+   响应: {"error":{"message":"The image is too large. The maximum limit is 20MB. (request id: 202602070040319974783054TvV9RNI)","type":"upstream_error","param":"","code":"BadRequest"}}
+      ❌ 分析失败，跳过
+   [3/10] 分析中: a76d54130ba053ce2377bf1a34643382d10b175e2884371f19a1c56803841457.png
+      ✅ 财神装-站立 (置信度: 0.95)
+   [4/10] 分析中: AirPods Max 无蓝牙连接电脑 (2).png
+      ✅ 现代装-站立 (置信度: 0.95)
+   [5/10] 分析中: AirPods Max 无蓝牙连接电脑 (3).png
+      ✅ 现代装-站立 (置信度: 0.95)
+   [6/10] 分析中: s` (347)(1).jpg
+      ✅ 现代装-红色-站立 (置信度: 0.95)
+   [7/10] 分析中: 微信图片_20260130225122_249_2540.jpg
+      ✅ 现代装-坐姿 (置信度: 0.95)
+   [8/10] 分析中: 微信图片_20260130225357_255_2540.jpg

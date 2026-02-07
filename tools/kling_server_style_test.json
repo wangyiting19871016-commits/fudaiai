@@ -1,0 +1,53 @@
+{
+  "summary": {
+    "total": 7,
+    "success": 3,
+    "fail": 4
+  },
+  "results": [
+    {
+      "template": "拜年讨红包",
+      "effect_scene": "new_year_greeting",
+      "success": true,
+      "task_id": "849103006527672399"
+    },
+    {
+      "template": "舞狮",
+      "effect_scene": "lion_dance",
+      "success": false
+    },
+    {
+      "template": "财神驾到",
+      "effect_scene": "fortune_god_transform",
+      "success": true,
+      "task_id": "849103062727143497"
+    },
+    {
+      "template": "专属对联",
+      "effect_scene": "unique_spring_couplets",
+      "success": true,
+      "task_id": "849103090648780849"
+    },
+    {
+      "template": "专属烟花",
+      "effect_scene": "unique_firework",
+      "success": false
+    },
+    {
+      "template": "欢庆时刻",
+      "effect_scene": "celebration",
+      "success": false
+    },
+    {
+      "template": "万物膨胀",
+      "effect_scene": "expansion",
+      "success": false
+    }
+  ],
+  "timestamp": "2026-02-07T13:21:32.710Z",
+  "test_config": {
+    "kling_access_key_prefix": "AHdgGnnt...",
+    "test_image_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+    "jwt_method": "server.js style"
+  }
+}

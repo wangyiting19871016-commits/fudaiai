@@ -1,0 +1,1409 @@
+{
+  "timestamp": "2026-02-06T19:44:08.482Z",
+  "unifiedDir": "C:\\Users\\Administrator\\Desktop\\M2模板素材",
+  "total": 140,
+  "success": 140,
+  "failed": 0,
+  "mapping": [
+    {
+      "assetId": "asset_1770400284937_qxalb71e9",
+      "fileName": "asset_1770400284937_qxalb71e9_现代装-手持道具-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770400284937_qxalb71e9_现代装-手持道具-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/male/asset_1770400284937_qxalb71e9.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400284937_qxalb71e9.jpg",
+      "md5": "1783dc353366e84ad2722a4561e2207e",
+      "etag": "\"1783dc353366e84ad2722a4561e2207e\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770400300048_bmuovslqb",
+      "fileName": "asset_1770400300048_bmuovslqb_财神装-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770400300048_bmuovslqb_财神装-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/male/asset_1770400300048_bmuovslqb.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400300048_bmuovslqb.png",
+      "md5": "e14872068f0543bac32b1bc8db05b863",
+      "etag": "\"e14872068f0543bac32b1bc8db05b863\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770400330367_b37k1cfus",
+      "fileName": "asset_1770400330367_b37k1cfus_现代装-手持道具-喜庆风-彩龙饰品.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770400330367_b37k1cfus_现代装-手持道具-喜庆风-彩龙饰品.jpg",
+      "cosKey": "festival-templates/m2/male/asset_1770400330367_b37k1cfus.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400330367_b37k1cfus.jpg",
+      "md5": "0ab8ec1d20c25eb2e7679c398edece2e",
+      "etag": "\"0ab8ec1d20c25eb2e7679c398edece2e\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770400338653_s1bpmq7he",
+      "fileName": "asset_1770400338653_s1bpmq7he_现代装-手持道具-喜庆风-福饰.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770400338653_s1bpmq7he_现代装-手持道具-喜庆风-福饰.jpg",
+      "cosKey": "festival-templates/m2/male/asset_1770400338653_s1bpmq7he.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400338653_s1bpmq7he.jpg",
+      "md5": "05e67639d8323ee1c68b443a5f90c7c3",
+      "etag": "\"05e67639d8323ee1c68b443a5f90c7c3\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770400346704_vukuo6lhr",
+      "fileName": "asset_1770400346704_vukuo6lhr_财神装-持道具-喜庆风-春联.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770400346704_vukuo6lhr_财神装-持道具-喜庆风-春联.jpg",
+      "cosKey": "festival-templates/m2/male/asset_1770400346704_vukuo6lhr.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400346704_vukuo6lhr.jpg",
+      "md5": "054293732be0a0da844a42578f5258d1",
+      "etag": "\"054293732be0a0da844a42578f5258d1\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770400359567_ekaj849ai",
+      "fileName": "asset_1770400359567_ekaj849ai_现代装-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770400359567_ekaj849ai_现代装-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/male/asset_1770400359567_ekaj849ai.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400359567_ekaj849ai.png",
+      "md5": "92a9833e610c61bafa6c6fa4d4369010",
+      "etag": "\"92a9833e610c61bafa6c6fa4d4369010\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770400370739_k9o9sw515",
+      "fileName": "asset_1770400370739_k9o9sw515_现代装-手持道具-喜庆风-吉祥物.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770400370739_k9o9sw515_现代装-手持道具-喜庆风-吉祥物.png",
+      "cosKey": "festival-templates/m2/male/asset_1770400370739_k9o9sw515.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770400370739_k9o9sw515.png",
+      "md5": "8f53d75a6c58f3ce856dc7579148e49d",
+      "etag": "\"8f53d75a6c58f3ce856dc7579148e49d\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770402708625_5h75yng24",
+      "fileName": "asset_1770402708625_5h75yng24_现代装-站立-喜庆风-喜庆道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770402708625_5h75yng24_现代装-站立-喜庆风-喜庆道具.png",
+      "cosKey": "festival-templates/m2/male/asset_1770402708625_5h75yng24.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402708625_5h75yng24.png",
+      "md5": "8576478ea2ef7384fa803bce2f946187",
+      "etag": "\"8576478ea2ef7384fa803bce2f946187\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770402719548_ixmbpewoz",
+      "fileName": "asset_1770402719548_ixmbpewoz_现代装-拜年姿势-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770402719548_ixmbpewoz_现代装-拜年姿势-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/male/asset_1770402719548_ixmbpewoz.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402719548_ixmbpewoz.png",
+      "md5": "e7f7ac13e4192f8515e175deb5ddcd73",
+      "etag": "\"e7f7ac13e4192f8515e175deb5ddcd73\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770402734171_m4pm0uj46",
+      "fileName": "asset_1770402734171_m4pm0uj46_现代装-其他-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770402734171_m4pm0uj46_现代装-其他-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/male/asset_1770402734171_m4pm0uj46.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402734171_m4pm0uj46.png",
+      "md5": "2d261bf48c7684a5f6dfe7cdb6b45dfa",
+      "etag": "\"2d261bf48c7684a5f6dfe7cdb6b45dfa\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770402748006_64u98vjl3",
+      "fileName": "asset_1770402748006_64u98vjl3_现代装-其他-喜庆风-福字灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770402748006_64u98vjl3_现代装-其他-喜庆风-福字灯笼.png",
+      "cosKey": "festival-templates/m2/male/asset_1770402748006_64u98vjl3.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402748006_64u98vjl3.png",
+      "md5": "dffa38023b269a4f542908b3eeb88257",
+      "etag": "\"dffa38023b269a4f542908b3eeb88257\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770402771361_ji78u3ium",
+      "fileName": "asset_1770402771361_ji78u3ium_现代装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770402771361_ji78u3ium_现代装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/male/asset_1770402771361_ji78u3ium.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402771361_ji78u3ium.png",
+      "md5": "26845a8d4bc024b2c7cf3462962080f7",
+      "etag": "\"26845a8d4bc024b2c7cf3462962080f7\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770402911144_ax42lburc",
+      "fileName": "asset_1770402911144_ax42lburc_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770402911144_ax42lburc_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/male/asset_1770402911144_ax42lburc.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770402911144_ax42lburc.png",
+      "md5": "3124e559a6fa78bb542033afa4c590e3",
+      "etag": "\"3124e559a6fa78bb542033afa4c590e3\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770403048355_tcdr52u5r",
+      "fileName": "asset_1770403048355_tcdr52u5r_唐装-坐姿-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770403048355_tcdr52u5r_唐装-坐姿-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/male/asset_1770403048355_tcdr52u5r.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403048355_tcdr52u5r.png",
+      "md5": "9db8fe4045b456c6d233b49fe77eb1df",
+      "etag": "\"9db8fe4045b456c6d233b49fe77eb1df\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770403168031_ulvauihdl",
+      "fileName": "asset_1770403168031_ulvauihdl_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770403168031_ulvauihdl_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/male/asset_1770403168031_ulvauihdl.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403168031_ulvauihdl.png",
+      "md5": "ccb1e890e74d1d578fa624f7eb0e89cf",
+      "etag": "\"ccb1e890e74d1d578fa624f7eb0e89cf\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770403222446_4lz47tu4w",
+      "fileName": "asset_1770403222446_4lz47tu4w_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770403222446_4lz47tu4w_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/male/asset_1770403222446_4lz47tu4w.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403222446_4lz47tu4w.png",
+      "md5": "f6051090c0daeab2658bd53d1581d800",
+      "etag": "\"f6051090c0daeab2658bd53d1581d800\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770403244947_bc0rfmxa0",
+      "fileName": "asset_1770403244947_bc0rfmxa0_财神装-站立-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770403244947_bc0rfmxa0_财神装-站立-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/male/asset_1770403244947_bc0rfmxa0.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403244947_bc0rfmxa0.png",
+      "md5": "0113e59c488f038a9277e40af163050e",
+      "etag": "\"0113e59c488f038a9277e40af163050e\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770403272937_99ujqz9ir",
+      "fileName": "asset_1770403272937_99ujqz9ir_财神装-站立-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770403272937_99ujqz9ir_财神装-站立-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/male/asset_1770403272937_99ujqz9ir.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403272937_99ujqz9ir.png",
+      "md5": "4ac555f24ceade97de5116149971a6ac",
+      "etag": "\"4ac555f24ceade97de5116149971a6ac\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770403303453_t8lcb3tpl",
+      "fileName": "asset_1770403303453_t8lcb3tpl_财神装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770403303453_t8lcb3tpl_财神装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/male/asset_1770403303453_t8lcb3tpl.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403303453_t8lcb3tpl.png",
+      "md5": "29f810680adf8d2c1d8fbd07b9f54cde",
+      "etag": "\"29f810680adf8d2c1d8fbd07b9f54cde\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770403342777_w1fz1ih3t",
+      "fileName": "asset_1770403342777_w1fz1ih3t_财神装-站立-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770403342777_w1fz1ih3t_财神装-站立-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/male/asset_1770403342777_w1fz1ih3t.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403342777_w1fz1ih3t.png",
+      "md5": "2cde565674a8b8b8fb0ea2e5f3df2b54",
+      "etag": "\"2cde565674a8b8b8fb0ea2e5f3df2b54\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770403486380_4ld2kf32a",
+      "fileName": "asset_1770403486380_4ld2kf32a_汉服-坐姿-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770403486380_4ld2kf32a_汉服-坐姿-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/male/asset_1770403486380_4ld2kf32a.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403486380_4ld2kf32a.png",
+      "md5": "29a1639c33416119e08a08b7058f3e4f",
+      "etag": "\"29a1639c33416119e08a08b7058f3e4f\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770403535321_suacdp86k",
+      "fileName": "asset_1770403535321_suacdp86k_汉服-站立-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\male\\asset_1770403535321_suacdp86k_汉服-站立-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/male/asset_1770403535321_suacdp86k.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset_1770403535321_suacdp86k.png",
+      "md5": "488920970ceb1d0904e1515d6b81e425",
+      "etag": "\"488920970ceb1d0904e1515d6b81e425\"",
+      "gender": "male"
+    },
+    {
+      "assetId": "asset_1770400382571_t7wluemks",
+      "fileName": "asset_1770400382571_t7wluemks_汉服-站立-传统风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400382571_t7wluemks_汉服-站立-传统风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770400382571_t7wluemks.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400382571_t7wluemks.png",
+      "md5": "68106769315afd5c5414d3a66138688c",
+      "etag": "\"68106769315afd5c5414d3a66138688c\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400403239_c4vj793v6",
+      "fileName": "asset_1770400403239_c4vj793v6_现代装-坐姿-喜庆风-福饰.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400403239_c4vj793v6_现代装-坐姿-喜庆风-福饰.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400403239_c4vj793v6.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400403239_c4vj793v6.jpg",
+      "md5": "873828b281b463ae2304b93c4d40d9b9",
+      "etag": "\"873828b281b463ae2304b93c4d40d9b9\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400424958_05c1pt8oh",
+      "fileName": "asset_1770400424958_05c1pt8oh_现代装-其他-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400424958_05c1pt8oh_现代装-其他-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400424958_05c1pt8oh.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400424958_05c1pt8oh.jpg",
+      "md5": "e706f85d655cecf6e56b221502f2f816",
+      "etag": "\"e706f85d655cecf6e56b221502f2f816\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400450869_0igp9780i",
+      "fileName": "asset_1770400450869_0igp9780i_现代装-坐姿-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400450869_0igp9780i_现代装-坐姿-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400450869_0igp9780i.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400450869_0igp9780i.jpg",
+      "md5": "ba16eff1b323574fd123b58b325e8405",
+      "etag": "\"ba16eff1b323574fd123b58b325e8405\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400473300_umbd225j5",
+      "fileName": "asset_1770400473300_umbd225j5_现代装-坐姿-喜庆风.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400473300_umbd225j5_现代装-坐姿-喜庆风.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400473300_umbd225j5.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400473300_umbd225j5.jpg",
+      "md5": "fdacafc4a06e18d055bec57cf8ad9d35",
+      "etag": "\"fdacafc4a06e18d055bec57cf8ad9d35\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400491008_aewab5o0s",
+      "fileName": "asset_1770400491008_aewab5o0s_现代装-手持道具-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400491008_aewab5o0s_现代装-手持道具-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400491008_aewab5o0s.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400491008_aewab5o0s.jpg",
+      "md5": "b919d177d98bae3a6699a08f12c71118",
+      "etag": "\"b919d177d98bae3a6699a08f12c71118\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400509863_e0deucuqd",
+      "fileName": "asset_1770400509863_e0deucuqd_现代装-坐姿-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400509863_e0deucuqd_现代装-坐姿-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400509863_e0deucuqd.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400509863_e0deucuqd.jpg",
+      "md5": "ff745244fc9477a0e713c703e790a4e3",
+      "etag": "\"ff745244fc9477a0e713c703e790a4e3\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400533283_uo2vuszl4",
+      "fileName": "asset_1770400533283_uo2vuszl4_现代装-手持道具-喜庆风-福饰.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400533283_uo2vuszl4_现代装-手持道具-喜庆风-福饰.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400533283_uo2vuszl4.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400533283_uo2vuszl4.jpg",
+      "md5": "6eb141271f3e8d42dcf15389edd7faa6",
+      "etag": "\"6eb141271f3e8d42dcf15389edd7faa6\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400556519_0ztjb43gu",
+      "fileName": "asset_1770400556519_0ztjb43gu_现代装-坐姿-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400556519_0ztjb43gu_现代装-坐姿-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400556519_0ztjb43gu.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400556519_0ztjb43gu.jpg",
+      "md5": "87cb41aab2f9fa85d5d96269716fc336",
+      "etag": "\"87cb41aab2f9fa85d5d96269716fc336\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400575615_0q5u7lctr",
+      "fileName": "asset_1770400575615_0q5u7lctr_现代装-坐姿-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400575615_0q5u7lctr_现代装-坐姿-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400575615_0q5u7lctr.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400575615_0q5u7lctr.jpg",
+      "md5": "0726cbef1cc63fb235a92b9abec2b5bc",
+      "etag": "\"0726cbef1cc63fb235a92b9abec2b5bc\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400593387_mezab46mo",
+      "fileName": "asset_1770400593387_mezab46mo_现代装-坐姿-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400593387_mezab46mo_现代装-坐姿-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400593387_mezab46mo.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400593387_mezab46mo.jpg",
+      "md5": "c2fbf0f73eebdad212db7b13e6b1d36b",
+      "etag": "\"c2fbf0f73eebdad212db7b13e6b1d36b\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400615954_7kx7h4i0q",
+      "fileName": "asset_1770400615954_7kx7h4i0q_现代装-手持道具-活泼风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400615954_7kx7h4i0q_现代装-手持道具-活泼风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400615954_7kx7h4i0q.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400615954_7kx7h4i0q.jpg",
+      "md5": "dabceee9f811dc1126ab822a662f52b2",
+      "etag": "\"dabceee9f811dc1126ab822a662f52b2\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400638257_0uwh3sga5",
+      "fileName": "asset_1770400638257_0uwh3sga5_现代装-手持道具-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400638257_0uwh3sga5_现代装-手持道具-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400638257_0uwh3sga5.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400638257_0uwh3sga5.jpg",
+      "md5": "63f15ffb21ff41ac262ab0bd42194e88",
+      "etag": "\"63f15ffb21ff41ac262ab0bd42194e88\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400655631_6jtkqa44g",
+      "fileName": "asset_1770400655631_6jtkqa44g_现代装-坐姿-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400655631_6jtkqa44g_现代装-坐姿-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400655631_6jtkqa44g.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400655631_6jtkqa44g.jpg",
+      "md5": "cd399b32f9d610590e92357550fdd2f8",
+      "etag": "\"cd399b32f9d610590e92357550fdd2f8\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400680728_l7os94y2r",
+      "fileName": "asset_1770400680728_l7os94y2r_现代装-手持道具-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400680728_l7os94y2r_现代装-手持道具-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400680728_l7os94y2r.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400680728_l7os94y2r.jpg",
+      "md5": "319274b4a854ff49d5425cfa44e249e2",
+      "etag": "\"319274b4a854ff49d5425cfa44e249e2\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400701355_np052m7mw",
+      "fileName": "asset_1770400701355_np052m7mw_现代装-其他-活泼风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400701355_np052m7mw_现代装-其他-活泼风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400701355_np052m7mw.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400701355_np052m7mw.jpg",
+      "md5": "657302b57e943a645fe261a28374cdb3",
+      "etag": "\"657302b57e943a645fe261a28374cdb3\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400724498_rworkpkcj",
+      "fileName": "asset_1770400724498_rworkpkcj_现代装-手持物品-优雅风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400724498_rworkpkcj_现代装-手持物品-优雅风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400724498_rworkpkcj.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400724498_rworkpkcj.jpg",
+      "md5": "a44eaa30d3669813b02422a5cadc60ec",
+      "etag": "\"a44eaa30d3669813b02422a5cadc60ec\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400768498_phfv7xpjo",
+      "fileName": "asset_1770400768498_phfv7xpjo_现代装-手持道具-喜庆风-红包.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400768498_phfv7xpjo_现代装-手持道具-喜庆风-红包.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400768498_phfv7xpjo.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400768498_phfv7xpjo.jpg",
+      "md5": "00065f8f53ba19aa73aa016ad90d4309",
+      "etag": "\"00065f8f53ba19aa73aa016ad90d4309\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400777376_i0dgqiytu",
+      "fileName": "asset_1770400777376_i0dgqiytu_现代装-手持道具-喜庆风-红包.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400777376_i0dgqiytu_现代装-手持道具-喜庆风-红包.png",
+      "cosKey": "festival-templates/m2/female/asset_1770400777376_i0dgqiytu.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400777376_i0dgqiytu.png",
+      "md5": "2ea74e6d8321116271a8bdd0db87776d",
+      "etag": "\"2ea74e6d8321116271a8bdd0db87776d\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400790904_r6s3whvdq",
+      "fileName": "asset_1770400790904_r6s3whvdq_旗袍-坐姿-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400790904_r6s3whvdq_旗袍-坐姿-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400790904_r6s3whvdq.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400790904_r6s3whvdq.jpg",
+      "md5": "607c7bf9372f4edd3c2b2a73b13efe63",
+      "etag": "\"607c7bf9372f4edd3c2b2a73b13efe63\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400807009_4wiahg653",
+      "fileName": "asset_1770400807009_4wiahg653_旗袍-手持道具-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400807009_4wiahg653_旗袍-手持道具-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400807009_4wiahg653.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400807009_4wiahg653.jpg",
+      "md5": "791447634c9282032c692a14d6a0abd5",
+      "etag": "\"791447634c9282032c692a14d6a0abd5\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400817623_5tcfrj28z",
+      "fileName": "asset_1770400817623_5tcfrj28z_旗袍-手持道具-喜庆风-红包.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400817623_5tcfrj28z_旗袍-手持道具-喜庆风-红包.png",
+      "cosKey": "festival-templates/m2/female/asset_1770400817623_5tcfrj28z.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400817623_5tcfrj28z.png",
+      "md5": "c722723da2b96fcaba0ccfb0adbeccec",
+      "etag": "\"c722723da2b96fcaba0ccfb0adbeccec\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400831370_5s1uqpevc",
+      "fileName": "asset_1770400831370_5s1uqpevc_旗袍-站立-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400831370_5s1uqpevc_旗袍-站立-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400831370_5s1uqpevc.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400831370_5s1uqpevc.jpg",
+      "md5": "94ea6e4bb2f58c516ccb29b181d1d418",
+      "etag": "\"94ea6e4bb2f58c516ccb29b181d1d418\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400845764_zvcl79sbu",
+      "fileName": "asset_1770400845764_zvcl79sbu_旗袍-坐姿-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400845764_zvcl79sbu_旗袍-坐姿-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400845764_zvcl79sbu.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400845764_zvcl79sbu.jpg",
+      "md5": "9077786061aa0aa1ecfdd237cd867407",
+      "etag": "\"9077786061aa0aa1ecfdd237cd867407\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400860110_t8ccuyt72",
+      "fileName": "asset_1770400860110_t8ccuyt72_旗袍-站立-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400860110_t8ccuyt72_旗袍-站立-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400860110_t8ccuyt72.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400860110_t8ccuyt72.jpg",
+      "md5": "83828768befaaa6e9d983ed6dd66aa00",
+      "etag": "\"83828768befaaa6e9d983ed6dd66aa00\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400874546_hf7k9pb11",
+      "fileName": "asset_1770400874546_hf7k9pb11_旗袍-手持道具-喜庆风-红包.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400874546_hf7k9pb11_旗袍-手持道具-喜庆风-红包.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400874546_hf7k9pb11.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400874546_hf7k9pb11.jpg",
+      "md5": "c754026a70e850f1105fe3b6957907a4",
+      "etag": "\"c754026a70e850f1105fe3b6957907a4\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400893942_tlb9vmhrd",
+      "fileName": "asset_1770400893942_tlb9vmhrd_旗袍-手持道具-喜庆风-红包.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400893942_tlb9vmhrd_旗袍-手持道具-喜庆风-红包.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400893942_tlb9vmhrd.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400893942_tlb9vmhrd.jpg",
+      "md5": "e0385792e457b8c590e5c6dc359676b8",
+      "etag": "\"e0385792e457b8c590e5c6dc359676b8\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400906199_ahmqz0mip",
+      "fileName": "asset_1770400906199_ahmqz0mip_现代装-手持道具-喜庆风-红包.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400906199_ahmqz0mip_现代装-手持道具-喜庆风-红包.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400906199_ahmqz0mip.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400906199_ahmqz0mip.jpg",
+      "md5": "cd02d26906163e5ae30e50d01ca5157c",
+      "etag": "\"cd02d26906163e5ae30e50d01ca5157c\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400920406_471kosv52",
+      "fileName": "asset_1770400920406_471kosv52_旗袍-坐姿-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400920406_471kosv52_旗袍-坐姿-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770400920406_471kosv52.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400920406_471kosv52.jpg",
+      "md5": "7ab299c8099b37eec140fbff4aaec433",
+      "etag": "\"7ab299c8099b37eec140fbff4aaec433\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400931749_oall0ui2z",
+      "fileName": "asset_1770400931749_oall0ui2z_旗袍-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400931749_oall0ui2z_旗袍-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770400931749_oall0ui2z.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400931749_oall0ui2z.png",
+      "md5": "090850cabd9a7c5b45da61ee146941e0",
+      "etag": "\"090850cabd9a7c5b45da61ee146941e0\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400942504_rkde9pvm0",
+      "fileName": "asset_1770400942504_rkde9pvm0_汉服-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400942504_rkde9pvm0_汉服-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770400942504_rkde9pvm0.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400942504_rkde9pvm0.png",
+      "md5": "9ec30d376f5ad8e1f52995d07f918c1a",
+      "etag": "\"9ec30d376f5ad8e1f52995d07f918c1a\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400957084_uuxcev16o",
+      "fileName": "asset_1770400957084_uuxcev16o_现代装-站立-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400957084_uuxcev16o_现代装-站立-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770400957084_uuxcev16o.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400957084_uuxcev16o.png",
+      "md5": "c1ccd9583b6605f06115fe25bc55cdde",
+      "etag": "\"c1ccd9583b6605f06115fe25bc55cdde\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400984185_qelu09oqz",
+      "fileName": "asset_1770400984185_qelu09oqz_现代装-手持道具-喜庆风-吉祥物.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400984185_qelu09oqz_现代装-手持道具-喜庆风-吉祥物.png",
+      "cosKey": "festival-templates/m2/female/asset_1770400984185_qelu09oqz.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400984185_qelu09oqz.png",
+      "md5": "94b4542a43e9265542b7a38d0cb15908",
+      "etag": "\"94b4542a43e9265542b7a38d0cb15908\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770400995878_d4ke535d0",
+      "fileName": "asset_1770400995878_d4ke535d0_唐装-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770400995878_d4ke535d0_唐装-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770400995878_d4ke535d0.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770400995878_d4ke535d0.png",
+      "md5": "900e7b6d9bace41074f7c59a5f020855",
+      "etag": "\"900e7b6d9bace41074f7c59a5f020855\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401023156_stxahq8vj",
+      "fileName": "asset_1770401023156_stxahq8vj_汉服-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401023156_stxahq8vj_汉服-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401023156_stxahq8vj.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401023156_stxahq8vj.png",
+      "md5": "3eb453e90e2049204798368cc9366854",
+      "etag": "\"3eb453e90e2049204798368cc9366854\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401039079_azx6h14nu",
+      "fileName": "asset_1770401039079_azx6h14nu_财神装-手持对联-喜庆风-对联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401039079_azx6h14nu_财神装-手持对联-喜庆风-对联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401039079_azx6h14nu.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401039079_azx6h14nu.png",
+      "md5": "8b09360bc2237e35a482f2a1e677836c",
+      "etag": "\"8b09360bc2237e35a482f2a1e677836c\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401063594_zgniw0irc",
+      "fileName": "asset_1770401063594_zgniw0irc_现代装-手持道具-喜庆风-吉祥物.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401063594_zgniw0irc_现代装-手持道具-喜庆风-吉祥物.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401063594_zgniw0irc.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401063594_zgniw0irc.jpg",
+      "md5": "e53579c9a9f1e2c42331603a3a438b33",
+      "etag": "\"e53579c9a9f1e2c42331603a3a438b33\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401072054_ymjweq3sy",
+      "fileName": "asset_1770401072054_ymjweq3sy_现代装-其他-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401072054_ymjweq3sy_现代装-其他-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401072054_ymjweq3sy.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401072054_ymjweq3sy.jpg",
+      "md5": "3a8cbb6bd976f5e0a9023b4b693ad13b",
+      "etag": "\"3a8cbb6bd976f5e0a9023b4b693ad13b\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401083903_ckaje6v7y",
+      "fileName": "asset_1770401083903_ckaje6v7y_现代装-手持道具-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401083903_ckaje6v7y_现代装-手持道具-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401083903_ckaje6v7y.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401083903_ckaje6v7y.jpg",
+      "md5": "802b97868c81d265ce56b0d1b5fa6d61",
+      "etag": "\"802b97868c81d265ce56b0d1b5fa6d61\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401093703_rxe0ae0hp",
+      "fileName": "asset_1770401093703_rxe0ae0hp_现代装-手持道具-喜庆风-福字挂饰.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401093703_rxe0ae0hp_现代装-手持道具-喜庆风-福字挂饰.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401093703_rxe0ae0hp.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401093703_rxe0ae0hp.jpg",
+      "md5": "5600e93057509b969748f4b79f3b040d",
+      "etag": "\"5600e93057509b969748f4b79f3b040d\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401107547_h5oknw7pk",
+      "fileName": "asset_1770401107547_h5oknw7pk_现代装-手持道具-喜庆风-吉祥物.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401107547_h5oknw7pk_现代装-手持道具-喜庆风-吉祥物.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401107547_h5oknw7pk.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401107547_h5oknw7pk.jpg",
+      "md5": "5178db95cc3a5a10c6b48cd64fca0f86",
+      "etag": "\"5178db95cc3a5a10c6b48cd64fca0f86\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401118086_a12ysu90j",
+      "fileName": "asset_1770401118086_a12ysu90j_现代装-手持道具-喜庆风-春联.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401118086_a12ysu90j_现代装-手持道具-喜庆风-春联.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401118086_a12ysu90j.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401118086_a12ysu90j.jpg",
+      "md5": "1733f8b3abd6525ae7bbafa592de7a05",
+      "etag": "\"1733f8b3abd6525ae7bbafa592de7a05\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401128822_fbeqh2yip",
+      "fileName": "asset_1770401128822_fbeqh2yip_现代装-坐姿-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401128822_fbeqh2yip_现代装-坐姿-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401128822_fbeqh2yip.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401128822_fbeqh2yip.jpg",
+      "md5": "10d3e56eedf2ab0cbcce4ee16b167341",
+      "etag": "\"10d3e56eedf2ab0cbcce4ee16b167341\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401139399_kw739931d",
+      "fileName": "asset_1770401139399_kw739931d_旗袍-手持道具-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401139399_kw739931d_旗袍-手持道具-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401139399_kw739931d.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401139399_kw739931d.jpg",
+      "md5": "ad8d1d915a990f037f2cc2fb6dbfd998",
+      "etag": "\"ad8d1d915a990f037f2cc2fb6dbfd998\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401151346_9yumhojci",
+      "fileName": "asset_1770401151346_9yumhojci_旗袍-手持灯笼-喜庆风-红色.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401151346_9yumhojci_旗袍-手持灯笼-喜庆风-红色.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401151346_9yumhojci.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401151346_9yumhojci.jpg",
+      "md5": "c91558be0c68b97ea93abe6dbb8ce72a",
+      "etag": "\"c91558be0c68b97ea93abe6dbb8ce72a\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401162141_y37d2byzd",
+      "fileName": "asset_1770401162141_y37d2byzd_旗袍-手持道具-喜庆风-红包.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401162141_y37d2byzd_旗袍-手持道具-喜庆风-红包.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401162141_y37d2byzd.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401162141_y37d2byzd.jpg",
+      "md5": "035aea8ea2c5e5df916b4c7c500f4f01",
+      "etag": "\"035aea8ea2c5e5df916b4c7c500f4f01\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401173933_za6kbmg3o",
+      "fileName": "asset_1770401173933_za6kbmg3o_唐装-其他-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401173933_za6kbmg3o_唐装-其他-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401173933_za6kbmg3o.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401173933_za6kbmg3o.jpg",
+      "md5": "6381873c434002b0978486653aea7145",
+      "etag": "\"6381873c434002b0978486653aea7145\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401184933_yge9py180",
+      "fileName": "asset_1770401184933_yge9py180_旗袍-手持道具-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401184933_yge9py180_旗袍-手持道具-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401184933_yge9py180.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401184933_yge9py180.jpg",
+      "md5": "1c754b75d75d6860ca4e2b9dd33395d1",
+      "etag": "\"1c754b75d75d6860ca4e2b9dd33395d1\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401198508_pahaf6sod",
+      "fileName": "asset_1770401198508_pahaf6sod_旗袍-站立-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401198508_pahaf6sod_旗袍-站立-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401198508_pahaf6sod.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401198508_pahaf6sod.jpg",
+      "md5": "8d5382c52903ee9e5884872bae279bcc",
+      "etag": "\"8d5382c52903ee9e5884872bae279bcc\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401209409_yhz5rtlgj",
+      "fileName": "asset_1770401209409_yhz5rtlgj_现代装-手持道具-喜庆风-灯笼.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401209409_yhz5rtlgj_现代装-手持道具-喜庆风-灯笼.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401209409_yhz5rtlgj.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401209409_yhz5rtlgj.jpg",
+      "md5": "df33530703d93492ba4bf7d311d5a75e",
+      "etag": "\"df33530703d93492ba4bf7d311d5a75e\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401223269_om14ipaa0",
+      "fileName": "asset_1770401223269_om14ipaa0_旗袍-手持道具-喜庆风-红包.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401223269_om14ipaa0_旗袍-手持道具-喜庆风-红包.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770401223269_om14ipaa0.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401223269_om14ipaa0.jpg",
+      "md5": "13a57e78a01d97f5c69364f18b0311ce",
+      "etag": "\"13a57e78a01d97f5c69364f18b0311ce\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401236521_nhkrsv6xo",
+      "fileName": "asset_1770401236521_nhkrsv6xo_现代装-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401236521_nhkrsv6xo_现代装-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401236521_nhkrsv6xo.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401236521_nhkrsv6xo.png",
+      "md5": "becc9f818f17d25f5a675c5387ea6711",
+      "etag": "\"becc9f818f17d25f5a675c5387ea6711\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401254979_dvbuqgi1e",
+      "fileName": "asset_1770401254979_dvbuqgi1e_唐装-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401254979_dvbuqgi1e_唐装-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401254979_dvbuqgi1e.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401254979_dvbuqgi1e.png",
+      "md5": "b2dd545303d8cdb6981eb69aba465733",
+      "etag": "\"b2dd545303d8cdb6981eb69aba465733\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401270946_k75ii701x",
+      "fileName": "asset_1770401270946_k75ii701x_唐装-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401270946_k75ii701x_唐装-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401270946_k75ii701x.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401270946_k75ii701x.png",
+      "md5": "f89a288e2de8fb22dda8a7269b56f12e",
+      "etag": "\"f89a288e2de8fb22dda8a7269b56f12e\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401278132_d8gym0b23",
+      "fileName": "asset_1770401278132_d8gym0b23_现代装-持道具-喜庆风-元宝.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401278132_d8gym0b23_现代装-持道具-喜庆风-元宝.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401278132_d8gym0b23.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401278132_d8gym0b23.png",
+      "md5": "50c6d450bba3fcddbd9c7bb9882cbbf8",
+      "etag": "\"50c6d450bba3fcddbd9c7bb9882cbbf8\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401292267_553xdche7",
+      "fileName": "asset_1770401292267_553xdche7_旗袍-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401292267_553xdche7_旗袍-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401292267_553xdche7.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401292267_553xdche7.png",
+      "md5": "f6e7303c4b5f8a93ef2a611abf734ae3",
+      "etag": "\"f6e7303c4b5f8a93ef2a611abf734ae3\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401303735_e2zn3t090",
+      "fileName": "asset_1770401303735_e2zn3t090_现代装-手持春联-喜庆风-红色.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401303735_e2zn3t090_现代装-手持春联-喜庆风-红色.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401303735_e2zn3t090.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401303735_e2zn3t090.png",
+      "md5": "0d623351a41a51f314d2f3129c484154",
+      "etag": "\"0d623351a41a51f314d2f3129c484154\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401324280_7fc21nlzm",
+      "fileName": "asset_1770401324280_7fc21nlzm_现代装-其他-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401324280_7fc21nlzm_现代装-其他-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401324280_7fc21nlzm.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401324280_7fc21nlzm.png",
+      "md5": "77d071e9d323416141cf530a222c9e24",
+      "etag": "\"77d071e9d323416141cf530a222c9e24\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401346693_0aa517q55",
+      "fileName": "asset_1770401346693_0aa517q55_旗袍-手持道具-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770401346693_0aa517q55_旗袍-手持道具-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770401346693_0aa517q55.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770401346693_0aa517q55.png",
+      "md5": "516c041004a8aa292987cef952df3ed3",
+      "etag": "\"516c041004a8aa292987cef952df3ed3\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402697273_fppskd5jr",
+      "fileName": "asset_1770402697273_fppskd5jr_现代装-手持道具-活泼风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402697273_fppskd5jr_现代装-手持道具-活泼风-无道具.jpg",
+      "cosKey": "festival-templates/m2/female/asset_1770402697273_fppskd5jr.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402697273_fppskd5jr.jpg",
+      "md5": "4dafaf45f1925de13e47bf4743469e97",
+      "etag": "\"4dafaf45f1925de13e47bf4743469e97\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402785224_i0fnrfgmh",
+      "fileName": "asset_1770402785224_i0fnrfgmh_唐装-站立-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402785224_i0fnrfgmh_唐装-站立-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402785224_i0fnrfgmh.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402785224_i0fnrfgmh.png",
+      "md5": "2dd23bc751d58722d63d5075390dae88",
+      "etag": "\"2dd23bc751d58722d63d5075390dae88\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402796449_rd84hlhfc",
+      "fileName": "asset_1770402796449_rd84hlhfc_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402796449_rd84hlhfc_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402796449_rd84hlhfc.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402796449_rd84hlhfc.png",
+      "md5": "98bded8084b152c2688c56993715b778",
+      "etag": "\"98bded8084b152c2688c56993715b778\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402810952_uunkzv8p7",
+      "fileName": "asset_1770402810952_uunkzv8p7_旗袍-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402810952_uunkzv8p7_旗袍-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402810952_uunkzv8p7.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402810952_uunkzv8p7.png",
+      "md5": "af9ecc4078da37fa0e0902006be658d9",
+      "etag": "\"af9ecc4078da37fa0e0902006be658d9\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402825596_3waj9rwqp",
+      "fileName": "asset_1770402825596_3waj9rwqp_财神装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402825596_3waj9rwqp_财神装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402825596_3waj9rwqp.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402825596_3waj9rwqp.png",
+      "md5": "a6b742e1cbac8335ec3c843e7521a817",
+      "etag": "\"a6b742e1cbac8335ec3c843e7521a817\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402838465_kdfp5ai1e",
+      "fileName": "asset_1770402838465_kdfp5ai1e_现代装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402838465_kdfp5ai1e_现代装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402838465_kdfp5ai1e.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402838465_kdfp5ai1e.png",
+      "md5": "4aa0ab572a892ed71a6e89c54a81f2cc",
+      "etag": "\"4aa0ab572a892ed71a6e89c54a81f2cc\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402850135_iiewx93v7",
+      "fileName": "asset_1770402850135_iiewx93v7_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402850135_iiewx93v7_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402850135_iiewx93v7.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402850135_iiewx93v7.png",
+      "md5": "074434058e1ea43f538557b7a49a2a9a",
+      "etag": "\"074434058e1ea43f538557b7a49a2a9a\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402862435_6vtthhb20",
+      "fileName": "asset_1770402862435_6vtthhb20_旗袍-坐姿-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402862435_6vtthhb20_旗袍-坐姿-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402862435_6vtthhb20.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402862435_6vtthhb20.png",
+      "md5": "c0c34c8e18a5d1a99e69f678bc2fa988",
+      "etag": "\"c0c34c8e18a5d1a99e69f678bc2fa988\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402874041_smal3rety",
+      "fileName": "asset_1770402874041_smal3rety_旗袍-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402874041_smal3rety_旗袍-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402874041_smal3rety.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402874041_smal3rety.png",
+      "md5": "4e4e7dd0db7bd3284fe33c22490e692f",
+      "etag": "\"4e4e7dd0db7bd3284fe33c22490e692f\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402886453_av7vzxzv8",
+      "fileName": "asset_1770402886453_av7vzxzv8_现代装-站立-喜庆风-福字装饰.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402886453_av7vzxzv8_现代装-站立-喜庆风-福字装饰.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402886453_av7vzxzv8.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402886453_av7vzxzv8.png",
+      "md5": "15793d6bb242bcc9cb6694128ff247db",
+      "etag": "\"15793d6bb242bcc9cb6694128ff247db\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402898605_u3f6bx6ad",
+      "fileName": "asset_1770402898605_u3f6bx6ad_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402898605_u3f6bx6ad_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402898605_u3f6bx6ad.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402898605_u3f6bx6ad.png",
+      "md5": "cdf27a5f888244eacbe7c25741bb6dea",
+      "etag": "\"cdf27a5f888244eacbe7c25741bb6dea\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770402925058_xz6w21ck4",
+      "fileName": "asset_1770402925058_xz6w21ck4_旗袍-手持道具-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770402925058_xz6w21ck4_旗袍-手持道具-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770402925058_xz6w21ck4.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770402925058_xz6w21ck4.png",
+      "md5": "4f181fc9306a2ade03b85ca0da3ad87e",
+      "etag": "\"4f181fc9306a2ade03b85ca0da3ad87e\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403181946_v6ag4f0c3",
+      "fileName": "asset_1770403181946_v6ag4f0c3_唐装-坐姿-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403181946_v6ag4f0c3_唐装-坐姿-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403181946_v6ag4f0c3.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403181946_v6ag4f0c3.png",
+      "md5": "9d710abf5b3aabd409a3fa3c62539f59",
+      "etag": "\"9d710abf5b3aabd409a3fa3c62539f59\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403192900_9gx9zt08p",
+      "fileName": "asset_1770403192900_9gx9zt08p_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403192900_9gx9zt08p_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403192900_9gx9zt08p.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403192900_9gx9zt08p.png",
+      "md5": "912519ddc2741126a6068f81f2fc2ec3",
+      "etag": "\"912519ddc2741126a6068f81f2fc2ec3\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403207298_f5612tpw8",
+      "fileName": "asset_1770403207298_f5612tpw8_汉服-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403207298_f5612tpw8_汉服-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403207298_f5612tpw8.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403207298_f5612tpw8.png",
+      "md5": "caa967405f1a2ecd212def8ca199e6a5",
+      "etag": "\"caa967405f1a2ecd212def8ca199e6a5\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403232022_ehjfdtnkr",
+      "fileName": "asset_1770403232022_ehjfdtnkr_汉服-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403232022_ehjfdtnkr_汉服-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403232022_ehjfdtnkr.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403232022_ehjfdtnkr.png",
+      "md5": "19e32eb94a05ab458d9526d8ecab62d5",
+      "etag": "\"19e32eb94a05ab458d9526d8ecab62d5\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403255942_typay458y",
+      "fileName": "asset_1770403255942_typay458y_汉服-站立-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403255942_typay458y_汉服-站立-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403255942_typay458y.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403255942_typay458y.png",
+      "md5": "84e937c45c110a87b86e11940a71cb6c",
+      "etag": "\"84e937c45c110a87b86e11940a71cb6c\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403287443_1i0zp3nvg",
+      "fileName": "asset_1770403287443_1i0zp3nvg_汉服-站立-传统风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403287443_1i0zp3nvg_汉服-站立-传统风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403287443_1i0zp3nvg.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403287443_1i0zp3nvg.png",
+      "md5": "7654fa8dfd69173df2126131cea7b381",
+      "etag": "\"7654fa8dfd69173df2126131cea7b381\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403317704_7o61o87s7",
+      "fileName": "asset_1770403317704_7o61o87s7_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403317704_7o61o87s7_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403317704_7o61o87s7.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403317704_7o61o87s7.png",
+      "md5": "21eb962d2556ccbea6337f8e624fffbb",
+      "etag": "\"21eb962d2556ccbea6337f8e624fffbb\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403329828_t52sb42rp",
+      "fileName": "asset_1770403329828_t52sb42rp_汉服-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403329828_t52sb42rp_汉服-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403329828_t52sb42rp.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403329828_t52sb42rp.png",
+      "md5": "4583fce672c46bd259faf90212a54014",
+      "etag": "\"4583fce672c46bd259faf90212a54014\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403357216_s5mx1g370",
+      "fileName": "asset_1770403357216_s5mx1g370_汉服-站立-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403357216_s5mx1g370_汉服-站立-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403357216_s5mx1g370.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403357216_s5mx1g370.png",
+      "md5": "375d11bb56792e6195773dd3c11a02e6",
+      "etag": "\"375d11bb56792e6195773dd3c11a02e6\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403498211_7rb0rdo35",
+      "fileName": "asset_1770403498211_7rb0rdo35_汉服-坐姿-喜庆风-灯笼.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403498211_7rb0rdo35_汉服-坐姿-喜庆风-灯笼.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403498211_7rb0rdo35.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403498211_7rb0rdo35.png",
+      "md5": "82079a55020bdceb5450d8640080aa15",
+      "etag": "\"82079a55020bdceb5450d8640080aa15\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403510833_uiqqn9f5n",
+      "fileName": "asset_1770403510833_uiqqn9f5n_唐装-坐姿-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403510833_uiqqn9f5n_唐装-坐姿-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403510833_uiqqn9f5n.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403510833_uiqqn9f5n.png",
+      "md5": "78f757a4981e2d5ac3175e43cc203110",
+      "etag": "\"78f757a4981e2d5ac3175e43cc203110\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770403523099_h8y68l7up",
+      "fileName": "asset_1770403523099_h8y68l7up_汉服-手持道具-喜庆风-春联.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770403523099_h8y68l7up_汉服-手持道具-喜庆风-春联.png",
+      "cosKey": "festival-templates/m2/female/asset_1770403523099_h8y68l7up.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770403523099_h8y68l7up.png",
+      "md5": "a3d8025cdb670496b985ea1cd8afa24f",
+      "etag": "\"a3d8025cdb670496b985ea1cd8afa24f\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770405154421_4oij6us3z",
+      "fileName": "asset_1770405154421_4oij6us3z_现代装-手持灯笼-喜庆风-红色.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\female\\asset_1770405154421_4oij6us3z_现代装-手持灯笼-喜庆风-红色.png",
+      "cosKey": "festival-templates/m2/female/asset_1770405154421_4oij6us3z.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/female/asset_1770405154421_4oij6us3z.png",
+      "md5": "992777c6218fedc4d8188f050e93d2a6",
+      "etag": "\"992777c6218fedc4d8188f050e93d2a6\"",
+      "gender": "female"
+    },
+    {
+      "assetId": "asset_1770401364364_bhll8xlhf",
+      "fileName": "asset_1770401364364_bhll8xlhf_汉服-手持道具-喜庆风-金球.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770401364364_bhll8xlhf_汉服-手持道具-喜庆风-金球.png",
+      "cosKey": "festival-templates/m2/child/asset_1770401364364_bhll8xlhf.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401364364_bhll8xlhf.png",
+      "md5": "323391f44401d8c5d26a696cef563e3b",
+      "etag": "\"323391f44401d8c5d26a696cef563e3b\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770401383719_7ntu2dumo",
+      "fileName": "asset_1770401383719_7ntu2dumo_汉服-坐姿-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770401383719_7ntu2dumo_汉服-坐姿-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770401383719_7ntu2dumo.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401383719_7ntu2dumo.png",
+      "md5": "0aecf4aecb2561b150866f17e485dafe",
+      "etag": "\"0aecf4aecb2561b150866f17e485dafe\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770401390497_2sh05jjhc",
+      "fileName": "asset_1770401390497_2sh05jjhc_儿童装-手持福字-喜庆风-福字.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770401390497_2sh05jjhc_儿童装-手持福字-喜庆风-福字.jpg",
+      "cosKey": "festival-templates/m2/child/asset_1770401390497_2sh05jjhc.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401390497_2sh05jjhc.jpg",
+      "md5": "71c61fc9719e93990927d4092ba5b13a",
+      "etag": "\"71c61fc9719e93990927d4092ba5b13a\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770401403977_bjhx1doh7",
+      "fileName": "asset_1770401403977_bjhx1doh7_儿童装-手持道具-喜庆风-无道具.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770401403977_bjhx1doh7_儿童装-手持道具-喜庆风-无道具.jpg",
+      "cosKey": "festival-templates/m2/child/asset_1770401403977_bjhx1doh7.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401403977_bjhx1doh7.jpg",
+      "md5": "df6f2308d9ab0bfb2551dec40c889526",
+      "etag": "\"df6f2308d9ab0bfb2551dec40c889526\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770401412562_vz35i5t76",
+      "fileName": "asset_1770401412562_vz35i5t76_儿童装-手持道具-喜庆风-吉祥物.jpg",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770401412562_vz35i5t76_儿童装-手持道具-喜庆风-吉祥物.jpg",
+      "cosKey": "festival-templates/m2/child/asset_1770401412562_vz35i5t76.jpg",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401412562_vz35i5t76.jpg",
+      "md5": "72ff9cac56de474ff6e0c66686dc9cff",
+      "etag": "\"72ff9cac56de474ff6e0c66686dc9cff\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770401431560_2dvir57la",
+      "fileName": "asset_1770401431560_2dvir57la_唐装-手持道具-喜庆风-福字装饰.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770401431560_2dvir57la_唐装-手持道具-喜庆风-福字装饰.png",
+      "cosKey": "festival-templates/m2/child/asset_1770401431560_2dvir57la.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401431560_2dvir57la.png",
+      "md5": "91e84b34f07395157c362868cab5d88e",
+      "etag": "\"91e84b34f07395157c362868cab5d88e\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770401447094_dqrs5ad03",
+      "fileName": "asset_1770401447094_dqrs5ad03_儿童装-手持道具-喜庆风-吉祥物.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770401447094_dqrs5ad03_儿童装-手持道具-喜庆风-吉祥物.png",
+      "cosKey": "festival-templates/m2/child/asset_1770401447094_dqrs5ad03.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770401447094_dqrs5ad03.png",
+      "md5": "bcd2350b4305dcf4164d017599a270fb",
+      "etag": "\"bcd2350b4305dcf4164d017599a270fb\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770402937604_cdz42mpke",
+      "fileName": "asset_1770402937604_cdz42mpke_汉服-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770402937604_cdz42mpke_汉服-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770402937604_cdz42mpke.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402937604_cdz42mpke.png",
+      "md5": "a0c57d74fc27eab931fa847bc028fd00",
+      "etag": "\"a0c57d74fc27eab931fa847bc028fd00\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770402949622_pl4nv2zjg",
+      "fileName": "asset_1770402949622_pl4nv2zjg_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770402949622_pl4nv2zjg_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770402949622_pl4nv2zjg.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402949622_pl4nv2zjg.png",
+      "md5": "0d1500be46ac4e1c52860478b4514aae",
+      "etag": "\"0d1500be46ac4e1c52860478b4514aae\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770402961739_oi1md2rvm",
+      "fileName": "asset_1770402961739_oi1md2rvm_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770402961739_oi1md2rvm_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770402961739_oi1md2rvm.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402961739_oi1md2rvm.png",
+      "md5": "2e95e10043e1443b09772b2602273352",
+      "etag": "\"2e95e10043e1443b09772b2602273352\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770402973496_7rwxzt2dz",
+      "fileName": "asset_1770402973496_7rwxzt2dz_财神装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770402973496_7rwxzt2dz_财神装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770402973496_7rwxzt2dz.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402973496_7rwxzt2dz.png",
+      "md5": "ed5926f9f5349f57e8621f28ead0941c",
+      "etag": "\"ed5926f9f5349f57e8621f28ead0941c\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770402985804_3j8ch8c1r",
+      "fileName": "asset_1770402985804_3j8ch8c1r_汉服-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770402985804_3j8ch8c1r_汉服-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770402985804_3j8ch8c1r.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402985804_3j8ch8c1r.png",
+      "md5": "23fd1ede27c58c4d7313a6c1572b21aa",
+      "etag": "\"23fd1ede27c58c4d7313a6c1572b21aa\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770402999161_vmrn4pea0",
+      "fileName": "asset_1770402999161_vmrn4pea0_财神装-拜年姿势-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770402999161_vmrn4pea0_财神装-拜年姿势-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770402999161_vmrn4pea0.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770402999161_vmrn4pea0.png",
+      "md5": "00c67305526e0bf4d3573b3d9205a94c",
+      "etag": "\"00c67305526e0bf4d3573b3d9205a94c\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403010444_plfwykqkc",
+      "fileName": "asset_1770403010444_plfwykqkc_儿童装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403010444_plfwykqkc_儿童装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403010444_plfwykqkc.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403010444_plfwykqkc.png",
+      "md5": "1f97166f7d8b63a4c8854612fc089f48",
+      "etag": "\"1f97166f7d8b63a4c8854612fc089f48\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403024062_dq75mlhzf",
+      "fileName": "asset_1770403024062_dq75mlhzf_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403024062_dq75mlhzf_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403024062_dq75mlhzf.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403024062_dq75mlhzf.png",
+      "md5": "aacb314978d1b46849c5d1ca0dfd04df",
+      "etag": "\"aacb314978d1b46849c5d1ca0dfd04df\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403036594_awdvhbr7g",
+      "fileName": "asset_1770403036594_awdvhbr7g_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403036594_awdvhbr7g_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403036594_awdvhbr7g.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403036594_awdvhbr7g.png",
+      "md5": "7491e0e5b97c77919900ef8232b8ac46",
+      "etag": "\"7491e0e5b97c77919900ef8232b8ac46\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403065093_3gtxknw6d",
+      "fileName": "asset_1770403065093_3gtxknw6d_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403065093_3gtxknw6d_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403065093_3gtxknw6d.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403065093_3gtxknw6d.png",
+      "md5": "4a53aa300dcf796010ce523670408a46",
+      "etag": "\"4a53aa300dcf796010ce523670408a46\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403076450_ld4vqq0ns",
+      "fileName": "asset_1770403076450_ld4vqq0ns_汉服-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403076450_ld4vqq0ns_汉服-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403076450_ld4vqq0ns.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403076450_ld4vqq0ns.png",
+      "md5": "f8cb2efeb7a49adc43fc7ebbb8536946",
+      "etag": "\"f8cb2efeb7a49adc43fc7ebbb8536946\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403088392_c0yafh37a",
+      "fileName": "asset_1770403088392_c0yafh37a_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403088392_c0yafh37a_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403088392_c0yafh37a.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403088392_c0yafh37a.png",
+      "md5": "da842aae0efc1dc8318219742b2fa49e",
+      "etag": "\"da842aae0efc1dc8318219742b2fa49e\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403102252_nb4fg8fd8",
+      "fileName": "asset_1770403102252_nb4fg8fd8_汉服-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403102252_nb4fg8fd8_汉服-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403102252_nb4fg8fd8.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403102252_nb4fg8fd8.png",
+      "md5": "e3f17b51b6d90642438e6dcc4f1c5162",
+      "etag": "\"e3f17b51b6d90642438e6dcc4f1c5162\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403113549_upp5gpg3k",
+      "fileName": "asset_1770403113549_upp5gpg3k_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403113549_upp5gpg3k_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403113549_upp5gpg3k.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403113549_upp5gpg3k.png",
+      "md5": "ba9e798c0655027e3e39b38ae42172fd",
+      "etag": "\"ba9e798c0655027e3e39b38ae42172fd\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403125653_tgwy3td0l",
+      "fileName": "asset_1770403125653_tgwy3td0l_汉服-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403125653_tgwy3td0l_汉服-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403125653_tgwy3td0l.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403125653_tgwy3td0l.png",
+      "md5": "99ea0a189bba3ee7d6ebb1e3988ede33",
+      "etag": "\"99ea0a189bba3ee7d6ebb1e3988ede33\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403139042_zqe9cqjjy",
+      "fileName": "asset_1770403139042_zqe9cqjjy_儿童装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403139042_zqe9cqjjy_儿童装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403139042_zqe9cqjjy.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403139042_zqe9cqjjy.png",
+      "md5": "593627112169e627425072ac799f4036",
+      "etag": "\"593627112169e627425072ac799f4036\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403155535_7mimhmwbf",
+      "fileName": "asset_1770403155535_7mimhmwbf_儿童装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403155535_7mimhmwbf_儿童装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403155535_7mimhmwbf.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403155535_7mimhmwbf.png",
+      "md5": "1976fbe50c5f9bc61ae9879d4b38e6a2",
+      "etag": "\"1976fbe50c5f9bc61ae9879d4b38e6a2\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403367064_wh0j54d1f",
+      "fileName": "asset_1770403367064_wh0j54d1f_儿童服装-拜年姿势-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403367064_wh0j54d1f_儿童服装-拜年姿势-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403367064_wh0j54d1f.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403367064_wh0j54d1f.png",
+      "md5": "da194b5c9f9894ed883608b256304114",
+      "etag": "\"da194b5c9f9894ed883608b256304114\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403378881_2trxtc5e8",
+      "fileName": "asset_1770403378881_2trxtc5e8_唐装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403378881_2trxtc5e8_唐装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403378881_2trxtc5e8.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403378881_2trxtc5e8.png",
+      "md5": "0b39e133d772fed0bd7ac78a40725925",
+      "etag": "\"0b39e133d772fed0bd7ac78a40725925\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403389470_4v2igtmwu",
+      "fileName": "asset_1770403389470_4v2igtmwu_儿童装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403389470_4v2igtmwu_儿童装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403389470_4v2igtmwu.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403389470_4v2igtmwu.png",
+      "md5": "7f0c7760a2e5e1564bfa4601c52bf434",
+      "etag": "\"7f0c7760a2e5e1564bfa4601c52bf434\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403401824_lra5ha74y",
+      "fileName": "asset_1770403401824_lra5ha74y_儿童装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403401824_lra5ha74y_儿童装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403401824_lra5ha74y.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403401824_lra5ha74y.png",
+      "md5": "42b0d2a77b41c7188e33d3b37e416937",
+      "etag": "\"42b0d2a77b41c7188e33d3b37e416937\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403413591_ggna8yp0v",
+      "fileName": "asset_1770403413591_ggna8yp0v_儿童装-拜年姿势-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403413591_ggna8yp0v_儿童装-拜年姿势-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403413591_ggna8yp0v.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403413591_ggna8yp0v.png",
+      "md5": "c795d9da88cd3b7659faf6838e88ad9f",
+      "etag": "\"c795d9da88cd3b7659faf6838e88ad9f\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403426280_7lyr16p8v",
+      "fileName": "asset_1770403426280_7lyr16p8v_儿童装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403426280_7lyr16p8v_儿童装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403426280_7lyr16p8v.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403426280_7lyr16p8v.png",
+      "md5": "75060e64910ff04caed8fcd905fe9edf",
+      "etag": "\"75060e64910ff04caed8fcd905fe9edf\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403439666_qwe54h80j",
+      "fileName": "asset_1770403439666_qwe54h80j_唐装-拜年姿势-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403439666_qwe54h80j_唐装-拜年姿势-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403439666_qwe54h80j.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403439666_qwe54h80j.png",
+      "md5": "e3ffde5669f8fad6485245cbc16a2245",
+      "etag": "\"e3ffde5669f8fad6485245cbc16a2245\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403452302_5d4u8wcbd",
+      "fileName": "asset_1770403452302_5d4u8wcbd_财神装-站立-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403452302_5d4u8wcbd_财神装-站立-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403452302_5d4u8wcbd.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403452302_5d4u8wcbd.png",
+      "md5": "e23de197c980bde69d920b9f37bcb848",
+      "etag": "\"e23de197c980bde69d920b9f37bcb848\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403463239_0ezomuj5v",
+      "fileName": "asset_1770403463239_0ezomuj5v_儿童装-招财手势-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403463239_0ezomuj5v_儿童装-招财手势-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403463239_0ezomuj5v.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403463239_0ezomuj5v.png",
+      "md5": "122b163f181246fdccb8c516fcddd671",
+      "etag": "\"122b163f181246fdccb8c516fcddd671\"",
+      "gender": "child"
+    },
+    {
+      "assetId": "asset_1770403475166_e121b74jw",
+      "fileName": "asset_1770403475166_e121b74jw_儿童装-拜年姿势-喜庆风-无道具.png",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\M2模板素材\\child\\asset_1770403475166_e121b74jw_儿童装-拜年姿势-喜庆风-无道具.png",
+      "cosKey": "festival-templates/m2/child/asset_1770403475166_e121b74jw.png",
+      "cosUrl": "https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/child/asset_1770403475166_e121b74jw.png",
+      "md5": "4958bea99676f8ef3fa057494568d122",
+      "etag": "\"4958bea99676f8ef3fa057494568d122\"",
+      "gender": "child"
+    }
+  ]
+}

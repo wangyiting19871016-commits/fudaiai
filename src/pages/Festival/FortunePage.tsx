@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import { missionExecutor, MissionProgress } from '../../services/MissionExecutor';
 import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-fortune-glass.css';
 
@@ -64,9 +65,7 @@ const FortunePage: React.FC = () => {
         <div className="fortune-header">
           <BackButton />
           <h1 className="fortune-title">运势抽卡</h1>
-          <button className="home-btn" onClick={() => navigate('/festival/home')}>
-            首页
-          </button>
+          <HomeButton />
         </div>
 
         {/* 主内容区 */}

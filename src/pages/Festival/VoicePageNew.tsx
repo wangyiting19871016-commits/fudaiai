@@ -9,6 +9,7 @@ import { message } from 'antd';
 import { VoicePreset, getNonEmptyCategories, getVoiceById } from '../../configs/festival/voicePresets';
 import FishAudioService from '../../services/FishAudioService';
 import { MaterialService } from '../../services/MaterialService';
+import { SessionMaterialManager } from '../../services/SessionMaterialManager';
 import type { MaterialAtom } from '../../types/material';
 import { TextSelector } from '../../components/TextSelector';
 import { getNavigationState, createNavigationState, type NavigationState } from '../../types/navigationState';
@@ -45,6 +46,7 @@ const VoicePageNew: React.FC = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [textSource, setTextSource] = useState<'template' | 'user' | 'caption'>('template');
   const [incomingImage, setIncomingImage] = useState<string>('');
+  const [returnToPath, setReturnToPath] = useState<string | null>(null);
 
   // 引用
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -59,7 +61,7 @@ const VoicePageNew: React.FC = () => {
       // ✅ 流转规则检查1: textType 验证（语音生成可以接受所有类型，但给出提示）
       if (navState.textType) {
         if (navState.textType === 'fortune' || navState.textType === 'couplet') {
-          message.warning('运势和春联文案通常较长，建议手动调整为50字以内');
+          message.warning('运势和春联文案通常较长，建议手动调整为80字以内（约15秒）');
           console.warn('[VoicePageNew] 长文案类型：', navState.textType);
         }
       }
@@ -67,11 +69,11 @@ const VoicePageNew: React.FC = () => {
       // 接收文本（优先使用text，fallback到originalCaption）
       let incomingText = navState.text || navState.originalCaption || '';
       if (incomingText) {
-        // ✅ 流转规则检查2: 长文案自动截断（语音生成建议50字以内）
-        if (incomingText.length > 50) {
-          incomingText = incomingText.substring(0, 50);
-          message.warning('文案过长，已自动截取前50字（建议50字以内效果更佳）');
-          console.log('[VoicePageNew] 文案截断：原长度', navState.text?.length, '→ 50字');
+        // ✅ 流转规则检查2: 长文案自动截断（语音生成建议80字以内）
+        if (incomingText.length > 80) {
+          incomingText = incomingText.substring(0, 80);
+          message.warning('文案过长，已自动截取前80字（建议控制在80字以内，约15秒）');
+          console.log('[VoicePageNew] 文案截断：原长度', navState.text?.length, '→ 80字');
         }
 
         setText(incomingText);
@@ -93,6 +95,12 @@ const VoicePageNew: React.FC = () => {
       // 接收图片
       if (navState.image) {
         setIncomingImage(navState.image);
+      }
+
+      // 接收返回路径
+      if (navState.returnTo) {
+        setReturnToPath(navState.returnTo);
+        console.log('[VoicePageNew] 返回路径:', navState.returnTo);
       }
     }
 
@@ -264,6 +272,10 @@ const VoicePageNew: React.FC = () => {
       setGeneratedAudioUrl(audioUrl);
       setIsGenerating(false);
       setIsSaved(false);
+
+      // 🎯 自动保存到临时会话（不占用素材库50条限制）
+      SessionMaterialManager.setTempAudio(audioUrl, text.trim(), 'voice-page');
+      console.log('[VoicePageNew] 音频已保存到临时会话');
     } catch (err) {
       console.error('[VoicePage] 生成失败:', err);
       message.error('生成失败，请重试');
@@ -314,7 +326,7 @@ const VoicePageNew: React.FC = () => {
           voiceName: selectedVoice?.name || '未知音色'
         },
         connectors: {
-          roles: ['videoAudio', 'posterAudio'],
+          roles: ['videoAudio'],
           canCombineWith: ['image', 'video']
         }
       };
@@ -332,7 +344,6 @@ const VoicePageNew: React.FC = () => {
   const handleGoToVideo = () => {
     if (!generatedAudioUrl) return;
 
-    // ⚠️ 不自动保存，用户需手动点击"保存到我的作品"
     // 传递NavigationState，包含音频、文本、图片
     const navState = createNavigationState({
       audio: generatedAudioUrl,
@@ -343,7 +354,23 @@ const VoicePageNew: React.FC = () => {
       sourcePagePath: '/festival/voice',
     });
 
-    navigate('/festival/video', { state: navState });
+    navigate('/festival/category/video', { state: navState });
+  };
+
+  // 返回制作页（带音频）
+  const handleReturnToProduction = () => {
+    if (!returnToPath || !generatedAudioUrl) return;
+
+    const navState = createNavigationState({
+      audio: generatedAudioUrl,
+      text: text.trim(),
+      image: incomingImage || undefined,
+      textSource: textSource as any,
+      sourceFeatureId: 'voice-page'
+    });
+
+    navigate(returnToPath, { state: navState });
+    message.success('已返回制作页，音频已自动填充');
   };
 
   // 关闭结果弹窗
@@ -617,14 +644,21 @@ const VoicePageNew: React.FC = () => {
               <div className="input-card__inner">
                 <textarea
                   className="text-input"
-                  placeholder="请输入您的祝福语..."
+                  placeholder="请输入您的祝福语（建议80字内，约15秒）..."
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   maxLength={200}
                   rows={3}
                 />
                 <div className="input-footer">
-                  <span className="char-count">{text.length}/200</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className="char-count">{text.length}/200</span>
+                    {text.length > 80 && (
+                      <span style={{ fontSize: '11px', color: '#ff6b00', fontWeight: '500' }}>
+                        建议80字内（约15秒）
+                      </span>
+                    )}
+                  </div>
                   {text && (
                     <button className="clear-btn" onClick={() => setText('')} aria-label="清空">
                       <svg width="14" height="14" viewBox="0 0 14 14">
@@ -715,13 +749,25 @@ const VoicePageNew: React.FC = () => {
                 <span className="action-label">{isSaved ? '已保存' : '保存作品'}</span>
               </button>
 
-              <button className="action-card action-card--primary" onClick={handleGoToVideo}>
-                <svg className="action-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
-                  <path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/>
-                </svg>
-                <span className="action-label">制作视频</span>
-              </button>
+              {/* 返回制作页按钮（如果从制作页跳转来的） */}
+              {returnToPath && (
+                <button className="action-card action-card--primary" onClick={handleReturnToProduction}>
+                  <svg className="action-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                  </svg>
+                  <span className="action-label">返回制作页</span>
+                </button>
+              )}
+
+              {!returnToPath && (
+                <button className="action-card action-card--primary" onClick={handleGoToVideo}>
+                  <svg className="action-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                    <path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/>
+                  </svg>
+                  <span className="action-label">制作视频</span>
+                </button>
+              )}
 
               <button
                 className="action-card"

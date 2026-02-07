@@ -7,9 +7,12 @@ import ZJGenderSelector from './components/ZJGenderSelector';
 import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import { missionExecutor, MissionProgress } from '../../services/MissionExecutor';
 import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
+import { PROMPT_SUGGESTIONS } from '../../configs/festival/promptSuggestions';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-multi-uploader.css';
 import '../../styles/festival-lab-glass.css';
+import '../../styles/festival-custom-prompt.css';
 
 /**
  * 🔥 AI炼金矩阵 (Lab Page) - 春节H5实操页
@@ -42,6 +45,11 @@ const FestivalLabPage: React.FC = () => {
   // 从 TemplateSelectionPage 传来的 state
   const initialGender = location.state?.gender || 'male';
   const templateConfig = location.state?.templateConfig;
+  const selectedTemplate = location.state?.selectedTemplate;  // 🆕 选中的模板（包含styleId）
+  const enableHairSwap = location.state?.enableHairSwap || false;  // 🆕 换发型选项
+  const customTemplateFile = location.state?.customTemplateFile;  // 🆕 M2自定义模板文件
+  const useCustomTemplate = location.state?.useCustomTemplate || false;  // 🆕 是否使用自定义模板
+  const templateImagePath = location.state?.templateImagePath;  // 🆕 模板图片路径（预览用）
 
   // 防止重复执行的锁
   const isExecutingRef = React.useRef(false);
@@ -54,6 +62,10 @@ const FestivalLabPage: React.FC = () => {
   const [narrativeTexts, setNarrativeTexts] = useState<string[]>([]);
   const [estimatedTime, setEstimatedTime] = useState<number>(0); // 预估剩余时间(秒)
   const taskStartTimeRef = React.useRef<number>(0);
+
+  // 🆕 自定义提示词功能
+  const [customPrompt, setCustomPrompt] = useState<string>('');
+  const [useCustomPrompt, setUseCustomPrompt] = useState<boolean>(false);
 
   // 🔥 废弃：性别选择逻辑已移除，gender 现在从 state 或默认值获取
 
@@ -87,7 +99,12 @@ const FestivalLabPage: React.FC = () => {
       const input: any = {
         gender: gender,
         customParams: {
-          templateConfig: templateConfig
+          templateConfig: templateConfig,
+          enableHairSwap: enableHairSwap,  // 🆕 传递换发型选项
+          styleId: selectedTemplate?.id || '3d-pixar',  // 🆕 传递风格ID（M1多风格支持）
+          customPrompt: (isM1 && useCustomPrompt) ? customPrompt : undefined,  // 🆕 传递自定义提示词（仅M1）
+          customTemplateFile: (isM2 && useCustomTemplate) ? customTemplateFile : undefined,  // 🆕 传递自定义模板文件（仅M2）
+          templateImagePath: (isM2 && useCustomTemplate) ? templateImagePath : undefined  // 🆕 传递模板预览路径（仅M2）
         }
       };
 
@@ -152,6 +169,8 @@ const FestivalLabPage: React.FC = () => {
       {/* 顶部导航 */}
       <div className="lab-top-nav">
         <BackButton />
+        <div style={{ flex: 1 }}></div>
+        <HomeButton />
       </div>
 
       {/* 主内容容器 */}
@@ -220,7 +239,7 @@ const FestivalLabPage: React.FC = () => {
               <div className="step-divider-modern"></div>
               <div className="step-modern">
                 <div className="step-number-modern">3</div>
-                <span className="step-text-modern">{isM2 ? '生成财神' : '生成头像'}</span>
+                <span className="step-text-modern">生成作品</span>
               </div>
             </div>
 
@@ -254,16 +273,71 @@ const FestivalLabPage: React.FC = () => {
                     {isM2 ? '新年写真' :
                      isM3 ? '情侣合照' :
                      isM4 ? '全家福照片' :
-                     '新年3D皮克斯风格头像'}
+                     isM1 && selectedTemplate?.name ? `${selectedTemplate.name}风格头像` : '新年头像'}
                   </strong>
                 </p>
               </div>
+
+              {/* 🆕 M1自定义提示词功能 */}
+              {isM1 && (
+                <div className="custom-prompt-section">
+                  <div className="section-toggle">
+                    <input
+                      type="checkbox"
+                      id="useCustomPrompt"
+                      checked={useCustomPrompt}
+                      onChange={(e) => setUseCustomPrompt(e.target.checked)}
+                    />
+                    <label htmlFor="useCustomPrompt">自定义提示词（高级模式）</label>
+                  </div>
+
+                  {useCustomPrompt && (
+                    <div className="custom-prompt-editor">
+                      <textarea
+                        value={customPrompt}
+                        onChange={(e) => setCustomPrompt(e.target.value)}
+                        placeholder="输入你想要的画面描述，例如：wearing red Chinese traditional costume, holding lantern, festive background..."
+                        rows={4}
+                        maxLength={500}
+                      />
+
+                      {/* 快速参考按钮 */}
+                      <div className="prompt-suggestions">
+                        <span className="suggestion-label">快速参考：</span>
+                        {PROMPT_SUGGESTIONS.slice(0, 4).map(suggestion => (
+                          <button
+                            key={suggestion.id}
+                            onClick={() => setCustomPrompt(suggestion.prompt)}
+                          >
+                            {suggestion.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* 说明信息 */}
+                      <div className="prompt-info">
+                        <p>系统会自动添加：</p>
+                        <ul>
+                          <li>选中的风格效果（如水彩、赛博等LoRA）</li>
+                          <li>DNA提取的发型、脸型特征</li>
+                          <li>基础质量控制（masterpiece等）</li>
+                          <li>防真人照保护（anti-photorealistic）</li>
+                        </ul>
+                        <p><strong>你只需描述：</strong>服饰、场景、动作、氛围</p>
+                        <p style={{ fontSize: '11px', color: '#f44336', marginTop: '8px' }}>
+                          ⚠️ 不要写"现代风格"/"写实"/"真人"等词，会导致生成真人照而非艺术风格
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* 生成按钮 */}
               <button className="generate-button-modern" onClick={handleStartGeneration}>
                 <div className="button-glow"></div>
                 <span className="button-icon"></span>
-                <span className="button-text">{isM2 ? '开始变身财神' : '开始炼成真迹'}</span>
+                <span className="button-text">开始生成</span>
               </button>
 
               {/* 重新上传 */}

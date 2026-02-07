@@ -15,7 +15,7 @@ export interface FortuneTemplate {
  */
 const FORTUNE_TEMPLATES: FortuneTemplate[] = [
   // 财运模板
-  { id: 'wealth_01', name: '金蛇旺财', imagePath: '/assets/fortune-templates/wealth-01.png', fortuneType: 'wealth' },
+  { id: 'wealth_01', name: '马年旺财', imagePath: '/assets/fortune-templates/wealth-01.png', fortuneType: 'wealth' },
   { id: 'wealth_02', name: '财源滚滚', imagePath: '/assets/fortune-templates/wealth-02.png', fortuneType: 'wealth' },
   { id: 'wealth_03', name: '金玉满堂', imagePath: '/assets/fortune-templates/wealth-03.png', fortuneType: 'wealth' },
   { id: 'wealth_04', name: '招财进宝', imagePath: '/assets/fortune-bg/bg-wealth.png', fortuneType: 'wealth' },
@@ -49,6 +49,25 @@ const FORTUNE_TEMPLATES: FortuneTemplate[] = [
   { id: 'yifa_02', name: '发发发', imagePath: '/assets/fortune-templates/yifa-02.png', fortuneType: 'yifa' },
   { id: 'yifa_03', name: '财运亨通', imagePath: '/assets/fortune-templates/yifa-03.png', fortuneType: 'yifa' },
   { id: 'yifa_04', name: '大吉大利', imagePath: '/assets/fortune-bg/bg-yifa.png', fortuneType: 'yifa' },
+
+  // 🆕 新增通用运势卡（17张）
+  { id: 'new_01', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-1.jpg', fortuneType: 'wealth' },
+  { id: 'new_02', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-2.jpg', fortuneType: 'luck' },
+  { id: 'new_03', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-3.jpg', fortuneType: 'love' },
+  { id: 'new_04', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-4.jpg', fortuneType: 'career' },
+  { id: 'new_05', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-5.jpg', fortuneType: 'health' },
+  { id: 'new_06', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-6.jpg', fortuneType: 'yifa' },
+  { id: 'new_07', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-7.jpg', fortuneType: 'wealth' },
+  { id: 'new_08', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-8.jpg', fortuneType: 'luck' },
+  { id: 'new_09', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-9.jpg', fortuneType: 'love' },
+  { id: 'new_10', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-10.jpg', fortuneType: 'career' },
+  { id: 'new_11', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-11.jpg', fortuneType: 'health' },
+  { id: 'new_12', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-12.jpg', fortuneType: 'yifa' },
+  { id: 'new_13', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-13.jpg', fortuneType: 'wealth' },
+  { id: 'new_14', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-14.jpg', fortuneType: 'luck' },
+  { id: 'new_15', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-15.jpg', fortuneType: 'love' },
+  { id: 'new_16', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-16.jpg', fortuneType: 'career' },
+  { id: 'new_17', name: '新年福卡', imagePath: '/assets/fortune-templates/new-card-17.jpg', fortuneType: 'health' },
 ];
 
 export class FortuneTemplateService {

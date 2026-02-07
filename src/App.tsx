@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { useCreditStore } from './stores/creditStore';
 import { MissionProvider } from './stores/MissionContext';
 import { AssetProvider } from './stores/AssetStore';
 import { ProtocolProvider } from './stores/ActiveProtocolStore';
@@ -24,12 +25,18 @@ import FestivalVoicePage from './pages/Festival/VoicePageNew';
 import FestivalTextPage from './pages/Festival/TextPage';
 import FestivalCategoryPage from './pages/Festival/CategoryPage';
 import FestivalVideoPage from './pages/Festival/VideoPage';
+import KlingEffectsPage from './pages/Festival/KlingEffectsPage';
+import VideoCategoryPage from './pages/Festival/VideoCategoryPage';
 import TemplateSelectionPage from './pages/Festival/TemplateSelectionPage';
 import FortunePage from './pages/Festival/FortunePage';
 import MaterialLibraryPage from './pages/Festival/MaterialLibraryPage';
 import FortuneCardPage from './pages/Festival/FortuneCardPage';
 import SmartReplyPage from './pages/Festival/SmartReplyPage';
-import DigitalHumanPage from './pages/Festival/DigitalHumanPage';
+// import DigitalHumanPage from './pages/Festival/DigitalHumanPage';  // ✅ 已合并到VideoPage
+import RechargePage from './pages/Festival/RechargePage';
+import PaymentSuccessPage from './pages/Festival/PaymentSuccessPage';
+import M2TemplateSelectionPage from './pages/Festival/M2TemplateSelectionPage';
+import M3TemplateSelectionPage from './pages/Festival/M3TemplateSelectionPage';
 
 // 布局组件，用于处理路由相关的布局逻辑
 const AppLayout: React.FC = () => {
@@ -66,6 +73,8 @@ const AppLayout: React.FC = () => {
           <Route path="/festival" element={<FestivalLayout />}>
             <Route index element={<HomePageGlass />} />
             <Route path="home" element={<HomePageGlass />} />
+            <Route path="category/video" element={<VideoCategoryPage />} />
+            <Route path="video-category" element={<VideoCategoryPage />} />
             <Route path="category/:categoryId" element={<FestivalCategoryPage />} />
             <Route path="template-select/:featureId" element={<TemplateSelectionPage />} />
             <Route path="lab/:missionId" element={<FestivalLabPage />} />
@@ -76,10 +85,15 @@ const AppLayout: React.FC = () => {
             <Route path="text/:featureId" element={<FestivalTextPage />} />
             <Route path="video/:taskId" element={<FestivalVideoPage />} />
             <Route path="video" element={<FestivalVideoPage />} />
+            <Route path="kling-effects" element={<KlingEffectsPage />} />
             <Route path="materials" element={<MaterialLibraryPage />} />
             <Route path="fortune-card" element={<FortuneCardPage />} />
             <Route path="smart-reply" element={<SmartReplyPage />} />
-            <Route path="digital-human" element={<DigitalHumanPage />} />
+            <Route path="digital-human" element={<Navigate to="/festival/video" replace />} />
+            <Route path="recharge" element={<RechargePage />} />
+            <Route path="payment-success" element={<PaymentSuccessPage />} />
+            <Route path="m2-template-select" element={<M2TemplateSelectionPage />} />
+            <Route path="m3-template-select" element={<M3TemplateSelectionPage />} />
           </Route>
         </Routes>
       </div>
@@ -89,6 +103,33 @@ const AppLayout: React.FC = () => {
 
 // 这是一个全新的 App 组件
 const App: React.FC = () => {
+  const initVisitor = useCreditStore((state) => state.initVisitor);
+  const creditData = useCreditStore((state) => state.creditData);
+
+  // 初始化访客ID和积分
+  useEffect(() => {
+    initVisitor();
+  }, [initVisitor]);
+
+  // 新用户欢迎提示（仅首次）
+  useEffect(() => {
+    // 检查是否是新用户（有赠送积分的交易记录）
+    const hasWelcomeGift = creditData.transactions.some(
+      t => t.type === 'gift' && t.description.includes('新春礼包')
+    );
+
+    // 如果有赠送记录且是首次访问（总消耗为0），显示欢迎提示
+    if (hasWelcomeGift && creditData.totalConsumed === 0 && creditData.totalRecharged === 0) {
+      const hasShownWelcome = sessionStorage.getItem('festival_welcome_shown');
+      if (!hasShownWelcome) {
+        setTimeout(() => {
+          console.log('🎁 新春礼包：赠送100积分体验');
+          sessionStorage.setItem('festival_welcome_shown', 'true');
+        }, 1000);
+      }
+    }
+  }, [creditData]);
+
   return (
     <ConfigProvider>
       <APISlotProvider>

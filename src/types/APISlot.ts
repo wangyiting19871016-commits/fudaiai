@@ -7,7 +7,7 @@ import { InputParam } from './index';
 export interface APISlot {
   id: string; // UUID
   name: string; // 显示名称 (e.g. "SiliconFlow Primary")
-  provider: 'SiliconFlow' | 'FishAudio' | 'Gemini' | 'Volcano' | 'Qwen' | 'DeepSeek' | 'Custom' | 'Aliyun' | 'N1N';
+  provider: 'SiliconFlow' | 'FishAudio' | 'Gemini' | 'Volcano' | 'Qwen' | 'DeepSeek' | 'Custom' | 'Aliyun' | 'N1N' | 'Kling';
   
   // 物理连接信息
   baseUrl: string; // e.g. "https://api.siliconflow.cn/v1"

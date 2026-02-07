@@ -1,0 +1,277 @@
+/**
+ * 图片合成编辑器样式
+ */
+
+.image-composer-editor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f5f5f5;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== 顶部工具栏 ===== */
+.editor-header {
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.editor-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.editor-btn {
+  padding: 8px 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.editor-btn:hover:not(:disabled) {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.editor-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-btn.primary {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  color: white;
+  border: none;
+}
+
+.editor-btn.primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* ===== 主内容区 ===== */
+.editor-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ===== 左侧工具栏 ===== */
+.editor-sidebar {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e5e5;
+  background: #fafafa;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+  background: white;
+  border-bottom-color: #ff6b6b;
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* ===== 素材网格 ===== */
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.asset-item {
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.asset-item:hover {
+  border-color: #ff6b6b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
+}
+
+.asset-item img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #f5f5f5;
+}
+
+.asset-name {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.asset-premium {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(255, 215, 0, 0.9);
+  color: #333;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* ===== 文字工具 ===== */
+.text-tool {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.text-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #ff6b6b;
+}
+
+.text-hint {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}
+
+.text-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.text-presets h4 {
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  color: #666;
+}
+
+.text-presets button {
+  padding: 10px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.text-presets button:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+  background: #fff8f8;
+}
+
+/* ===== 画布区 ===== */
+.editor-canvas-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  padding: 20px;
+}
+
+.editor-canvas-container canvas {
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.canvas-hint {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #999;
+  background: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+  .editor-sidebar {
+    width: 240px;
+  }
+
+  .asset-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-content {
+    padding: 12px;
+  }
+
+  .editor-header {
+    padding: 8px 12px;
+  }
+
+  .editor-header h2 {
+    font-size: 16px;
+  }
+
+  .editor-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

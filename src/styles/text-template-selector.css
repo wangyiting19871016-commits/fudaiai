@@ -1,0 +1,66 @@
+/* 文案模板选择器样式 */
+
+.text-template-selector-modal .ant-modal-body {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.text-template-selector {
+  width: 100%;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.template-card {
+  padding: 16px;
+  background: #fafafa;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.template-card:hover {
+  border-color: #ff4d4f;
+  background: #fff5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.15);
+}
+
+.template-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 8px;
+}
+
+.template-text {
+  font-size: 12px;
+  color: #595959;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  min-height: 40px;
+}
+
+.template-length {
+  font-size: 11px;
+  color: #8c8c8c;
+  text-align: right;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .template-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .text-template-selector-modal {
+    width: 90% !important;
+  }
+}

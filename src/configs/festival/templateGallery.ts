@@ -45,13 +45,13 @@ export interface TemplateItem {
 
 // ========== M1 新年头像模板 ==========
 export const M1_TEMPLATES: TemplateItem[] = [
-  // 3D粘土风
+  // 3D福喜
   {
     id: 'm1-3d-clay-male',
     featureId: 'M1',
-    name: '3D粘土风',
+    name: '3D福喜',
     subtitle: '可爱立体',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m1-3d-clay-male-preview.jpg',
+    coverUrl: '/assets/templates/3d-pixar-male.png',
     gender: 'male',
     workflowConfig: {
       workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
@@ -68,9 +68,9 @@ export const M1_TEMPLATES: TemplateItem[] = [
   {
     id: 'm1-3d-clay-female',
     featureId: 'M1',
-    name: '3D粘土风',
+    name: '3D福喜',
     subtitle: '可爱立体',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m1-3d-clay-female-preview.jpg',
+    coverUrl: '/assets/templates/3d-pixar-female.png',
     gender: 'female',
     workflowConfig: {
       workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
@@ -83,201 +83,326 @@ export const M1_TEMPLATES: TemplateItem[] = [
     tags: ['3D', '粘土', '可爱', '女生'],
     order: 1,
     enabled: true
-  }
-  // TODO: 添加更多M1模板（国潮、赛博朋克、油画等）
-];
+  },
 
-// ========== M2 新年写真模板（6场景 × 3性别 = 18个模板）==========
-export const M2_TEMPLATES: TemplateItem[] = [
-  // 场景1: 财神造型
+  // 🆕 水彩春意
   {
-    id: 'm2-caishen-male',
-    featureId: 'M2',
-    name: '财神造型',
-    subtitle: '招财进宝',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-caishen-male.jpg',
+    id: 'watercolor-spring',
+    featureId: 'M1',
+    name: '水彩春意',
+    subtitle: '柔和画风',
+    coverUrl: '/assets/templates/watercolor-male.png',
     gender: 'male',
     workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-caishen-male-template.jpg'
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: '99f2b2879651432385b4b68a1e614976',
+        weight: 0.65,  // 🔥 已调整为0.65
+        triggerWord: 'watercolor'
+      }
+    },
+    tags: ['水彩', '艺术', '温暖', '男生'],
+    order: 2,
+    enabled: true
+  },
+  {
+    id: 'watercolor-spring-female',
+    featureId: 'M1',
+    name: '水彩春意',
+    subtitle: '柔和画风',
+    coverUrl: '/assets/templates/watercolor-female.png',
+    gender: 'female',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: '99f2b2879651432385b4b68a1e614976',
+        weight: 0.7,  // 🔥 已调整为0.7
+        triggerWord: 'watercolor'
+      }
+    },
+    tags: ['水彩', '艺术', '温暖', '女生'],
+    order: 2,
+    enabled: true
+  },
+
+  // 🆕 赛博新春
+  {
+    id: 'cyber-newyear',
+    featureId: 'M1',
+    name: '赛博新春',
+    subtitle: 'Q版科技',
+    coverUrl: '/assets/templates/cyber-male.png',
+    gender: 'male',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: 'd128f7ca3340468ba1d569d6dd111c70',
+        weight: 0.65,  // 🔥 已调整为0.65
+        triggerWord: 'cyberpunk'
+      }
+    },
+    tags: ['赛博朋克', '科技', 'Q版', '男生'],
+    order: 3,
+    enabled: true
+  },
+  {
+    id: 'cyber-newyear-female',
+    featureId: 'M1',
+    name: '赛博新春',
+    subtitle: 'Q版科技',
+    coverUrl: '/assets/templates/cyber-female.png',
+    gender: 'female',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: 'd128f7ca3340468ba1d569d6dd111c70',
+        weight: 0.7,  // 🔥 已调整为0.7
+        triggerWord: 'cyberpunk'
+      }
+    },
+    tags: ['赛博朋克', '科技', 'Q版', '女生'],
+    order: 3,
+    enabled: true
+  },
+
+  // 🆕 国风厚涂
+  {
+    id: 'thick-paint',
+    featureId: 'M1',
+    name: '国风厚涂',
+    subtitle: '厚涂插画',
+    coverUrl: '/assets/templates/thick-paint-male.png',
+    gender: 'male',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: '3b80855c10534549a51a66481bfcc86b',
+        weight: 0.65,  // 🔥 已调整为0.65
+        triggerWord: 'thick paint'
+      }
+    },
+    tags: ['厚涂', '国风', '插画', '男生'],
+    order: 4,
+    enabled: true
+  },
+  {
+    id: 'thick-paint-female',
+    featureId: 'M1',
+    name: '国风厚涂',
+    subtitle: '厚涂插画',
+    coverUrl: '/assets/templates/thick-paint-female.png',
+    gender: 'female',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: '3b80855c10534549a51a66481bfcc86b',
+        weight: 0.7,  // 🔥 已调整为0.7
+        triggerWord: 'thick paint'
+      }
+    },
+    tags: ['厚涂', '国风', '插画', '女生'],
+    order: 4,
+    enabled: true
+  },
+
+  // 🆕 2D动漫风格（男女都有）
+  {
+    id: '2d-anime-male',
+    featureId: 'M1',
+    name: '2D动漫',
+    subtitle: '二次元画风',
+    coverUrl: '/assets/templates/2d-anime-male.png',
+    gender: 'male',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: '5e5968fec9174d13ad15ac4453519abd',
+        weight: 0.75,
+        triggerWord: 'htx'  // ✅ 正确的trigger word
+      }
+    },
+    tags: ['2D', '动漫', '二次元', '男生'],
+    order: 5,
+    enabled: true
+  },
+  {
+    id: '2d-anime-female',
+    featureId: 'M1',
+    name: '2D动漫',
+    subtitle: '二次元画风',
+    coverUrl: '/assets/templates/2d-anime-female.png',
+    gender: 'female',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: '5e5968fec9174d13ad15ac4453519abd',
+        weight: 0.8,
+        triggerWord: 'htx'  // ✅ 正确的trigger word
+      }
+    },
+    tags: ['2D', '动漫', '二次元', '女生'],
+    order: 5,
+    enabled: true
+  },
+
+  // 🆕 Q版娃娃风格（女性专属）
+  {
+    id: 'chibi-doll-female',
+    featureId: 'M1',
+    name: 'Q版娃娃',
+    subtitle: '可爱Q版',
+    coverUrl: '/assets/templates/chibi-doll-female.png',
+    gender: 'female',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: '95cef7238a9c47be8f02f5a68a9997f4',
+        weight: 0.7,  // 🔥 已调整为0.7
+        triggerWord: 'chibi'
+      }
+    },
+    tags: ['Q版', '娃娃', '可爱', '女生'],
+    order: 6,
+    enabled: true
+  },
+
+  // 🆕 宫崎骏风格（不使用LoRA，纯prompt控制）
+  {
+    id: 'ghibli-style-male',
+    featureId: 'M1',
+    name: '宫崎骏风格',
+    subtitle: '吉卜力动画',
+    coverUrl: '/assets/templates/ghibli-male.png',  // 占位图
+    gender: 'male',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: 'ghibli-style',  // 🔥 特殊标记，不是真实UUID
+        weight: 0,
+        triggerWord: ''
+      }
+    },
+    tags: ['宫崎骏', '吉卜力', '动画', '男生'],
+    order: 7,
+    enabled: true
+  },
+  {
+    id: 'ghibli-style-female',
+    featureId: 'M1',
+    name: '宫崎骏风格',
+    subtitle: '吉卜力动画',
+    coverUrl: '/assets/templates/ghibli-female.png',  // 占位图
+    gender: 'female',
+    workflowConfig: {
+      workflowUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
+      loraConfig: {
+        uuid: 'ghibli-style',  // 🔥 特殊标记，不是真实UUID
+        weight: 0,
+        triggerWord: ''
+      }
+    },
+    tags: ['宫崎骏', '吉卜力', '动画', '女生'],
+    order: 7,
+    enabled: true
+  }
+];
+
+// ========== M2 新年写真模板 ==========
+export const M2_TEMPLATES: TemplateItem[] = [
+  // 场景1: 财神造型（使用本地图片）
+  {
+    id: 'm2-caishen-male-1',
+    featureId: 'M2',
+    name: '财神造型1',
+    subtitle: '招财进宝',
+    coverUrl: '/assets/festival-templates/caishen/male/male_01.png',
+    gender: 'male',
+    workflowConfig: {
+      workflowUuid: 'ae99b8cbe39a4d66a467211f45ddbda5',
+      templateImageUrl: '/assets/festival-templates/caishen/male/male_01.png'
     },
     tags: ['财神', '金色', '男生'],
     order: 1,
     enabled: true
   },
   {
-    id: 'm2-caishen-female',
+    id: 'm2-caishen-male-2',
     featureId: 'M2',
-    name: '财神造型',
+    name: '财神造型2',
     subtitle: '招财进宝',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-caishen-female.jpg',
+    coverUrl: '/assets/festival-templates/caishen/male/male_02.png',
+    gender: 'male',
+    workflowConfig: {
+      workflowUuid: 'ae99b8cbe39a4d66a467211f45ddbda5',
+      templateImageUrl: '/assets/festival-templates/caishen/male/male_02.png'
+    },
+    tags: ['财神', '金色', '男生'],
+    order: 2,
+    enabled: true
+  },
+  {
+    id: 'm2-caishen-female-1',
+    featureId: 'M2',
+    name: '财神造型1',
+    subtitle: '招财进宝',
+    coverUrl: '/assets/festival-templates/caishen/female/female_01.png',
     gender: 'female',
     workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-caishen-female-template.jpg'
+      workflowUuid: 'ae99b8cbe39a4d66a467211f45ddbda5',
+      templateImageUrl: '/assets/festival-templates/caishen/female/female_01.png'
     },
     tags: ['财神', '金色', '女生'],
     order: 1,
     enabled: true
   },
-
-  // 场景2: 红墙灯笼
   {
-    id: 'm2-red-wall-male',
+    id: 'm2-caishen-female-2',
     featureId: 'M2',
-    name: '红墙灯笼',
-    subtitle: '喜庆热闹',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-red-wall-male.jpg',
-    gender: 'male',
-    workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-red-wall-male-template.jpg'
-    },
-    tags: ['红墙', '灯笼', '男生'],
-    order: 2,
-    enabled: true
-  },
-  {
-    id: 'm2-red-wall-female',
-    featureId: 'M2',
-    name: '红墙灯笼',
-    subtitle: '喜庆热闹',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-red-wall-female.jpg',
+    name: '财神造型2',
+    subtitle: '招财进宝',
+    coverUrl: '/assets/festival-templates/caishen/female/female_02.png',
     gender: 'female',
     workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-red-wall-female-template.jpg'
+      workflowUuid: 'ae99b8cbe39a4d66a467211f45ddbda5',
+      templateImageUrl: '/assets/festival-templates/caishen/female/female_02.png'
     },
-    tags: ['红墙', '灯笼', '女生'],
+    tags: ['财神', '金色', '女生'],
     order: 2,
     enabled: true
   },
 
-  // 场景3: 唐装拜年
+  // 🚫 场景2-6: 暂时禁用（等待真实模板图片）
+  // TODO: 红墙灯笼、唐装拜年、古风客厅、汉服新春、庙会街景
+
+  // 🆕 场景2: 发红包造型
   {
-    id: 'm2-tangzhuang-male',
+    id: 'm2-hongbao-male',
     featureId: 'M2',
-    name: '唐装拜年',
-    subtitle: '传统礼仪',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-tangzhuang-male.jpg',
+    name: '发红包',
+    subtitle: '新年送福',
+    coverUrl: '/assets/templates/hongbao-male.jpg',
     gender: 'male',
     workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-tangzhuang-male-template.jpg'
+      workflowUuid: '18d122a7506e44478fa7d1e562fb3f20',  // BananaPro工作流（支持换发型）
+      templateImageUrl: '/assets/templates/hongbao-male.jpg'
     },
-    tags: ['唐装', '拜年', '男生'],
+    tags: ['发红包', '新年', '男生'],
     order: 3,
     enabled: true
   },
   {
-    id: 'm2-tangzhuang-female',
+    id: 'm2-hongbao-female',
     featureId: 'M2',
-    name: '唐装拜年',
-    subtitle: '传统礼仪',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-tangzhuang-female.jpg',
+    name: '发红包',
+    subtitle: '新年送福',
+    coverUrl: '/assets/templates/hongbao-female.jpg',
     gender: 'female',
     workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-tangzhuang-female-template.jpg'
+      workflowUuid: '18d122a7506e44478fa7d1e562fb3f20',  // BananaPro工作流（支持换发型）
+      templateImageUrl: '/assets/templates/hongbao-female.jpg'
     },
-    tags: ['唐装', '拜年', '女生'],
+    tags: ['发红包', '新年', '女生'],
     order: 3,
-    enabled: true
-  },
-
-  // 场景4: 古风客厅
-  {
-    id: 'm2-guofeng-male',
-    featureId: 'M2',
-    name: '古风客厅',
-    subtitle: '雅致温馨',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-guofeng-male.jpg',
-    gender: 'male',
-    workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-guofeng-male-template.jpg'
-    },
-    tags: ['古风', '客厅', '男生'],
-    order: 4,
-    enabled: true
-  },
-  {
-    id: 'm2-guofeng-female',
-    featureId: 'M2',
-    name: '古风客厅',
-    subtitle: '雅致温馨',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-guofeng-female.jpg',
-    gender: 'female',
-    workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-guofeng-female-template.jpg'
-    },
-    tags: ['古风', '客厅', '女生'],
-    order: 4,
-    enabled: true
-  },
-
-  // 场景5: 汉服新春
-  {
-    id: 'm2-hanfu-male',
-    featureId: 'M2',
-    name: '汉服新春',
-    subtitle: '华美典雅',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-hanfu-male.jpg',
-    gender: 'male',
-    workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-hanfu-male-template.jpg'
-    },
-    tags: ['汉服', '新春', '男生'],
-    order: 5,
-    enabled: true
-  },
-  {
-    id: 'm2-hanfu-female',
-    featureId: 'M2',
-    name: '汉服新春',
-    subtitle: '华美典雅',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-hanfu-female.jpg',
-    gender: 'female',
-    workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-hanfu-female-template.jpg'
-    },
-    tags: ['汉服', '新春', '女生'],
-    order: 5,
-    enabled: true
-  },
-
-  // 场景6: 庙会街景
-  {
-    id: 'm2-temple-fair-male',
-    featureId: 'M2',
-    name: '庙会街景',
-    subtitle: '热闹非凡',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-temple-fair-male.jpg',
-    gender: 'male',
-    workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-temple-fair-male-template.jpg'
-    },
-    tags: ['庙会', '街景', '男生'],
-    order: 6,
-    enabled: true
-  },
-  {
-    id: 'm2-temple-fair-female',
-    featureId: 'M2',
-    name: '庙会街景',
-    subtitle: '热闹非凡',
-    coverUrl: 'https://files.codelife.cc/temp/20250130/m2-temple-fair-female.jpg',
-    gender: 'female',
-    workflowConfig: {
-      workflowUuid: 'c2284ab826d84cdbabeef0f092d4dca5',
-      templateImageUrl: 'https://files.codelife.cc/temp/20250130/m2-temple-fair-female-template.jpg'
-    },
-    tags: ['庙会', '街景', '女生'],
-    order: 6,
     enabled: true
   }
 ];

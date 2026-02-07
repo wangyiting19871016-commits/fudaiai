@@ -12,6 +12,7 @@ import { generateSmartReplyCard } from '../../utils/smartReplyCanvas';
 import { MaterialService } from '../../services/MaterialService';
 import type { MaterialAtom } from '../../types/material';
 import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
 import { FestivalButton } from '../../components/FestivalButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-lab-glass.css';
@@ -37,7 +38,7 @@ const SmartReplyPage: React.FC = () => {
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [replyCard, setReplyCard] = useState<string>('');
   const [showMoreActions, setShowMoreActions] = useState(false);
-  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(true);
 
   // 生成回复
   const handleGenerate = async () => {
@@ -192,9 +193,10 @@ const SmartReplyPage: React.FC = () => {
   const handleAddVoice = () => {
     navigate('/festival/voice', {
       state: {
-        prefillText: selectedReply,
-        sourceFeature: 'M10',
-        sourceImage: replyCard
+        text: selectedReply,
+        textSource: 'user',
+        sourceFeatureId: 'M10',
+        image: replyCard
       }
     });
   };
@@ -227,6 +229,8 @@ const SmartReplyPage: React.FC = () => {
       {/* 顶部导航 */}
       <div className="lab-top-nav">
         <BackButton />
+        <div style={{ flex: 1 }}></div>
+        <HomeButton />
       </div>
 
       {/* 主内容容器 */}
@@ -234,7 +238,7 @@ const SmartReplyPage: React.FC = () => {
 
         {/* 输入阶段 */}
         {stage === 'input' && (
-          <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+          <div style={{ width: '90%', maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
             {/* 标题 */}
             <div style={{ textAlign: 'center', marginBottom: '30px' }}>
               <h1 style={{ fontSize: '32px', fontWeight: '900', color: 'var(--cny-red-500)', marginBottom: '8px' }}>
@@ -249,8 +253,8 @@ const SmartReplyPage: React.FC = () => {
             <div style={{ marginTop: '30px' }}>
               <label style={{
                 display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
+                marginBottom: '10px',
+                fontSize: '15px',
                 fontWeight: '600',
                 color: 'var(--cny-gray-800)'
               }}>
@@ -260,12 +264,13 @@ const SmartReplyPage: React.FC = () => {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="例如：怎么还不找对象啊？工资多少呀？什么时候要孩子？"
-                rows={3}
+                rows={4}
                 maxLength={100}
                 style={{
                   width: '100%',
-                  padding: '12px 16px',
+                  padding: '14px 16px',
                   fontSize: '16px',
+                  lineHeight: '1.5',
                   border: '1px solid rgba(0, 0, 0, 0.1)',
                   borderRadius: '8px',
                   background: 'var(--glass-light)',
@@ -282,7 +287,7 @@ const SmartReplyPage: React.FC = () => {
                 style={{
                   width: '100%',
                   padding: '10px 16px',
-                  marginBottom: showAdvancedOptions ? '12px' : '24px',
+                  marginBottom: '12px',
                   background: 'rgba(33, 150, 243, 0.05)',
                   border: '1px solid rgba(33, 150, 243, 0.15)',
                   borderRadius: '6px',
@@ -309,7 +314,7 @@ const SmartReplyPage: React.FC = () => {
               {/* 高级选项面板 */}
               {showAdvancedOptions && (
                 <div style={{
-                  padding: '16px',
+                  padding: '14px',
                   marginBottom: '16px',
                   background: 'rgba(33, 150, 243, 0.03)',
                   border: '1px solid rgba(33, 150, 243, 0.1)',
@@ -318,8 +323,8 @@ const SmartReplyPage: React.FC = () => {
                 }}>
                   <label style={{
                     display: 'block',
-                    marginBottom: '8px',
-                    fontSize: '14px',
+                    marginBottom: '6px',
+                    fontSize: '13px',
                     fontWeight: '600',
                     color: 'var(--cny-gray-800)'
                   }}>
@@ -330,13 +335,13 @@ const SmartReplyPage: React.FC = () => {
                     onChange={(e) => setRelation(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: '12px 16px',
-                      fontSize: '16px',
+                      padding: '10px 14px',
+                      fontSize: '15px',
                       border: '1px solid rgba(0, 0, 0, 0.1)',
-                      borderRadius: '8px',
+                      borderRadius: '6px',
                       background: 'var(--glass-light)',
                       backdropFilter: 'blur(10px)',
-                      marginBottom: '16px',
+                      marginBottom: '12px',
                       cursor: 'pointer',
                       fontFamily: 'inherit'
                     }}
@@ -351,8 +356,8 @@ const SmartReplyPage: React.FC = () => {
 
                   <label style={{
                     display: 'block',
-                    marginBottom: '8px',
-                    fontSize: '14px',
+                    marginBottom: '6px',
+                    fontSize: '13px',
                     fontWeight: '600',
                     color: 'var(--cny-gray-800)'
                   }}>
@@ -363,13 +368,13 @@ const SmartReplyPage: React.FC = () => {
                     onChange={(e) => setScene(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: '12px 16px',
-                      fontSize: '16px',
+                      padding: '10px 14px',
+                      fontSize: '15px',
                       border: '1px solid rgba(0, 0, 0, 0.1)',
-                      borderRadius: '8px',
+                      borderRadius: '6px',
                       background: 'var(--glass-light)',
                       backdropFilter: 'blur(10px)',
-                      marginBottom: '0',
+                      marginBottom: '8px',
                       cursor: 'pointer',
                       fontFamily: 'inherit'
                     }}
@@ -382,10 +387,10 @@ const SmartReplyPage: React.FC = () => {
                   </select>
 
                   <p style={{
-                    marginTop: '12px',
-                    fontSize: '12px',
+                    marginTop: '8px',
+                    fontSize: '11px',
                     color: '#999',
-                    lineHeight: '1.5'
+                    lineHeight: '1.4'
                   }}>
                     💡 提示：默认设置为「远房亲戚」+「饭桌上」，适合大部分场景
                   </p>
@@ -407,7 +412,7 @@ const SmartReplyPage: React.FC = () => {
 
         {/* 选择版本阶段 */}
         {stage === 'selecting' && replies && (
-          <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+          <div style={{ width: '90%', maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
             <h3 style={{
               textAlign: 'center',
               marginBottom: '24px',

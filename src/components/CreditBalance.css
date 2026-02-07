@@ -1,0 +1,138 @@
+/**
+ * 积分余额组件样式
+ */
+
+.credit-balance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.95) 0%, rgba(255, 142, 83, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.credit-balance:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+.credit-balance:active {
+  transform: translateY(0);
+}
+
+/* 位置变体 */
+.credit-balance-top-right {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 999;
+}
+
+.credit-balance-top-left {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 999;
+}
+
+.credit-balance-inline {
+  position: relative;
+}
+
+/* 尺寸变体 */
+.credit-balance-small {
+  padding: 6px 10px;
+  border-radius: 16px;
+}
+
+.credit-balance-small .credit-icon {
+  font-size: 18px;
+}
+
+.credit-balance-small .credit-amount {
+  font-size: 16px;
+}
+
+.credit-balance-small .credit-label {
+  font-size: 10px;
+}
+
+.credit-balance-medium {
+  padding: 8px 12px;
+  border-radius: 20px;
+}
+
+.credit-balance-large {
+  padding: 12px 16px;
+  border-radius: 24px;
+}
+
+.credit-balance-large .credit-icon {
+  font-size: 28px;
+}
+
+.credit-balance-large .credit-amount {
+  font-size: 22px;
+}
+
+.credit-balance-large .credit-label {
+  font-size: 13px;
+}
+
+/* 图标 */
+.credit-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* 积分信息 */
+.credit-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.credit-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.credit-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+}
+
+/* 充值按钮 */
+.credit-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .credit-balance-top-right {
+    top: 12px;
+    right: 12px;
+  }
+
+  .credit-balance-top-left {
+    top: 12px;
+    left: 12px;
+  }
+}

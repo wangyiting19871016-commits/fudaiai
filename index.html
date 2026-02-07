@@ -31,14 +31,8 @@
 <body>
 
         <div id="root"></div>
-        <!-- 🔄 缓存破坏：每次加载使用时间戳 -->
-        <script>
-          const version = Date.now();
-          const script = document.createElement('script');
-          script.type = 'module';
-          script.src = '/src/main.tsx?v=' + version;
-          document.currentScript.after(script);
-        </script>
+        <!-- Vite will transform this to a bundled script in production -->
+        <script type="module" src="/src/main.tsx"></script>
 
         <!-- 📱 移动端调试工具 vConsole（仅开发环境） -->
         <script>

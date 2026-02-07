@@ -1,3 +1,6 @@
+// 加载环境变量
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const { exec } = require('child_process');
@@ -7,7 +10,11 @@ const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
-const crypto = require('crypto'); // 🔑 用于LiblibAI签名
+const crypto = require('crypto'); // 🔑 用于LiblibAI签名和支付签名
+const COS = require('cos-nodejs-sdk-v5'); // 腾讯云COS SDK
+const jwt = require('jsonwebtoken'); // JWT用于可灵API鉴权
+const rateLimit = require('express-rate-limit'); // 速率限制
+// crypto已在上方引入，无需重复声明
 // const db = require('./src/backend/db');  // ⚠️ Zhenji项目模块，暂时注释
 // const { executeTask } = require('./src/backend/executor');  // ⚠️ Zhenji项目模块，暂时注释
 
@@ -54,6 +61,42 @@ const upload = multer({
 
 const app = express();
 const PORT = process.env.PORT || 3002;
+
+// 统一的JWT生成函数（解决时间同步问题）
+function generateKlingJWT() {
+  const KLING_ACCESS_KEY = process.env.KLING_ACCESS_KEY;
+  const KLING_SECRET_KEY = process.env.KLING_SECRET_KEY;
+  
+  if (!KLING_ACCESS_KEY || !KLING_SECRET_KEY) {
+    throw new Error('可灵API密钥未配置');
+  }
+  
+  // 使用更宽松的时间窗口，避免时钟不同步
+  const now = Math.floor(Date.now() / 1000);
+  return jwt.sign({
+    iss: KLING_ACCESS_KEY,
+    exp: now + 3600,  // 1小时，更宽松
+    nbf: now - 30,    // 30秒前生效，避免时钟快
+    jti: `kling_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  }, KLING_SECRET_KEY, {
+    algorithm: 'HS256',
+    header: { alg: 'HS256', typ: 'JWT' }
+  });
+}
+
+// 可灵API速率限制配置（防止超过资源包限制）
+const klingRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1分钟窗口
+  max: 5, // 每分钟最多5次请求
+  message: {
+    status: 'error',
+    message: '请求过于频繁，请等待1分钟后重试',
+    code: 429
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false
+});
 
 // 配置 CORS - 允许所有跨域请求，包括本地HTML文件
 app.use(cors({
@@ -695,6 +738,170 @@ function downloadFile(url, destPath) {
   });
 }
 
+// 阿里云ASR API - 获取音频文字及时间轴
+async function getAudioTranscription(audioUrl) {
+  return new Promise((resolve, reject) => {
+    const DASHSCOPE_API_KEY = process.env.VITE_DASHSCOPE_API_KEY;
+
+    if (!DASHSCOPE_API_KEY) {
+      console.error('❌ [ASR] Dashscope API Key 未配置');
+      return reject(new Error('ASR API Key 未配置'));
+    }
+
+    const options = {
+      hostname: 'dashscope.aliyuncs.com',
+      path: '/api/v1/services/aigc/asr/transcription',
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${DASHSCOPE_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    const requestData = JSON.stringify({
+      model: 'paraformer-realtime-v2',
+      input: {
+        audio_url: audioUrl
+      },
+      parameters: {
+        format: 'json',
+        sample_rate: 16000,
+        enable_words: true // 启用词级时间戳
+      }
+    });
+
+    const req = https.request(options, (res) => {
+      let data = '';
+
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(data);
+          console.log('✅ [ASR] 转录成功');
+          console.log('🔍 [ASR] 响应数据:', JSON.stringify(response, null, 2));
+          console.log('🔍 [ASR] sentences数量:', response.output?.sentences?.length || 0);
+          resolve(response);
+        } catch (error) {
+          console.error('❌ [ASR] 响应解析失败:', data);
+          reject(new Error('ASR响应解析失败'));
+        }
+      });
+    });
+
+    req.on('error', (error) => {
+      console.error('❌ [ASR] 请求失败:', error);
+      reject(error);
+    });
+
+    req.write(requestData);
+    req.end();
+  });
+}
+
+// 简单字幕生成：按音频时长平均分配文本（快速方案）
+function generateSimpleSRT(text, audioDurationMs, outputPath) {
+  try {
+    console.log('[SRT简单模式] 文本:', text, '时长:', audioDurationMs);
+
+    // 按标点符号分段
+    const segments = text.split(/([。！？；.!?;])/).filter(s => s.trim());
+
+    // 合并文本和标点
+    const sentences = [];
+    for (let i = 0; i < segments.length; i += 2) {
+      const content = segments[i] + (segments[i + 1] || '');
+      if (content.trim()) {
+        sentences.push(content.trim());
+      }
+    }
+
+    if (sentences.length === 0) {
+      console.warn('⚠️ [SRT简单模式] 文本为空');
+      fs.writeFileSync(outputPath, '', 'utf8');
+      return outputPath;
+    }
+
+    console.log('[SRT简单模式] 分段:', sentences);
+
+    // 平均分配时间
+    const timePerSegment = audioDurationMs / sentences.length;
+
+    const formatTime = (ms) => {
+      const hours = Math.floor(ms / 3600000);
+      const minutes = Math.floor((ms % 3600000) / 60000);
+      const seconds = Math.floor((ms % 60000) / 1000);
+      const milliseconds = ms % 1000;
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')},${String(milliseconds).padStart(3, '0')}`;
+    };
+
+    let srtContent = '';
+    sentences.forEach((sentence, index) => {
+      const startTime = index * timePerSegment;
+      const endTime = (index + 1) * timePerSegment;
+
+      srtContent += `${index + 1}\n`;
+      srtContent += `${formatTime(startTime)} --> ${formatTime(endTime)}\n`;
+      srtContent += `${sentence}\n\n`;
+    });
+
+    // 使用 UTF-8 with BOM 编码，确保FFmpeg正确识别中文
+    const BOM = '\uFEFF';
+    fs.writeFileSync(outputPath, BOM + srtContent, 'utf8');
+    console.log('✅ [SRT简单模式] 字幕已生成:', outputPath);
+    console.log('✅ [SRT简单模式] 字幕内容预览:\n', srtContent.substring(0, 200));
+    return outputPath;
+  } catch (error) {
+    console.error('❌ [SRT简单模式] 失败:', error);
+    throw error;
+  }
+}
+
+// 生成SRT字幕文件（ASR模式）
+function generateSRTFile(transcription, outputPath) {
+  try {
+    // 从ASR响应中提取句子和时间戳
+    const sentences = transcription.output?.sentences || [];
+
+    if (sentences.length === 0) {
+      console.warn('⚠️ [SRT] 未找到转录句子，生成空字幕');
+      fs.writeFileSync(outputPath, '', 'utf8');
+      return outputPath;
+    }
+
+    let srtContent = '';
+
+    sentences.forEach((sentence, index) => {
+      const startTime = sentence.begin_time || 0;
+      const endTime = sentence.end_time || (startTime + 2000);
+      const text = sentence.text || '';
+
+      // 转换时间戳（毫秒 -> SRT格式 HH:MM:SS,mmm）
+      const formatTime = (ms) => {
+        const hours = Math.floor(ms / 3600000);
+        const minutes = Math.floor((ms % 3600000) / 60000);
+        const seconds = Math.floor((ms % 60000) / 1000);
+        const milliseconds = ms % 1000;
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')},${String(milliseconds).padStart(3, '0')}`;
+      };
+
+      // SRT格式：序号\n时间范围\n文本\n空行
+      srtContent += `${index + 1}\n`;
+      srtContent += `${formatTime(startTime)} --> ${formatTime(endTime)}\n`;
+      srtContent += `${text}\n\n`;
+    });
+
+    fs.writeFileSync(outputPath, srtContent, 'utf8');
+    console.log(`✅ [SRT] 字幕文件已生成: ${outputPath}`);
+    return outputPath;
+  } catch (error) {
+    console.error('❌ [SRT] 生成失败:', error);
+    throw error;
+  }
+}
+
 // 视频合成接口 - FFmpeg 高质量字幕烧录（优化版：先下载再处理）
 app.post('/api/video/compose', express.json({ limit: '50mb' }), async (req, res) => {
   let tempInputPath = null;  // 临时输入文件路径
@@ -881,25 +1088,1408 @@ app.post('/api/video/compose', express.json({ limit: '50mb' }), async (req, res)
   }
 });
 
+// 视频后处理接口 - 字幕烧录 + 装饰元素叠加（春节拜年专用）
+app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req, res) => {
+  let tempVideoPath = null;
+  let tempSrtPath = null;
+  const tempDecorationPaths = [];
+
+  try {
+    const {
+      videoUrl,        // WAN生成的原始视频URL
+      audioUrl,        // 音频URL（用于ASR生成实时字幕）
+      subtitle,        // 静态字幕文本（备用）
+      decorations = [], // 装饰元素数组 [{url, position, size}]
+      enableRealtimeSubtitle = true // 是否启用实时字幕
+    } = req.body;
+
+    console.log('🎨 [视频后处理] 收到请求:', {
+      videoUrl,
+      audioUrl,
+      subtitle,
+      decorationCount: decorations.length,
+      enableRealtimeSubtitle
+    });
+
+    if (!videoUrl) {
+      return res.status(400).json({
+        status: 'error',
+        message: '缺少必要参数：videoUrl'
+      });
+    }
+
+    // 生成唯一的输出文件名
+    const timestamp = Date.now();
+    const outputFileName = `processed_${timestamp}.mp4`;
+    const outputPath = path.join(downloadDir, outputFileName);
+
+    // 下载原始视频到临时目录
+    tempVideoPath = path.join(tempDirPath, `temp_video_${timestamp}.mp4`);
+    console.log('📥 [视频后处理] 下载原始视频:', videoUrl);
+    await downloadFile(videoUrl, tempVideoPath);
+    console.log('✅ [视频后处理] 下载完成');
+
+    // 下载装饰元素图片
+    for (let i = 0; i < decorations.length; i++) {
+      const decoration = decorations[i];
+      if (decoration.url) {
+        const tempPath = path.join(tempDirPath, `temp_decoration_${timestamp}_${i}.png`);
+        await downloadFile(decoration.url, tempPath);
+        tempDecorationPaths.push({ ...decoration, tempPath });
+        console.log(`📥 [视频后处理] 下载装饰元素 ${i + 1}`);
+      }
+    }
+
+    // 生成简单字幕（按时长平均分配，不用ASR）
+    if (enableRealtimeSubtitle && subtitle && subtitle.trim()) {
+      try {
+        console.log('🎬 [简单字幕] 开始生成...');
+
+        // 获取音频时长
+        let audioDurationMs = 5000; // 默认5秒
+
+        if (audioUrl) {
+          try {
+            // 下载音频
+            const tempAudioPath = path.join(tempDirPath, `temp_audio_${timestamp}.mp3`);
+            await downloadFile(audioUrl, tempAudioPath);
+
+            // 用ffprobe获取时长
+            audioDurationMs = await new Promise((resolve, reject) => {
+              ffmpeg.ffprobe(tempAudioPath, (err, metadata) => {
+                if (err) {
+                  console.warn('⚠️ [简单字幕] 无法获取音频时长，使用默认5秒');
+                  resolve(5000);
+                } else {
+                  const duration = metadata.format.duration * 1000; // 转为毫秒
+                  console.log('✅ [简单字幕] 音频时长:', duration, 'ms');
+                  resolve(duration);
+                }
+              });
+            });
+
+            // 删除临时音频
+            fs.unlinkSync(tempAudioPath);
+          } catch (err) {
+            console.warn('⚠️ [简单字幕] 处理音频失败，使用默认时长');
+          }
+        }
+
+        // 生成简单SRT字幕
+        tempSrtPath = path.join(tempDirPath, `temp_subtitle_${timestamp}.srt`);
+        generateSimpleSRT(subtitle.trim(), audioDurationMs, tempSrtPath);
+        console.log('✅ [简单字幕] 字幕已生成');
+      } catch (error) {
+        console.warn('⚠️ [简单字幕] 生成失败，将使用静态字幕:', error.message);
+      }
+    }
+
+    // 检查 FFmpeg 可用性
+    checkFfmpegInPath((found, ffmpegPath) => {
+      if (!found) {
+        console.error('❌ [视频后处理] FFmpeg 未找到');
+        return res.status(500).json({
+          status: 'error',
+          message: 'FFmpeg 未安装或未配置在系统路径中'
+        });
+      }
+
+      console.log('✅ [视频后处理] 使用 FFmpeg:', ffmpegPath);
+      ffmpeg.setFfmpegPath(ffmpegPath);
+
+      let command = ffmpeg(tempVideoPath);
+
+      // 构建复杂滤镜链
+      const filters = [];
+      let currentInput = '[0:v]';
+
+      // 1. 添加装饰元素叠加（使用overlay滤镜）
+      if (tempDecorationPaths.length > 0) {
+        tempDecorationPaths.forEach((decoration, index) => {
+          command = command.input(decoration.tempPath);
+
+          // 计算位置
+          let overlayPosition = 'x=10:y=10'; // 默认左上角
+          if (decoration.position === 'top-right') {
+            overlayPosition = 'x=W-w-10:y=10';
+          } else if (decoration.position === 'bottom-left') {
+            overlayPosition = 'x=10:y=H-h-10';
+          } else if (decoration.position === 'bottom-right') {
+            overlayPosition = 'x=W-w-10:y=H-h-10';
+          } else if (decoration.position === 'center') {
+            overlayPosition = 'x=(W-w)/2:y=(H-h)/2';
+          }
+
+          const outputLabel = `[overlay${index}]`;
+          const overlayFilter = `${currentInput}[${index + 1}:v]overlay=${overlayPosition}${outputLabel}`;
+          filters.push(overlayFilter);
+          currentInput = outputLabel;
+        });
+      }
+
+      // 2. 添加字幕滤镜（实时字幕 or 静态字幕）
+      if (tempSrtPath && fs.existsSync(tempSrtPath)) {
+        // 使用实时字幕（SRT文件）
+        // Windows路径转换：C:\temp\sub.srt → C:/temp/sub.srt → C\\:/temp/sub.srt
+        const escapedSrtPath = tempSrtPath
+          .replace(/\\/g, '/') // 反斜杠转正斜杠
+          .replace(/:/g, '\\:'); // 冒号转义
+
+        console.log('🎬 [字幕] 原始SRT路径:', tempSrtPath);
+        console.log('🎬 [字幕] 转义后路径:', escapedSrtPath);
+
+        const subtitleFilter = `${currentInput}subtitles='${escapedSrtPath}':` +
+          `force_style='FontName=Microsoft YaHei,FontSize=28,` +
+          `PrimaryColour=&HFFFFFF&,OutlineColour=&H000000&,BorderStyle=1,` +
+          `Outline=2,Shadow=1,MarginV=50,Alignment=2'[output]`;
+
+        filters.push(subtitleFilter);
+        currentInput = '[output]';
+        console.log('🎬 [字幕] 使用实时字幕（SRT），滤镜:', subtitleFilter.substring(0, 150) + '...');
+      } else if (subtitle && subtitle.trim()) {
+        // fallback: 使用静态字幕（drawtext）- 修复字号和位置
+        const escapedSubtitle = subtitle
+          .replace(/\\/g, '\\\\')
+          .replace(/'/g, "\\'")
+          .replace(/:/g, '\\:')
+          .replace(/,/g, '\\,');
+
+        const subtitleFilter = `${currentInput}drawtext=` +
+          `text='${escapedSubtitle}':` +
+          `fontfile='C\\:/Windows/Fonts/msyh.ttc':` +
+          `fontsize=60:` + // 修复：80 -> 60
+          `fontcolor=white:` +
+          `borderw=3:` +
+          `bordercolor=black:` +
+          `shadowcolor=black@0.7:` +
+          `shadowx=2:` +
+          `shadowy=2:` +
+          `box=1:` +
+          `boxcolor=black@0.5:` +
+          `boxborderw=10:` +
+          `x=(w-text_w)/2:` +
+          `y=h-th-100[output]`; // 修复：120 -> 100
+
+        filters.push(subtitleFilter);
+        currentInput = '[output]';
+        console.log('⚠️ [字幕] 使用静态字幕（fallback）');
+      }
+
+      // 应用滤镜链
+      if (filters.length > 0) {
+        command = command.complexFilter(filters.join(';'));
+      }
+
+      // 设置输出选项
+      command = command
+        .outputOptions([
+          '-map', currentInput === '[0:v]' ? '0:v' : currentInput,
+          '-c:v libx264',
+          '-c:a copy',
+          '-preset ultrafast',
+          '-crf 23'
+        ])
+        .output(outputPath);
+
+      // 监听进度
+      command.on('start', (commandLine) => {
+        console.log('🎬 [FFmpeg] 命令:', commandLine);
+      });
+
+      command.on('progress', (progress) => {
+        console.log(`📊 [FFmpeg] 进度: ${progress.percent ? progress.percent.toFixed(2) : 0}%`);
+      });
+
+      command.on('end', () => {
+        console.log('✅ [视频后处理] 完成:', outputFileName);
+
+        // 清理临时文件
+        if (tempVideoPath && fs.existsSync(tempVideoPath)) {
+          fs.unlinkSync(tempVideoPath);
+        }
+        if (tempSrtPath && fs.existsSync(tempSrtPath)) {
+          fs.unlinkSync(tempSrtPath);
+        }
+        tempDecorationPaths.forEach(dec => {
+          if (fs.existsSync(dec.tempPath)) {
+            fs.unlinkSync(dec.tempPath);
+          }
+        });
+
+        const downloadUrl = `http://localhost:${PORT}/downloads/${outputFileName}`;
+        res.json({
+          status: 'success',
+          message: '视频后处理完成',
+          downloadUrl: downloadUrl,
+          fileName: outputFileName
+        });
+      });
+
+      command.on('error', (err, stdout, stderr) => {
+        console.error('❌ [FFmpeg] 错误:', err.message);
+        console.error('❌ [FFmpeg] stderr:', stderr);
+
+        // 清理临时文件
+        if (tempVideoPath && fs.existsSync(tempVideoPath)) {
+          fs.unlinkSync(tempVideoPath);
+        }
+        if (tempSrtPath && fs.existsSync(tempSrtPath)) {
+          fs.unlinkSync(tempSrtPath);
+        }
+        tempDecorationPaths.forEach(dec => {
+          if (fs.existsSync(dec.tempPath)) {
+            fs.unlinkSync(dec.tempPath);
+          }
+        });
+
+        res.status(500).json({
+          status: 'error',
+          message: 'FFmpeg 处理失败',
+          error: err.message
+        });
+      });
+
+      command.run();
+    });
+
+  } catch (error) {
+    console.error('❌ [视频后处理] 异常:', error.message);
+
+    // 清理临时文件
+    if (tempVideoPath && fs.existsSync(tempVideoPath)) {
+      fs.unlinkSync(tempVideoPath);
+    }
+    if (tempSrtPath && fs.existsSync(tempSrtPath)) {
+      fs.unlinkSync(tempSrtPath);
+    }
+    tempDecorationPaths.forEach(dec => {
+      if (dec.tempPath && fs.existsSync(dec.tempPath)) {
+        fs.unlinkSync(dec.tempPath);
+      }
+    });
+
+    res.status(500).json({
+      status: 'error',
+      message: '视频后处理失败',
+      error: error.message
+    });
+  }
+});
+
+// ========== 可灵AI视频生成 API ==========
+
+/**
+ * 可灵AI - 图生视频接口
+ * POST /api/kling/video-generation
+ *
+ * 请求体:
+ * {
+ *   "image_url": "图片URL",
+ *   "prompt": "视频描述(可选)",
+ *   "duration": 5 或 10,
+ *   "mode": "std" 或 "pro",
+ *   "audio_url": "音频URL(可选,用于音画同步)"
+ * }
+ */
+app.post('/api/kling/video-generation', express.json(), async (req, res) => {
+  try {
+    const { image_url, prompt = '', duration = 5, mode = 'std', audio_url } = req.body;
+
+    if (!image_url) {
+      return res.status(400).json({
+        status: 'error',
+        message: '缺少必需参数: image_url'
+      });
+    }
+
+    const KLING_ACCESS_KEY = process.env.KLING_ACCESS_KEY;
+    const KLING_SECRET_KEY = process.env.KLING_SECRET_KEY;
+
+    if (!KLING_ACCESS_KEY || !KLING_SECRET_KEY) {
+      return res.status(500).json({
+        status: 'error',
+        message: '服务器未配置可灵API密钥'
+      });
+    }
+
+    const jwtToken = generateKlingJWT();
+    console.log('[可灵API] 创建视频生成任务:', { image_url, prompt, duration, mode });
+
+    // 构建请求体（严格按照官方文档）
+    const requestBody = {
+      model_name: 'kling-v2-6', // 升级到v2.6以支持voice_list参数
+      image: image_url,           // 官方字段名是 image，不是 image_url
+      prompt: prompt,
+      duration: String(duration), // 官方要求字符串格式
+      mode: mode
+    };
+
+    // 注意：官方图生视频API不支持audio_url参数！
+    // 音画同步需要使用voice_list参数（仅V2.6及后续版本支持）
+
+    // 调用可灵API
+    const klingResponse = await new Promise((resolve, reject) => {
+      const postData = JSON.stringify(requestBody);
+
+      const options = {
+        hostname: 'api-beijing.klingai.com',  // 官方域名
+        path: '/v1/videos/image2video',        // 官方端点（注意是videos复数）
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,  // 使用生成的JWT token
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      };
+
+      const apiReq = https.request(options, (apiRes) => {
+        let data = '';
+        apiRes.on('data', (chunk) => { data += chunk; });
+        apiRes.on('end', () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(new Error(`解析响应失败: ${data}`));
+          }
+        });
+      });
+
+      apiReq.on('error', reject);
+      apiReq.write(postData);
+      apiReq.end();
+    });
+
+    console.log('[可灵API] 任务创建响应:', klingResponse);
+
+    // 按照官方文档解析响应
+    if (klingResponse.code !== 0) {
+      return res.status(500).json({
+        status: 'error',
+        message: klingResponse.message || '可灵API调用失败',
+        details: klingResponse
+      });
+    }
+
+    if (!klingResponse.data || !klingResponse.data.task_id) {
+      return res.status(500).json({
+        status: 'error',
+        message: '可灵API响应格式异常',
+        details: klingResponse
+      });
+    }
+
+    const taskId = klingResponse.data.task_id;
+
+    // 开始轮询任务状态（最多等待5分钟）
+    const maxAttempts = 60; // 60次 × 5秒 = 5分钟
+    const pollInterval = 5000; // 5秒
+    let attempts = 0;
+
+    const pollTask = async () => {
+      attempts++;
+      console.log(`[可灵API] 查询任务状态 (${attempts}/${maxAttempts}):`, taskId);
+
+      const statusResponse = await new Promise((resolve, reject) => {
+          const queryToken = generateKlingJWT();
+
+        const options = {
+          hostname: 'api-beijing.klingai.com',       // 官方域名
+          path: `/v1/videos/image2video/${taskId}`,  // 官方端点
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${queryToken}`   // 使用JWT token
+          }
+        };
+
+        const apiReq = https.request(options, (apiRes) => {
+          let data = '';
+          apiRes.on('data', (chunk) => { data += chunk; });
+          apiRes.on('end', () => {
+            try {
+              resolve(JSON.parse(data));
+            } catch (e) {
+              reject(new Error(`解析响应失败: ${data}`));
+            }
+          });
+        });
+
+        apiReq.on('error', reject);
+        apiReq.end();
+      });
+
+      // 按照官方文档解析响应
+      if (statusResponse.code !== 0) {
+        throw new Error(`查询任务失败: ${statusResponse.message}`);
+      }
+
+      const taskData = statusResponse.data;
+      const status = taskData.task_status;  // submitted/processing/succeed/failed
+      console.log(`[可灵API] 任务状态: ${status}`);
+
+      if (status === 'succeed') {
+        // 任务成功
+        const videoUrl = taskData.task_result?.videos?.[0]?.url;
+
+        if (!videoUrl) {
+          throw new Error('任务完成但未找到视频URL');
+        }
+
+        console.log('[可灵API] ✅ 视频生成成功:', videoUrl);
+        return res.json({
+          status: 'success',
+          videoUrl: videoUrl,
+          taskId: taskId
+        });
+      } else if (status === 'failed') {
+        // 任务失败
+        throw new Error(`视频生成失败: ${taskData.task_status_msg || '未知错误'}`);
+      } else if (attempts >= maxAttempts) {
+        // 超时
+        throw new Error('视频生成超时（5分钟）');
+      } else {
+        // 继续轮询（submitted 或 processing 状态）
+        setTimeout(pollTask, pollInterval);
+      }
+    };
+
+    // 启动轮询
+    setTimeout(pollTask, pollInterval);
+
+  } catch (error) {
+    console.error('❌ [可灵API] 异常:', error.message);
+    res.status(500).json({
+      status: 'error',
+      message: '可灵视频生成失败',
+      error: error.message
+    });
+  }
+});
+
+// ========== 可灵视频特效 API ==========
+app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (req, res) => {
+  try {
+    const { effect_scene, image_url } = req.body;
+
+    if (!effect_scene || !image_url) {
+      return res.status(400).json({
+        status: 'error',
+        message: '缺少必需参数: effect_scene, image_url'
+      });
+    }
+
+    const KLING_ACCESS_KEY = process.env.KLING_ACCESS_KEY;
+    const KLING_SECRET_KEY = process.env.KLING_SECRET_KEY;
+
+    if (!KLING_ACCESS_KEY || !KLING_SECRET_KEY) {
+      return res.status(500).json({
+        status: 'error',
+        message: '服务器未配置可灵API密钥'
+      });
+    }
+
+    const jwtToken = generateKlingJWT();
+    console.log('[可灵特效API] 创建视频特效任务:', { effect_scene, image_url });
+
+    // 构建请求体
+    const requestBody = {
+      effect_scene: effect_scene,
+      input: {
+        image: image_url
+      }
+    };
+
+    // 调用可灵特效API
+    const klingResponse = await new Promise((resolve, reject) => {
+      const postData = JSON.stringify(requestBody);
+
+      const options = {
+        hostname: 'api-beijing.klingai.com',
+        path: '/v1/videos/effects',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      };
+
+      const apiReq = https.request(options, (apiRes) => {
+        let data = '';
+        apiRes.on('data', (chunk) => { data += chunk; });
+        apiRes.on('end', () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(new Error(`解析响应失败: ${data}`));
+          }
+        });
+      });
+
+      apiReq.on('error', reject);
+      apiReq.write(postData);
+      apiReq.end();
+    });
+
+    console.log('[可灵特效API] 任务创建响应:', klingResponse);
+
+    if (klingResponse.code !== 0) {
+      return res.status(500).json({
+        status: 'error',
+        message: klingResponse.message || '可灵特效API调用失败',
+        details: klingResponse
+      });
+    }
+
+    if (!klingResponse.data || !klingResponse.data.task_id) {
+      return res.status(500).json({
+        status: 'error',
+        message: '可灵特效API响应格式异常',
+        details: klingResponse
+      });
+    }
+
+    const taskId = klingResponse.data.task_id;
+
+    // 轮询任务状态
+    const maxAttempts = 60;
+    const pollInterval = 5000;
+    let attempts = 0;
+
+    const pollTask = async () => {
+      attempts++;
+      console.log(`[可灵特效API] 查询任务状态 (${attempts}/${maxAttempts}):`, taskId);
+
+      let statusResponse;
+      try {
+      statusResponse = await new Promise((resolve, reject) => {
+        const queryTime = Math.floor(Date.now() / 1000);
+        const queryPayload = {
+          iss: KLING_ACCESS_KEY,
+          exp: queryTime + 1800,
+          nbf: queryTime - 5,
+          jti: `query_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        };
+    const queryToken = generateKlingJWT();
+
+          const options = {
+            hostname: 'api-beijing.klingai.com',
+            path: `/v1/videos/effects/${taskId}`,
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${queryToken}`
+            },
+            timeout: 10000 // 10秒超时
+          };
+
+          const apiReq = https.request(options, (apiRes) => {
+            let data = '';
+            apiRes.on('data', (chunk) => { data += chunk; });
+            apiRes.on('end', () => {
+              try {
+                resolve(JSON.parse(data));
+              } catch (e) {
+                reject(new Error(`解析响应失败: ${data}`));
+              }
+            });
+          });
+
+          apiReq.on('error', (err) => {
+            console.warn(`⚠️ [可灵特效API] 网络错误 (${attempts}/${maxAttempts}):`, err.message);
+            reject(err);
+          });
+
+          apiReq.on('timeout', () => {
+            apiReq.destroy();
+            reject(new Error('请求超时'));
+          });
+
+          apiReq.end();
+        });
+      } catch (networkError) {
+        // 网络错误，重试
+        console.warn(`⚠️ [可灵特效API] 网络错误，将在5秒后重试:`, networkError.message);
+        if (attempts < maxAttempts) {
+          setTimeout(pollTask, pollInterval);
+          return;
+        } else {
+          return res.status(500).json({
+            status: 'error',
+            message: '网络连接失败，请检查网络后重试',
+            error: networkError.message
+          });
+        }
+      }
+
+      console.log('[可灵特效API] 任务状态响应:', {
+        code: statusResponse.code,
+        message: statusResponse.message,
+        hasData: !!statusResponse.data,
+        taskStatus: statusResponse.data?.task_status
+      });
+
+        if (statusResponse.code !== 0) {
+          // 签名错误（code === 1000）应该立即失败，不重试
+          if (statusResponse.code === 1000 && statusResponse.message.includes('signature')) {
+            console.error(`❌ [可灵特效API] 签名错误，无法继续重试:`, statusResponse.message);
+            return res.status(500).json({
+              status: 'error',
+              message: 'API签名验证失败，可能是密钥错误或时间同步问题',
+              errorCode: statusResponse.code,
+              details: statusResponse.message
+            });
+          }
+          
+          console.warn(`⚠️ [可灵特效API] 查询失败，将在5秒后重试 (${attempts}/${maxAttempts}):`, statusResponse.message);
+          
+          // 其他错误继续重试
+          if (attempts < maxAttempts) {
+            setTimeout(pollTask, pollInterval);
+            return;
+          } else {
+            return res.status(500).json({
+              status: 'error',
+              message: '查询任务状态失败',
+              details: statusResponse
+            });
+          }
+        }
+
+      const taskStatus = statusResponse.data?.task_status;
+      
+      // 处理undefined状态 - 常见于刚创建的任务
+      if (taskStatus === undefined) {
+        console.log(`🔄 [可灵特效API] 任务状态为undefined，将在5秒后重试 (${attempts}/${maxAttempts})`);
+        if (attempts < maxAttempts) {
+          setTimeout(pollTask, pollInterval);
+          return;
+        } else {
+          return res.status(500).json({
+            status: 'error',
+            message: '任务状态获取失败，请稍后重试'
+          });
+        }
+      }
+
+      console.log(`[可灵特效API] 当前任务状态: ${taskStatus}`);
+
+      if (taskStatus === 'succeed') {
+        const videoUrl = statusResponse.data?.task_result?.videos?.[0]?.url;
+        if (!videoUrl) {
+          console.error('❌ [可灵特效API] 任务成功但未找到视频URL');
+          return res.status(500).json({
+            status: 'error',
+            message: '未获取到视频URL'
+          });
+        }
+
+        console.log('[可灵特效API] ✅ 视频生成成功:', videoUrl);
+        return res.json({
+          status: 'success',
+          videoUrl: videoUrl
+        });
+      } else if (taskStatus === 'failed') {
+        console.error('❌ [可灵特效API] 任务失败:', statusResponse.data?.task_status_msg);
+        return res.status(500).json({
+          status: 'error',
+          message: '可灵特效视频生成失败',
+          details: statusResponse.data
+        });
+      } else if (taskStatus === 'submitted' || taskStatus === 'processing') {
+        // 正常状态，继续轮询
+        if (attempts >= maxAttempts) {
+          console.log('⏰ [可灵特效API] 轮询超时，任务仍在处理中');
+          return res.status(500).json({
+            status: 'error',
+            message: '任务处理超时，请稍后查询结果',
+            taskId: taskId
+          });
+        }
+        setTimeout(pollTask, pollInterval);
+      } else {
+        // 未知状态，记录并继续轮询
+        console.warn(`⚠️ [可灵特效API] 未知任务状态: ${taskStatus}，将在5秒后重试`);
+        if (attempts < maxAttempts) {
+          setTimeout(pollTask, pollInterval);
+        } else {
+          return res.status(500).json({
+            status: 'error',
+            message: '任务处理异常',
+            taskStatus: taskStatus
+          });
+        }
+      }
+    };
+
+    setTimeout(pollTask, pollInterval);
+
+  } catch (error) {
+    console.error('❌ [可灵特效API] 异常:', error.message);
+    res.status(500).json({
+      status: 'error',
+      message: '可灵特效视频生成失败',
+      error: error.message
+    });
+  }
+});
+
+// ========== 腾讯云COS上传 API ==========
+
+/**
+ * 图片/音频上传到腾讯云COS
+ * POST /api/upload-cos
+ *
+ * 替代Vite中间件，直接在后端处理，避免响应重复问题
+ */
+app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) => {
+  try {
+    const { image, type, format } = req.body;
+
+    if (!image) {
+      return res.status(400).json({ error: 'Missing image data' });
+    }
+
+    // 获取腾讯云配置
+    const secretId = process.env.VITE_TENCENT_COS_SECRET_ID;
+    const secretKey = process.env.VITE_TENCENT_COS_SECRET_KEY;
+    const bucket = process.env.VITE_TENCENT_COS_BUCKET || 'fudaiai-1400086527';
+    const region = process.env.VITE_TENCENT_COS_REGION || 'ap-shanghai';
+
+    if (!secretId || !secretKey) {
+      return res.status(500).json({ error: '服务器未配置腾讯云COS密钥' });
+    }
+
+    // 初始化COS
+    const cos = new COS({
+      SecretId: secretId,
+      SecretKey: secretKey
+    });
+
+    // Base64转Buffer（支持图片和音频）
+    let base64Data;
+    let fileExtension;
+
+    if (type === 'audio') {
+      // 音频文件处理
+      base64Data = image.replace(/^data:audio\/\w+;base64,/, '');
+      fileExtension = format || 'mp3';
+    } else {
+      // 图片文件处理（默认）
+      base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+      fileExtension = 'jpg';
+    }
+
+    const buffer = Buffer.from(base64Data, 'base64');
+    const fileName = `festival/user/${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExtension}`;
+
+    console.log('[COS Backend] 上传文件:', fileName, '类型:', type || 'image', '大小:', buffer.length);
+
+    // 上传到COS
+    cos.putObject(
+      {
+        Bucket: bucket,
+        Region: region,
+        Key: fileName,
+        Body: buffer,
+        ACL: 'public-read'
+      },
+      (err, data) => {
+        if (err) {
+          console.error('[COS Backend] ❌ 上传失败:', err.message);
+          return res.status(500).json({ error: err.message });
+        }
+
+        const url = `https://${bucket}.cos.${region}.myqcloud.com/${fileName}`;
+        console.log('[COS Backend] ✅ 上传成功:', url);
+
+        // 🔍 调试：检查发送前的数据
+        const responseData = { url };
+        console.log('[COS Backend] 🔍 准备发送的响应:', JSON.stringify(responseData));
+        console.log('[COS Backend] 🔍 URL长度:', url.length);
+
+        // 🔧 绕过res.json()，直接发送字符串
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(responseData));
+      }
+    );
+
+  } catch (error) {
+    console.error('[COS Backend] ❌ 异常:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * 从COS动态获取M2模板列表
+ * GET /api/m2-templates?gender=male&category=modern
+ *
+ * 功能：从COS bucket读取图片，并根据category筛选
+ * 支持分类：modern, qipao, hanfu, tangzhuang, caishen, traditional
+ */
+app.get('/api/m2-templates', async (req, res) => {
+  try {
+    const { gender, category } = req.query;
+
+    if (!gender || !['male', 'female', 'child', 'couple'].includes(gender)) {
+      return res.status(400).json({ error: 'Invalid gender parameter (male/female/child/couple required)' });
+    }
+
+    // 获取COS配置
+    const secretId = process.env.VITE_TENCENT_COS_SECRET_ID;
+    const secretKey = process.env.VITE_TENCENT_COS_SECRET_KEY;
+    const bucket = process.env.VITE_TENCENT_COS_BUCKET || 'fudaiai-1400086527';
+    const region = process.env.VITE_TENCENT_COS_REGION || 'ap-shanghai';
+
+    if (!secretId || !secretKey) {
+      return res.status(500).json({ error: '服务器未配置腾讯云COS密钥' });
+    }
+
+    // 初始化COS
+    const cos = new COS({
+      SecretId: secretId,
+      SecretKey: secretKey
+    });
+
+    // 列出指定目录下的所有文件
+    const prefix = `festival-templates/m2/${gender}/`;
+
+    // 读取数据库获取分类信息
+    const databasePath = path.join(__dirname, 'template-analysis', 'asset-database.json');
+    let assetDatabase = {};
+    try {
+      if (fs.existsSync(databasePath)) {
+        assetDatabase = JSON.parse(fs.readFileSync(databasePath, 'utf-8')).assets || {};
+      }
+    } catch (e) {
+      console.warn('[M2 Templates API] 无法读取数据库，分类功能不可用');
+    }
+
+    cos.getBucket(
+      {
+        Bucket: bucket,
+        Region: region,
+        Prefix: prefix
+      },
+      (err, data) => {
+        if (err) {
+          console.error('[M2 Templates API] ❌ 获取失败:', err.message);
+          return res.status(500).json({ error: err.message });
+        }
+
+        // 过滤出图片文件并添加分类信息
+        let templates = data.Contents
+          .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file.Key))
+          .map(file => {
+            const baseUrl = `https://${bucket}.cos.${region}.myqcloud.com/${file.Key}`;
+
+            // 🔥 使用腾讯云数据万象实时处理（URL参数方式）
+            // imageMogr2: 图片处理命令
+            // thumbnail/800x: 缩放到宽度800px
+            // strip: 去除EXIF元信息
+            // format/webp: 转换为WebP格式
+            // quality/85: 质量85
+            const compressedUrl = `${baseUrl}?imageMogr2/thumbnail/800x/strip/format/webp/quality/85`;
+
+            const fileName = file.Key.split('/').pop();
+            const id = fileName.split('.')[0]; // 使用文件名（不含扩展名）作为ID
+
+            // 从数据库获取分类信息
+            const assetInfo = assetDatabase[id] || {};
+            const assetCategory = assetInfo.category || 'modern';
+
+            return {
+              id: id,
+              name: fileName,
+              imagePath: compressedUrl,  // 🔥 返回压缩后的URL
+              originalImagePath: baseUrl,  // 保留原图URL（如需高清预览）
+              gender: gender,
+              category: assetCategory,
+              size: file.Size,
+              lastModified: file.LastModified
+            };
+          });
+
+        // 根据category筛选
+        if (category && category !== 'all') {
+          if (category === 'traditional') {
+            // 传统装包括：hanfu, tangzhuang, caishen
+            templates = templates.filter(t =>
+              ['hanfu', 'tangzhuang', 'caishen'].includes(t.category)
+            );
+          } else {
+            // 其他分类直接匹配
+            templates = templates.filter(t => t.category === category);
+          }
+        }
+
+        console.log(`[M2 Templates API] ✅ 返回 ${templates.length} 个${gender}模板 (分类: ${category || 'all'})`);
+        res.json({
+          success: true,
+          gender: gender,
+          category: category || 'all',
+          count: templates.length,
+          templates: templates
+        });
+      }
+    );
+
+  } catch (error) {
+    console.error('[M2 Templates API] ❌ 异常:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ========== 🔥 M3 情侣模板 API（复制 M2 逻辑）==========
+app.get('/api/m3-templates', async (req, res) => {
+  console.log('📡 [雷达捕捉到信号]: GET -> /api/m3-templates');
+  console.log('✨ [3002 信号] 成功接收到来自网页的请求！');
+
+  try {
+    const secretId = process.env.VITE_TENCENT_COS_SECRET_ID;
+    const secretKey = process.env.VITE_TENCENT_COS_SECRET_KEY;
+    const bucket = process.env.VITE_TENCENT_COS_BUCKET || 'fudaiai-1400086527';
+    const region = process.env.VITE_TENCENT_COS_REGION || 'ap-shanghai';
+
+    if (!secretId || !secretKey) {
+      return res.status(500).json({ error: '服务器未配置腾讯云COS密钥' });
+    }
+
+    // 初始化COS
+    const cos = new COS({
+      SecretId: secretId,
+      SecretKey: secretKey
+    });
+
+    // M3 情侣模板目录（不分性别）
+    const prefix = `festival-templates/m3/`;
+
+    cos.getBucket(
+      {
+        Bucket: bucket,
+        Region: region,
+        Prefix: prefix
+      },
+      (err, data) => {
+        if (err) {
+          console.error('[M3 Templates API] ❌ 获取失败:', err.message);
+          return res.status(500).json({ error: err.message });
+        }
+
+        // 过滤出图片文件（排除过大的文件）
+        const excludeFiles = ['4 (68).jpeg', '4 (69).jpeg', '4 (71).jpeg'];
+        let templates = data.Contents
+          .filter(file => {
+            const fileName = file.Key.split('/').pop();
+            return /\.(jpg|jpeg|png|webp)$/i.test(file.Key) && !excludeFiles.includes(fileName);
+          })
+          .map(file => {
+            // 🔥 对文件路径进行URL编码（处理空格、括号等特殊字符）
+            const encodedKey = file.Key.split('/').map(part => encodeURIComponent(part)).join('/');
+            const baseUrl = `https://${bucket}.cos.${region}.myqcloud.com/${encodedKey}`;
+
+            // 🔥 使用腾讯云数据万象实时处理（URL参数方式）
+            const compressedUrl = `${baseUrl}?imageMogr2/thumbnail/800x/strip/format/webp/quality/85`;
+
+            const fileName = file.Key.split('/').pop();
+            const id = fileName.split('.')[0];
+
+            return {
+              id: id,
+              name: fileName,
+              imagePath: compressedUrl,  // 🔥 返回压缩后的URL
+              originalImagePath: baseUrl,  // 保留原图URL
+              size: file.Size,
+              lastModified: file.LastModified
+            };
+          });
+
+        console.log(`[M3 Templates API] ✅ 返回 ${templates.length} 个情侣模板`);
+        res.json({
+          success: true,
+          count: templates.length,
+          templates: templates
+        });
+      }
+    );
+
+  } catch (error) {
+    console.error('[M3 Templates API] ❌ 异常:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 添加下载路由
 app.use('/downloads', express.static(path.join(__dirname, 'downloads')));
 
 // 添加临时处理目录的静态资源映射
 app.use('/temp_processing', express.static(path.join(__dirname, 'temp_processing')));
 
+// ========== 支付系统 API ==========
+
+// 订单存储（生产环境应使用数据库）
+const ordersFilePath = path.join(__dirname, 'data', 'orders.json');
+
+// 确保数据目录存在
+const dataDir = path.join(__dirname, 'data');
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// 初始化订单文件
+if (!fs.existsSync(ordersFilePath)) {
+  fs.writeFileSync(ordersFilePath, JSON.stringify({ orders: [] }, null, 2));
+}
+
+/**
+ * 读取订单数据
+ */
+function readOrders() {
+  try {
+    const data = fs.readFileSync(ordersFilePath, 'utf8');
+    return JSON.parse(data).orders || [];
+  } catch (error) {
+    console.error('Failed to read orders:', error);
+    return [];
+  }
+}
+
+/**
+ * 保存订单数据
+ */
+function saveOrders(orders) {
+  try {
+    fs.writeFileSync(ordersFilePath, JSON.stringify({ orders }, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Failed to save orders:', error);
+    return false;
+  }
+}
+
+/**
+ * 生成订单ID
+ */
+function generateOrderId() {
+  return `ord_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+}
+
+/**
+ * 生成虎皮椒签名
+ */
+function generateHupijiaoSign(params, appSecret) {
+  // 1. 过滤空值
+  const filteredParams = {};
+  Object.keys(params).forEach(key => {
+    if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+      filteredParams[key] = params[key];
+    }
+  });
+
+  // 2. 按key排序
+  const sortedKeys = Object.keys(filteredParams).sort();
+
+  // 3. 拼接字符串
+  const signStr = sortedKeys.map(key => `${key}=${filteredParams[key]}`).join('&') + appSecret;
+
+  // 4. MD5加密
+  return crypto.createHash('md5').update(signStr).digest('hex');
+}
+
+/**
+ * 创建充值订单
+ */
+app.post('/api/payment/create-order', express.json(), async (req, res) => {
+  try {
+    const { visitorId, packageId, packageName, amount, credits } = req.body;
+
+    // 验证参数
+    if (!visitorId || !packageId || !amount || !credits) {
+      return res.status(400).json({ error: '缺少必要参数' });
+    }
+
+    // 生成订单ID
+    const orderId = generateOrderId();
+
+    // 创建订单
+    const order = {
+      orderId,
+      visitorId,
+      packageId,
+      packageName,
+      amount,
+      credits,
+      status: 'pending',
+      createdAt: Date.now(),
+      expiredAt: Date.now() + 30 * 60 * 1000, // 30分钟后过期
+    };
+
+    // 保存订单
+    const orders = readOrders();
+    orders.push(order);
+    saveOrders(orders);
+
+    // 虎皮椒配置（正式环境，必须配置环境变量）
+    const hupijiaoAppId = process.env.HUPIJIAO_APP_ID;
+    const hupijiaoAppSecret = process.env.HUPIJIAO_APP_SECRET;
+    const notifyUrl = process.env.HUPIJIAO_NOTIFY_URL;
+    const paymentGateway = process.env.HUPIJIAO_PAYMENT_GATEWAY || 'https://api.xunhupay.com/payment/do.html';
+
+    // 验证必需的配置
+    if (!hupijiaoAppId || !hupijiaoAppSecret) {
+      console.error('🚨 [配置错误] 缺少虎皮椒配置，请检查.env文件');
+      return res.status(500).json({ error: '支付配置错误，请联系管理员' });
+    }
+
+    if (!notifyUrl || notifyUrl.includes('your-domain')) {
+      console.warn('⚠️ [配置警告] 回调URL未正确配置，支付后积分可能无法自动到账');
+    }
+
+    // 虎皮椒支付参数
+    const paymentParams = {
+      version: '1.1',
+      lang: 'zh-CN',
+      plugins: 'festival-ai',
+      appid: hupijiaoAppId,
+      trade_order_id: orderId,
+      total_fee: amount.toFixed(2), // 虎皮椒使用元
+      title: `${packageName} - ${credits}积分`,
+      time: Math.floor(Date.now() / 1000).toString(),
+      notify_url: notifyUrl,
+      return_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment-success?orderId=${orderId}`,
+      callback_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment-success?orderId=${orderId}`,
+    };
+
+    // 生成签名
+    const sign = generateHupijiaoSign(paymentParams, hupijiaoAppSecret);
+    paymentParams.hash = sign;
+
+    console.log(`💰 [支付信息]`);
+    console.log(`   AppID: ${hupijiaoAppId}`);
+    console.log(`   订单号: ${orderId}`);
+    console.log(`   金额: ¥${amount}`);
+    console.log(`   回调URL: ${notifyUrl}`);
+
+    // 调用虎皮椒API创建支付订单
+    const paymentRequestUrl = `${paymentGateway}?${Object.keys(paymentParams).map(key => `${key}=${encodeURIComponent(paymentParams[key])}`).join('&')}`;
+
+    console.log(`🔗 [请求虎皮椒] ${paymentRequestUrl}`);
+
+    // 使用https模块调用虎皮椒API
+    const httpsModule = paymentGateway.startsWith('https') ? https : http;
+
+    httpsModule.get(paymentRequestUrl, (apiRes) => {
+      let data = '';
+
+      apiRes.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      apiRes.on('end', () => {
+        try {
+          const hupijiaoResponse = JSON.parse(data);
+
+          console.log(`✅ [虎皮椒响应]`, hupijiaoResponse);
+
+          if (hupijiaoResponse.errcode === 0) {
+            // 成功，返回支付URL
+            console.log(`💰 [订单创建] ${orderId} - ${packageName} - ¥${amount} - ${credits}积分`);
+
+            res.json({
+              ...order,
+              paymentUrl: hupijiaoResponse.url, // 使用虎皮椒返回的URL
+              qrcodeUrl: hupijiaoResponse.url_qrcode, // 二维码URL
+              hupijiaoOrderId: hupijiaoResponse.openid, // 虎皮椒订单ID
+            });
+          } else {
+            console.error(`❌ [虎皮椒错误] ${hupijiaoResponse.errmsg}`);
+            res.status(500).json({ error: `支付平台错误: ${hupijiaoResponse.errmsg}` });
+          }
+        } catch (parseError) {
+          console.error(`❌ [解析错误]`, parseError);
+          console.error(`   响应数据: ${data}`);
+          res.status(500).json({ error: '支付平台响应异常' });
+        }
+      });
+    }).on('error', (err) => {
+      console.error(`❌ [请求失败]`, err);
+      res.status(500).json({ error: '无法连接支付平台' });
+    });
+  } catch (error) {
+    console.error('创建订单失败:', error);
+    res.status(500).json({ error: '创建订单失败' });
+  }
+});
+
+/**
+ * 查询订单状态
+ */
+app.get('/api/payment/order-status/:orderId', (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const orders = readOrders();
+    const order = orders.find(o => o.orderId === orderId);
+
+    if (!order) {
+      return res.status(404).json({ error: '订单不存在' });
+    }
+
+    // 检查订单是否过期
+    if (order.status === 'pending' && Date.now() > order.expiredAt) {
+      order.status = 'expired';
+      saveOrders(orders);
+    }
+
+    res.json(order);
+  } catch (error) {
+    console.error('查询订单失败:', error);
+    res.status(500).json({ error: '查询订单失败' });
+  }
+});
+
+/**
+ * 虎皮椒支付回调
+ */
+app.post('/api/payment/notify', express.urlencoded({ extended: true }), (req, res) => {
+  try {
+    console.log('🔔 [支付回调] 收到虎皮椒回调:', req.body);
+
+    const {
+      trade_order_id,
+      total_fee,
+      transaction_id,
+      order_id,
+      status,
+      hash,
+    } = req.body;
+
+    // 验证签名
+    const hupijiaoAppSecret = process.env.HUPIJIAO_APP_SECRET;
+    if (!hupijiaoAppSecret) {
+      console.error('🚨 [支付回调] 缺少支付密钥配置');
+      return res.send('fail');
+    }
+
+    const verifyParams = { ...req.body };
+    delete verifyParams.hash;
+    const expectedSign = generateHupijiaoSign(verifyParams, hupijiaoAppSecret);
+
+    if (hash !== expectedSign) {
+      console.error('🚨 [支付回调] 签名验证失败');
+      console.error(`   收到签名: ${hash}`);
+      console.error(`   期望签名: ${expectedSign}`);
+      return res.send('fail');
+    }
+
+    // 查找订单
+    const orders = readOrders();
+    const orderIndex = orders.findIndex(o => o.orderId === trade_order_id);
+
+    if (orderIndex === -1) {
+      console.error('🚨 [支付回调] 订单不存在:', trade_order_id);
+      return res.send('fail');
+    }
+
+    const order = orders[orderIndex];
+
+    // 防止重复回调
+    if (order.status === 'paid') {
+      console.log('✅ [支付回调] 订单已处理，忽略重复回调');
+      return res.send('success');
+    }
+
+    // 更新订单状态
+    if (status === 'OD') {
+      order.status = 'paid';
+      order.paidAt = Date.now();
+      order.paymentId = transaction_id || order_id;
+      saveOrders(orders);
+
+      console.log(`✅ [支付成功] ${trade_order_id} - ¥${total_fee / 100} - ${order.credits}积分`);
+
+      // TODO: 这里可以触发发放积分的逻辑，或者由前端轮询后处理
+
+      return res.send('success');
+    } else {
+      order.status = 'failed';
+      saveOrders(orders);
+
+      console.log(`❌ [支付失败] ${trade_order_id}`);
+      return res.send('success');
+    }
+  } catch (error) {
+    console.error('🚨 [支付回调] 处理失败:', error);
+    return res.send('fail');
+  }
+});
+
+/**
+ * 手动完成订单（测试用，无需支付回调）
+ * 用于本地测试，无法接收支付回调时使用
+ */
+app.post('/api/payment/manual-complete', express.json(), (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    if (!orderId) {
+      return res.status(400).json({ error: '缺少订单ID' });
+    }
+
+    const orders = readOrders();
+    const orderIndex = orders.findIndex(o => o.orderId === orderId);
+
+    if (orderIndex === -1) {
+      return res.status(404).json({ error: '订单不存在' });
+    }
+
+    const order = orders[orderIndex];
+
+    if (order.status === 'paid') {
+      return res.json({
+        success: true,
+        message: '订单已完成',
+        order
+      });
+    }
+
+    // 手动标记为已支付
+    order.status = 'paid';
+    order.paidAt = Date.now();
+    order.paymentId = 'manual_test_' + Date.now();
+    orders[orderIndex] = order;
+    saveOrders(orders);
+
+    console.log(`✅ [手动完成] ${orderId} - ${order.credits}积分`);
+
+    res.json({
+      success: true,
+      message: '订单已手动完成',
+      order
+    });
+  } catch (error) {
+    console.error('手动完成订单失败:', error);
+    res.status(500).json({ error: '操作失败' });
+  }
+});
+
 // 处理所有其他请求，返回前端应用
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
+// 🔒 加载API代理端点 (安全地代理第三方API调用)
+const apiProxyRoutes = require('./api-proxy-endpoints');
+apiProxyRoutes(app);
+
 // 添加全局错误处理中间件 - 捕获所有中间件的错误
 app.use((err, req, res, next) => {
   console.error('🚨 [SERVER CRITICAL ERROR]:', err.stack);
-  res.status(500).json({ 
-    error: err.message, 
+  res.status(500).json({
+    error: err.message,
     stack: err.stack,
     status: 'error',
-    message: '服务器内部错误' 
+    message: '服务器内部错误'
   });
 });
 

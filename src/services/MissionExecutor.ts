@@ -22,6 +22,8 @@ import { FESTIVAL_ASSET_TRIGGERS } from '../configs/festival/assetTriggers';
 import { TEMPLATE_CACHE } from '../configs/festival/templateCache';
 import { getEnabledWorkflows, LiblibWorkflowConfig } from '../configs/festival/liblibWorkflows';
 import { FortuneTemplateService } from './FortuneTemplateService';
+import { getFeatureById } from '../configs/festival/features';
+import { useCreditStore } from '../stores/creditStore';
 
 export interface MissionConfig {
   missionId: string;
@@ -190,6 +192,22 @@ export class MissionExecutor {
 
     console.log(`[MissionExecutor] 开始执行任务: ${config.name}`);
 
+    // ===== 积分扣除逻辑（临时关闭，方便测试）=====
+    // const feature = getFeatureById(missionId);
+    // const creditsRequired = feature?.access.credits || 0;
+    // if (creditsRequired > 0) {
+    //   const { consumeCredits } = useCreditStore.getState();
+    //   const success = consumeCredits(
+    //     creditsRequired,
+    //     missionId,
+    //     `使用功能: ${config.name}`
+    //   );
+    //   if (!success) {
+    //     throw new Error('积分不足，请先充值');
+    //   }
+    //   console.log(`[MissionExecutor] 扣除积分: ${creditsRequired}，功能: ${config.name}`);
+    // }
+
     try {
       // 生成UUID
       const taskId = this.generateTaskId();
@@ -248,14 +266,10 @@ export class MissionExecutor {
       }
 
       // Step 2: 图像生成
-      const generatingMessages = isM2 ? [
-        '🧧 正在召唤财神爷...',
-        '✨ 财神法阵启动中...',
-        '🎊 正在为您变身财神...'
-      ] : [
-        '🎨 AI画师正在挥笔创作...',
-        '✨ 皮克斯风格真迹生成中...',
-        '🌟 正在为您打造专属3D头像...'
+      const generatingMessages = [
+        '🎨 福袋AI正在创作中...',
+        '✨ 福袋AI正在生成作品...',
+        '🌟 福袋AI正在施展魔法...'
       ];
 
       this.updateProgress({
@@ -269,7 +283,7 @@ export class MissionExecutor {
       this.updateProgress({
         stage: 'generating',
         progress: 80,
-        message: '🎉 真迹生成完成！正在添加点睛之笔...'
+        message: '🎉 作品生成完成！正在添加点睛之笔...'
       });
 
       // Step 3: 判词生成（如果需要）
@@ -296,7 +310,9 @@ export class MissionExecutor {
         dna: dnaDisplayTexts,
         metadata: {
           missionId,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          gender: input.gender,  // 🔥 保存性别，用于重新生成时保留选择
+          templateId: input.customParams?.selectedTemplate?.id  // 🔥 保存模板ID
         }
       };
 
@@ -596,33 +612,113 @@ export class MissionExecutor {
       let prompt: string;
       let negativePrompt: string;
 
+      // 🆕 M1任务的LoRA配置（用于后续请求）
+      let currentLoraUuid = M1_CONFIG.model_config.lora.uuid;
+      let currentLoraWeight = M1_CONFIG.model_config.lora.weight;
+      let currentTriggerWord = M1_CONFIG.model_config.lora.trigger_word;
+
       if (config.missionId === 'M1') {
         // 验证性别参数
         const gender = input.gender || 'female';  // 默认female
 
-        console.log(`[MissionExecutor] M1任务 - 性别: ${gender}, DNA: ${dnaRawOutput}`);
+        // 🆕 优先使用templateConfig中的loraConfig（来自templateGallery）
+        const templateConfig = input.customParams?.templateConfig;
+        let styleConfig = null;
 
-        // 获取对应性别的prompt模板
-        const template = M1_CONFIG.prompt_templates[gender];
+        if (templateConfig?.loraConfig) {
+          // 方案1：使用templateGallery中的LoRA配置
+          console.log('[MissionExecutor] M1任务 - 使用模板LoRA配置');
+          currentLoraUuid = templateConfig.loraConfig.uuid;
+          currentLoraWeight = templateConfig.loraConfig.weight;
+          currentTriggerWord = templateConfig.loraConfig.triggerWord || '';
+
+          // 根据LoRA UUID匹配对应的风格提示词模板
+          const { getM1Style } = await import('../configs/missions/M1_Config');
+          if (currentLoraUuid === '99f2b2879651432385b4b68a1e614976') {
+            styleConfig = getM1Style('watercolor-spring');
+          } else if (currentLoraUuid === 'd128f7ca3340468ba1d569d6dd111c70') {
+            styleConfig = getM1Style('cyber-newyear');
+          } else if (currentLoraUuid === '3b80855c10534549a51a66481bfcc86b') {
+            styleConfig = getM1Style('thick-paint');
+          } else if (currentLoraUuid === '5e5968fec9174d13ad15ac4453519abd') {
+            styleConfig = getM1Style('2d-anime');
+          } else if (currentLoraUuid === '95cef7238a9c47be8f02f5a68a9997f4') {
+            styleConfig = getM1Style('chibi-doll');
+          } else if (currentLoraUuid === 'ghibli-style' || currentLoraUuid === '') {
+            // 宫崎骏风格：不使用LoRA，纯prompt控制
+            styleConfig = getM1Style('ghibli-style');
+          } else {
+            styleConfig = getM1Style('3d-pixar');
+          }
+        } else {
+          // 方案2：使用styleId（备选）
+          const styleId = input.customParams?.styleId || '3d-pixar';
+          console.log(`[MissionExecutor] M1任务 - 风格ID: ${styleId}`);
+
+          const { getM1Style } = await import('../configs/missions/M1_Config');
+          styleConfig = getM1Style(styleId);
+          currentLoraUuid = styleConfig.lora.uuid;
+          currentLoraWeight = (gender === 'male' && styleConfig.lora.male_weight != null)
+            ? styleConfig.lora.male_weight
+            : styleConfig.lora.weight;
+          currentTriggerWord = styleConfig.lora.trigger_word;
+        }
+
+        console.log(`[MissionExecutor] 使用风格: ${styleConfig.name}, LoRA UUID: ${currentLoraUuid}, 权重: ${currentLoraWeight}`);
+
+        // 获取对应性别的prompt模板（从风格配置中获取）
+        const template = styleConfig.prompt_templates[gender];
 
         // 🆕 分层权重处理：将DNA拆分成不同权重层级
         const parsedDNA = this.parseAndWeightDNA(dnaRawOutput || '');
 
         console.log('[MissionExecutor] 分层DNA解析:', {
-          hairAge: parsedDNA.hairAge,
+          hair: parsedDNA.hair,
+          age: parsedDNA.age,
           accessories: parsedDNA.accessories,
           face: parsedDNA.face
         });
 
-        // 填充三层占位符
+        // 填充占位符（支持新旧两种格式）
         prompt = template.positive
-          .replace('{{HAIR_AGE}}', parsedDNA.hairAge)
+          .replace('{{HAIR}}', parsedDNA.hair)
+          .replace('{{AGE}}', parsedDNA.age)
+          .replace('{{HAIR_AGE}}', parsedDNA.hairAge)  // 兼容旧模板
           .replace('{{ACCESSORIES}}', parsedDNA.accessories)
-          .replace('{{FACE}}', parsedDNA.face);
+          .replace('{{FACE}}', parsedDNA.face)
+          .replace('{{CLOTHING}}', parsedDNA.clothing || 'casual clothing')  // 🆕 衣服
+          .replace('{{POSE}}', parsedDNA.pose || 'natural pose');  // 🆕 动作
         negativePrompt = template.negative;
 
         console.log('[MissionExecutor] 填充后的Prompt:', prompt);
         console.log('[MissionExecutor] Negative Prompt:', negativePrompt);
+
+        // 🆕 自定义提示词模式
+        const customPrompt = input.customParams?.customPrompt;
+        if (customPrompt && customPrompt.trim().length > 0) {
+          console.log('[MissionExecutor] 🎨 使用自定义提示词模式');
+          console.log('[MissionExecutor] 用户输入:', customPrompt);
+
+          // 🔥 修复现代风格真人照问题：保留完整风格控制
+          // 提取风格前缀（保留前2个部分，如"pks, (masterpiece)"）
+          const baseParts = prompt.split(',').slice(0, 2);
+          const stylePrefix = baseParts.join(',').trim();
+
+          // 🔥 新增：提取风格特定的艺术化描述（如"3d pixar animation style", "watercolor", "cyberpunk"等）
+          // 这些关键词帮助LORA保持艺术风格，避免输出真人照
+          const styleKeywords = prompt.match(/(3d pixar animation style|watercolor|cyberpunk|thick paint|anime illustration|chibi|Studio Ghibli style|hand-drawn animation)/i);
+          const styleDescriptor = styleKeywords ? `, ${styleKeywords[0]}` : '';
+
+          // 组装：风格前缀 + 风格描述 + DNA特征（分层权重） + 用户自定义
+          prompt = `${stylePrefix}${styleDescriptor}, (${parsedDNA.hairAge}:6.0), (${parsedDNA.accessories}:3.5), (${parsedDNA.face}:2.0), ${customPrompt}`;
+
+          // 🔥 关键修复：保留原始negative prompt（防止生成真人照）
+          // negativePrompt已经从template.negative中获取，不需要修改，保持原样
+          console.log('[MissionExecutor] 最终Prompt:', prompt);
+          console.log('[MissionExecutor] Negative Prompt保持原样:', negativePrompt);
+          console.log('[MissionExecutor] 🔥 已包含配饰:', parsedDNA.accessories);
+          console.log('[MissionExecutor] 🎨 风格描述:', styleDescriptor || '无额外风格描述');
+        }
       } else {
         // 其他任务的默认prompt
         prompt = input.customParams?.prompt || 'A festive Chinese New Year scene';
@@ -632,7 +728,7 @@ export class MissionExecutor {
       // 使用ApiVault中的LiblibAI密钥
       const accessKey = API_VAULT.LIBLIB.ACCESS_KEY;
       const secretKey = API_VAULT.LIBLIB.SECRET_KEY;
-      
+
       if (!accessKey || !secretKey) {
         throw new Error('LiblibAI密钥未配置');
       }
@@ -640,36 +736,39 @@ export class MissionExecutor {
       // 组合为sendRequest需要的格式（换行符分隔）
       const liblibKey = `${accessKey}\n${secretKey}`;
 
-      const loraWeight = (config.missionId === 'M1' && input.gender === 'male' && M1_CONFIG.model_config.lora.male_weight != null)
-        ? M1_CONFIG.model_config.lora.male_weight
-        : M1_CONFIG.model_config.lora.weight;
+      // 构建请求参数
+      const generateParams: any = {
+        prompt: prompt,
+        negativePrompt: negativePrompt,
+        width: 768,
+        height: 1024,
+        imgCount: 1,
+        steps: 25,
+        cfgScale: 3.5,
+        seed: -1,
+        sampler: 15  // Euler
+      };
+
+      // 只有真实LoRA UUID才添加additionalNetwork（宫崎骏风格不用LoRA）
+      if (currentLoraUuid && currentLoraUuid !== 'ghibli-style' && currentLoraUuid !== '') {
+        generateParams.additionalNetwork = [
+          {
+            modelId: currentLoraUuid,
+            weight: currentLoraWeight
+          }
+        ];
+      }
 
       const requestBody = {
         templateUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
-        generateParams: {
-          prompt: prompt,
-          negativePrompt: negativePrompt,
-          width: 768,
-          height: 1024,
-          imgCount: 1,
-          steps: 25,
-          cfgScale: 3.5,
-          seed: -1,
-          sampler: 15,  // Euler
-          additionalNetwork: [
-            {
-              modelId: M1_CONFIG.model_config.lora.uuid,
-              weight: loraWeight
-            }
-          ]
-        }
+        generateParams: generateParams
       };
 
       console.log('[MissionExecutor] 发送FLUX请求:', JSON.stringify(requestBody, null, 2));
 
       // 使用P4LAB的签名方法
       console.log('[MissionExecutor] 准备调用LiblibAI API...');
-      const { sendRequest } = await import('./apiService');
+      const { sendRequest } = await import('./secureApiService');
 
       let response;
       try {
@@ -860,7 +959,7 @@ export class MissionExecutor {
 
         // 📊 预估剩余时间
         const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-        let estimatedMessage = '🧧 正在炼成财神真迹...';
+        let estimatedMessage = '🎨 福袋AI正在生成作品...';
 
         if (p > 0.1) {  // 有了10%的进度才开始预估
           const totalEstimated = elapsedSeconds / p;
@@ -869,9 +968,9 @@ export class MissionExecutor {
             const mins = Math.floor(remaining / 60);
             const secs = remaining % 60;
             if (mins > 0) {
-              estimatedMessage = `🧧 正在炼成财神真迹... (预计剩余 ${mins}分${secs}秒)`;
+              estimatedMessage = `🎨 福袋AI正在生成作品... (预计剩余 ${mins}分${secs}秒)`;
             } else {
-              estimatedMessage = `🧧 正在炼成财神真迹... (预计剩余 ${secs}秒)`;
+              estimatedMessage = `🎨 福袋AI正在生成作品... (预计剩余 ${secs}秒)`;
             }
           }
         }
@@ -961,7 +1060,7 @@ export class MissionExecutor {
       console.log('[MissionExecutor] 老照片修复请求:', JSON.stringify(requestBody, null, 2));
 
       // 动态导入sendRequest
-      const { sendRequest } = await import('./apiService');
+      const { sendRequest } = await import('./secureApiService');
 
       // 发送请求
       const result = await sendRequest(
@@ -1159,7 +1258,7 @@ export class MissionExecutor {
       console.log('[MissionExecutor] 节点配置:', JSON.stringify(nodeConfigs, null, 2));
 
       // 动态导入sendRequest
-      const { sendRequest } = await import('./apiService');
+      const { sendRequest } = await import('./secureApiService');
 
       // 发送请求（使用正确的API参数结构）
       const result = await sendRequest(
@@ -1224,6 +1323,7 @@ export class MissionExecutor {
 
   private async generateCaishenFaceSwap(input: MissionInput): Promise<string> {
     console.log('[M2] 🚀 开始人脸融合流程（多工作流架构）...');
+    console.log('[M2] 🔍 DEBUG - input.customParams:', JSON.stringify(input.customParams, null, 2));
 
     if (!input.image) {
       throw new Error('缺少上传照片');
@@ -1232,15 +1332,71 @@ export class MissionExecutor {
     const gender: 'male' | 'female' = input.gender || 'female';
     console.log('[M2] 性别:', gender);
 
-    // 获取模板池
-    const trigger = FESTIVAL_ASSET_TRIGGERS.caishen;
-    const templatePool = gender === 'male' ? trigger.male : trigger.female;
-    if (!templatePool || templatePool.length === 0) {
-      throw new Error(`缺少${gender === 'male' ? '男' : '女'}性模板资源`);
+    // 🆕 支持用户选择的模板（从 TemplateSelectionPage 传来）
+    let templatePool: any[];
+
+    console.log('[M2] 🔍 检查templateConfig:', input.customParams?.templateConfig);
+
+    // 🆕 优先处理自定义上传的模板文件
+    if (input.customParams?.customTemplateFile) {
+      console.log('[M2] 📤 检测到自定义上传模板，准备上传到COS...');
+      try {
+        // 上传自定义模板文件到COS
+        const customTemplateUrl = await this.uploadUserImageToPublicUrl(input.customParams.templateImagePath);
+        console.log('[M2] ✅ 自定义模板上传成功:', customTemplateUrl);
+        templatePool = [{
+          localPath: customTemplateUrl,
+          name: '用户上传的自定义模板'
+        }];
+      } catch (uploadErr) {
+        const errMsg = uploadErr instanceof Error ? uploadErr.message : String(uploadErr);
+        throw new Error(`自定义模板上传失败: ${errMsg}`);
+      }
+    } else if (input.customParams?.templateConfig?.templateImageUrl) {
+      // 使用用户选择的模板图片
+      const selectedTemplate = input.customParams.templateConfig.templateImageUrl;
+      console.log('[M2] ✅✅✅ 使用用户选择的模板:', selectedTemplate);
+      templatePool = [{
+        localPath: selectedTemplate,
+        name: '用户选择的模板'
+      }];
+    } else if (input.customParams?.templateImageUrl) {
+      // 兼容：直接传递 templateImageUrl
+      console.log('[M2] ⚠️ 使用自定义模板:', input.customParams.templateImageUrl);
+      templatePool = [{
+        localPath: input.customParams.templateImageUrl,
+        name: input.customParams.templateName || '自定义模板'
+      }];
+    } else {
+      // 使用默认财神模板池（旧的自动轮询方式）
+      console.log('[M2] ❌❌❌ 使用默认模板池（assetTriggers）- 这意味着没有传递templateConfig！');
+      console.log('[M2] ❌ customParams:', input.customParams);
+      const trigger = FESTIVAL_ASSET_TRIGGERS.caishen;
+      templatePool = gender === 'male' ? trigger.male : trigger.female;
+      if (!templatePool || templatePool.length === 0) {
+        throw new Error(`缺少${gender === 'male' ? '男' : '女'}性模板资源`);
+      }
     }
 
-    // 获取启用的工作流列表
-    const workflows = getEnabledWorkflows();
+    // 🆕 根据换发型选项决定使用哪些工作流
+    let workflows = getEnabledWorkflows();
+
+    if (input.customParams?.enableHairSwap) {
+      // 用户开启了换发型模式，只使用支持换发型的工作流
+      console.log('[M2] 🎭 换发型模式已开启，使用 BananaPro 工作流');
+      const hairSwapWorkflow = workflows.find(w => w.supportsHairSwap);
+      if (hairSwapWorkflow) {
+        workflows = [hairSwapWorkflow];
+        console.log('[M2] ✅ 使用工作流:', hairSwapWorkflow.name);
+      } else {
+        console.log('[M2] ⚠️ 未找到支持换发型的工作流，使用默认列表');
+      }
+    } else {
+      // 正常模式，使用所有工作流（但排除 BananaPro 以避免超时）
+      console.log('[M2] 👤 正常模式（只换脸），排除 BananaPro 工作流');
+      workflows = workflows.filter(w => !w.supportsHairSwap);
+    }
+
     if (workflows.length === 0) {
       throw new Error('没有可用的工作流配置');
     }
@@ -1306,7 +1462,12 @@ export class MissionExecutor {
         console.log('[M2] 🔍 templateUrl后50字符:', templateUrl.substring(templateUrl.length - 50));
         console.log('[M2] 🔍 templateUrl包含几个https:', templateUrl.split('https://').length - 1);
 
-        const requestBody = this.buildLiblibRequestBody(workflow, userUrl, templateUrl);
+        const requestBody = this.buildLiblibRequestBody(
+          workflow,
+          userUrl,
+          templateUrl,
+          { enableHairSwap: input.customParams?.enableHairSwap }
+        );
 
         // 🔍 动态检查构建后的节点数据
         const userPhotoNodes = workflow.nodeMapping.userPhoto;
@@ -1378,7 +1539,8 @@ export class MissionExecutor {
   private buildLiblibRequestBody(
     workflow: LiblibWorkflowConfig,
     userPhotoUrl: string,
-    templateUrl: string
+    templateUrl: string,
+    options?: { enableHairSwap?: boolean }
   ): any {
     // 🔧 根据工作流配置动态构建节点
     const generateParams: any = {
@@ -1399,6 +1561,22 @@ export class MissionExecutor {
         class_type: 'LoadImage',
         inputs: { image: templateUrl }
       };
+    }
+
+    // 🆕 应用 extraNodes（额外节点配置）
+    if (workflow.extraNodes) {
+      for (const [nodeId, nodeConfig] of Object.entries(workflow.extraNodes)) {
+        // 如果是换发型控制节点，根据用户选项动态设置
+        if (workflow.supportsHairSwap && nodeId === workflow.hairSwapNodeId) {
+          const hairSwapNode = { ...nodeConfig };
+          // value = 1: 换头（含发型），value = 2: 只换脸
+          hairSwapNode.inputs.value = options?.enableHairSwap ? 1 : 2;
+          generateParams[nodeId] = hairSwapNode;
+          console.log(`[MissionExecutor] 换发型控制节点 ${nodeId}: value=${hairSwapNode.inputs.value} (${options?.enableHairSwap ? '换头' : '只换脸'})`);
+        } else {
+          generateParams[nodeId] = nodeConfig;
+        }
+      }
     }
 
     return {
@@ -1423,7 +1601,7 @@ export class MissionExecutor {
       try {
         // 使用ApiVault中的LiblibAI密钥
         const liblibKey = `${API_VAULT.LIBLIB.ACCESS_KEY}\n${API_VAULT.LIBLIB.SECRET_KEY}`;
-        const { sendRequest } = await import('./apiService');
+        const { sendRequest } = await import('./secureApiService');
         
         const data = await sendRequest(
           {
@@ -1455,15 +1633,15 @@ export class MissionExecutor {
         const progressPercent = Math.floor((i / maxAttempts) * 100);
         
         // 根据进度显示不同的叙事文案
-        let narrativeMessage = '正在生成真迹...';
+        let narrativeMessage = '正在生成作品...';
         if (progressPercent < 25) {
-          narrativeMessage = '🔍 正在寻找皮克斯光影...';
+          narrativeMessage = '🔍 福袋AI正在分析特征...';
         } else if (progressPercent < 50) {
-          narrativeMessage = '✨ 已锁定毛发细节层...';
+          narrativeMessage = '✨ 福袋AI正在描绘细节...';
         } else if (progressPercent < 75) {
-          narrativeMessage = '🎨 注入LoRA灵气 (0.8x)...';
+          narrativeMessage = '🎨 福袋AI正在添加色彩...';
         } else {
-          narrativeMessage = '🧧 正在渲染春节氛围...';
+          narrativeMessage = '🧧 福袋AI正在渲染氛围...';
         }
         
         this.updateProgress({
@@ -1493,7 +1671,7 @@ export class MissionExecutor {
 
       try {
         const liblibKey = `${API_VAULT.LIBLIB.ACCESS_KEY}\n${API_VAULT.LIBLIB.SECRET_KEY}`;
-        const { sendRequest } = await import('./apiService');
+        const { sendRequest } = await import('./secureApiService');
 
         const data = await sendRequest(
           {
@@ -1703,18 +1881,22 @@ export class MissionExecutor {
   }
 
   /**
-   * 🆕 分层权重DNA解析
-   * 将Qwen输出拆分成3个权重层级，提高关键特征（发型、年龄）的识别度
+   * 🆕 分层权重DNA解析（优化版 + 衣服动作）
+   * 将Qwen输出拆分成6个权重层级，发型单独高权重
    *
    * @param dnaOutput Qwen原始输出，逗号分隔的特征列表
    * @returns 分层后的DNA对象
    */
-  private parseAndWeightDNA(dnaOutput: string): { hairAge: string; accessories: string; face: string } {
+  private parseAndWeightDNA(dnaOutput: string): { hair: string; age: string; accessories: string; face: string; hairAge: string; clothing: string; pose: string } {
     if (!dnaOutput || dnaOutput.trim() === '') {
       return {
-        hairAge: 'individual portrait',
+        hair: 'natural hairstyle',
+        age: '',
         accessories: '',
-        face: ''
+        face: '',
+        hairAge: 'individual portrait',  // 兼容旧代码
+        clothing: 'casual clothing',
+        pose: 'natural pose'
       };
     }
 
@@ -1727,29 +1909,49 @@ export class MissionExecutor {
     const genderKeywords = ['male', 'female'];
     const accessoryKeywords = ['headwear', 'hat', 'cap', 'beanie', 'fedora', 'glasses', 'earrings', 'earwear'];
     const faceKeywords = ['face', 'jawline', 'cheekbones', 'cheeks'];
+    const clothingKeywords = ['shirt', 't-shirt', 'sweater', 'hoodie', 'jacket', 'coat', 'dress', 'suit', 'clothing', 'wear', 'wearing'];
+    const poseKeywords = ['standing', 'sitting', 'portrait', 'arms', 'hands', 'pose', 'position', 'upper body', 'shot'];
 
-    const hairAgeFeatures: string[] = [];
+    const hairFeatures: string[] = [];
+    const ageFeatures: string[] = [];
     const accessoryFeatures: string[] = [];
     const faceFeatures: string[] = [];
+    const clothingFeatures: string[] = [];  // 🆕 衣服
+    const poseFeatures: string[] = [];       // 🆕 动作
 
     for (const feature of features) {
       const lowerFeature = feature.toLowerCase();
 
       // 判断是否包含发型关键词
       if (hairKeywords.some(kw => lowerFeature.includes(kw))) {
-        hairAgeFeatures.push(feature);
+        hairFeatures.push(feature);
         continue;
       }
 
       // 判断是否包含年龄或性别关键词
       if (ageKeywords.some(kw => lowerFeature.includes(kw)) || genderKeywords.some(kw => lowerFeature.includes(kw))) {
-        hairAgeFeatures.push(feature);
+        ageFeatures.push(feature);
         continue;
       }
 
-      // 判断是否包含配饰关键词
+      // 判断是否包含配饰关键词（⚠️ 过滤否定描述，避免"no earrings"被高权重引入）
       if (accessoryKeywords.some(kw => lowerFeature.includes(kw))) {
-        accessoryFeatures.push(feature);
+        // 🔥 跳过否定描述（no xxx, without xxx）
+        if (!lowerFeature.startsWith('no ') && !lowerFeature.includes('without ')) {
+          accessoryFeatures.push(feature);
+        }
+        continue;
+      }
+
+      // 🆕 判断是否包含衣服关键词
+      if (clothingKeywords.some(kw => lowerFeature.includes(kw))) {
+        clothingFeatures.push(feature);
+        continue;
+      }
+
+      // 🆕 判断是否包含动作关键词
+      if (poseKeywords.some(kw => lowerFeature.includes(kw))) {
+        poseFeatures.push(feature);
         continue;
       }
 
@@ -1765,15 +1967,22 @@ export class MissionExecutor {
 
     // 组装结果
     const result = {
-      hairAge: hairAgeFeatures.length > 0 ? hairAgeFeatures.join(', ') : 'individual portrait',
+      hair: hairFeatures.length > 0 ? hairFeatures.join(', ') : 'natural hairstyle',
+      age: ageFeatures.length > 0 ? ageFeatures.join(', ') : '',
       accessories: accessoryFeatures.length > 0 ? accessoryFeatures.join(', ') : 'no accessories',
-      face: faceFeatures.length > 0 ? faceFeatures.join(', ') : 'balanced face'
+      face: faceFeatures.length > 0 ? faceFeatures.join(', ') : 'balanced face',
+      hairAge: [...hairFeatures, ...ageFeatures].join(', ') || 'individual portrait',  // 兼容旧代码
+      clothing: clothingFeatures.length > 0 ? clothingFeatures.join(', ') : 'casual clothing',  // 🆕
+      pose: poseFeatures.length > 0 ? poseFeatures.join(', ') : 'natural pose'  // 🆕
     };
 
     console.log('[parseAndWeightDNA] 原始DNA:', dnaOutput);
-    console.log('[parseAndWeightDNA] 发型+年龄 (超高权重):', result.hairAge);
-    console.log('[parseAndWeightDNA] 配饰 (高权重):', result.accessories);
-    console.log('[parseAndWeightDNA] 脸型 (中权重):', result.face);
+    console.log('[parseAndWeightDNA] 🔥 发型 (最高权重4.8):', result.hair);
+    console.log('[parseAndWeightDNA] 年龄性别:', result.age);
+    console.log('[parseAndWeightDNA] 配饰 (高权重3.8):', result.accessories);
+    console.log('[parseAndWeightDNA] 脸型 (中权重2.2):', result.face);
+    console.log('[parseAndWeightDNA] 🆕 衣服 (低权重2.0):', result.clothing);
+    console.log('[parseAndWeightDNA] 🆕 动作 (低权重1.5):', result.pose);
 
     return result;
   }

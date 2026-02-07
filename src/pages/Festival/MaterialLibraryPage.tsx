@@ -10,6 +10,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { message } from 'antd';
 import { MaterialService, MaterialCombiner } from '../../services/MaterialService';
 import type { MaterialAtom, MaterialType } from '../../types/material';
+import { createNavigationState } from '../../types/navigationState';
 import { FestivalButton, FestivalButtonGroup } from '../../components/FestivalButton';
 import { BackButton } from '../../components/BackButton';
 import '../../styles/festival-design-system.css';
@@ -83,34 +84,14 @@ const MaterialLibraryPage: React.FC = () => {
       // 根据组合类型跳转到相应的生成页面
       switch (optionId) {
         case 'couplet-poster': {
-          // 春联+图片 → 海报生成页
-          const couplet = selectedMaterials.find(m => m.type === 'couplet');
-          const image = selectedMaterials.find(m => m.type === 'image');
-
           message.destroy('combine');
-          navigate('/festival/poster', {
-            state: {
-              image: image?.data.url,
-              couplet: couplet?.data.couplet,
-              fromLibrary: true
-            }
-          });
+          message.warning('海报功能暂未开放');
           break;
         }
 
         case 'blessing-poster': {
-          // 祝福文案+图片 → 海报生成页
-          const text = selectedMaterials.find(m => m.type === 'text');
-          const image = selectedMaterials.find(m => m.type === 'image');
-
           message.destroy('combine');
-          navigate('/festival/poster', {
-            state: {
-              image: image?.data.url,
-              blessing: text?.data.text,
-              fromLibrary: true
-            }
-          });
+          message.warning('海报功能暂未开放');
           break;
         }
 
@@ -122,14 +103,16 @@ const MaterialLibraryPage: React.FC = () => {
           const text = selectedMaterials.find(m => m.type === 'text');
 
           message.destroy('combine');
-          navigate('/festival/video', {
-            state: {
-              image: image?.data.url,
-              audioUrl: audio?.data.url,
-              caption: text?.data.text || '',
-              fromLibrary: true
-            }
+          const navState = createNavigationState({
+            image: image?.data.url,
+            audio: audio?.data.url,
+            text: text?.data.text || '',
+            textSource: 'user',
+            sourceFeatureId: 'material-library',
+            sourcePagePath: '/festival/materials',
           });
+
+          navigate('/festival/category/video', { state: navState });
           break;
         }
 
@@ -237,12 +220,13 @@ const MaterialLibraryPage: React.FC = () => {
           >
             📸 图片 ({stats.image})
           </button>
-          <button
+          {/* 🔥 2026-02-07 春联功能暂时下线，注释掉标签 */}
+          {/* <button
             className={`material-type-tab ${selectedType === 'couplet' ? 'active' : ''}`}
             onClick={() => setSelectedType('couplet')}
           >
             🏮 春联 ({stats.couplet})
-          </button>
+          </button> */}
           <button
             className={`material-type-tab ${selectedType === 'text' ? 'active' : ''}`}
             onClick={() => setSelectedType('text')}
@@ -336,26 +320,44 @@ const MaterialLibraryPage: React.FC = () => {
                         }}
                       />
                     )}
+                    {/* 🔥 2026-02-07 春联功能暂时下线 */}
                     {material.type === 'couplet' && (
                       <div className="material-preview-icon">🏮</div>
                     )}
                     {material.type === 'text' && material.data.text && (
                       <div style={{
-                        padding: '12px',
-                        fontSize: '13px',
-                        lineHeight: '1.5',
-                        color: 'var(--cny-gray-700)',
+                        padding: '16px',
+                        fontSize: '14px',
+                        lineHeight: '1.6',
+                        color: 'var(--cny-gray-800)',
                         textAlign: 'left',
-                        overflow: 'hidden',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 4,
-                        WebkitBoxOrient: 'vertical'
+                        overflow: 'auto',
+                        maxHeight: '100%',
+                        wordBreak: 'break-word',
+                        whiteSpace: 'pre-wrap'
                       }}>
                         {material.data.text}
                       </div>
                     )}
-                    {material.type === 'audio' && (
-                      <div className="material-preview-icon">🎙️</div>
+                    {material.type === 'audio' && material.data.url && (
+                      <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '100%',
+                        gap: '12px',
+                        padding: '16px'
+                      }}>
+                        <div className="material-preview-icon" style={{ fontSize: '48px' }}>🎙️</div>
+                        <audio
+                          controls
+                          style={{ width: '100%', maxWidth: '200px' }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <source src={material.data.url} />
+                        </audio>
+                      </div>
                     )}
                     {material.type === 'video' && material.data.url && (
                       <video

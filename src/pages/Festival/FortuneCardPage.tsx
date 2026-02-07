@@ -14,6 +14,7 @@ import { MaterialService } from '../../services/MaterialService';
 import type { MaterialAtom } from '../../types/material';
 import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
 import { FestivalButton, FestivalButtonGroup } from '../../components/FestivalButton';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-lab-glass.css';
@@ -274,6 +275,8 @@ const FortuneCardPage: React.FC = () => {
       {/* 顶部导航 */}
       <div className="lab-top-nav">
         <BackButton />
+        <div style={{ flex: 1 }}></div>
+        <HomeButton />
       </div>
 
       {/* 主内容容器 */}
@@ -409,16 +412,16 @@ const FortuneCardPage: React.FC = () => {
             alignItems: 'center',
             minHeight: 'calc(100vh - 60px)'
           }}>
-            {/* 卡片 - 增大显示 */}
+            {/* 卡片 - 大幅增大显示 */}
             <img
               src={fortuneCard}
               alt="命理卡片"
               style={{
-                width: '90%',
-                maxWidth: '500px',
-                borderRadius: '16px',
-                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.3)',
-                marginBottom: '20px'
+                width: '95%',
+                maxWidth: '750px',
+                borderRadius: '20px',
+                boxShadow: '0 16px 48px rgba(0, 0, 0, 0.4)',
+                marginBottom: '24px'
               }}
             />
 

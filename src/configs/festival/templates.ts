@@ -40,20 +40,44 @@ export interface ImageTemplate {
 
 // ===== 模板配置 =====
 export const IMAGE_TEMPLATES: ImageTemplate[] = [
-  // ========== M1: 新年3D头像 ==========
-  // 目前只有一个默认模板，后续可扩展多种风格
-  // {
-  //   id: '3d-red-festive',
-  //   featureId: 'M1',
-  //   name: '喜庆红',
-  //   preview: '/images/templates/3d-red.jpg',
-  //   gender: 'all',
-  //   isDefault: true,
-  //   description: '红色传统服饰，金色装饰',
-  //   overrides: {
-  //     promptTemplate: 'pks, {{QWEN_OUTPUT}}, red traditional Chinese silk jacket with gold dragon patterns'
-  //   }
-  // },
+  // ========== M1: 新年3D头像 - 多风格模板 ==========
+  {
+    id: '3d-pixar',
+    featureId: 'M1',
+    name: '3D福喜',
+    preview: '/assets/templates/m1-3d-pixar.jpg',
+    gender: 'all',
+    isDefault: true,
+    isHot: true,
+    description: '皮克斯3D卡通风格，传统春节服饰',
+    overrides: {
+      // styleId会传给MissionExecutor
+    }
+  },
+  {
+    id: 'watercolor-spring',
+    featureId: 'M1',
+    name: '水彩春意',
+    preview: '/assets/templates/m1-watercolor.jpg',
+    gender: 'all',
+    isHot: true,
+    description: '柔和水彩画风，现代春节氛围',
+    overrides: {
+      // styleId会传给MissionExecutor
+    }
+  },
+  {
+    id: 'cyber-newyear',
+    featureId: 'M1',
+    name: '赛博新春',
+    preview: '/assets/templates/m1-cyber.jpg',
+    gender: 'all',
+    isHot: true,
+    description: 'Q版赛博朋克，科技感春节',
+    overrides: {
+      // styleId会传给MissionExecutor
+    }
+  },
   // {
   //   id: '3d-gold-luxury',
   //   featureId: 'M1',
@@ -78,8 +102,27 @@ export const IMAGE_TEMPLATES: ImageTemplate[] = [
   //   }
   // },
 
-  // ========== M2: 财神变身 ==========
-  // 模板资源在 assetTriggers.ts 中配置
+  // ========== M2: 新年写真（多模板）==========
+  {
+    id: 'm2-hongbao-female',
+    featureId: 'M2',
+    name: '发红包女',
+    preview: '/assets/templates/hongbao-female.jpg',
+    gender: 'female',
+    isDefault: true,
+    isHot: true,
+    description: '新年发红包造型（女性）'
+  },
+  {
+    id: 'm2-hongbao-male',
+    featureId: 'M2',
+    name: '发红包男',
+    preview: '/assets/templates/hongbao-male.jpg',
+    gender: 'male',
+    isDefault: true,
+    isHot: true,
+    description: '新年发红包造型（男性）'
+  }
 
   // ========== M7: 红包封面 ==========
   // {

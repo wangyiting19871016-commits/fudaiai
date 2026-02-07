@@ -899,6 +899,84 @@ const PRESET_SLOTS: APISlot[] = [
       }
     }
   },
+  {
+    id: 'kling-primary',
+    name: 'Kling AI (可灵)',
+    provider: 'Kling',
+    baseUrl: '/api/kling',
+    authType: 'Bearer',
+    authKey: 'KLING_API_KEY',
+    models: ['kling-v1-6'],
+    isPreset: true,
+    capabilities: ['图生视频 (Image to Video)', '音画同步 (Audio Sync)', '高质量运动生成'],
+    modelOverrides: {
+      'kling-v1-6': {
+        adapterConfig: {
+          structure_template: {
+            image_url: "{{image_url}}",
+            audio_url: "{{audio_url}}",
+            prompt: "{{prompt}}",
+            duration: "{{duration}}",
+            mode: "{{mode}}"
+          },
+          routing: {
+            endpoint: "/api/kling/video-generation"
+          },
+          response_path: {
+            video_url: "videoUrl"
+          }
+        },
+        params_schema: [
+          {
+            id: 'image_url',
+            name: '角色图片',
+            type: 'image',
+            required: true,
+            description: '上传你的照片'
+          },
+          {
+            id: 'audio_url',
+            name: '语音音频',
+            type: 'audio',
+            required: false,
+            description: '上传配音文件（可选，用于音画同步）'
+          },
+          {
+            id: 'prompt',
+            name: '视频描述',
+            type: 'textarea',
+            required: false,
+            defaultValue: '',
+            description: '描述想要的动作和场景（可选）'
+          },
+          {
+            id: 'duration',
+            name: '视频时长',
+            type: 'select',
+            required: false,
+            defaultValue: 5,
+            options: [
+              { label: '5秒 (标准)', value: 5 },
+              { label: '10秒 (扩展)', value: 10 }
+            ],
+            description: '生成视频的时长'
+          },
+          {
+            id: 'mode',
+            name: '服务模式',
+            type: 'select',
+            required: false,
+            defaultValue: 'std',
+            options: [
+              { label: '标准模式 (经济)', value: 'std' },
+              { label: '专业模式 (高质量)', value: 'pro' }
+            ],
+            description: '选择生成质量'
+          }
+        ] as any
+      }
+    }
+  },
 ];
 
 // 定义动作类型

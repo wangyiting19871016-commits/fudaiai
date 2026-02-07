@@ -7,127 +7,7 @@ const COS = require('cos-nodejs-sdk-v5')
 // 手动加载.env文件（用于middleware）
 require('dotenv').config()
 
-// 腾讯云COS上传中间件
-function cosUploadMiddleware() {
-  // 🔧 在函数顶部读取环境变量（而不是在请求时读取）
-  const bucket = process.env.VITE_TENCENT_COS_BUCKET;
-  const region = process.env.VITE_TENCENT_COS_REGION;
-  const secretId = process.env.VITE_TENCENT_COS_SECRET_ID;
-  const secretKey = process.env.VITE_TENCENT_COS_SECRET_KEY;
-
-  console.log('[COS Middleware] 初始化配置:', { bucket, region, hasSecretId: !!secretId, hasSecretKey: !!secretKey });
-
-  return {
-    name: 'cos-upload-middleware',
-    configureServer(server: any) {
-      server.middlewares.use('/api/upload-cos', async (req: any, res: any) => {
-        if (req.method !== 'POST') {
-          res.statusCode = 405;
-          res.end('Method Not Allowed');
-          return;
-        }
-
-        let body = '';
-        let isProcessing = false;  // 🔍 防止重复处理的标志位
-
-        req.on('data', (chunk: any) => {
-          body += chunk.toString();
-        });
-
-        req.on('end', async () => {
-          console.log('[COS Middleware] 🔍 end事件被触发，当前isProcessing:', isProcessing);
-
-          if (isProcessing) {
-            console.log('[COS Middleware] ⚠️ 检测到重复触发，已忽略');
-            return;
-          }
-          isProcessing = true;
-
-          try {
-            console.log('[COS Middleware] 🔍 开始处理，body长度:', body.length);
-            const { image, type, format } = JSON.parse(body);
-
-            if (!image) {
-              res.statusCode = 400;
-              res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ error: 'Missing image data' }));
-              return;
-            }
-
-            // 初始化COS
-            const cos = new COS({
-              SecretId: secretId,
-              SecretKey: secretKey
-            });
-
-            // Base64转Buffer（支持图片和音频）
-            let base64Data: string;
-            let fileExtension: string;
-
-            if (type === 'audio') {
-              // 音频文件处理
-              base64Data = image.replace(/^data:audio\/\w+;base64,/, '');
-              fileExtension = format || 'mp3';
-            } else {
-              // 图片文件处理（默认）
-              base64Data = image.replace(/^data:image\/\w+;base64,/, '');
-              fileExtension = 'jpg';
-            }
-
-            const buffer = Buffer.from(base64Data, 'base64');
-
-            const fileName = `festival/user/${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExtension}`;
-            console.log('[COS Middleware] 📁 文件名:', fileName, '类型:', type || 'image');
-
-            // 上传到COS
-            cos.putObject(
-              {
-                Bucket: bucket,
-                Region: region,
-                Key: fileName,
-                Body: buffer,
-                ACL: 'public-read'  // 🔧 设置文件为公开可读
-              },
-              (err: any, data: any) => {
-                if (err) {
-                  console.error('[COS Middleware] ❌ 上传失败:', err.message);
-                  res.statusCode = 500;
-                  res.setHeader('Content-Type', 'application/json');
-                  res.end(JSON.stringify({ error: err.message }));
-                } else {
-                  const url = `https://${bucket}.cos.${region}.myqcloud.com/${fileName}`;
-                  console.log('[COS Middleware] 构造的URL:', url);
-                  console.log('[COS Middleware] URL长度:', url.length);
-                  console.log('[COS Middleware] URL类型:', typeof url);
-
-                  const responseBody = JSON.stringify({ url });
-                  console.log('[COS Middleware] 响应体:', responseBody);
-                  console.log('[COS Middleware] 响应体长度:', responseBody.length);
-
-                  // 🔍 检查响应是否已经结束
-                  if (res.writableEnded) {
-                    console.log('[COS Middleware] ⚠️ 响应已经结束，跳过');
-                    return;
-                  }
-
-                  res.statusCode = 200;
-                  res.setHeader('Content-Type', 'application/json');
-                  console.log('[COS Middleware] 📤 准备发送响应...');
-                  res.end(responseBody);
-                  console.log('[COS Middleware] ✅ 响应已发送');
-                }
-              }
-            );
-          } catch (error: any) {
-            res.statusCode = 500;
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ error: error.message }));
-          }
-        });
-      });
-    }
-  };
-}
+// COS上传已移至后端server.js，通过/api/upload-cos代理访问
 
 // LiblibAI签名中间件（内联版本）
 function signMiddleware() {
@@ -180,7 +60,7 @@ function signMiddleware() {
 }
 
 export default defineConfig({
-  plugins: [react(), cosUploadMiddleware(), signMiddleware()],
+  plugins: [react(), signMiddleware()], // 移除cosUploadMiddleware，改用后端
   root: './',
   resolve: {
     alias: {
@@ -193,6 +73,17 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',  // 允许局域网访问
     proxy: {
+      // 图片/音频上传代理到后端（避免Vite中间件的响应重复问题）
+      '/api/upload-cos': {
+        target: 'http://localhost:3002',
+        changeOrigin: true,
+        secure: false
+      },
+      '/api/kling': {
+        target: 'http://localhost:3002',
+        changeOrigin: true,
+        secure: false
+      },
       '/api/dashscope': {
         target: 'https://dashscope.aliyuncs.com',
         changeOrigin: true,

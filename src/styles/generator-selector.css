@@ -1,0 +1,141 @@
+/**
+ * 生成方式选择器样式
+ */
+
+.generator-selector-modal .ant-modal-body {
+  padding: 24px;
+}
+
+/* ========== 图片生成器 - 网格卡片 ========== */
+.generator-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.generator-card {
+  position: relative;
+  padding: 24px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.generator-card:hover {
+  border-color: var(--cny-red-500);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.15);
+}
+
+.generator-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #000;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+.generator-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.generator-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cny-gray-900);
+  margin-bottom: 8px;
+}
+
+.generator-desc {
+  font-size: 13px;
+  color: var(--cny-gray-600);
+  line-height: 1.4;
+}
+
+/* ========== 文案生成器 - 列表 ========== */
+.generator-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.generator-list-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.generator-list-item:hover {
+  border-color: var(--cny-red-500);
+  background: rgba(255, 255, 255, 1);
+  transform: translateX(4px);
+}
+
+.generator-list-item .item-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.generator-list-item .item-content {
+  flex: 1;
+}
+
+.generator-list-item .item-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cny-gray-900);
+  margin-bottom: 4px;
+}
+
+.generator-list-item .recommended-badge {
+  padding: 2px 8px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #000;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.generator-list-item .item-desc {
+  font-size: 13px;
+  color: var(--cny-gray-600);
+  line-height: 1.4;
+}
+
+.generator-list-item .item-arrow {
+  font-size: 20px;
+  color: var(--cny-gray-400);
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 768px) {
+  .generator-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .generator-card {
+    padding: 20px 16px;
+  }
+
+  .generator-icon {
+    font-size: 40px;
+  }
+}

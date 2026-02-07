@@ -1,0 +1,106 @@
+{
+  "summary": {
+    "total": 12,
+    "success": 1,
+    "invalid_parameter": 0,
+    "unsupported_effect": 0,
+    "auth_failed": 0,
+    "other_errors": 11
+  },
+  "results": [
+    {
+      "template": "拜年讨红包",
+      "effect_scene": "new_year_greeting",
+      "status": "success",
+      "task_id": "849089107875237934",
+      "message": "任务创建成功"
+    },
+    {
+      "template": "舞狮",
+      "effect_scene": "lion_dance",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"24ea46fd-4ab9-4d5b-baf4-c90ca798247c\"}"
+    },
+    {
+      "template": "财神敲门",
+      "effect_scene": "fortune_knocks_cartoon",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"a7c06952-475a-4457-b743-0eb9994012d0\"}"
+    },
+    {
+      "template": "财神驾到",
+      "effect_scene": "fortune_god_transform",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"5356c880-817f-42c5-8244-3e4bc1bb960e\"}"
+    },
+    {
+      "template": "专属对联",
+      "effect_scene": "unique_spring_couplets",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"7b226048-ccd1-4d62-987f-394dbc5566bd\"}"
+    },
+    {
+      "template": "蹴鞠闹元宵",
+      "effect_scene": "lantern_festival_cuju",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"c2cd4766-4b5e-420a-8358-f83d0ac67beb\"}"
+    },
+    {
+      "template": "专属烟花",
+      "effect_scene": "unique_firework",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"1c7bc24b-b6de-4924-bb44-256701f8ce88\"}"
+    },
+    {
+      "template": "欢庆时刻",
+      "effect_scene": "celebration",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"bea5b40b-e5a2-4df7-8461-c16c0b7f3c65\"}"
+    },
+    {
+      "template": "冲天火箭",
+      "effect_scene": "rocket_rocket",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"7de0736a-af1a-411a-b035-ab8eb2777abf\"}"
+    },
+    {
+      "template": "金钱雨",
+      "effect_scene": "dollar_rain",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"8411b752-b789-417f-8626-e1aa2247b634\"}"
+    },
+    {
+      "template": "花花世界",
+      "effect_scene": "bloom_bloom",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"7e733dd3-9d84-4d10-9515-035118972892\"}"
+    },
+    {
+      "template": "万物膨胀",
+      "effect_scene": "expansion",
+      "status": "http_error",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"74515068-52dd-4eb7-b970-a5df0457ad2c\"}"
+    }
+  ],
+  "timestamp": "2026-02-07T12:26:06.493Z",
+  "valid_effects": [
+    "new_year_greeting"
+  ],
+  "invalid_effects": [],
+  "recommendations": [
+    "使用已验证的effect_scene值: new_year_greeting",
+    "避免使用包含重复单词的命名（如rocket_rocket, bloom_bloom）",
+    "优先使用简洁的命名模式"
+  ]
+}

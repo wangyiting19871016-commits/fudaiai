@@ -6,6 +6,7 @@ import { addWatermark } from '../../utils/addWatermark';
 import { MaterialService } from '../../services/MaterialService';
 import { ContinueCreationPanel } from '../../components/ContinueCreationPanel';
 import { HomeButton } from '../../components/HomeButton';
+import { MobileAdvancedEditor } from '../../components/MobileAdvancedEditor';
 import type { MaterialAtom } from '../../types/material';
 import { createNavigationState, type NavigationState } from '../../types/navigationState';
 import '../../styles/festival-design-system.css';
@@ -35,6 +36,8 @@ const FestivalResultPage: React.FC = () => {
   const [currentMaterial, setCurrentMaterial] = useState<MaterialAtom | null>(null); // 当前素材
   const [isSaved, setIsSaved] = useState(false); // 是否已保存到素材库
   const [showDownloadModal, setShowDownloadModal] = useState(false); // 显示下载引导
+  const [showAdvancedEditor, setShowAdvancedEditor] = useState(false); // 显示高级编辑器
+  const [editedImage, setEditedImage] = useState<string>(''); // 编辑后的图片
 
   useEffect(() => {
     // 自动清理过期任务（7天前的）
@@ -190,7 +193,7 @@ const FestivalResultPage: React.FC = () => {
       sourcePagePath: '/festival/result',
     });
 
-    navigate(`/festival/video/${taskId}`, { state: navState });
+    navigate('/festival/category/video', { state: navState });
   };
 
   const handleShare = async () => {
@@ -352,26 +355,65 @@ const FestivalResultPage: React.FC = () => {
   const handleRegenerate = () => {
     const missionId = result?.metadata?.missionId;
 
+    // 🔥 获取当前使用的参数，用于保留选择
+    const currentGender = result?.metadata?.gender;
+    const currentTemplateId = result?.metadata?.templateId;
+
     // M7运势抽卡：返回运势页
     if (missionId === 'M7') {
       navigate(`/festival/fortune/${missionId}`);
       return;
     }
 
-    // 有模板的任务（M2, M3, M4）：返回模板选择页
-    const tasksWithTemplate = ['M2', 'M3', 'M4'];
-    if (tasksWithTemplate.includes(missionId || '')) {
-      navigate(`/festival/template-select/${missionId}`);
+    // 🔥 M2写真：使用专用模板选择页
+    if (missionId === 'M2') {
+      navigate('/festival/m2-template-select', {
+        state: {
+          preserveGender: currentGender,
+          preserveTemplateId: currentTemplateId
+        }
+      });
       return;
     }
 
-    // 其他任务：返回实操页（M1直接上传，M6老照片修复）
+    // 🔥 M1等其他任务：使用通用模板页
+    const tasksWithTemplate = ['M1', 'M3', 'M4'];
+    if (tasksWithTemplate.includes(missionId || '')) {
+      navigate(`/festival/template-select/${missionId}`, {
+        state: {
+          preserveGender: currentGender,
+          preserveTemplateId: currentTemplateId
+        }
+      });
+      return;
+    }
+
+    // 其他任务：返回实操页（M6老照片修复等）
     navigate(`/festival/lab/${missionId}`);
   };
 
   const handleChangeTask = () => {
     // 返回福境入口（主页）
     navigate('/festival/home');
+  };
+
+  // 打开高级编辑器
+  const handleOpenAdvancedEditor = () => {
+    setShowAdvancedEditor(true);
+  };
+
+  // 保存编辑后的图片
+  const handleSaveEdited = (finalImageUrl: string) => {
+    setEditedImage(finalImageUrl);
+    setShowAdvancedEditor(false);
+
+    // 更新result对象，使用编辑后的图片
+    if (result) {
+      result.image = finalImageUrl;
+      result.comparisonImage = finalImageUrl;
+    }
+
+    message.success('编辑已保存！');
   };
 
   // 判断是否为老照片修复任务
@@ -476,6 +518,21 @@ const FestivalResultPage: React.FC = () => {
               重生成
             </button>
           </div>
+
+          {/* 高级编辑按钮 - 暂时禁用（功能未达要求）*/}
+          {/* <button
+            className="festival-result-btn"
+            onClick={handleOpenAdvancedEditor}
+            style={{
+              width: '100%',
+              background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+              color: '#1a1a24',
+              fontWeight: 'bold',
+              marginBottom: '16px'
+            }}
+          >
+            🎨 高级编辑（换背景/加装饰）
+          </button> */}
 
           {/* 保存提示 */}
           {isSaved && (
@@ -604,6 +661,15 @@ const FestivalResultPage: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* 高级编辑器 - H5移动端版本 */}
+      {showAdvancedEditor && (
+        <MobileAdvancedEditor
+          originalImage={editedImage || result?.image || ''}
+          onClose={() => setShowAdvancedEditor(false)}
+          onSave={handleSaveEdited}
+        />
       )}
     </div>
   );

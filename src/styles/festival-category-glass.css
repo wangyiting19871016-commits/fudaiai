@@ -3,6 +3,105 @@
  * 保持原有布局和交互，仅改变视觉风格
  */
 
+/* ========================================
+   Modal 弹窗样式
+   ======================================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 32px 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modal-content h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.modal-content p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.modal-content strong {
+  color: #ff6b6b;
+  font-weight: 700;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: #f8f9fa;
+  color: #666;
+}
+
+.btn-secondary:hover {
+  background: #e9ecef;
+}
+
+/* ========================================
+   功能卡片积分显示（已移除，保持原有布局）
+   ======================================== */
+
+.feature-credits-small {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(255, 107, 107, 0.9);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 10;
+}
+
 .festival-category-page {
   min-height: 100vh;
   background: var(--cny-bg-cream);

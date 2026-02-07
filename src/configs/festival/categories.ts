@@ -34,6 +34,15 @@ export const CATEGORIES: Category[] = [
     order: 2
   },
   {
+    id: 'video',
+    name: '视频制作',
+    icon: '',
+    description: '特效视频 · 数字人拜年',
+    gradient: ['#FF6B6B', '#FFA07A'],
+    previewImage: '/assets/showcase/home-video-preview.gif',
+    order: 2.5
+  },
+  {
     id: 'blessing',
     name: '拜年祝福',
     icon: '',

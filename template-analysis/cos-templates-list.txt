@@ -1,0 +1,16 @@
+===== COS 模板图片清单 =====
+
+【festival-templates/m2/male】 (2张)
+  1. asset.jpg
+     完整路径: festival-templates/m2/male/asset.jpg
+     大小: 396.80 KB
+     URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset.jpg
+
+  2. asset.png
+     完整路径: festival-templates/m2/male/asset.png
+     大小: 3546.69 KB
+     URL: https://fudaiai-1400086527.cos.ap-shanghai.myqcloud.com/festival-templates/m2/male/asset.png
+
+
+
+总计: 2 张图片

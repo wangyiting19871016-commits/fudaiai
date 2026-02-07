@@ -1,0 +1,407 @@
+/**
+ * H5移动端高级编辑器样式
+ * 设计：黑金国潮风格 + 移动端优化
+ */
+
+.mobile-advanced-editor {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #0f0f13 0%, #1a1a24 100%);
+  color: #e8e6e3;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* ===== 顶部工具栏 ===== */
+.editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #1a1a24 0%, #0f0f17 100%);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.header-btn-back {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-btn-back:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.header-btn-save {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #1a1a24;
+  font-weight: 600;
+}
+
+.header-btn-save:active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+/* ===== Canvas画布区 ===== */
+.editor-canvas-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #18181f;
+  overflow: auto;
+  padding: 16px;
+  min-height: 0;
+}
+
+.editor-canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 215, 0, 0.1);
+  cursor: pointer;
+  touch-action: none;
+}
+
+/* ===== 底部操作面板 ===== */
+.editor-bottom-panel {
+  flex-shrink: 0;
+  background: #1a1a24;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  max-height: 50vh;
+}
+
+/* Tab导航 */
+.editor-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.editor-tab {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  background: transparent;
+  color: #888;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.editor-tab.active {
+  background: rgba(255, 215, 0, 0.08);
+  color: #FFD700;
+  border-bottom-color: #FFD700;
+  font-weight: 600;
+}
+
+.editor-tab:active {
+  background: rgba(255, 215, 0, 0.12);
+}
+
+/* 内容区 */
+.editor-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px;
+}
+
+/* ===== 素材网格 ===== */
+.assets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.asset-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.asset-card:active {
+  background: rgba(255, 215, 0, 0.12);
+  border-color: #FFD700;
+  transform: scale(0.95);
+}
+
+.asset-preview {
+  width: 100%;
+  height: 80px;
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.asset-name {
+  font-size: 11px;
+  color: #bbb;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* ===== 文字工具 ===== */
+.text-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.text-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.text-input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e8e6e3;
+  font-size: 14px;
+  outline: none;
+}
+
+.text-input:focus {
+  border-color: #FFD700;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.text-add-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #1a1a24;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.text-add-btn:active {
+  opacity: 0.8;
+  transform: scale(0.95);
+}
+
+.text-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.presets-title {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.preset-btn {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(178, 34, 34, 0.3);
+  border-radius: 6px;
+  background: rgba(178, 34, 34, 0.1);
+  color: #FFD700;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.preset-btn:active {
+  background: rgba(178, 34, 34, 0.2);
+  border-color: #FFD700;
+  transform: scale(0.98);
+}
+
+/* ===== 图层管理 ===== */
+.layers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.layer-item.selected {
+  background: rgba(74, 144, 217, 0.15);
+  border-color: rgba(74, 144, 217, 0.4);
+}
+
+.layer-item:active {
+  background: rgba(74, 144, 217, 0.2);
+}
+
+.layer-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.layer-name {
+  flex: 1;
+  font-size: 13px;
+  color: #ccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layer-item.selected .layer-name {
+  color: #8BB8E8;
+  font-weight: 500;
+}
+
+.layer-delete {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.15);
+  color: #ef4444;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.layer-delete:active {
+  background: rgba(220, 38, 38, 0.3);
+  transform: scale(0.9);
+}
+
+.layer-actions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.action-btn {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 6px;
+  background: rgba(220, 38, 38, 0.15);
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.action-btn:active {
+  background: rgba(220, 38, 38, 0.25);
+  transform: scale(0.98);
+}
+
+/* ===== 空状态提示 ===== */
+.empty-hint {
+  padding: 40px 20px;
+  text-align: center;
+  color: #555;
+  font-size: 13px;
+}
+
+/* ===== 响应式优化 ===== */
+@media (max-width: 360px) {
+  .assets-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .editor-tab {
+    font-size: 12px;
+    padding: 10px 6px;
+  }
+
+  .header-title {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .assets-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ===== 滚动条美化 ===== */
+.editor-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.editor-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.editor-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.2);
+  border-radius: 2px;
+}
+
+.editor-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 215, 0, 0.3);
+}

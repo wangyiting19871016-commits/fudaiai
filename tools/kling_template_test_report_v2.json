@@ -1,0 +1,152 @@
+{
+  "summary": {
+    "total": 12,
+    "success": 4,
+    "signature_error": 0,
+    "http_401": 2,
+    "invalid_parameter": 0,
+    "unsupported_effect": 0,
+    "auth_failed": 0,
+    "other_errors": 6
+  },
+  "results": [
+    {
+      "template": "拜年讨红包",
+      "effect_scene": "new_year_greeting",
+      "status": "success",
+      "task_id": "849095479358410802",
+      "message": "任务创建成功",
+      "response_code": 0
+    },
+    {
+      "template": "舞狮",
+      "effect_scene": "lion_dance",
+      "status": "http_401",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"06a5279c-f609-4caa-ac40-975bd7412b7d\"}",
+      "response_parsed": {
+        "code": 1000,
+        "message": "Authorization signature is invalid",
+        "request_id": "06a5279c-f609-4caa-ac40-975bd7412b7d"
+      }
+    },
+    {
+      "template": "财神敲门",
+      "effect_scene": "fortune_knocks_cartoon",
+      "status": "exception",
+      "error": "Client network socket disconnected before secure TLS connection was established"
+    },
+    {
+      "template": "财神驾到",
+      "effect_scene": "fortune_god_transform",
+      "status": "success",
+      "task_id": "849095593112264797",
+      "message": "任务创建成功",
+      "response_code": 0
+    },
+    {
+      "template": "专属对联",
+      "effect_scene": "unique_spring_couplets",
+      "status": "success",
+      "task_id": "849095620123594834",
+      "message": "任务创建成功",
+      "response_code": 0
+    },
+    {
+      "template": "蹴鞠闹元宵",
+      "effect_scene": "lantern_festival_cuju",
+      "status": "exception",
+      "error": "Client network socket disconnected before secure TLS connection was established"
+    },
+    {
+      "template": "专属烟花",
+      "effect_scene": "unique_firework",
+      "status": "http_error",
+      "status_code": 429,
+      "response": "{\"code\":1303,\"message\":\"parallel task over resource pack limit\",\"request_id\":\"58a16538-3dd2-4839-9d0c-9889b49a78ef\"}",
+      "response_parsed": {
+        "code": 1303,
+        "message": "parallel task over resource pack limit",
+        "request_id": "58a16538-3dd2-4839-9d0c-9889b49a78ef"
+      }
+    },
+    {
+      "template": "欢庆时刻",
+      "effect_scene": "celebration",
+      "status": "http_error",
+      "status_code": 429,
+      "response": "{\"code\":1303,\"message\":\"parallel task over resource pack limit\",\"request_id\":\"87b94ce2-80ce-4ecf-8407-65b9217319ca\"}",
+      "response_parsed": {
+        "code": 1303,
+        "message": "parallel task over resource pack limit",
+        "request_id": "87b94ce2-80ce-4ecf-8407-65b9217319ca"
+      }
+    },
+    {
+      "template": "冲天火箭",
+      "effect_scene": "rocket_rocket",
+      "status": "http_error",
+      "status_code": 400,
+      "response": "{\"code\":1201,\"message\":\"effect_scene value 'rocket_rocket' is invalid\",\"request_id\":\"dc981279-a74d-449e-84f1-7b14a83626e9\"}",
+      "response_parsed": {
+        "code": 1201,
+        "message": "effect_scene value 'rocket_rocket' is invalid",
+        "request_id": "dc981279-a74d-449e-84f1-7b14a83626e9"
+      }
+    },
+    {
+      "template": "金钱雨",
+      "effect_scene": "dollar_rain",
+      "status": "http_401",
+      "status_code": 401,
+      "response": "{\"code\":1000,\"message\":\"Authorization signature is invalid\",\"request_id\":\"efa19e74-26a6-4831-ae5c-96b7dd585b4c\"}",
+      "response_parsed": {
+        "code": 1000,
+        "message": "Authorization signature is invalid",
+        "request_id": "efa19e74-26a6-4831-ae5c-96b7dd585b4c"
+      }
+    },
+    {
+      "template": "花花世界",
+      "effect_scene": "bloom_bloom",
+      "status": "http_error",
+      "status_code": 400,
+      "response": "{\"code\":1201,\"message\":\"effect_scene value 'bloom_bloom' is invalid\",\"request_id\":\"da5409b3-c5c1-47ac-a6a2-2cc236479f0e\"}",
+      "response_parsed": {
+        "code": 1201,
+        "message": "effect_scene value 'bloom_bloom' is invalid",
+        "request_id": "da5409b3-c5c1-47ac-a6a2-2cc236479f0e"
+      }
+    },
+    {
+      "template": "万物膨胀",
+      "effect_scene": "expansion",
+      "status": "success",
+      "task_id": "849095876286361697",
+      "message": "任务创建成功",
+      "response_code": 0
+    }
+  ],
+  "timestamp": "2026-02-07T12:52:32.979Z",
+  "test_config": {
+    "test_image_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+    "kling_access_key_prefix": "AHdgGnnt...",
+    "total_templates": 12
+  },
+  "valid_effects": [
+    "new_year_greeting",
+    "fortune_god_transform",
+    "unique_spring_couplets",
+    "expansion"
+  ],
+  "signature_errors": [],
+  "http401_errors": [
+    "lion_dance",
+    "dollar_rain"
+  ],
+  "recommendations": [
+    "检查API密钥有效期和请求频率限制",
+    "确保服务器时间与可灵API服务器同步",
+    "考虑使用server.js中的JWT生成逻辑进行测试"
+  ]
+}

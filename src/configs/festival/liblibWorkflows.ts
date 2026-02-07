@@ -23,6 +23,8 @@ export interface LiblibWorkflowConfig {
   };
   priority: number;  // 优先级（越小越优先）
   enabled: boolean;  // 是否启用
+  supportsHairSwap?: boolean;  // 是否支持换发型功能
+  hairSwapNodeId?: string;     // 控制换发型的节点ID（如果支持）
 }
 
 /**
@@ -88,7 +90,33 @@ export const M2_WORKFLOWS: LiblibWorkflowConfig[] = [
       templateImage: ['21'] // 模板图节点
     },
     priority: 2,  // 降低优先级
-    enabled: true
+    enabled: true,
+    supportsHairSwap: false  // ❌ 不支持换发型
+  },
+
+  // BananaPro平替 - 换发型实验工作流（慎用）
+  {
+    id: 'banana-pro-clone-v1',
+    name: 'BananaPro平替 - 换发型工作流',
+    description: '实验性功能 | 效果：6-7分（不稳定）| 速度：慢3倍（约3分钟）| 适合：古装、发型差异大的场景 | 不建议：现代装、证件照',
+    templateUuid: '4df2efa0f18d46dc9758803e478eb51c',
+    workflowUuid: '18d122a7506e44478fa7d1e562fb3f20',
+    nodeMapping: {
+      userPhoto: ['71'],    // 角色图片（脸部占比大）
+      templateImage: ['78']  // 背景图（待换脸场景）
+    },
+    extraNodes: {
+      '65': {
+        class_type: 'INTConstant',
+        inputs: {
+          value: 1  // 默认值：1=换头（含发型），2=只换脸
+        }
+      }
+    },
+    priority: 99,  // 🔽 降低优先级，仅在用户主动开启时使用
+    enabled: true,
+    supportsHairSwap: true,   // ✅ 支持换发型
+    hairSwapNodeId: '65'      // 节点65控制换发型（1=换头，2=只换脸）
   }
 ];
 

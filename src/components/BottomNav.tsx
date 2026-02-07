@@ -12,7 +12,7 @@ export const BottomNav: React.FC = () => {
   const tabs = [
     { id: 'home', label: '首页', icon: '🏠', path: '/festival/home' },
     { id: 'library', label: '我的作品', icon: '💼', path: '/festival/materials' },
-    { id: 'vip', label: '会员中心', icon: '👑', path: '/festival/vip' },
+    { id: 'vip', label: '会员', icon: '💰', path: '/festival/recharge' },
     { id: 'contact', label: '联系客服', icon: '💬', path: '/festival/contact' }
   ];
 

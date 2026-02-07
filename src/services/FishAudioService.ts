@@ -59,11 +59,12 @@ export interface VoiceCloneResult {
 // ========== Fish Audio Service ==========
 
 export class FishAudioService {
-  private static readonly API_KEY = API_VAULT.FISH_AUDIO.API_KEY;
-  private static readonly BASE_URL = API_VAULT.FISH_AUDIO.BASE_URL;
+  // ✅ 改为使用后端代理
+  private static readonly PROXY_BASE_URL = API_VAULT.FISH_AUDIO.PROXY_BASE_URL;
+  private static readonly PROXY_TTS = API_VAULT.FISH_AUDIO.PROXY_TTS;
 
   /**
-   * 预设音色TTS生成
+   * 预设音色TTS生成 (通过后端代理)
    */
   static async generateTTS(options: TTSOptions): Promise<TTSResult> {
     const {
@@ -79,13 +80,14 @@ export class FishAudioService {
     } = options;
 
     try {
-      console.log('[FishAudio] 开始TTS生成:', {
+      console.log('[FishAudio] 通过后端代理开始TTS生成:', {
         text: text.substring(0, 50) + '...',
         reference_id,
-        enhance_audio_quality
+        enhance_audio_quality,
+        proxyUrl: `${this.PROXY_BASE_URL}${this.PROXY_TTS}`
       });
 
-      // 构建请求体
+      // ✅ 调用后端代理
       const requestBody: any = {
         text: text.trim(),
         reference_id,
@@ -109,12 +111,11 @@ export class FishAudioService {
         requestBody.emotion = emotion;
       }
 
-      const response = await fetch(`${this.BASE_URL}/tts`, {
+      // ✅ 调用后端代理，无需API密钥
+      const response = await fetch(`${this.PROXY_BASE_URL}${this.PROXY_TTS}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.API_KEY}`,
-          'model': 's1'  // Fish Audio模型版本
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody)
       });

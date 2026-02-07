@@ -50,11 +50,8 @@ export class VoiceService {
         return { success: false, error: '未选择音色' };
       }
 
-      // 获取 API Key
-      const apiKey = API_VAULT.FISH_AUDIO?.API_KEY || '';
-      if (!apiKey) {
-        return { success: false, error: '缺少 Fish Audio API Key 配置' };
-      }
+      // ✅ 使用后端代理，不需要前端API密钥检查
+      // 后端代理会处理密钥验证
 
       // 调用 Fish Audio TTS API
       const response = await fetch('/api/fish/v1/tts', {

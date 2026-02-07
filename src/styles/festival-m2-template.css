@@ -1,0 +1,340 @@
+/**
+ * M2写真模板选择页 - Notion风格精简设计
+ *
+ * 设计理念：
+ * - 紧凑布局，节省空间
+ * - 4列网格，框体变小
+ * - Tab横向滑动
+ * - 无EMOJI，简洁Notion风格
+ */
+
+.m2-template-selection {
+  min-height: 100vh;
+  background: var(--cny-gray-50);
+  padding-bottom: 80px;
+}
+
+/* 顶部导航 */
+.template-top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: white;
+  border-bottom: 1px solid var(--cny-gray-200);
+}
+
+.template-page-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cny-gray-900);
+}
+
+/* 性别选择 - 紧凑型 */
+.gender-selector-compact {
+  display: flex;
+  gap: 6px;
+  padding: 12px 12px;
+  justify-content: center;
+}
+
+.gender-btn-small {
+  padding: 6px 16px;
+  background: white;
+  border: 1px solid var(--cny-gray-300);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cny-gray-700);
+}
+
+.gender-btn-small:hover {
+  border-color: var(--cny-red-300);
+  background: var(--cny-red-50);
+}
+
+.gender-btn-small.active {
+  background: var(--cny-red-500);
+  border-color: var(--cny-red-500);
+  color: white;
+}
+
+/* 分类Tab - 紧凑型 */
+.category-tabs-compact {
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--cny-gray-300);
+  overflow: hidden;
+}
+
+.tabs-scroll-compact {
+  display: flex;
+  gap: 4px;
+  padding: 0 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tabs-scroll-compact::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-item-compact {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  background: white;
+  border: 1px solid var(--cny-gray-300);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cny-gray-700);
+  scroll-snap-align: start;
+}
+
+.tab-item-compact:hover {
+  border-color: var(--cny-red-300);
+  background: var(--cny-red-50);
+}
+
+.tab-item-compact.active {
+  background: var(--cny-red-500);
+  border-color: var(--cny-red-500);
+  color: white;
+}
+
+.tab-item-compact .count {
+  font-size: 10px;
+  padding: 1px 5px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.tab-item-compact.active .count {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* 模板网格 - 4列紧凑布局 */
+.template-grid-compact {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 12px;
+}
+
+.template-card-compact {
+  position: relative;
+  aspect-ratio: 0.75;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 200ms;
+  border: 2px solid transparent;
+}
+
+.template-card-compact:hover {
+  transform: scale(1.02);
+}
+
+.template-card-compact:active {
+  transform: scale(0.98);
+}
+
+.template-card-compact.selected {
+  border-color: #FFD700;
+  box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.3);
+}
+
+.template-image-compact {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.selected-mark {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  animation: mark-appear 200ms ease;
+}
+
+@keyframes mark-appear {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 空状态 */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--cny-gray-500);
+  font-size: 13px;
+}
+
+/* 底部按钮 - 紧凑型 */
+.bottom-action-compact {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 12px;
+  background: white;
+  border-top: 1px solid var(--cny-gray-300);
+  z-index: 10;
+}
+
+.continue-btn-compact {
+  width: 100%;
+  padding: 12px;
+  background: var(--cny-red-500);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  font-family: inherit;
+}
+
+.continue-btn-compact:hover:not(:disabled) {
+  background: var(--cny-red-600);
+  transform: translateY(-1px);
+}
+
+.continue-btn-compact:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.continue-btn-compact:disabled {
+  background: var(--cny-gray-400);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 🆕 自定义上传区 */
+.custom-upload-section {
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.custom-upload-card {
+  display: block;
+  padding: 16px;
+  background: white;
+  border: 2px dashed var(--cny-gray-300);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all var(--duration-normal);
+  position: relative;
+}
+
+.custom-upload-card:hover {
+  border-color: var(--cny-primary);
+  background: var(--cny-red-50);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.custom-upload-card .upload-icon {
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.custom-upload-card .upload-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.custom-upload-card .upload-text strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cny-gray-900);
+}
+
+.custom-upload-card .upload-text span {
+  font-size: 12px;
+  color: var(--cny-gray-600);
+}
+
+.custom-upload-card .upload-preview {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.custom-upload-card .upload-preview img {
+  max-width: 100%;
+  max-height: 150px;
+  border-radius: 8px;
+  object-fit: contain;
+  border: 1px solid var(--cny-gray-200);
+}
+
+/* 响应式 */
+@media (max-width: 375px) {
+  .template-grid-compact {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .template-grid-compact {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    padding: 16px 20px;
+  }
+
+  .gender-selector-compact {
+    padding: 0 20px 16px;
+  }
+
+  .tabs-scroll-compact {
+    padding: 0 20px;
+  }
+
+  .bottom-action-compact {
+    padding: 12px 20px;
+  }
+
+  .continue-btn-compact {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .template-grid-compact {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}

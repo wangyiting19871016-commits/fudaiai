@@ -87,6 +87,7 @@
   padding: 12px 16px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background: rgba(10, 10, 15, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);

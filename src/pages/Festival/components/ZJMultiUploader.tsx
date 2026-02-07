@@ -158,16 +158,35 @@ const ZJMultiUploader: React.FC<ZJMultiUploaderProps> = ({
 
   const getPersonLabel = (index: number) => {
     if (personCount === 2) {
-      return index === 0 ? '人物1' : '人物2';
-    } else {
-      return ['人物1', '人物2', '人物3'][index];
+      // 情侣照：明确标注左右位置
+      return index === 0 ? '左边人物' : '右边人物';
+    } else if (personCount === 3) {
+      // 全家福：标注左中右位置
+      return ['左边人物', '中间人物', '右边人物'][index];
     }
+    return `人物${index + 1}`;
   };
 
   return (
     <div className="zj-multi-uploader">
       <div className="multi-uploader-title">
         上传{personCount}张照片
+      </div>
+
+      {/* 🔥 明确的上传顺序提示 */}
+      <div className="upload-order-hint">
+        {personCount === 2 && (
+          <div className="hint-text">
+            ⚠️ 请按照合照中的位置顺序上传<br/>
+            <span className="hint-emphasis">第1张 = 左边人物 | 第2张 = 右边人物</span>
+          </div>
+        )}
+        {personCount === 3 && (
+          <div className="hint-text">
+            ⚠️ 请按照合照中的位置顺序上传<br/>
+            <span className="hint-emphasis">第1张 = 左边 | 第2张 = 中间 | 第3张 = 右边</span>
+          </div>
+        )}
       </div>
 
       <div className="multi-uploader-grid">

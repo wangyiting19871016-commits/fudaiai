@@ -14,6 +14,13 @@ export interface TextTemplate {
   tags: string[];
 }
 
+export interface SceneCategory {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+}
+
 // ===== 超短文案（8-15字）- 适合判词/语音/视频 =====
 export const SHORT_TEMPLATES: TextTemplate[] = [
   // 马年系列（20条）
@@ -193,7 +200,7 @@ export const MEDIUM_TEMPLATES: TextTemplate[] = [
 ];
 
 // ===== 场景分类 =====
-export const SCENE_CATEGORIES = [
+export const SCENE_CATEGORIES: SceneCategory[] = [
   { id: 'general', name: '通用', icon: '', description: '适合所有场合' },
   { id: 'elder', name: '长辈', icon: '', description: '尊敬长辈，孝心满满' },
   { id: 'friend', name: '朋友', icon: '', description: '友谊常青，快乐无限' },

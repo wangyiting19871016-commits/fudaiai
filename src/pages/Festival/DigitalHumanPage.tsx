@@ -204,7 +204,30 @@ const DigitalHumanPage: React.FC = () => {
         message: '上传照片中...'
       });
 
-      const imageUploadResult = await uploadImage(uploadedImage);
+      console.log('[DigitalHuman] 上传图片 - uploadedImage类型:', typeof uploadedImage);
+      console.log('[DigitalHuman] 上传图片 - uploadedImage长度:', uploadedImage?.length || 0);
+      console.log('[DigitalHuman] 上传图片 - uploadedImage前100字符:', uploadedImage?.substring(0, 100));
+
+      // 🔧 修复：如果是 HTTP URL，需要先转换为 base64（参考 VideoPage 的成功实现）
+      let imageToUpload = uploadedImage;
+      if (uploadedImage.startsWith('http://') || uploadedImage.startsWith('https://')) {
+        console.log('[DigitalHuman] 图片是HTTP URL，转换为blob...');
+        try {
+          const response = await fetch(uploadedImage);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          imageToUpload = await new Promise<string>((resolve, reject) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+          console.log('[DigitalHuman] 图片已转换为data URL，长度:', imageToUpload.length);
+        } catch (err) {
+          console.warn('[DigitalHuman] HTTP图片转换失败，尝试直接使用:', err);
+        }
+      }
+
+      const imageUploadResult = await uploadImage(imageToUpload);
       if (!imageUploadResult.success) {
         throw new Error(imageUploadResult.error || '图片上传失败');
       }
@@ -466,7 +489,7 @@ const DigitalHumanPage: React.FC = () => {
         greetingText: greetingText,
       },
       connectors: {
-        roles: ['video'],
+        roles: ['videoResult'],
         canCombineWith: ['text'],
       },
     };

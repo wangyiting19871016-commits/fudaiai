@@ -768,10 +768,11 @@ export class MissionExecutor {
       let response;
       try {
         console.log('[MissionExecutor] 调用LiblibAI API...');
+        const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
         response = await sendRequest(
           {
             method: 'POST',
-            url: '/api/liblib/api/generate/webui/text2img',  // ✅ 恢复原来的URL和字段名
+            url: `${proxyBaseUrl}/api/liblib/text2img`,  // 使用后端代理
             body: requestBody
           },
           liblibKey

@@ -14,6 +14,11 @@ const HomePageGlass: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCategoryClick = (categoryId: string) => {
+    // 🔥 2026-02-07 可灵特效暂时下线(API不稳定,成本高),视频分类只有数字人,直接跳转
+    if (categoryId === 'video') {
+      navigate('/festival/video');
+      return;
+    }
     navigate(`/festival/category/${categoryId}`);
   };
 
@@ -25,18 +30,19 @@ const HomePageGlass: React.FC = () => {
   const cardBackgrounds: Record<string, string> = {
     'avatar': '/assets/showcase/new-year-avatar-latest.png',
     'family': '/assets/showcase/couple.jpg',
+    'video': '/assets/showcase/home-video-preview.gif',
     'blessing': '/assets/showcase/blessing-new.jpg',
     'fun': '/assets/showcase/fortune-new.jpg'
   };
 
   // 画廊展示图片
   const showcaseImages = [
-    { img: '/assets/showcase/gallery-1.jpg', label: '3D头像' },
-    { img: '/assets/showcase/gallery-2.jpg', label: '全家福' },
-    { img: '/assets/showcase/gallery-3.jpg', label: '写真' },
-    { img: '/assets/showcase/gallery-4.jpg', label: '修复' },
-    { img: '/assets/showcase/gallery-5.jpg', label: '国潮' },
-    { img: '/assets/showcase/gallery-6.jpg', label: '春联' }
+    { img: '/assets/showcase/gallery-1.jpg', label: '2D动漫' },
+    { img: '/assets/showcase/gallery-2.jpg', label: '水彩春意' },
+    { img: '/assets/showcase/gallery-3.jpg', label: '赛博新春' },
+    { img: '/assets/showcase/gallery-4.jpg', label: '国风厚涂' },
+    { img: '/assets/showcase/gallery-5.jpg', label: '国风厚涂' },
+    { img: '/assets/showcase/gallery-6.jpg', label: 'Q版娃娃' }
   ];
 
   return (

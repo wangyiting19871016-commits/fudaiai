@@ -41,8 +41,11 @@ export class TextService {
         return { success: false, error: `提示词模板 [${promptKey}] 未找到` };
       }
 
+      // 获取后端URL
+      const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+
       // 调用后端代理（密钥在后端）
-      const response = await fetch('/api/deepseek/chat/completions', {
+      const response = await fetch(`${backendUrl}/api/deepseek/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

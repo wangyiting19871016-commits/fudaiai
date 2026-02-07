@@ -175,7 +175,10 @@ const FortuneCardPage: React.FC = () => {
         face_analysis: faceAnalysis
       });
 
-      const response = await fetch('/api/deepseek/chat/completions', {
+      // 获取后端URL
+      const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+
+      const response = await fetch(`${backendUrl}/api/deepseek/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

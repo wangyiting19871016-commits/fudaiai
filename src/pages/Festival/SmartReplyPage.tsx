@@ -58,7 +58,10 @@ const SmartReplyPage: React.FC = () => {
 
 只输出类别名称，不要解释。`;
 
-      const classifyResponse = await fetch('/api/deepseek/chat/completions', {
+      // 获取后端URL
+      const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+
+      const classifyResponse = await fetch(`${backendUrl}/api/deepseek/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -84,7 +87,7 @@ const SmartReplyPage: React.FC = () => {
       // Step 2: 使用金句库作为few-shot examples生成回复
       const prompt = generateSmartReplyPrompt(category, question, relation, scene);
 
-      const response = await fetch('/api/deepseek/chat/completions', {
+      const response = await fetch(`${backendUrl}/api/deepseek/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

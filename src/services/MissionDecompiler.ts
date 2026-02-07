@@ -3,9 +3,8 @@
 // 导入真迹协议 schema
 import { Mission } from '../missionSchema';
 
-// DeepSeek API 配置 - DeepSeek-V3 接口
-const DEEPSEEK_API_KEY = ''; // 实际使用时从环境变量获取
-const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+// DeepSeek API 配置 - 使用后端代理（密钥在后端，安全）
+const DEEPSEEK_API_URL = '/api/deepseek/chat/completions';
 
 // 提示模板 - 支持B站链接解析和3-10步约束
 const PROMPT_TEMPLATE = `你是一位专业的《真迹协议 v1.0》解析器。请将用户输入的视频文案/教程文字或B站链接，严格按照真迹协议格式转换为JSON结构。
@@ -29,11 +28,10 @@ const PROMPT_TEMPLATE = `你是一位专业的《真迹协议 v1.0》解析器�
  * MissionDecompiler 类 - 负责将用户输入转换为真迹协议JSON
  */
 export class MissionDecompiler {
-  private apiKey: string;
   private apiUrl: string;
 
-  constructor(apiKey?: string, apiUrl?: string) {
-    this.apiKey = apiKey || DEEPSEEK_API_KEY;
+  constructor(apiUrl?: string) {
+    // 使用后端代理，无需API Key
     this.apiUrl = apiUrl || DEEPSEEK_API_URL;
   }
 
@@ -76,17 +74,14 @@ export class MissionDecompiler {
    */
   async decompileMission(userInput: string): Promise<Mission> {
     try {
-      if (!this.apiKey) {
-        throw new Error('DeepSeek API key is not configured');
-      }
-
       const requestBody = this.buildRequest(userInput);
-      
+
+      // 调用后端代理（密钥在后端）
       const response = await fetch(this.apiUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`
+          'Content-Type': 'application/json'
+          // Authorization由后端代理处理
         },
         body: JSON.stringify(requestBody)
       });

@@ -32,10 +32,11 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
       console.log('[COS] 🔍 File转base64完成，长度:', base64Data.length);
     }
 
-    // 🔧 直接调用后端，绕过Vite proxy（避免proxy损坏响应）
+    // 🔧 调用后端上传（密钥在后端，避免前端暴露）
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
     console.log('[COS] 🔍 base64Data长度:', base64Data.length);
-    console.log('[COS] 🔍 直接调用后端 http://localhost:3002/api/upload-cos...');
-    const response = await fetch('http://localhost:3002/api/upload-cos', {
+    console.log('[COS] 🔍 调用后端上传:', `${backendUrl}/api/upload-cos`);
+    const response = await fetch(`${backendUrl}/api/upload-cos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ image: base64Data }),
@@ -226,9 +227,10 @@ export async function uploadAudioToTencentCOS(blob: Blob, format: string = 'mp3'
       reader.readAsDataURL(blob);
     });
 
-    // 🔧 直接调用后端，绕过Vite proxy
-    console.log('[COS] 🔍 发送音频上传请求到后端...');
-    const response = await fetch('http://localhost:3002/api/upload-cos', {
+    // 🔧 调用后端上传音频（密钥在后端）
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+    console.log('[COS] 🔍 发送音频上传请求到后端:', `${backendUrl}/api/upload-cos`);
+    const response = await fetch(`${backendUrl}/api/upload-cos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -296,34 +298,20 @@ export async function uploadAudioToTencentCOS(blob: Blob, format: string = 'mp3'
  * 自动选择可用的图床服务（优先腾讯云COS）
  */
 export async function uploadImage(file: File | string): Promise<UploadResult> {
-  // 优先使用腾讯云COS（生产环境推荐）
-  const cosSecretId = import.meta.env.VITE_TENCENT_COS_SECRET_ID;
-  const cosSecretKey = import.meta.env.VITE_TENCENT_COS_SECRET_KEY;
+  // 直接使用后端腾讯云COS上传（密钥在后端，安全）
+  console.log('[ImageHosting] 通过后端上传到腾讯云COS...');
+  const result = await uploadToTencentCOS(file);
 
-  if (cosSecretId && cosSecretKey) {
-    console.log('[ImageHosting] Using Tencent COS...');
-    const result = await uploadToTencentCOS(file);
-
-    // COS成功就直接返回
-    if (result.success) {
-      return result;
-    }
-
-    // COS失败，尝试降级到ImgBB
-    console.warn('[ImageHosting] COS上传失败，尝试降级到ImgBB...', result.error);
+  // COS成功就直接返回
+  if (result.success) {
+    return result;
   }
 
-  // 降级方案：ImgBB
-  const imgbbKey = import.meta.env.VITE_IMGBB_API_KEY;
-  if (imgbbKey) {
-    console.log('[ImageHosting] Using ImgBB (fallback)...');
-    return uploadToImgBB(file, imgbbKey);
-  }
-
-  // 如果没有配置任何图床，返回错误提示
+  // COS失败，返回错误
+  console.error('[ImageHosting] COS上传失败:', result.error);
   return {
     success: false,
-    error: '未配置图床服务。请在.env文件中设置腾讯云COS或ImgBB配置'
+    error: `图片上传失败: ${result.error}`
   };
 }
 
@@ -333,16 +321,7 @@ export async function uploadImage(file: File | string): Promise<UploadResult> {
  * @param format 音频格式
  */
 export async function uploadAudio(blob: Blob, format: string = 'mp3'): Promise<UploadResult> {
-  const cosSecretId = import.meta.env.VITE_TENCENT_COS_SECRET_ID;
-  const cosSecretKey = import.meta.env.VITE_TENCENT_COS_SECRET_KEY;
-
-  if (cosSecretId && cosSecretKey) {
-    console.log('[AudioHosting] Using Tencent COS...');
-    return uploadAudioToTencentCOS(blob, format);
-  }
-
-  return {
-    success: false,
-    error: '未配置音频上传服务。请在.env文件中设置腾讯云COS配置'
-  };
+  // 直接使用后端腾讯云COS上传（密钥在后端，安全）
+  console.log('[AudioHosting] 通过后端上传音频到腾讯云COS...');
+  return uploadAudioToTencentCOS(blob, format);
 }

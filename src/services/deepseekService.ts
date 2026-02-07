@@ -231,10 +231,7 @@ const mainFunction = async (userInput: string, ...args: any[]): Promise<any> => 
       const isMicroStepGeneration = args.includes('microSteps');
       const schemeType = args.find(arg => ['A', 'B', 'C'].includes(arg)) || 'A';
       
-      // 禁用所有Mock模式，只使用真实API服务
-      if (!DEEPSEEK_CONFIG.apiKey) {
-        throw new Error("请配置DeepSeek API密钥");
-      }
+      // 使用后端代理，无需前端配置API密钥
       
       // 降级提示词：使用简化的系统提示词，停用 MICRO_STEPS_SYSTEM_PROMPT
       const simplifiedSystemPrompt = `
@@ -344,8 +341,8 @@ P4 (Mission Foundry) API 抓取器 - SiliconFlow 风格
       };
       
       const deepseekHeaders = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_CONFIG.apiKey}`
+        'Content-Type': 'application/json'
+        // Authorization由后端代理处理，前端不传递API Key
       };
       
       // 强制打印请求指纹

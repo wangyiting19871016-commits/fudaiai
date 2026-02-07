@@ -77,3 +77,15 @@ mission-hunter/Lib/
 backups/
 *.bak
 *.backup
+# === 部署清理：不上传的文件 ===
+.claude/
+.cursor/
+.git_backup*/
+cloudflared.exe
+*.log
+.trae/
+mission-hunter/
+Lib/
+Scripts/
+Include/
+pyvenv.cfg

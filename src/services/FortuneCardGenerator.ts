@@ -53,18 +53,13 @@ export class FortuneCardGenerator {
     console.log('[FortuneCardGenerator] Prompt:', prompt);
 
     try {
-      // 使用LiblibAI FLUX API
-      const accessKey = API_VAULT.LIBLIB.ACCESS_KEY;
-      const secretKey = API_VAULT.LIBLIB.SECRET_KEY;
+      // ✅ 使用后端代理，通过占位符触发secureApiService拦截
+      const accessKey = API_VAULT.LIBLIB.ACCESS_KEY || 'PROXY';
+      const secretKey = API_VAULT.LIBLIB.SECRET_KEY || 'MODE';
+      const liblibKey = `${accessKey}\n${secretKey}`;  // "PROXY\nMODE"
 
-      if (!accessKey || !secretKey) {
-        throw new Error('LiblibAI密钥未配置');
-      }
-
-      const liblibKey = `${accessKey}\n${secretKey}`;
-
-      // 导入sendRequest
-      const { sendRequest } = await import('./apiService');
+      // ✅ 导入secureApiService（会自动拦截LiblibAI调用）
+      const { sendRequest } = await import('./secureApiService');
 
       // 构建请求
       const requestBody = {

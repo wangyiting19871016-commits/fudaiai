@@ -1,0 +1,73 @@
+/**
+ * ⚠️⚠️⚠️ 已下线 (2026-02-08) ⚠️⚠️⚠️
+ *
+ * 【下线原因】
+ * 1. Kling API 不稳定，成功率低
+ * 2. 成本过高（每次生成约¥2）
+ * 3. 生成时间过长（3-5分钟）
+ * 4. 用户体验不佳
+ *
+ * 【UI变更】
+ * VideoCategoryPage 中"特效视频"选项已注释（Line 25-34）
+ * 用户在视频选择页不再看到此选项
+ *
+ * 【路由状态】
+ * 路由: /festival/kling-effects
+ * 状态: 建议重定向到视频选择页或显示维护页
+ * 当前: 仍可通过直接输入URL访问（需要修复）
+ *
+ * 【如需恢复】
+ * 1. 确认 Kling API 稳定性和成本可控
+ * 2. 在 VideoCategoryPage.tsx 中取消注释 Kling 选项 (Line 25-34)
+ * 3. 重命名此文件回 KlingEffectsPage.tsx
+ * 4. 确保 App.tsx 中的路由配置正确
+ * 5. 更新成本和限额配置
+ * 6. 充分测试后再上线
+ *
+ * 【功能说明】
+ * - 输入: 一张图片
+ * - 输出: 5秒特效视频（烟花、财神、舞狮等12种特效）
+ * - 自带背景音乐
+ * - 不需要文案或音频
+ *
+ * 【文件大小】
+ * 17KB
+ *
+ * 【最后修改】
+ * 2026-02-07 - 功能开发完成
+ * 2026-02-08 - 因稳定性问题下线
+ * 2026-02-08 - 标记为废弃
+ *
+ * ========================================
+ * 以下为原始代码（已下线，请勿使用）
+ * ========================================
+ */
+
+// 原始文件内容已移除
+// 如需查看，请使用 git 查看历史版本：
+// git show HEAD~n:src/pages/Festival/KlingEffectsPage.tsx
+
+export default function KlingEffectsPageDeprecated() {
+  return (
+    <div style={{ padding: '40px', textAlign: 'center' }}>
+      <h2>🔧 功能维护中</h2>
+      <p>Kling 特效视频功能暂时下线维护</p>
+      <p>原因: API 不稳定，正在优化中</p>
+      <button
+        onClick={() => window.location.href = '#/festival/category/video'}
+        style={{
+          marginTop: '20px',
+          padding: '12px 24px',
+          fontSize: '16px',
+          background: '#E53935',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer'
+        }}
+      >
+        返回视频选择
+      </button>
+    </div>
+  );
+}

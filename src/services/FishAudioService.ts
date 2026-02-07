@@ -173,12 +173,12 @@ export class FishAudioService {
         formData.append('enhance_audio_quality', 'true');
       }
 
-      const response = await fetch(`${this.BASE_URL}/voices`, {
+      // ✅ 使用后端代理 /api/fish/voices
+      // 后端会处理Authorization和Fish Audio API调用
+      const response = await fetch('/api/fish/voices', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.API_KEY}`
-          // 不要设置Content-Type，让浏览器自动设置multipart/form-data
-        },
+        // 不需要Authorization，后端代理会处理
+        // 不要设置Content-Type，让浏览器自动设置multipart/form-data
         body: formData
       });
 

@@ -12,7 +12,8 @@ const PRESET_SLOTS: APISlot[] = [
     provider: 'N1N',
     baseUrl: API_VAULT.N1N.BASE_URL,
     authType: 'Bearer',
-    authKey: API_VAULT.N1N.MASTER_KEY,
+    // ✅ N1N密钥从localStorage读取，用户需自行配置
+    authKey: localStorage.getItem('N1N_API_KEY') || '',
     models: ['gpt-4.1', 'gpt-4o', 'claude-3-5-sonnet-20241022', 'flux-pro', 'mj_imagine', 'black-forest-labs/flux-kontext-pro', 'black-forest-labs/flux-kontext-dev', 'black-forest-labs/flux-kontext-max', 'runwayml-gen3a_turbo-5'],
     isPreset: true,
     capabilities: ['文生图 (FLUX Pro)', '对话 (GPT-4.1/4o)', '视频 (Runway)'],
@@ -301,7 +302,8 @@ const PRESET_SLOTS: APISlot[] = [
     provider: 'Custom', // 使用 Custom Provider 配合 Adapter 实现
     baseUrl: '/api/liblib',
     authType: 'Query',
-    authKey: `${API_VAULT.LIBLIB.ACCESS_KEY}\n${API_VAULT.LIBLIB.SECRET_KEY}`,
+    // ✅ 使用占位符"PROXY\nMODE"触发secureApiService拦截
+    authKey: 'PROXY\nMODE',
     // Liblib 通常需要签名，这里我们简化为直接透传 Key，后续在 apiService 中处理签名逻辑
     // 或者利用 Custom Provider 的灵活性
     models: ['liblib-canny', 'liblib-qrcode', 'liblib-flux-dev', 'liblib-all-in-one-v2', 'liblib-face-swap-hd'],
@@ -555,7 +557,8 @@ const PRESET_SLOTS: APISlot[] = [
     provider: 'SiliconFlow',
     baseUrl: API_VAULT.SILICONFLOW.BASE_URL,
     authType: 'Bearer',
-    authKey: API_VAULT.SILICONFLOW.MASTER_KEY,
+    // ✅ SiliconFlow密钥从localStorage读取，用户需自行配置
+    authKey: localStorage.getItem('SILICON_FLOW_KEY') || localStorage.getItem('token') || '',
     models: ['black-forest-labs/FLUX.1-dev', 'Qwen/Qwen2.5-7B-Instruct', 'deepseek-ai/DeepSeek-V3', 'FunAudioLLM/CosyVoice2-0.5B'],
     isPreset: true,
     capabilities: ['文生图 (FLUX)', '对话 (Qwen/DeepSeek)'],
@@ -781,9 +784,11 @@ const PRESET_SLOTS: APISlot[] = [
     id: 'fish-audio-tts',
     name: 'Fish Audio (语音合成)',
     provider: 'FishAudio',
-    baseUrl: API_VAULT.FISH_AUDIO.BASE_URL,
+    // ✅ 使用后端代理
+    baseUrl: API_VAULT.FISH_AUDIO.PROXY_BASE_URL || '',
     authType: 'Bearer',
-    authKey: API_VAULT.FISH_AUDIO.API_KEY,
+    // ✅ 不需要authKey，后端代理会处理
+    authKey: '',
     models: ['tts'],
     isPreset: true,
     capabilities: ['文字转语音 (TTS)', '声音克隆', '多语言支持'],
@@ -804,7 +809,8 @@ const PRESET_SLOTS: APISlot[] = [
               volume: '{{volume}}'
             }
           },
-          routing: { endpoint: `${API_VAULT.FISH_AUDIO.BASE_URL}/tts` },
+          // ✅ 使用后端代理端点
+          routing: { endpoint: `${API_VAULT.FISH_AUDIO.PROXY_BASE_URL || ''}${API_VAULT.FISH_AUDIO.PROXY_TTS || '/api/fish/tts'}` },
           io_schema: { inputType: 'text', outputType: 'audio' }
         },
         params_schema: [

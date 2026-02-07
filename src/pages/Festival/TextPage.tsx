@@ -11,6 +11,7 @@ import { CoupletEditor } from '../../components/CoupletEditor';
 import { FestivalButton, FestivalButtonGroup } from '../../components/FestivalButton';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
+import { createNavigationState } from '../../types/navigationState';
 import type { MaterialAtom, CoupletData } from '../../types/material';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival.css';
@@ -313,13 +314,15 @@ const FestivalTextPage: React.FC = () => {
 
   // 转语音
   const handleToVoice = () => {
-    // 通过state传递文案，跳转到语音页
-    navigate('/festival/voice', {
-      state: {
-        prefillText: generatedText,
-        sourceFeature: featureId
-      }
+    // ✅ 使用标准NavigationState传递文案
+    const navState = createNavigationState({
+      text: generatedText,
+      textSource: 'ai',  // AI生成的文案
+      sourceFeatureId: featureId,
+      sourcePagePath: location.pathname
     });
+
+    navigate('/festival/voice', { state: navState });
   };
 
   // 返回

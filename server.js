@@ -2473,14 +2473,15 @@ app.post('/api/payment/manual-complete', express.json(), (req, res) => {
   }
 });
 
-// 处理所有其他请求，返回前端应用
+// 🔒 加载API代理端点 (安全地代理第三方API调用)
+// ⚠️ 必须在catch-all中间件之前加载，否则会被拦截
+const apiProxyRoutes = require('./api-proxy-endpoints');
+apiProxyRoutes(app);
+
+// 处理所有其他请求，返回前端应用（必须放在最后）
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
-
-// 🔒 加载API代理端点 (安全地代理第三方API调用)
-const apiProxyRoutes = require('./api-proxy-endpoints');
-apiProxyRoutes(app);
 
 // 添加全局错误处理中间件 - 捕获所有中间件的错误
 app.use((err, req, res, next) => {

@@ -50,16 +50,17 @@ export class VoiceService {
         return { success: false, error: '未选择音色' };
       }
 
-      // ✅ 使用后端代理，不需要前端API密钥检查
-      // 后端代理会处理密钥验证
+      // ✅ 使用后端代理 /api/fish/tts
+      // 后端代理会处理密钥验证和Authorization
+      const proxyBaseUrl = API_VAULT.FISH_AUDIO.PROXY_BASE_URL || '';
+      const proxyTTS = API_VAULT.FISH_AUDIO.PROXY_TTS || '/api/fish/tts';
 
-      // 调用 Fish Audio TTS API
-      const response = await fetch('/api/fish/v1/tts', {
+      // 调用 Fish Audio TTS 后端代理
+      const response = await fetch(`${proxyBaseUrl}${proxyTTS}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'model': 's1'
+          'Content-Type': 'application/json'
+          // 不需要Authorization，后端代理会处理
         },
         body: JSON.stringify({
           text: text.trim(),
@@ -104,21 +105,18 @@ export class VoiceService {
 
   /**
    * 创建克隆音色
+   * ✅ 使用后端代理 /api/fish/model
    */
   static async createClonedVoice(params: {
     audioBlob: Blob;
     title?: string;
   }): Promise<{ success: boolean; voiceId?: string; error?: string }> {
     try {
-      const apiKey = API_VAULT.FISH_AUDIO?.API_KEY || '';
-      if (!apiKey) {
-        return { success: false, error: '缺少 Fish Audio API Key 配置' };
-      }
-
+      // ✅ 使用后端代理，不需要前端API密钥
       const formData = new FormData();
       formData.append('type', 'tts');
-      formData.append('title', params.title || `我的声音_${Date.now()}`);
-      formData.append('train_mode', 'fast');
+      formData.append('name', params.title || `我的声音_${Date.now()}`);
+      formData.append('description', '用户上传的声音克隆');
       formData.append('visibility', 'private');
 
       const file = new File([params.audioBlob], `voice_${Date.now()}.webm`, {
@@ -126,22 +124,22 @@ export class VoiceService {
       });
       formData.append('voices', file);
 
+      // 调用后端代理（后端会处理Authorization）
       const response = await fetch('/api/fish/model', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`
-        },
+        // 不需要Authorization header，后端代理会处理
         body: formData
       });
 
       if (!response.ok) {
-        return { success: false, error: `创建失败: ${response.status}` };
+        const errorText = await response.text();
+        return { success: false, error: `创建失败: ${response.status} - ${errorText}` };
       }
 
       const result = await response.json();
       return {
         success: true,
-        voiceId: result._id
+        voiceId: result._id || result.id
       };
 
     } catch (error: any) {

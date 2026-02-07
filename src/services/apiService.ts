@@ -745,10 +745,14 @@ export const executeMissionAPI = async (protocol: any, inputValues: any) => {
     }
   }
 
-  // 1. 物理鉴权优先级：LocalStorage -> API_VAULT Master Key
-  const key = localStorage.getItem('SILICON_FLOW_KEY') || 
-              localStorage.getItem('token') || 
-              API_VAULT.SILICONFLOW.MASTER_KEY;
+  // 1. 物理鉴权：从LocalStorage读取
+  // ✅ 不再从API_VAULT读取密钥，用户需在P4Lab中配置
+  const key = localStorage.getItem('SILICON_FLOW_KEY') ||
+              localStorage.getItem('token') || '';
+
+  if (!key && protocol.provider === 'SiliconFlow') {
+    throw new Error('请在P4Lab中配置SiliconFlow API密钥');
+  }
 
   // 2. 构造标准请求配置
   const config: RequestConfig = {

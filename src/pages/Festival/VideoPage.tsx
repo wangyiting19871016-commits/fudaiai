@@ -18,7 +18,7 @@ import { sendRequest } from '../../services/apiService';
 import { useAPISlotStore } from '../../stores/APISlotStore';
 import { getAllVoices } from '../../configs/festival/voicePresets';
 import { uploadImage, uploadAudio } from '../../services/imageHosting';
-import { getNavigationState, type NavigationState } from '../../types/navigationState';
+import { getNavigationState, createNavigationState, type NavigationState } from '../../types/navigationState';
 import { SessionMaterialManager } from '../../services/SessionMaterialManager';
 import { ImageGeneratorSelector } from '../../components/ImageGeneratorSelector';
 import { TextGeneratorSelector } from '../../components/TextGeneratorSelector';
@@ -159,13 +159,16 @@ const FestivalVideoPage: React.FC = () => {
   };
 
   const handleImageGenerate = (option: any) => {
-    navigate(option.path, {
-      state: {
-        returnTo: '/festival/video',
-        text,
-        audio
-      }
+    // ✅ 使用标准NavigationState传递数据
+    const navState = createNavigationState({
+      text,
+      audio,
+      textSource: text ? 'user' : undefined,
+      sourcePagePath: '/festival/video',
+      sourceFeatureId: 'video-production'
     });
+
+    navigate(option.path, { state: navState });
     setImageSelectorVisible(false);
   };
 
@@ -186,13 +189,16 @@ const FestivalVideoPage: React.FC = () => {
   };
 
   const handleAudioGenerate = () => {
-    navigate('/festival/voice', {
-      state: {
-        returnTo: '/festival/video',
-        text,
-        image
-      }
+    // ✅ 使用标准NavigationState传递数据
+    const navState = createNavigationState({
+      text,
+      image,
+      textSource: text ? 'user' : undefined,
+      sourcePagePath: '/festival/video',
+      sourceFeatureId: 'video-production'
     });
+
+    navigate('/festival/voice', { state: navState });
   };
 
   const handleQuickTTS = async () => {
@@ -235,13 +241,15 @@ const FestivalVideoPage: React.FC = () => {
   };
 
   const handleTextGenerate = (featureId: string) => {
-    navigate(`/festival/text/${featureId}`, {
-      state: {
-        returnTo: '/festival/video',
-        image,
-        audio
-      }
+    // ✅ 使用标准NavigationState传递数据
+    const navState = createNavigationState({
+      image,
+      audio,
+      sourcePagePath: '/festival/video',
+      sourceFeatureId: 'video-production'
     });
+
+    navigate(`/festival/text/${featureId}`, { state: navState });
     setTextSelectorVisible(false);
   };
 

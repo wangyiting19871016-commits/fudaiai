@@ -52,7 +52,7 @@ module.exports = function(app) {
 
         const options = {
           hostname: 'api.liblibai.com',
-          path: '/api/www/v1/workflows/run',
+          path: '/api/generate/webui/text2img',  // ✅ 使用 Web UI API，匹配前端的 templateUuid 格式
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -277,8 +277,233 @@ module.exports = function(app) {
     }
   });
 
+  /**
+   * Fish Audio 声音克隆代理
+   * POST /api/fish/voices
+   */
+  app.post('/api/fish/voices', async (req, res) => {
+    try {
+      const apiKey = process.env.FISH_AUDIO_API_KEY || '58864427d9e44e4ca76febe5b50639e6';
+
+      if (!apiKey) {
+        return res.status(500).json({
+          success: false,
+          error: 'Fish Audio API密钥未配置'
+        });
+      }
+
+      // 使用multipart/form-data解析（需要multer中间件）
+      const multer = require('multer');
+      const upload = multer({ storage: multer.memoryStorage() });
+
+      // 处理文件上传
+      upload.single('voices')(req, res, async (err) => {
+        if (err) {
+          return res.status(400).json({
+            success: false,
+            error: `文件上传失败: ${err.message}`
+          });
+        }
+
+        const { name, description, visibility = 'private' } = req.body;
+        const audioFile = req.file;
+
+        if (!name || !audioFile) {
+          return res.status(400).json({
+            success: false,
+            error: '缺少必需参数: name, voices (audio file)'
+          });
+        }
+
+        console.log('[Fish Audio代理] 声音克隆请求:', {
+          name,
+          visibility,
+          audioSize: audioFile.size
+        });
+
+        // 构造FormData
+        const FormData = require('form-data');
+        const formData = new FormData();
+        formData.append('name', name);
+        if (description) formData.append('description', description);
+        formData.append('visibility', visibility);
+        formData.append('voices', audioFile.buffer, {
+          filename: audioFile.originalname,
+          contentType: audioFile.mimetype
+        });
+
+        // 调用Fish Audio API
+        try {
+          const fishResponse = await new Promise((resolve, reject) => {
+            const options = {
+              hostname: 'api.fish.audio',
+              path: '/v1/voices',
+              method: 'POST',
+              headers: {
+                ...formData.getHeaders(),
+                'Authorization': `Bearer ${apiKey}`
+              },
+              timeout: 120000 // 声音克隆可能需要更长时间
+            };
+
+            const apiReq = https.request(options, (apiRes) => {
+              let data = '';
+              apiRes.on('data', (chunk) => { data += chunk; });
+              apiRes.on('end', () => {
+                try {
+                  const response = JSON.parse(data);
+                  if (apiRes.statusCode === 200 || apiRes.statusCode === 201) {
+                    resolve(response);
+                  } else {
+                    reject(new Error(`Fish Audio API错误 ${apiRes.statusCode}: ${data}`));
+                  }
+                } catch (e) {
+                  reject(new Error(`解析Fish Audio响应失败: ${data}`));
+                }
+              });
+            });
+
+            apiReq.on('error', reject);
+            apiReq.on('timeout', () => {
+              apiReq.destroy();
+              reject(new Error('Fish Audio声音克隆超时'));
+            });
+
+            formData.pipe(apiReq);
+          });
+
+          console.log('[Fish Audio代理] 声音克隆成功:', fishResponse);
+          res.json(fishResponse);
+
+        } catch (apiError) {
+          throw apiError;
+        }
+      });
+
+    } catch (error) {
+      console.error('[Fish Audio代理] 声音克隆错误:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  });
+
+  /**
+   * Fish Audio 模型创建代理
+   * POST /api/fish/model
+   */
+  app.post('/api/fish/model', async (req, res) => {
+    try {
+      const apiKey = process.env.FISH_AUDIO_API_KEY || '58864427d9e44e4ca76febe5b50639e6';
+
+      if (!apiKey) {
+        return res.status(500).json({
+          success: false,
+          error: 'Fish Audio API密钥未配置'
+        });
+      }
+
+      // 使用multipart/form-data解析
+      const multer = require('multer');
+      const upload = multer({ storage: multer.memoryStorage() });
+
+      upload.single('voices')(req, res, async (err) => {
+        if (err) {
+          return res.status(400).json({
+            success: false,
+            error: `文件上传失败: ${err.message}`
+          });
+        }
+
+        const { name, description, visibility = 'private' } = req.body;
+        const audioFile = req.file;
+
+        if (!name || !audioFile) {
+          return res.status(400).json({
+            success: false,
+            error: '缺少必需参数: name, voices (audio file)'
+          });
+        }
+
+        console.log('[Fish Audio代理] 模型创建请求:', {
+          name,
+          visibility,
+          audioSize: audioFile.size
+        });
+
+        // 构造FormData
+        const FormData = require('form-data');
+        const formData = new FormData();
+        formData.append('name', name);
+        if (description) formData.append('description', description);
+        formData.append('visibility', visibility);
+        formData.append('voices', audioFile.buffer, {
+          filename: audioFile.originalname,
+          contentType: audioFile.mimetype
+        });
+
+        // 调用Fish Audio API（模型创建可能使用相同端点）
+        try {
+          const fishResponse = await new Promise((resolve, reject) => {
+            const options = {
+              hostname: 'api.fish.audio',
+              path: '/v1/voices',
+              method: 'POST',
+              headers: {
+                ...formData.getHeaders(),
+                'Authorization': `Bearer ${apiKey}`
+              },
+              timeout: 120000
+            };
+
+            const apiReq = https.request(options, (apiRes) => {
+              let data = '';
+              apiRes.on('data', (chunk) => { data += chunk; });
+              apiRes.on('end', () => {
+                try {
+                  const response = JSON.parse(data);
+                  if (apiRes.statusCode === 200 || apiRes.statusCode === 201) {
+                    resolve(response);
+                  } else {
+                    reject(new Error(`Fish Audio API错误 ${apiRes.statusCode}: ${data}`));
+                  }
+                } catch (e) {
+                  reject(new Error(`解析Fish Audio响应失败: ${data}`));
+                }
+              });
+            });
+
+            apiReq.on('error', reject);
+            apiReq.on('timeout', () => {
+              apiReq.destroy();
+              reject(new Error('Fish Audio模型创建超时'));
+            });
+
+            formData.pipe(apiReq);
+          });
+
+          console.log('[Fish Audio代理] 模型创建成功:', fishResponse);
+          res.json(fishResponse);
+
+        } catch (apiError) {
+          throw apiError;
+        }
+      });
+
+    } catch (error) {
+      console.error('[Fish Audio代理] 模型创建错误:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  });
+
   console.log('✅ API代理端点已加载：');
   console.log('   - POST /api/liblib/text2img (LiblibAI图片生成)');
   console.log('   - GET /api/liblib/query/:uuid (LiblibAI查询状态)');
   console.log('   - POST /api/fish/tts (Fish Audio语音生成)');
+  console.log('   - POST /api/fish/voices (Fish Audio声音克隆)');
+  console.log('   - POST /api/fish/model (Fish Audio模型创建)');
 };

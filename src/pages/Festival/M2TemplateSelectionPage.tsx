@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
+import { getNavigationState } from '../../types/navigationState';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-m2-template.css';
 
@@ -178,8 +179,12 @@ const M2TemplateSelectionPage: React.FC = () => {
       return;
     }
 
+    // ✅ 接收并保留从上一页传来的NavigationState
+    const navState = getNavigationState(location.state);
+
     navigate('/festival/lab/M2', {
       state: {
+        ...navState,  // ✅ 保留原有NavigationState（保持数据流转完整性）
         gender: selectedGender,
         templateId: useCustom ? 'custom' : selectedTemplate?.id,
         templateImagePath: useCustom ? customPreview : selectedTemplate?.imagePath,

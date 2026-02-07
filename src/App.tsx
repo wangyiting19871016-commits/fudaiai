@@ -25,18 +25,21 @@ import FestivalVoicePage from './pages/Festival/VoicePageNew';
 import FestivalTextPage from './pages/Festival/TextPage';
 import FestivalCategoryPage from './pages/Festival/CategoryPage';
 import FestivalVideoPage from './pages/Festival/VideoPage';
-import KlingEffectsPage from './pages/Festival/KlingEffectsPage';
 import VideoCategoryPage from './pages/Festival/VideoCategoryPage';
 import TemplateSelectionPage from './pages/Festival/TemplateSelectionPage';
 import FortunePage from './pages/Festival/FortunePage';
 import MaterialLibraryPage from './pages/Festival/MaterialLibraryPage';
 import FortuneCardPage from './pages/Festival/FortuneCardPage';
 import SmartReplyPage from './pages/Festival/SmartReplyPage';
-// import DigitalHumanPage from './pages/Festival/DigitalHumanPage';  // ✅ 已合并到VideoPage
 import RechargePage from './pages/Festival/RechargePage';
 import PaymentSuccessPage from './pages/Festival/PaymentSuccessPage';
 import M2TemplateSelectionPage from './pages/Festival/M2TemplateSelectionPage';
 import M3TemplateSelectionPage from './pages/Festival/M3TemplateSelectionPage';
+
+// ⚠️ 已废弃页面（已移除）
+// - DigitalHumanPage.tsx → 合并到VideoPage.tsx (2026-02-06)
+// - KlingEffectsPage.tsx → 功能下线 (2026-02-08)
+// - VideoPageNew.tsx → 重命名为VideoPageMultiMode.tsx.backup备份 (2026-02-08)
 
 // 布局组件，用于处理路由相关的布局逻辑
 const AppLayout: React.FC = () => {
@@ -85,11 +88,13 @@ const AppLayout: React.FC = () => {
             <Route path="text/:featureId" element={<FestivalTextPage />} />
             <Route path="video/:taskId" element={<FestivalVideoPage />} />
             <Route path="video" element={<FestivalVideoPage />} />
-            <Route path="kling-effects" element={<KlingEffectsPage />} />
             <Route path="materials" element={<MaterialLibraryPage />} />
             <Route path="fortune-card" element={<FortuneCardPage />} />
             <Route path="smart-reply" element={<SmartReplyPage />} />
+
+            {/* 已废弃路由 - 重定向到主要功能 */}
             <Route path="digital-human" element={<Navigate to="/festival/video" replace />} />
+            <Route path="kling-effects" element={<Navigate to="/festival/category/video" replace />} />
             <Route path="recharge" element={<RechargePage />} />
             <Route path="payment-success" element={<PaymentSuccessPage />} />
             <Route path="m2-template-select" element={<M2TemplateSelectionPage />} />

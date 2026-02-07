@@ -22,15 +22,16 @@ const VideoCategoryPage: React.FC = () => {
   const hasIncomingImage = Boolean(incomingState?.image);
 
   const videoOptions = [
-    {
-      id: 'effects',
-      title: '特效视频',
-      description: '烟花 · 财神 · 舞狮等12种特效',
-      detail: '5秒短视频，自带背景音乐',
-      gradient: ['#FF6B6B', '#FFA07A'],
-      path: '/festival/kling-effects',
-      previewImage: '/assets/showcase/video-effects-demo.gif'
-    },
+    // 🔥 2026-02-08 可灵特效已下线，暂时注释
+    // {
+    //   id: 'effects',
+    //   title: '特效视频',
+    //   description: '烟花 · 财神 · 舞狮等12种特效',
+    //   detail: '5秒短视频，自带背景音乐',
+    //   gradient: ['#FF6B6B', '#FFA07A'],
+    //   path: '/festival/kling-effects',
+    //   previewImage: '/assets/showcase/video-effects-demo.gif'
+    // },
     {
       id: 'digital-human',
       title: '数字人拜年',

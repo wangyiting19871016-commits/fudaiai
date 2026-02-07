@@ -176,11 +176,11 @@ const VoiceCreator: React.FC<VoiceCreatorProps> = ({ visible, onClose, onSuccess
       formData.append('voices', audioFile);
       // 不传 texts 参数，让 Fish Audio 自动进行语音识别 (ASR)
 
+      // ✅ 调用后端代理 /api/fish/model
+      // 后端会处理Authorization和Fish Audio API调用
       const response = await fetch('/api/fish/model', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${API_VAULT.FISH_AUDIO.API_KEY}`
-        },
+        // 不需要Authorization header，后端代理会处理
         body: formData
       });
 

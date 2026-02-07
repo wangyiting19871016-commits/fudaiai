@@ -9,6 +9,7 @@ import {
 import { getFeatureById } from '../../configs/festival/features';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
+import { getNavigationState } from '../../types/navigationState';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-m2-template.css';
 
@@ -81,9 +82,13 @@ const TemplateSelectionPage: React.FC = () => {
       return;
     }
 
-    // 跳转到LabPage，传递模板、性别和换发型选项
+    // ✅ 接收并保留从上一页传来的NavigationState
+    const navState = getNavigationState(location.state);
+
+    // 跳转到LabPage，合并NavigationState和模板配置
     navigate(`/festival/lab/${featureId}`, {
       state: {
+        ...navState,  // ✅ 保留原有NavigationState（虽然LabPage当前不需要，但保持数据流转完整性）
         templateId: selectedTemplate.id,
         templateConfig: selectedTemplate.workflowConfig,
         selectedTemplate: selectedTemplate,  // 🆕 传递完整模板对象（用于M1多风格）

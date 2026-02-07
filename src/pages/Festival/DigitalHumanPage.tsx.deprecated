@@ -1,0 +1,42 @@
+/**
+ * ⚠️⚠️⚠️ 已废弃 (2026-02-06) ⚠️⚠️⚠️
+ *
+ * 【废弃原因】
+ * 功能已完全合并到 VideoPage.tsx
+ * 数字人拜年视频现在统一由VideoPage处理
+ *
+ * 【路由变更】
+ * 旧路由: /festival/digital-human
+ * 新路由: /festival/video （已在App.tsx中重定向）
+ *
+ * 【如需恢复】
+ * 1. 重命名回 DigitalHumanPage.tsx
+ * 2. 在 App.tsx 中取消注释: import DigitalHumanPage from './pages/Festival/DigitalHumanPage';
+ * 3. 修改路由: <Route path="digital-human" element={<DigitalHumanPage />} />
+ * 4. 取消 VideoCategoryPage 中的重定向
+ *
+ * 【文件大小】
+ * 31KB (保留供参考，可安全删除)
+ *
+ * 【最后修改】
+ * 2026-02-06 - 合并到VideoPage
+ * 2026-02-08 - 标记为废弃
+ *
+ * ========================================
+ * 以下为原始代码（已废弃，请勿使用）
+ * ========================================
+ */
+
+// 原始文件内容已移除
+// 如需查看，请使用 git 查看历史版本：
+// git show HEAD~n:src/pages/Festival/DigitalHumanPage.tsx
+
+export default function DigitalHumanPageDeprecated() {
+  return (
+    <div style={{ padding: '40px', textAlign: 'center' }}>
+      <h2>⚠️ 页面已废弃</h2>
+      <p>该功能已合并到视频制作页面</p>
+      <p>请访问: <a href="#/festival/video">/festival/video</a></p>
+    </div>
+  );
+}

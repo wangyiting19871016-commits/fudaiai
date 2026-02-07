@@ -32,7 +32,7 @@ export const sendRequest = async (config: RequestConfig, authKey: string) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(config.data)
+        body: JSON.stringify(config.body)
       });
 
       if (!response.ok) {
@@ -44,8 +44,8 @@ export const sendRequest = async (config: RequestConfig, authKey: string) => {
     }
 
     // Query请求
-    if (config.method === 'GET' || config.endpoint?.includes('/workflows/run/')) {
-      const uuid = config.endpoint?.split('/').pop() || '';
+    if (config.method === 'GET' || config.url?.includes('/workflows/run/')) {
+      const uuid = config.url?.split('/').pop() || '';
       const response = await fetch(`${proxyBaseUrl}/api/liblib/query/${uuid}`, {
         method: 'GET',
         headers: {

@@ -1661,7 +1661,7 @@ export class MissionExecutor {
       await this.sleep(interval);
 
       try {
-        const liblibKey = `${(API_VAULT.LIBLIB.ACCESS_KEY || 'PROXY')}\n${(API_VAULT.LIBLIB.SECRET_KEY || 'MODE')}`;
+        const liblibKey = 'PROXY\nMODE'; // 后端代理模式
         const { sendRequest } = await import('./secureApiService');
 
         const data = await sendRequest(

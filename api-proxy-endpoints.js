@@ -176,6 +176,84 @@ module.exports = function(app) {
     }
   });
 
+  /**
+   * LiblibAI 状态查询代理
+   * POST /api/liblib/status
+   */
+  app.post('/api/liblib/status', express.json({ limit: '10mb' }), async (req, res) => {
+    try {
+      const accessKey = process.env.LIBLIB_ACCESS_KEY || 'z8_g6KeL5Vac48fUL6am2A';
+      const secretKey = process.env.LIBLIB_SECRET_KEY || 'FbPajEW5edStMVxBJuRUDu7fwr1Hy5Up';
+
+      if (!accessKey || !secretKey) {
+        return res.status(500).json({
+          success: false,
+          error: 'LiblibAI密钥未配置'
+        });
+      }
+
+      const { generateUuid } = req.body;
+
+      // 生成签名
+      const timestamp = Date.now();
+      const nonce = Math.random().toString(36).substring(2, 15);
+      const signString = `${accessKey}${timestamp}${nonce}${secretKey}`;
+      const sign = crypto.createHash('md5').update(signString).digest('hex');
+
+      console.log('[LiblibAI状态代理] 查询UUID:', generateUuid);
+
+      // 调用LiblibAI状态查询API
+      const liblibResponse = await new Promise((resolve, reject) => {
+        const postData = JSON.stringify({ generateUuid });
+
+        const options = {
+          hostname: 'api.liblibai.com',
+          path: '/api/generate/webui/status',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(postData),
+            'x-access-key': accessKey,
+            'x-timestamp': timestamp.toString(),
+            'x-nonce': nonce,
+            'x-sign': sign
+          },
+          timeout: 30000
+        };
+
+        const apiReq = https.request(options, (apiRes) => {
+          let data = '';
+          apiRes.on('data', (chunk) => { data += chunk; });
+          apiRes.on('end', () => {
+            try {
+              const response = JSON.parse(data);
+              resolve(response);
+            } catch (e) {
+              reject(new Error(`解析LiblibAI响应失败: ${data}`));
+            }
+          });
+        });
+
+        apiReq.on('error', reject);
+        apiReq.on('timeout', () => {
+          apiReq.destroy();
+          reject(new Error('LiblibAI状态查询超时'));
+        });
+
+        apiReq.write(postData);
+        apiReq.end();
+      });
+
+      res.json(liblibResponse);
+    } catch (error) {
+      console.error('[LiblibAI状态代理] 错误:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  });
+
   // ========== Fish Audio 代理端点 ==========
 
   /**

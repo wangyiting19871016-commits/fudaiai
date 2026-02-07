@@ -1593,10 +1593,11 @@ export class MissionExecutor {
         const liblibKey = 'PROXY\nMODE';
         const { sendRequest } = await import('./secureApiService');
         
+        const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
         const data = await sendRequest(
           {
             method: 'POST',
-            url: '/api/liblib/api/generate/webui/status',
+            url: `${proxyBaseUrl}/api/liblib/status`,
             body: {
               generateUuid: generateUuid
             }

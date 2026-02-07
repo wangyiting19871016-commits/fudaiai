@@ -78,10 +78,11 @@ export class FortuneCardGenerator {
       };
 
       console.log('[FortuneCardGenerator] 发送FLUX请求...');
+      const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
       const response = await sendRequest(
         {
           method: 'POST',
-          url: '/api/liblib/api/generate/webui/text2img',
+          url: `${proxyBaseUrl}/api/liblib/text2img`,
           body: requestBody
         },
         liblibKey
@@ -236,10 +237,11 @@ export class FortuneCardGenerator {
       await this.sleep(2000);  // 每2秒轮询一次
 
       try {
+        const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
         const data = await sendRequest(
           {
             method: 'POST',
-            url: '/api/liblib/api/generate/webui/status',
+            url: `${proxyBaseUrl}/api/liblib/status`,
             body: { generateUuid }
           },
           liblibKey

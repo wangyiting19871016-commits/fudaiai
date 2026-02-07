@@ -41,18 +41,12 @@ export class TextService {
         return { success: false, error: `提示词模板 [${promptKey}] 未找到` };
       }
 
-      // 获取 API Key
-      const apiKey = import.meta.env.VITE_DEEPSEEK_API_KEY || '';
-      if (!apiKey) {
-        return { success: false, error: '缺少 VITE_DEEPSEEK_API_KEY 配置' };
-      }
-
-      // 调用 DeepSeek API
+      // 调用后端代理（密钥在后端）
       const response = await fetch('/api/deepseek/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
+          // Authorization由后端处理
         },
         body: JSON.stringify({
           model,

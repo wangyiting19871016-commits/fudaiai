@@ -61,8 +61,8 @@ const SmartReplyPage: React.FC = () => {
       const classifyResponse = await fetch('/api/deepseek/chat/completions', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_DEEPSEEK_API_KEY}`
+          'Content-Type': 'application/json'
+          // Authorization由后端处理
         },
         body: JSON.stringify({
           model: 'deepseek-chat',
@@ -87,8 +87,8 @@ const SmartReplyPage: React.FC = () => {
       const response = await fetch('/api/deepseek/chat/completions', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_DEEPSEEK_API_KEY}`
+          'Content-Type': 'application/json'
+          // Authorization由后端处理
         },
         body: JSON.stringify({
           model: 'deepseek-chat',

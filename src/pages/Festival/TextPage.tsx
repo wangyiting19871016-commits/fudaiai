@@ -160,12 +160,12 @@ const FestivalTextPage: React.FC = () => {
         ? `请生成一句春节上联，要求对仗工整，喜庆吉祥，只返回春联内容，不要其他内容。参考下联：${coupletData.lowerLine}`
         : `请生成一句春节下联，要求对仗工整，喜庆吉祥，只返回春联内容，不要其他内容。参考上联：${coupletData.upperLine}`;
 
-      const deepseekKey = import.meta.env.VITE_DEEPSEEK_API_KEY || '';
+      // 调用后端代理（密钥在后端）
       const response = await fetch('/api/deepseek/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${deepseekKey}`,
           'Content-Type': 'application/json'
+          // Authorization由后端处理
         },
         body: JSON.stringify({
           model: 'deepseek-chat',
@@ -231,17 +231,12 @@ const FestivalTextPage: React.FC = () => {
         throw new Error('提示词模板未找到');
       }
 
-      // 调用 DeepSeek API
-      const deepseekKey = import.meta.env.VITE_DEEPSEEK_API_KEY || '';
-      if (!deepseekKey) {
-        throw new Error('缺少 VITE_DEEPSEEK_API_KEY 配置');
-      }
-
+      // 调用后端代理（密钥在后端）
       const response = await fetch('/api/deepseek/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${deepseekKey}`,
           'Content-Type': 'application/json'
+          // Authorization由后端处理
         },
         body: JSON.stringify({
           model: processConfig.model || 'deepseek-chat',

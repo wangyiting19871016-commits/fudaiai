@@ -506,7 +506,7 @@ module.exports = function(app) {
    * Dashscope API 代理
    * POST /api/dashscope/proxy
    */
-  app.post('/api/dashscope/proxy', express.json(), async (req, res) => {
+  app.post('/api/dashscope/proxy', express.json({ limit: '50mb' }), async (req, res) => {
     try {
       const apiKey = process.env.VITE_DASHSCOPE_API_KEY;
 
@@ -577,7 +577,7 @@ module.exports = function(app) {
    * DeepSeek API 代理
    * POST /api/deepseek/proxy
    */
-  app.post('/api/deepseek/proxy', express.json(), async (req, res) => {
+  app.post('/api/deepseek/proxy', express.json({ limit: '50mb' }), async (req, res) => {
     try {
       const apiKey = process.env.VITE_DEEPSEEK_API_KEY;
 

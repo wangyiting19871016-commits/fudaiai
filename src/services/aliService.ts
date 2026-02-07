@@ -140,12 +140,9 @@ const blobToBase64 = async (blobUrl: string): Promise<string> => {
 export const callAliVision = async (request: VisionAnalysisRequest): Promise<AliVisionResult> => {
   const { images, prompt, maxTokens = 1024, temperature = 0.7, model = ALI_VISION_MODEL } = request;
 
-  const apiKey = import.meta.env.VITE_DASHSCOPE_API_KEY || '';
-  if (!apiKey) {
-    throw new Error("请配置阿里 DashScope API 密钥 (VITE_DASHSCOPE_API_KEY)");
-  }
-
-  const apiEndpoint = '/api/dashscope/api/v1/services/aigc/multimodal-generation/generation';
+  // 使用后端代理，密钥由后端管理
+  const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+  const apiEndpoint = `${proxyBaseUrl}/api/dashscope/proxy`;
 
   const startTime = Date.now();
   console.log(`[AliVision] 开始调用视觉分析 API，端点: ${apiEndpoint}`);
@@ -186,19 +183,21 @@ export const callAliVision = async (request: VisionAnalysisRequest): Promise<Ali
       }
     };
 
-    console.log(`[AliVision] 发送请求到阿里 DashScope...`);
+    console.log(`[AliVision] 发送请求到阿里 DashScope（通过后端代理）...`);
     console.log(`[AliVision] 请求体预览: ${JSON.stringify(payload).substring(0, 500)}...`);
 
-    const headers = {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    };
-
+    // 通过后端代理调用Dashscope API
     const response = await window.fetch(apiEndpoint, {
       method: 'POST',
-      headers: headers,
-      body: JSON.stringify(payload)
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        endpoint: '/api/v1/services/aigc/multimodal-generation/generation',
+        method: 'POST',
+        body: payload
+      })
     });
 
     const endTime = Date.now();

@@ -500,10 +500,158 @@ module.exports = function(app) {
     }
   });
 
+  // ========== Dashscope (Qwen-VL) 代理端点 ==========
+
+  /**
+   * Dashscope API 代理
+   * POST /api/dashscope/proxy
+   */
+  app.post('/api/dashscope/proxy', express.json(), async (req, res) => {
+    try {
+      const apiKey = process.env.VITE_DASHSCOPE_API_KEY;
+
+      if (!apiKey) {
+        return res.status(500).json({
+          success: false,
+          error: 'Dashscope API密钥未配置'
+        });
+      }
+
+      const { endpoint, method = 'POST', body } = req.body;
+
+      console.log('[Dashscope代理] 请求:', { endpoint, method });
+
+      const dashscopeResponse = await new Promise((resolve, reject) => {
+        const postData = JSON.stringify(body);
+
+        const options = {
+          hostname: 'dashscope.aliyuncs.com',
+          path: endpoint,
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Length': Buffer.byteLength(postData)
+          },
+          timeout: 60000
+        };
+
+        const apiReq = https.request(options, (apiRes) => {
+          let data = '';
+          apiRes.on('data', (chunk) => { data += chunk; });
+          apiRes.on('end', () => {
+            try {
+              const response = JSON.parse(data);
+              resolve(response);
+            } catch (e) {
+              reject(new Error(`解析Dashscope响应失败: ${data}`));
+            }
+          });
+        });
+
+        apiReq.on('error', reject);
+        apiReq.on('timeout', () => {
+          apiReq.destroy();
+          reject(new Error('Dashscope请求超时'));
+        });
+
+        apiReq.write(postData);
+        apiReq.end();
+      });
+
+      console.log('[Dashscope代理] 响应成功');
+      res.json(dashscopeResponse);
+
+    } catch (error) {
+      console.error('[Dashscope代理] 错误:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  });
+
+  // ========== DeepSeek 代理端点 ==========
+
+  /**
+   * DeepSeek API 代理
+   * POST /api/deepseek/proxy
+   */
+  app.post('/api/deepseek/proxy', express.json(), async (req, res) => {
+    try {
+      const apiKey = process.env.VITE_DEEPSEEK_API_KEY;
+
+      if (!apiKey) {
+        return res.status(500).json({
+          success: false,
+          error: 'DeepSeek API密钥未配置'
+        });
+      }
+
+      const { messages, model = 'deepseek-chat', ...otherParams } = req.body;
+
+      console.log('[DeepSeek代理] 请求:', { model, messagesCount: messages?.length });
+
+      const deepseekResponse = await new Promise((resolve, reject) => {
+        const postData = JSON.stringify({
+          model,
+          messages,
+          ...otherParams
+        });
+
+        const options = {
+          hostname: 'api.deepseek.com',
+          path: '/chat/completions',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Length': Buffer.byteLength(postData)
+          },
+          timeout: 60000
+        };
+
+        const apiReq = https.request(options, (apiRes) => {
+          let data = '';
+          apiRes.on('data', (chunk) => { data += chunk; });
+          apiRes.on('end', () => {
+            try {
+              const response = JSON.parse(data);
+              resolve(response);
+            } catch (e) {
+              reject(new Error(`解析DeepSeek响应失败: ${data}`));
+            }
+          });
+        });
+
+        apiReq.on('error', reject);
+        apiReq.on('timeout', () => {
+          apiReq.destroy();
+          reject(new Error('DeepSeek请求超时'));
+        });
+
+        apiReq.write(postData);
+        apiReq.end();
+      });
+
+      console.log('[DeepSeek代理] 响应成功');
+      res.json(deepseekResponse);
+
+    } catch (error) {
+      console.error('[DeepSeek代理] 错误:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  });
+
   console.log('✅ API代理端点已加载：');
   console.log('   - POST /api/liblib/text2img (LiblibAI图片生成)');
   console.log('   - GET /api/liblib/query/:uuid (LiblibAI查询状态)');
   console.log('   - POST /api/fish/tts (Fish Audio语音生成)');
   console.log('   - POST /api/fish/voices (Fish Audio声音克隆)');
   console.log('   - POST /api/fish/model (Fish Audio模型创建)');
+  console.log('   - POST /api/dashscope/proxy (Dashscope/Qwen-VL代理)');
+  console.log('   - POST /api/deepseek/proxy (DeepSeek代理)');
 };

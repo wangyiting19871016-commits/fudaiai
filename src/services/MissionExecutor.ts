@@ -346,12 +346,8 @@ export class MissionExecutor {
     console.log('[MissionExecutor] 调用Qwen-VL提取DNA...');
 
     try {
-      const apiKey = import.meta.env.VITE_DASHSCOPE_API_KEY || '';
-      if (!apiKey) {
-        const err = '缺少VITE_DASHSCOPE_API_KEY配置';
-        console.error('[MissionExecutor]', err);
-        throw new Error(err);
-      }
+      // 使用后端代理，密钥由后端管理
+      const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
 
       const requestBody = {
         model: 'qwen-vl-plus',
@@ -369,15 +365,17 @@ export class MissionExecutor {
         parameters: { max_new_tokens: 300, temperature: 0.3 }
       };
 
-      const bodyStr = JSON.stringify(requestBody);
-
-      const response = await fetch('/api/dashscope/api/v1/services/aigc/multimodal-generation/generation', {
+      // 通过后端代理调用Dashscope API
+      const response = await fetch(`${proxyBaseUrl}/api/dashscope/proxy`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
         },
-        body: bodyStr
+        body: JSON.stringify({
+          endpoint: '/api/v1/services/aigc/multimodal-generation/generation',
+          method: 'POST',
+          body: requestBody
+        })
       });
 
       if (!response.ok) {
@@ -1808,20 +1806,18 @@ export class MissionExecutor {
     console.log('[MissionExecutor] 调用DeepSeek生成判词...');
 
     try {
-      const deepseekKey = import.meta.env.VITE_DEEPSEEK_API_KEY || '';
-      if (!deepseekKey) {
-        throw new Error('缺少VITE_DEEPSEEK_API_KEY配置');
-      }
+      // 使用后端代理，密钥由后端管理
+      const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
 
       const isCaishen = missionId === 'M2';
       const prompt = isCaishen
-        ? `你是春节财神语录生成器。请根据这张财神变身成片，输出1-2句马年祝福语，喜庆、接地气、有财气氛围。要求：必须包含“马年”，不要加标题、不要解释、不要加引号。图片：${imageUrl}`
+        ? `你是春节财神语录生成器。请根据这张财神变身成片，输出1-2句马年祝福语，喜庆、接地气、有财气氛围。要求：必须包含"马年"，不要加标题、不要解释、不要加引号。图片：${imageUrl}`
         : `根据这张皮克斯风格的春节头像，生成一句8-12字的吉祥话，要求：押韵、喜庆、有文化底蕴。只输出文案，不要解释。图片：${imageUrl}`;
 
-      const response = await fetch('/api/deepseek/chat/completions', {
+      // 通过后端代理调用DeepSeek API
+      const response = await fetch(`${proxyBaseUrl}/api/deepseek/proxy`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${deepseekKey}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({

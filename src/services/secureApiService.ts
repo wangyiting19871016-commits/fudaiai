@@ -19,14 +19,14 @@ export const sendRequest = async (config: RequestConfig, authKey: string) => {
   // 检测是否是LiblibAI调用
   const isLiblibCall =
     config.url?.includes('liblibai.com') ||
-    config.endpoint?.includes('/workflows/run') ||
+    config.url?.includes('/workflows/run') ||
     authKey?.includes('\n'); // LiblibAI的authKey格式是 "ACCESS_KEY\nSECRET_KEY"
 
   if (isLiblibCall) {
     console.log('[安全API] 拦截LiblibAI调用，通过后端代理');
 
     // Text2Img请求
-    if (config.method === 'POST' && config.endpoint?.includes('/workflows/run') && !config.endpoint.includes('/workflows/run/')) {
+    if (config.method === 'POST' && config.url?.includes('/workflows/run') && !config.url.includes('/workflows/run/')) {
       const response = await fetch(`${proxyBaseUrl}/api/liblib/text2img`, {
         method: 'POST',
         headers: {

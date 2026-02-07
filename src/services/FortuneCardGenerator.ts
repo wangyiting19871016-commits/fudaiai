@@ -53,9 +53,9 @@ export class FortuneCardGenerator {
     console.log('[FortuneCardGenerator] Prompt:', prompt);
 
     try {
-      // ✅ 使用后端代理，通过占位符触发secureApiService拦截
-      const accessKey = API_VAULT.LIBLIB.ACCESS_KEY || 'PROXY';
-      const secretKey = API_VAULT.LIBLIB.SECRET_KEY || 'MODE';
+      // ✅ 使用后端代理，密钥由后端管理
+      const accessKey = 'PROXY';
+      const secretKey = 'MODE';
       const liblibKey = `${accessKey}\n${secretKey}`;  // "PROXY\nMODE"
 
       // ✅ 导入secureApiService（会自动拦截LiblibAI调用）

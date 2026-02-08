@@ -724,6 +724,87 @@ module.exports = function(app) {
     }
   });
 
+  // ========================================
+  // DeepSeek Chat Completions 端点（别名路由）
+  // ========================================
+  app.post('/api/deepseek/chat/completions', express.json({ limit: '50mb' }), async (req, res) => {
+    try {
+      const apiKey = process.env.VITE_DEEPSEEK_API_KEY;
+
+      if (!apiKey) {
+        console.error('[DeepSeek] API密钥未配置');
+        return res.status(500).json({
+          success: false,
+          error: 'DeepSeek API密钥未配置'
+        });
+      }
+
+      const { messages, model = 'deepseek-chat', ...otherParams } = req.body;
+
+      console.log('[DeepSeek] 请求:', { model, messagesCount: messages?.length, endpoint: '/chat/completions' });
+
+      const deepseekResponse = await new Promise((resolve, reject) => {
+        const postData = JSON.stringify({
+          model,
+          messages,
+          ...otherParams
+        });
+
+        const options = {
+          hostname: 'api.deepseek.com',
+          path: '/chat/completions',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Length': Buffer.byteLength(postData)
+          },
+          timeout: 60000
+        };
+
+        const apiReq = https.request(options, (apiRes) => {
+          let data = '';
+          apiRes.on('data', (chunk) => { data += chunk; });
+          apiRes.on('end', () => {
+            try {
+              const response = JSON.parse(data);
+              console.log('[DeepSeek] 响应状态:', apiRes.statusCode);
+              if (apiRes.statusCode !== 200) {
+                reject(new Error(`DeepSeek API错误: ${response.error?.message || JSON.stringify(response)}`));
+              } else {
+                resolve(response);
+              }
+            } catch (e) {
+              reject(new Error(`解析DeepSeek响应失败: ${data}`));
+            }
+          });
+        });
+
+        apiReq.on('error', (err) => {
+          console.error('[DeepSeek] 请求错误:', err);
+          reject(err);
+        });
+        apiReq.on('timeout', () => {
+          apiReq.destroy();
+          reject(new Error('DeepSeek请求超时'));
+        });
+
+        apiReq.write(postData);
+        apiReq.end();
+      });
+
+      console.log('[DeepSeek] 响应成功');
+      res.json(deepseekResponse);
+
+    } catch (error) {
+      console.error('[DeepSeek] 错误:', error.message);
+      res.status(500).json({
+        success: false,
+        error: error.message || '未知错误'
+      });
+    }
+  });
+
   console.log('✅ API代理端点已加载：');
   console.log('   - POST /api/liblib/text2img (LiblibAI图片生成)');
   console.log('   - GET /api/liblib/query/:uuid (LiblibAI查询状态)');
@@ -732,4 +813,5 @@ module.exports = function(app) {
   console.log('   - POST /api/fish/model (Fish Audio模型创建)');
   console.log('   - POST /api/dashscope/proxy (Dashscope/Qwen-VL代理)');
   console.log('   - POST /api/deepseek/proxy (DeepSeek代理)');
+  console.log('   - POST /api/deepseek/chat/completions (DeepSeek Chat端点)');
 };

@@ -458,7 +458,7 @@ const FestivalVideoPage: React.FC = () => {
         try {
           const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
 
-          // 调用后端代理
+          // 调用后端代理（启用异步模式）
           const response = await fetch(`${backendUrl}/api/dashscope/proxy`, {
             method: 'POST',
             headers: {
@@ -467,6 +467,9 @@ const FestivalVideoPage: React.FC = () => {
             body: JSON.stringify({
               endpoint: '/api/v1/services/aigc/image2video/video-synthesis',
               method: 'POST',
+              headers: {
+                'X-DashScope-Async': 'enable'  // 关键：启用异步任务模式
+              },
               body: {
                 model: 'wan2.2-s2v',
                 input: {

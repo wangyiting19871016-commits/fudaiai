@@ -66,30 +66,46 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
 
     // 🔧 强制清理URL：只保留从第一个https://到第一个文件扩展名
     if (typeof finalUrl === 'string') {
+      console.log('[COS] 🔍 开始清理URL，原始长度:', finalUrl.length);
+      console.log('[COS] 🔍 原始URL前80字符:', finalUrl.substring(0, 80));
+
       const extensions = ['.jpg', '.jpeg', '.png', '.mp3', '.wav', '.mp4'];
 
       // 查找第一个https://的位置
       const firstHttpsIndex = finalUrl.indexOf('https://');
+      console.log('[COS] 🔍 第一个https://位置:', firstHttpsIndex);
+
       if (firstHttpsIndex === -1) {
         throw new Error('无效的URL：不包含https://');
       }
 
       // 从第一个https://开始查找扩展名
+      let found = false;
       for (const ext of extensions) {
         const extIndex = finalUrl.indexOf(ext, firstHttpsIndex);
+        console.log(`[COS] 🔍 查找${ext}:`, extIndex);
+
         if (extIndex > 0) {
           // 截取从第一个https://到第一个扩展名结束
           const cleanUrl = finalUrl.substring(firstHttpsIndex, extIndex + ext.length);
 
+          console.log('[COS] 🔍 cleanUrl:', cleanUrl);
+          console.log('[COS] 🔍 cleanUrl === finalUrl:', cleanUrl === finalUrl);
+
           if (cleanUrl !== finalUrl) {
-            console.log('[COS] 🔧 URL已修复');
-            console.log('[COS] 原URL长度:', finalUrl.length);
-            console.log('[COS] 新URL长度:', cleanUrl.length);
+            console.log('[COS] 🔧 URL已修复！');
+            console.log('[COS] 🔧 原URL长度:', finalUrl.length);
+            console.log('[COS] 🔧 新URL长度:', cleanUrl.length);
           }
 
           finalUrl = cleanUrl;
+          found = true;
           break;
         }
+      }
+
+      if (!found) {
+        console.warn('[COS] ⚠️ 未找到任何文件扩展名，使用原始URL');
       }
     }
 

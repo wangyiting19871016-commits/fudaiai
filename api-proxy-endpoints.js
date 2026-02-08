@@ -595,22 +595,26 @@ module.exports = function(app) {
         });
       }
 
-      const { endpoint, method = 'POST', body } = req.body;
+      const { endpoint, method = 'POST', body, headers: customHeaders = {} } = req.body;
 
-      console.log('[Dashscope代理] 请求:', { endpoint, method });
+      console.log('[Dashscope代理] 请求:', { endpoint, method, customHeaders });
 
       const dashscopeResponse = await new Promise((resolve, reject) => {
         const postData = JSON.stringify(body);
+
+        // 合并自定义headers（如X-DashScope-Async）
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Length': Buffer.byteLength(postData),
+          ...customHeaders  // 允许传递自定义headers
+        };
 
         const options = {
           hostname: 'dashscope.aliyuncs.com',
           path: endpoint,
           method: method,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Length': Buffer.byteLength(postData)
-          },
+          headers: headers,
           timeout: 60000
         };
 

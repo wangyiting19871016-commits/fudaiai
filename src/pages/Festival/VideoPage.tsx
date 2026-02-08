@@ -453,33 +453,92 @@ const FestivalVideoPage: React.FC = () => {
           });
         }, 1000);
 
-        // WAN API异步任务
+        // WAN API异步任务 - 通过后端代理调用
         let wanResult;
         try {
-          wanResult = await sendRequest({
+          const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+
+          // 调用后端代理
+          const response = await fetch(`${backendUrl}/api/dashscope/proxy`, {
             method: 'POST',
-            url: '/api/dashscope/api/v1/services/aigc/image2video/video-synthesis',
-            body: {
-              model: 'wan2.2-s2v',
-              input: {
-                image_url: imageUploadResult.url,
-                audio_url: audioUploadResult.url
-              },
-              parameters: {
-                resolution: '720P'
-              }
-            },
             headers: {
-              'X-DashScope-Async': 'enable'
+              'Content-Type': 'application/json'
             },
-            polling: {
-              task_id: 'output.task_id',
-              status_endpoint: '/api/dashscope/api/v1/tasks/{{task_id}}',
-              status_path: 'output.task_status',
-              success_value: 'SUCCEEDED',
-              result_path: 'output.results.video_url'
+            body: JSON.stringify({
+              endpoint: '/api/v1/services/aigc/image2video/video-synthesis',
+              method: 'POST',
+              body: {
+                model: 'wan2.2-s2v',
+                input: {
+                  image_url: imageUploadResult.url,
+                  audio_url: audioUploadResult.url
+                },
+                parameters: {
+                  resolution: '720P'
+                }
+              }
+            })
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`视频生成请求失败: ${response.status} ${errorText}`);
+          }
+
+          const initialResult = await response.json();
+          const taskId = initialResult.output?.task_id;
+
+          if (!taskId) {
+            throw new Error('未获取到任务ID');
+          }
+
+          console.log('[VideoPage] 任务已创建:', taskId);
+
+          // 轮询任务状态
+          let taskStatus = 'PENDING';
+          let videoUrl = '';
+          const maxPolls = 60; // 最多轮询60次（5分钟）
+          let pollCount = 0;
+
+          while (taskStatus !== 'SUCCEEDED' && taskStatus !== 'FAILED' && pollCount < maxPolls) {
+            await new Promise(resolve => setTimeout(resolve, 5000)); // 等待5秒
+            pollCount++;
+
+            const statusResponse = await fetch(`${backendUrl}/api/dashscope/proxy`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                endpoint: `/api/v1/tasks/${taskId}`,
+                method: 'GET',
+                body: {}
+              })
+            });
+
+            if (!statusResponse.ok) {
+              console.error('[VideoPage] 查询任务状态失败:', statusResponse.status);
+              continue;
             }
-          }, dashscopeSlot.authKey);
+
+            const statusData = await statusResponse.json();
+            taskStatus = statusData.output?.task_status || 'UNKNOWN';
+
+            if (taskStatus === 'SUCCEEDED') {
+              videoUrl = statusData.output?.results?.video_url || '';
+              break;
+            } else if (taskStatus === 'FAILED') {
+              throw new Error('视频生成失败');
+            }
+
+            console.log('[VideoPage] 任务状态:', taskStatus, `(${pollCount}/${maxPolls})`);
+          }
+
+          if (!videoUrl) {
+            throw new Error('视频生成超时或失败');
+          }
+
+          wanResult = { video_url: videoUrl };
 
           clearInterval(progressTimer);
         } catch (error) {

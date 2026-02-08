@@ -61,6 +61,29 @@ const upload = multer({
 
 const app = express();
 const PORT = process.env.PORT || 3002;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+// CORS allowlist:
+// - production should only allow frontend domains from env
+// - development keeps local LAN/dev convenience
+const defaultDevOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174'
+];
+const envCorsOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+const allowedOrigins = IS_PRODUCTION
+  ? envCorsOrigins
+  : [...new Set([...defaultDevOrigins, ...envCorsOrigins])];
+
+function sanitizeSegmentBoundary(value) {
+  const num = Number(value);
+  return Number.isFinite(num) ? Math.max(0, num) : NaN;
+}
 
 // 统一的JWT生成函数（解决时间同步问题）
 function generateKlingJWT() {
@@ -98,11 +121,24 @@ const klingRateLimiter = rateLimit({
   skipSuccessfulRequests: false
 });
 
-// 配置 CORS - 允许所有跨域请求，包括本地HTML文件
+// CORS: strict in production, flexible in development
 app.use(cors({
   origin: function(origin, callback) {
-    // 允许所有来源（包括 null origin，即本地HTML文件）
-    callback(null, true);
+    // Allow non-browser clients (curl/postman) or local file testing
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (!IS_PRODUCTION) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    console.warn(`🚫 [CORS] Blocked origin: ${origin}`);
+    callback(new Error('Not allowed by CORS'));
   },
   methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true
@@ -525,8 +561,14 @@ app.post('/api/audio/split-traditional', (req, res, next) => {
       // 处理每个时间片段
       for (let i = 0; i < segmentsData.length; i++) {
         const segment = segmentsData[i];
-        const { startTime, endTime } = segment;
+        const startTime = sanitizeSegmentBoundary(segment.startTime);
+        const endTime = sanitizeSegmentBoundary(segment.endTime);
         
+        if (!Number.isFinite(startTime) || !Number.isFinite(endTime)) {
+          console.warn(`>>> 跳过非法片段 ${i}: startTime=${segment.startTime}, endTime=${segment.endTime}`);
+          continue;
+        }
+
         if (startTime > 0 && endTime > startTime) {
           // 生成片段文件名，使用标准化路径
           const segmentVocalPath = path.join(absoluteTempDir, `segment_vocal_${i}.mp3`);
@@ -696,14 +738,19 @@ app.post('/api/audio/split-traditional', (req, res, next) => {
       // });
       
       // 返回 JSON 格式的错误信息，包含详细的 FFmpeg 报错
-      res.status(500).json({
+      const responseBody = {
         error: error.message,
-        stack: error.stack,
         status: 'error',
         message: '音频剥离失败',
         // 如果是FFmpeg错误，保留原始错误信息
         ffmpegError: error.ffmpegError || undefined
-      });
+      };
+
+      if (!IS_PRODUCTION) {
+        responseBody.stack = error.stack;
+      }
+
+      res.status(500).json(responseBody);
     }
   });
 });
@@ -2174,6 +2221,69 @@ function generateOrderId() {
   return `ord_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
+// Payment environment toggles:
+// - production: strict package/amount checks, manual-complete disabled by default
+// - sandbox/dev: allow legacy payloads for internal testing
+const PAYMENT_MODE = process.env.PAYMENT_MODE || (process.env.NODE_ENV === 'production' ? 'production' : 'sandbox');
+const ALLOW_MANUAL_COMPLETE = process.env.ALLOW_MANUAL_COMPLETE === 'true' || process.env.NODE_ENV !== 'production';
+const MANUAL_COMPLETE_TOKEN = process.env.MANUAL_COMPLETE_TOKEN || '';
+
+// Server-side package catalog (authoritative source in production)
+const PAYMENT_PACKAGES = {
+  // Canonical ids used by frontend RechargePage
+  basic: { packageName: '小试牛刀', amount: 9.9, credits: 600 },
+  value: { packageName: '超值畅玩', amount: 29.9, credits: 2300 },
+  premium: { packageName: '春节豪礼', amount: 59.9, credits: 6000 },
+
+  // Backward-compatible aliases
+  starter: { packageName: '小试牛刀', amount: 9.9, credits: 600 },
+  standard: { packageName: '超值畅玩', amount: 29.9, credits: 2300 },
+  pro: { packageName: '春节豪礼', amount: 59.9, credits: 6000 },
+};
+
+function resolveOrderPricing(payload) {
+  const { packageId, packageName, amount, credits } = payload || {};
+  const pkg = PAYMENT_PACKAGES[packageId];
+
+  // Prefer server-side package config when matched
+  if (pkg) {
+    return {
+      packageId,
+      packageName: pkg.packageName,
+      amount: Number(pkg.amount),
+      credits: Number(pkg.credits),
+    };
+  }
+
+  // Sandbox fallback: keep existing test flow (legacy frontend payload)
+  if (PAYMENT_MODE !== 'production') {
+    const parsedAmount = Number(amount);
+    const parsedCredits = Number(credits);
+    if (!packageId || !Number.isFinite(parsedAmount) || parsedAmount <= 0 || !Number.isFinite(parsedCredits) || parsedCredits <= 0) {
+      throw new Error('缺少必要参数');
+    }
+    return {
+      packageId,
+      packageName: packageName || packageId,
+      amount: parsedAmount,
+      credits: parsedCredits,
+    };
+  }
+
+  throw new Error('无效套餐ID，请使用后端配置的套餐');
+}
+
+function isCallbackAmountMatch(orderAmount, callbackTotalFee) {
+  const expected = Number(orderAmount);
+  const callbackRaw = Number(callbackTotalFee);
+  if (!Number.isFinite(expected) || !Number.isFinite(callbackRaw)) return false;
+
+  // Some gateways send yuan (9.90), some send fen (990)
+  const sameYuan = Math.abs(callbackRaw - expected) < 0.0001;
+  const fenToYuan = Math.abs(callbackRaw / 100 - expected) < 0.0001;
+  return sameYuan || fenToYuan;
+}
+
 /**
  * 生成虎皮椒签名
  */
@@ -2201,12 +2311,13 @@ function generateHupijiaoSign(params, appSecret) {
  */
 app.post('/api/payment/create-order', express.json(), async (req, res) => {
   try {
-    const { visitorId, packageId, packageName, amount, credits } = req.body;
+    const { visitorId } = req.body;
 
-    // 验证参数
-    if (!visitorId || !packageId || !amount || !credits) {
+    if (!visitorId) {
       return res.status(400).json({ error: '缺少必要参数' });
     }
+
+    const pricing = resolveOrderPricing(req.body);
 
     // 生成订单ID
     const orderId = generateOrderId();
@@ -2215,10 +2326,10 @@ app.post('/api/payment/create-order', express.json(), async (req, res) => {
     const order = {
       orderId,
       visitorId,
-      packageId,
-      packageName,
-      amount,
-      credits,
+      packageId: pricing.packageId,
+      packageName: pricing.packageName,
+      amount: pricing.amount,
+      credits: pricing.credits,
       status: 'pending',
       createdAt: Date.now(),
       expiredAt: Date.now() + 30 * 60 * 1000, // 30分钟后过期
@@ -2252,8 +2363,8 @@ app.post('/api/payment/create-order', express.json(), async (req, res) => {
       plugins: 'festival-ai',
       appid: hupijiaoAppId,
       trade_order_id: orderId,
-      total_fee: amount.toFixed(2), // 虎皮椒使用元
-      title: `${packageName} - ${credits}积分`,
+      total_fee: Number(pricing.amount).toFixed(2), // 虎皮椒使用元
+      title: `${pricing.packageName} - ${pricing.credits}积分`,
       time: Math.floor(Date.now() / 1000).toString(),
       notify_url: notifyUrl,
       return_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment-success?orderId=${orderId}`,
@@ -2267,7 +2378,7 @@ app.post('/api/payment/create-order', express.json(), async (req, res) => {
     console.log(`💰 [支付信息]`);
     console.log(`   AppID: ${hupijiaoAppId}`);
     console.log(`   订单号: ${orderId}`);
-    console.log(`   金额: ¥${amount}`);
+    console.log(`   金额: ¥${pricing.amount}`);
     console.log(`   回调URL: ${notifyUrl}`);
 
     // 调用虎皮椒API创建支付订单
@@ -2293,7 +2404,7 @@ app.post('/api/payment/create-order', express.json(), async (req, res) => {
 
           if (hupijiaoResponse.errcode === 0) {
             // 成功，返回支付URL
-            console.log(`💰 [订单创建] ${orderId} - ${packageName} - ¥${amount} - ${credits}积分`);
+            console.log(`💰 [订单创建] ${orderId} - ${pricing.packageName} - ¥${pricing.amount} - ${pricing.credits}积分`);
 
             res.json({
               ...order,
@@ -2317,6 +2428,9 @@ app.post('/api/payment/create-order', express.json(), async (req, res) => {
     });
   } catch (error) {
     console.error('创建订单失败:', error);
+    if (error && (error.message === '缺少必要参数' || error.message.includes('无效套餐ID'))) {
+      return res.status(400).json({ error: error.message });
+    }
     res.status(500).json({ error: '创建订单失败' });
   }
 });
@@ -2401,6 +2515,13 @@ app.post('/api/payment/notify', express.urlencoded({ extended: true }), (req, re
 
     // 更新订单状态
     if (status === 'OD') {
+      if (!isCallbackAmountMatch(order.amount, total_fee)) {
+        console.error('🚨 [支付回调] 金额校验失败');
+        console.error(`   订单金额: ${order.amount}`);
+        console.error(`   回调金额: ${total_fee}`);
+        return res.send('fail');
+      }
+
       order.status = 'paid';
       order.paidAt = Date.now();
       order.paymentId = transaction_id || order_id;
@@ -2430,6 +2551,17 @@ app.post('/api/payment/notify', express.urlencoded({ extended: true }), (req, re
  */
 app.post('/api/payment/manual-complete', express.json(), (req, res) => {
   try {
+    if (!ALLOW_MANUAL_COMPLETE) {
+      return res.status(403).json({ error: '生产环境已禁用手动完成订单' });
+    }
+
+    if (MANUAL_COMPLETE_TOKEN) {
+      const token = req.headers['x-admin-token'];
+      if (token !== MANUAL_COMPLETE_TOKEN) {
+        return res.status(403).json({ error: '管理员令牌无效' });
+      }
+    }
+
     const { orderId } = req.body;
 
     if (!orderId) {
@@ -2486,12 +2618,15 @@ app.use((req, res) => {
 // 添加全局错误处理中间件 - 捕获所有中间件的错误
 app.use((err, req, res, next) => {
   console.error('🚨 [SERVER CRITICAL ERROR]:', err.stack);
-  res.status(500).json({
-    error: err.message,
-    stack: err.stack,
+  const payload = {
+    error: IS_PRODUCTION ? 'Internal Server Error' : err.message,
     status: 'error',
     message: '服务器内部错误'
-  });
+  };
+  if (!IS_PRODUCTION) {
+    payload.stack = err.stack;
+  }
+  res.status(500).json(payload);
 });
 
 // 启动服务器 - 强制持久运行

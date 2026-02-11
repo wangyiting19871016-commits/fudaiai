@@ -1947,16 +1947,49 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
           return res.status(500).json({ error: err.message });
         }
 
-        const url = `https://${bucket}.cos.${region}.myqcloud.com/${fileName}`;
-        console.log('[COS Backend] ✅ 上传成功:', url);
+        // 🔧 【修复URL重复问题 - 多重验证】参考：docs/CONTEXT_HANDOFF.md
 
-        // 🔍 调试：检查发送前的数据
-        const responseData = { url };
-        console.log('[COS Backend] 🔍 准备发送的响应:', JSON.stringify(responseData));
-        console.log('[COS Backend] 🔍 URL长度:', url.length);
+        // 第1层：手动构建干净URL（不使用COS返回的Location）
+        let cleanUrl = `https://${bucket}.cos.${region}.myqcloud.com/${fileName}`;
 
-        // 🔧 绕过res.json()，直接发送字符串
+        // 第2层：检测并修复URL中的重复https://
+        const httpsCount = (cleanUrl.match(/https:\/\//g) || []).length;
+        if (httpsCount > 1) {
+          console.warn('[COS Backend] ⚠️ 检测到URL重复，正在修复...');
+          const parts = cleanUrl.split('https://').filter(p => p);
+          cleanUrl = 'https://' + parts[parts.length - 1]; // 取最后一段
+        }
+
+        // 第3层：JSON序列化后二次验证
+        const responseData = { url: cleanUrl };
+        const jsonString = JSON.stringify(responseData);
+        const jsonHttpsCount = (jsonString.match(/https:\/\//g) || []).length;
+
+        if (jsonHttpsCount > 1) {
+          console.error('[COS Backend] ❌ JSON序列化后仍有重复URL:', jsonString);
+          // 强制修复
+          const urlMatch = jsonString.match(/"url":"(https:\/\/[^"]+)"/);
+          if (urlMatch) {
+            const fixedUrl = urlMatch[1].split('https://').filter(p => p);
+            responseData.url = 'https://' + fixedUrl[fixedUrl.length - 1];
+          }
+        }
+
+        console.log('[COS Backend] ✅ 上传成功:', responseData.url);
+        console.log('[COS Backend] 🔍 URL长度:', responseData.url.length);
+
+        // 第4层：添加强防缓存响应头（防止代理层重复）
         res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+
+        // 第5层：检查响应是否已发送（防止重复发送）
+        if (res.writableEnded) {
+          console.warn('[COS Backend] ⚠️ 响应已发送，跳过重复发送');
+          return;
+        }
+
         res.end(JSON.stringify(responseData));
       }
     );

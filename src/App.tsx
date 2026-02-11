@@ -8,6 +8,7 @@ import { ConfigProvider } from './stores/ConfigStore';
 import { APISlotProvider } from './stores/APISlotStore';
 import { VoiceProvider } from './stores/VoiceStore';
 import Navigation from './components/Navigation';
+import { initAnalyticsInterceptor } from './utils/analyticsInterceptor';
 
 // 强制引用 src/pages 下的文件
 import Home from './pages/Home';
@@ -35,6 +36,15 @@ import RechargePage from './pages/Festival/RechargePage';
 import PaymentSuccessPage from './pages/Festival/PaymentSuccessPage';
 import M2TemplateSelectionPage from './pages/Festival/M2TemplateSelectionPage';
 import M3TemplateSelectionPage from './pages/Festival/M3TemplateSelectionPage';
+import CompanionUploadPage from './pages/Festival/CompanionUploadPage';
+import CompanionGeneratingPage from './pages/Festival/CompanionGeneratingPage';
+import CompanionResultPage from './pages/Festival/CompanionResultPage';
+
+// 管理后台页面
+import AdminLoginPage from './pages/Admin/LoginPage';
+import AdminDashboardPage from './pages/Admin/DashboardPage';
+import AdminUsersPage from './pages/Admin/UsersPage';
+import AdminAPILogsPage from './pages/Admin/APILogsPage';
 
 // ⚠️ 已废弃页面（已移除）
 // - DigitalHumanPage.tsx → 合并到VideoPage.tsx (2026-02-06)
@@ -60,6 +70,13 @@ const AppLayout: React.FC = () => {
         <Routes>
           {/* 🎯 默认跳转到春节H5 */}
           <Route path="/" element={<Navigate to="/festival/home" replace />} />
+
+          {/* 🔐 管理后台 */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/api-logs" element={<AdminAPILogsPage />} />
+          <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
 
           {/* 现有页面（内部测试，通过具体路径访问） */}
           <Route path="/p1" element={<Home />} />
@@ -99,6 +116,9 @@ const AppLayout: React.FC = () => {
             <Route path="payment-success" element={<PaymentSuccessPage />} />
             <Route path="m2-template-select" element={<M2TemplateSelectionPage />} />
             <Route path="m3-template-select" element={<M3TemplateSelectionPage />} />
+            <Route path="companion" element={<CompanionUploadPage />} />
+            <Route path="companion/generating" element={<CompanionGeneratingPage />} />
+            <Route path="companion/result" element={<CompanionResultPage />} />
           </Route>
         </Routes>
       </div>
@@ -114,6 +134,8 @@ const App: React.FC = () => {
   // 初始化访客ID和积分
   useEffect(() => {
     initVisitor();
+    // 初始化数据分析拦截器
+    initAnalyticsInterceptor();
   }, [initVisitor]);
 
   // 新用户欢迎提示（仅首次）

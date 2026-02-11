@@ -1,0 +1,120 @@
+﻿import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BackButton } from '../../components/BackButton';
+import { HomeButton } from '../../components/HomeButton';
+import { generateCompanionPhoto } from '../../services/companionService';
+import '../../styles/festival-design-system.css';
+import '../../styles/festival-result-glass.css';
+import '../../styles/festival-companion.css';
+
+const INPUT_KEY = 'festival_companion_input_image';
+const RESULT_KEY = 'festival_companion_result';
+const RUN_LOCK_KEY = 'festival_companion_generating_lock';
+
+const CompanionGeneratingPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [status, setStatus] = useState('AI 生成合照中...');
+  const [error, setError] = useState('');
+  const [progress, setProgress] = useState(8);
+  const [etaSec, setEtaSec] = useState(15);
+  const startedRef = useRef(false);
+
+  const run = async () => {
+    const input = sessionStorage.getItem(INPUT_KEY) || '';
+    if (!input) {
+      sessionStorage.removeItem(RUN_LOCK_KEY);
+      setError('未找到上传图片，请返回重新上传。');
+      return;
+    }
+
+    try {
+      const resp = await generateCompanionPhoto(input);
+      const result = {
+        sourceImage: input,
+        resultImage: resp.imageUrl || '',
+        analysis: resp.analysis || {},
+        model: resp.model || {},
+        createdAt: Date.now()
+      };
+      sessionStorage.setItem(RESULT_KEY, JSON.stringify(result));
+      sessionStorage.removeItem(RUN_LOCK_KEY);
+      navigate('/festival/companion/result');
+    } catch (e: any) {
+      sessionStorage.removeItem(RUN_LOCK_KEY);
+      setError(e?.message || '生成失败');
+    }
+  };
+
+  useEffect(() => {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    if (sessionStorage.getItem(RUN_LOCK_KEY) === '1') return;
+    sessionStorage.setItem(RUN_LOCK_KEY, '1');
+    run();
+  }, []);
+
+  useEffect(() => {
+    if (error) return;
+
+    const progressTimer = window.setInterval(() => {
+      setProgress((prev) => {
+        const next = prev + (prev < 55 ? 7 : prev < 78 ? 4 : prev < 92 ? 2 : 1);
+        return Math.min(next, 96);
+      });
+    }, 900);
+
+    const etaTimer = window.setInterval(() => {
+      setEtaSec((prev) => Math.max(prev - 1, 1));
+    }, 1000);
+
+    return () => {
+      window.clearInterval(progressTimer);
+      window.clearInterval(etaTimer);
+    };
+  }, [error]);
+
+  return (
+    <div className="festival-result companion-shell">
+      <div className="festival-result-container companion-container">
+        <div className="festival-companion-top-nav">
+          <BackButton />
+          <h1>正在生成</h1>
+          <HomeButton />
+        </div>
+
+        <div className="festival-companion-card generating">
+          <div className="loading-spinner" />
+          <div className="festival-companion-status">{status}</div>
+
+          {!error && (
+            <>
+              <div className="festival-companion-progress-wrap">
+                <div className="festival-companion-progress-bar">
+                  <div className="festival-companion-progress-fill" style={{ width: `${progress}%` }} />
+                </div>
+                <div className="festival-companion-progress-meta">
+                  <span>进度 {progress}%</span>
+                  <span>预计 {etaSec}s</span>
+                </div>
+              </div>
+              <div className="festival-companion-stage">正在分析照片特征并生成伴侣合照，请稍候...</div>
+            </>
+          )}
+
+          {!!error && (
+            <>
+              <div className="festival-companion-error">{error}</div>
+              <div className="festival-companion-actions companion-single-action">
+                <button className="festival-companion-btn festival-companion-btn-secondary" onClick={() => navigate('/festival/companion')}>
+                  返回重试
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CompanionGeneratingPage;

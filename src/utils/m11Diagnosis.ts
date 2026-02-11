@@ -7,54 +7,27 @@ export const diagnosisM11 = async () => {
   console.log('%c=== M11 数字人健康检查 ===', 'color: #1890ff; font-size: 16px; font-weight: bold');
   console.log('');
 
-  // 1. 检查API Key配置
-  console.log('%c📝 步骤1: 检查API Key配置', 'color: #52c41a; font-weight: bold');
-  const slotsStr = localStorage.getItem('apiSlots');
-  if (!slotsStr) {
-    console.error('❌ API插槽未配置');
-    return false;
-  }
-
-  const slots = JSON.parse(slotsStr);
-  const qwenSlot = slots.find((s: any) => s.id === 'qwen-primary');
-
-  if (!qwenSlot) {
-    console.error('❌ qwen-primary插槽不存在');
-    console.log('   可用插槽:', slots.map((s: any) => s.id));
-    return false;
-  }
-
-  const apiKey = qwenSlot.authKey?.trim();
-  if (!apiKey || apiKey.length < 20) {
-    console.error('❌ API Key无效，长度:', apiKey?.length || 0);
-    console.log('   请前往 P4LabPage 配置阿里云DashScope API Key');
-    return false;
-  }
-
-  console.log('✅ API Key配置正常');
-  console.log('   长度:', apiKey.length);
-  console.log('   前10位:', apiKey.substring(0, 10) + '...');
+  // 1. 检查后端代理可达性
+  console.log('%c📝 步骤1: 检查后端代理可达性', 'color: #52c41a; font-weight: bold');
+  const backendUrl = (import.meta as any).env?.VITE_API_BASE_URL || '';
+  const proxyBase = backendUrl || '';
+  const proxyEndpoint = `${proxyBase}/api/dashscope/proxy`;
+  console.log('✅ 使用后端代理模式');
+  console.log('   代理端点:', proxyEndpoint || '/api/dashscope/proxy');
   console.log('');
 
   // 2. 测试API连通性
   console.log('%c🔍 步骤2: 测试阿里云DashScope连通性', 'color: #52c41a; font-weight: bold');
   try {
-    const testResponse = await fetch('/api/dashscope/api/v1/services/aigc/image2video/video-synthesis', {
+    const testResponse = await fetch(`${proxyBase}/api/dashscope/proxy`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'X-DashScope-Async': 'enable'
       },
       body: JSON.stringify({
-        model: 'wan2.2-s2v',
-        input: {
-          image_url: 'https://via.placeholder.com/512',
-          audio_url: 'https://example.com/test.mp3'
-        },
-        parameters: {
-          resolution: '720P'
-        }
+        endpoint: '/api/v1/tasks/test',
+        method: 'GET',
+        body: {}
       })
     });
 
@@ -73,9 +46,9 @@ export const diagnosisM11 = async () => {
       } else if (message.includes('quota') || message.includes('配额')) {
         console.error('   📊 可能原因: API配额耗尽');
         console.log('   解决方法: 申请更高配额或等待配额重置');
-      } else if (message.includes('invalid') || message.includes('key')) {
-        console.error('   🔑 可能原因: API Key无效');
-        console.log('   解决方法: 重新生成并配置API Key');
+      } else if (message.includes('invalid') || message.includes('key') || message.includes('not configured')) {
+        console.error('   🔑 可能原因: 后端Dashscope密钥未配置或无效');
+        console.log('   解决方法: 检查后端 .env 中 DASHSCOPE_API_KEY');
       } else {
         console.error('   ⚠️ 其他错误:', result.message || '未知');
       }
@@ -111,7 +84,7 @@ export const diagnosisM11 = async () => {
   } catch (error: any) {
     console.error('%c❌ API连接失败', 'color: #ff4d4f; font-weight: bold');
     console.error('   错误:', error.message);
-    console.error('   可能原因: 网络问题或代理配置错误');
+      console.error('   可能原因: 网络问题、后端未启动或代理配置错误');
     console.log('');
     return false;
   }

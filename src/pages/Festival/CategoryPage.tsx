@@ -6,8 +6,10 @@ import { BottomNav } from '../../components/BottomNav';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
 import { useCredits, useCreditActions } from '../../stores/creditStore';
+import { BlessingTextBackground, VoiceCardBackground, CyberFortuneBackground, HighEQBackground } from '../../components/FeatureCardBackgrounds';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-category-glass.css';
+import '../../components/FeatureCardBackgrounds.css';
 
 /**
  * 📂 分类页
@@ -151,13 +153,21 @@ const FestivalCategoryPage: React.FC = () => {
             <div
               key={feature.id}
               className="feature-card feature-card-v2"
+              data-feature-id={feature.id}
               onClick={() => handleFeatureClick(feature)}
             >
-              {/* 上层：预览图 */}
-              {feature.previewImage && (
+              {/* 上层：预览图或背景组件 */}
+              {feature.previewImage ? (
                 <div className="feature-preview-bg" style={{
                   backgroundImage: `url(${feature.previewImage})`
                 }} />
+              ) : (
+                <div className="feature-preview-bg">
+                  {feature.id === 'text-blessing' && <BlessingTextBackground />}
+                  {feature.id === 'M5' && <VoiceCardBackground />}
+                  {feature.id === 'M8' && <CyberFortuneBackground />}
+                  {feature.id === 'M10' && <HighEQBackground />}
+                </div>
               )}
 
               {/* 下层：功能信息 */}

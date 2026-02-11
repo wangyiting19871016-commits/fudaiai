@@ -1,1 +1,49 @@
-�ܾ����ʡ�
+
+> trinity-mirror@1.0.0 server
+> node server.js
+
+[dotenv@17.2.4] injecting env (28) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+✅ 物理保存路径已锁定: F:/project_kuajing/temp_processing
+✅ 下载目录已初始化: F:\project_kuajing\downloads
+鉁?API浠ｇ悊绔偣宸插姞杞斤細
+   - POST /api/liblib/text2img (LiblibAI鍥剧墖鐢熸垚)
+   - POST /api/liblib/status (LiblibAI鐘舵€佹煡璇?
+   - POST /api/liblib/api/generate/comfyui/app (LiblibAI ComfyUI鐢熸垚-M6涓撶敤)
+   - POST /api/liblib/api/generate/comfy/status (LiblibAI ComfyUI鐘舵€佹煡璇?M6涓撶敤)
+   - POST /api/fish/tts (Fish Audio璇煶鐢熸垚)
+   - POST /api/dashscope/proxy (Dashscope/Qwen-VL浠ｇ悊)
+   - POST /api/deepseek/proxy (DeepSeek浠ｇ悊)
+   - POST /api/deepseek/chat/completions (DeepSeek Chat绔偣)
+🔥 [核心监听启动] 后端心脏已跳动，端口: 3002
+🔥 物理进程已开启，PID: 31308
+
+🚀 Server is running on http://localhost:3002
+📡 API endpoints available at:
+   - Health check: http://localhost:3002/api/health
+   - FFmpeg check: http://localhost:3002/api/ffmpeg-check
+   - Audio separate: http://localhost:3002/api/audio/separate
+   - AI Triple Split: http://localhost:3002/api/audio/process-triple-split
+   - Traditional Split: http://localhost:3002/api/audio/split-traditional
+   - Video Compose: http://localhost:3002/api/video/compose
+
+🎯 Frontend available at: http://localhost:3002
+🚀 后端服务已在 3002 端口就绪，准备调用 FFmpeg
+🔑 DashScope API Key: 已加载
+
+🔍 Checking FFmpeg installation...
+🚨 [监听失败] 检查 3002 是否被占用！ Error: listen EADDRINUSE: address already in use 0.0.0.0:3002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3002
+}
+
+✅ FFmpeg FOUND:
+   Path: ffmpeg
+   Version: 2025-12-31-git-38e89fe502-full_build-www.gyan.dev
+   FFmpeg service is now active and reachable

@@ -96,7 +96,7 @@ soft cinematic lighting, bokeh festive background,
 high-end 3d character design, rendered in Octane, stylized movie look, 
 vibrant colors, clean smooth surfaces`,
       
-      negative_prompt_template: `{{GENDER_NEG}}, snake, reptile, low quality, (distorted:1.2)`,
+      negative_prompt_template: `{{GENDER_NEG}}, low quality, (distorted:1.2)`,
       
       // 性别逻辑
       gender_logic: {
@@ -106,7 +106,7 @@ vibrant colors, clean smooth surfaces`,
         },
         female: {
           modifier: '(elegant young adult woman, refined sophisticated features:1.4)',
-          negative_add: 'beard, mustache, rough skin, masculine, snake'
+          negative_add: 'beard, mustache, rough skin, masculine'
         }
       },
       

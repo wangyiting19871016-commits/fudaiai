@@ -51,8 +51,6 @@ const FestivalResultPage: React.FC = () => {
     if (taskId) {
       const savedResult = MissionExecutor.getResult(taskId);
       if (savedResult) {
-        console.log('✅ [Festival Result] LocalStorage读取成功');
-        console.log('[Festival Result] 结果包含对比图:', !!savedResult.comparisonImage);
         setResult(savedResult);
         setIsLoading(false);
 
@@ -60,7 +58,6 @@ const FestivalResultPage: React.FC = () => {
         const imageToLoad = savedResult.comparisonImage || savedResult.image;
         const img = new Image();
         img.onload = () => {
-          console.log('[Festival Result] 图片加载完成');
           setImageLoaded(true);
         };
         img.onerror = () => {
@@ -70,9 +67,8 @@ const FestivalResultPage: React.FC = () => {
         img.src = imageToLoad;
       } else {
         console.error('❌ [Festival Result] LocalStorage读取失败，taskId:', taskId);
-        console.error('可能原因：1) LocalStorage配额不足 2) 数据未保存 3) taskId错误');
 
-        // 🔍 手机端调试：显示详细信息
+        // 手机端调试：显示详细信息
         const allKeys = Object.keys(localStorage).filter(k => k.startsWith('festival_task_'));
         alert(`❌ 数据加载失败\ntaskId: ${taskId}\nLocalStorage中的任务: ${allKeys.length}个\n${allKeys.join('\n')}`);
 
@@ -106,7 +102,6 @@ const FestivalResultPage: React.FC = () => {
     };
 
     setCurrentMaterial(material);
-    console.log('[ResultPage] 素材原子已创建，等待用户保存:', material.id);
   }, [result, imageLoaded]);
 
   // 获取功能名称（显示用）
@@ -156,7 +151,6 @@ const FestivalResultPage: React.FC = () => {
       // 保存到素材库
       MaterialService.saveMaterial(currentMaterial);
       setIsSaved(true);
-      console.log('[ResultPage] 素材已保存到素材库:', currentMaterial.id);
 
       message.success({
         content: '已保存到【我的作品】',
@@ -200,8 +194,8 @@ const FestivalResultPage: React.FC = () => {
     if (!result) return;
 
     try {
-      // TODO: 检查用户是否VIP
-      const isVIP = false;
+      const isVIP = localStorage.getItem('user_vip_status') === 'true';
+      const watermarkQrUrl = import.meta.env.VITE_WATERMARK_QR_URL || '';
 
       message.loading({ content: '正在生成分享图片...', key: 'share', duration: 0 });
 
@@ -209,13 +203,10 @@ const FestivalResultPage: React.FC = () => {
 
       // 免费用户：添加水印
       if (!isVIP) {
-        console.log('[Share] 免费用户，添加水印');
         imageToShare = await addWatermark(imageToShare, {
-          text: '福袋AI制作'
-          // qrCodeUrl: 部署后添加真实二维码URL
+          text: '福袋AI制作',
+          qrCodeUrl: watermarkQrUrl || undefined
         });
-      } else {
-        console.log('[Share] VIP用户，无水印');
       }
 
       // 将DataURL转为Blob URL（更容易被浏览器识别，长按成功率更高）
@@ -237,16 +228,12 @@ const FestivalResultPage: React.FC = () => {
   };
 
   const handleSystemShare = async () => {
-    console.log('[Share] 按钮被点击');
-
     if (!shareCardUrl) {
-      console.error('[Share] shareCardUrl为空');
       return;
     }
 
     // 检查是否支持Web Share API
     if (!navigator.share || !navigator.canShare) {
-      console.log('[Share] 不支持Web Share API');
       message.info({
         content: '请长按上方图片，选择"保存图片"',
         duration: 3,
@@ -255,7 +242,6 @@ const FestivalResultPage: React.FC = () => {
     }
 
     try {
-      console.log('[Share] 开始调用系统分享');
 
       // 将Blob URL转换为File对象
       const response = await fetch(shareCardUrl);
@@ -272,14 +258,12 @@ const FestivalResultPage: React.FC = () => {
         });
 
         // 分享成功
-        console.log('[Share] 分享成功');
         message.success({
           content: '操作成功！图片已保存到相册',
           duration: 3,
         });
         setTimeout(() => setShowShareModal(false), 1500);
       } else {
-        console.log('[Share] 浏览器不支持分享文件');
         message.info({
           content: '请长按上方图片，选择"保存图片"',
           duration: 3,
@@ -288,7 +272,6 @@ const FestivalResultPage: React.FC = () => {
     } catch (error: any) {
       // 用户取消
       if (error.name === 'AbortError') {
-        console.log('[Share] 用户取消分享');
         return;
       } else {
         console.error('[Share] 系统分享失败:', error);

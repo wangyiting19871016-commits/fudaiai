@@ -163,7 +163,7 @@ export const FEATURES: Feature[] = [
         workflowType: 'text2img',
         templateUuid: '5d7e67009b344550bc1aa6ccbfa1d7f4',
         promptTemplate: '{{LORA_TRIGGER}}, {{QWEN_OUTPUT}}, {{STYLE_SUFFIX}}',
-        negativePrompt: '--no snake, reptile, low quality, distorted',
+        negativePrompt: '--no low quality, distorted',
         lora: {
           uuid: '95ec78a639394f48827c31adabc00828',
           weight: 0.4,
@@ -260,7 +260,7 @@ export const FEATURES: Feature[] = [
     name: '情侣合照',
     subtitle: '和TA一起迎新年',
     icon: '💑',
-    previewImage: '/assets/showcase/couple-photo.png',
+    previewImage: '/assets/showcase/couple-s350.jpg',
     order: 1,
     enabled: true,
     input: {
@@ -343,6 +343,7 @@ export const FEATURES: Feature[] = [
     name: '老照片修复',
     subtitle: '修复上色，还原记忆',
     icon: '📷',
+    previewImage: '/assets/showcase/photo-restore-desktop.jpg',
     order: 3,
     enabled: true,
     input: {
@@ -439,7 +440,6 @@ export const FEATURES: Feature[] = [
     name: '语音贺卡',
     subtitle: '听见时光的祝福',
     icon: '🎵',
-    previewImage: '/assets/showcase/voice-card.png',
     order: 2,
     enabled: true,
     input: {
@@ -558,7 +558,6 @@ export const FEATURES: Feature[] = [
     name: '赛博算命',
     subtitle: '看面相，测运势',
     icon: '🔮',
-    previewImage: '/assets/showcase/fortune-love.png',
     order: 2,
     enabled: true,
     input: {

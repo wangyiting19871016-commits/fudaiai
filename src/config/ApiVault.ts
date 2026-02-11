@@ -29,6 +29,7 @@ export const API_VAULT = {
     PROXY_TTS: '/api/fish/tts'
   },
   QWEN: {
-    MASTER_KEY: import.meta.env.VITE_DASHSCOPE_API_KEY // 动态读取 .env 环境变量
+    // DashScope 统一走后端代理，前端不再默认保存密钥
+    MASTER_KEY: ''
   }
 };

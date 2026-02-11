@@ -1,12 +1,13 @@
 /**
  * 支付结果页面
- * 轮询订单状态并发放积分
+ * 轮询订单状态，并以后端积分余额为准做本地同步
  */
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { pollOrderStatus, Order, OrderStatus } from '../../services/paymentService';
-import { useCreditActions } from '../../stores/creditStore';
+import { useCreditActions, useCreditStore } from '../../stores/creditStore';
+import { getVisitorId } from '../../utils/visitorId';
 import './PaymentSuccessPage.css';
 
 const PaymentSuccessPage: React.FC = () => {
@@ -14,11 +15,41 @@ const PaymentSuccessPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
 
-  const { addCredits } = useCreditActions();
+  const { addCredits, consumeCredits } = useCreditActions();
+  const currentCredits = useCreditStore((state) => state.creditData.credits);
 
   const [status, setStatus] = useState<'loading' | 'success' | 'failed' | 'expired'>('loading');
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string>('');
+
+  const syncCreditsFromServer = async (paidOrder: Order) => {
+    try {
+      const visitorId = getVisitorId();
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+      const response = await fetch(`${API_BASE}/api/credits/balance/${visitorId}`);
+      if (!response.ok) return;
+
+      const data = await response.json();
+      const serverBalance = Number(data?.balance);
+      if (!Number.isFinite(serverBalance)) return;
+
+      if (serverBalance > currentCredits) {
+        addCredits(
+          serverBalance - currentCredits,
+          paidOrder.orderId,
+          `支付到账同步: ${paidOrder.packageName}`
+        );
+      } else if (serverBalance < currentCredits) {
+        consumeCredits(
+          currentCredits - serverBalance,
+          'server-sync',
+          '后端积分同步修正'
+        );
+      }
+    } catch (e) {
+      console.warn('sync credits from server failed:', e);
+    }
+  };
 
   useEffect(() => {
     if (!orderId) {
@@ -27,22 +58,15 @@ const PaymentSuccessPage: React.FC = () => {
       return;
     }
 
-    // 开始轮询订单状态
     pollOrderStatus(
       orderId,
       (updatedOrder) => {
         setOrder(updatedOrder);
 
-        // 订单状态变化
         if (updatedOrder.status === OrderStatus.PAID) {
           setStatus('success');
-
-          // 发放积分
-          addCredits(
-            updatedOrder.credits,
-            updatedOrder.orderId,
-            `充值 ${updatedOrder.packageName}`
-          );
+          // 只以后端余额为准，不再在这里本地盲加积分
+          syncCreditsFromServer(updatedOrder);
         } else if (updatedOrder.status === OrderStatus.FAILED) {
           setStatus('failed');
           setError('支付失败，请重试');
@@ -51,25 +75,19 @@ const PaymentSuccessPage: React.FC = () => {
           setError('订单已过期');
         }
       },
-      60, // 最多轮询60次（2分钟）
-      2000 // 每2秒轮询一次
+      60,
+      2000
     ).catch((err) => {
       console.error('Poll order status failed:', err);
       setStatus('failed');
       setError('查询订单状态失败');
     });
-  }, [orderId, addCredits]);
+  }, [orderId, addCredits, consumeCredits, currentCredits]);
 
-  /**
-   * 返回首页
-   */
   const handleGoHome = () => {
     navigate('/');
   };
 
-  /**
-   * 重新充值
-   */
   const handleRecharge = () => {
     navigate('/recharge');
   };
@@ -87,7 +105,7 @@ const PaymentSuccessPage: React.FC = () => {
 
       {status === 'success' && order && (
         <div className="payment-status success">
-          <div className="success-icon">✅</div>
+          <div className="success-icon">✓</div>
           <h1>支付成功！</h1>
           <p>积分已到账，可以开始使用啦</p>
 
@@ -120,9 +138,9 @@ const PaymentSuccessPage: React.FC = () => {
 
       {(status === 'failed' || status === 'expired') && (
         <div className="payment-status failed">
-          <div className="failed-icon">❌</div>
+          <div className="failed-icon">✕</div>
           <h1>{status === 'expired' ? '订单已过期' : '支付失败'}</h1>
-          <p>{error || '请重新尝试充值'}</p>
+          <p>{error || '请重试充值'}</p>
 
           {order && (
             <div className="order-details">

@@ -284,19 +284,44 @@ export const sendRequest = async (config: RequestConfig, authKey: string) => {
 
   let finalUrl = config.url;
   if (isLiblib) {
-    const { accessKey, secretKey } = parseLiblibAuth(trimmedKey);
-    if (!accessKey) {
-      throw new Error('缺少 AccessKey：请在顶部【API 插槽】填写 Liblib 的 AccessKey');
-    }
-    if (!secretKey) {
-      throw new Error('缺少 SecretKey：请在顶部【API 插槽】的 API Key 中按两行粘贴 AccessKey 和 SecretKey');
+    // ── LiblibAI 走后端代理，前端不再签名 ──
+    // 所有 /api/liblib/* 请求直接 fetch 到后端
+    let fetchUrl = config.url;
+    if (fetchUrl.startsWith('http')) {
+      try {
+        const urlObj = new URL(fetchUrl);
+        fetchUrl = urlObj.pathname + urlObj.search;
+      } catch {
+        // 保持原样
+      }
     }
 
-    delete headers.Authorization;
-    delete (headers as any).AccessKey;
-    delete (headers as any).accesskey;
+    // 如果是相对路径，加上backend base URL
+    if (!fetchUrl.startsWith('http')) {
+      const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+      fetchUrl = `${backendUrl}${fetchUrl}`;
+    }
 
-    finalUrl = await signLiblibUrl(finalUrl, accessKey, secretKey);
+    console.log(`[apiService] LiblibAI → 后端代理: ${config.method} ${fetchUrl}`);
+
+    const proxyResponse = await fetch(fetchUrl, {
+      method: config.method || 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: config.body ? JSON.stringify(config.body) : undefined,
+    });
+
+    if (!proxyResponse.ok) {
+      const errorText = await proxyResponse.text();
+      throw new Error(`LiblibAI代理失败(${proxyResponse.status}): ${errorText}`);
+    }
+
+    const proxyData = await proxyResponse.json();
+
+    if (typeof proxyData?.code === 'number' && proxyData.code !== 0 && proxyData?.msg) {
+      throw new Error(`${proxyData.msg} (code: ${proxyData.code})`);
+    }
+
+    return proxyData;
   }
 
   if (typeof config.url === 'string' && config.url.includes('/mj/submit/imagine')) {

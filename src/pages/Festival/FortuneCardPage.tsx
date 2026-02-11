@@ -16,8 +16,10 @@ import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
 import { FestivalButton, FestivalButtonGroup } from '../../components/FestivalButton';
+import { CyberFortuneBackground } from '../../components/FeatureCardBackgrounds';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-lab-glass.css';
+import '../../components/FeatureCardBackgrounds.css';
 
 type Stage = 'upload' | 'analyzing' | 'result';
 
@@ -268,9 +270,20 @@ const FortuneCardPage: React.FC = () => {
   };
 
   return (
-    <div className="festival-lab-modern">
+    <div className="festival-lab-modern" style={{ position: 'relative' }}>
+      {/* 🎨 赛博算命背景装饰层 */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        zIndex: 0,
+        opacity: 0.08,
+        pointerEvents: 'none'
+      }}>
+        <CyberFortuneBackground />
+      </div>
+
       {/* 动态背景 */}
-      <div className="lab-background-modern">
+      <div className="lab-background-modern" style={{ position: 'relative', zIndex: 1 }}>
         <div className="lab-grid-pattern"></div>
         <div className="lab-glow-effect"></div>
       </div>

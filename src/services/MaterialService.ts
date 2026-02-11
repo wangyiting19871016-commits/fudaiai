@@ -29,7 +29,20 @@ export class MaterialService {
         materials.splice(MATERIAL_STORAGE_LIMIT);
       }
 
-      localStorage.setItem(MATERIAL_STORAGE_KEY, JSON.stringify(materials));
+      try {
+        localStorage.setItem(MATERIAL_STORAGE_KEY, JSON.stringify(materials));
+      } catch (quotaError: any) {
+        if (quotaError.name === 'QuotaExceededError') {
+          console.warn('[MaterialService] LocalStorage quota exceeded, clearing old materials...');
+          // 保留最近的50%素材
+          const keepCount = Math.floor(materials.length / 2);
+          const trimmedMaterials = materials.slice(0, keepCount);
+          localStorage.setItem(MATERIAL_STORAGE_KEY, JSON.stringify(trimmedMaterials));
+          console.log(`[MaterialService] Cleaned up, kept ${keepCount} recent materials`);
+        } else {
+          throw quotaError;
+        }
+      }
     } catch (error) {
       console.error('[MaterialService] 保存素材失败:', error);
     }

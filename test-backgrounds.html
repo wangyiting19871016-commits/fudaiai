@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>背景测试</title>
+  <link rel="stylesheet" href="src/components/FeatureCardBackgrounds.css">
+  <style>
+    .test-card {
+      width: 300px;
+      height: 200px;
+      margin: 20px;
+      border: 2px solid #ccc;
+      position: relative;
+      overflow: hidden;
+    }
+    .label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 5px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <h1>背景组件测试</h1>
+
+  <div class="test-card">
+    <div class="label">1. Blessing Text</div>
+    <div class="card-bg blessing-text-bg" data-emoji="✍️"></div>
+  </div>
+
+  <div class="test-card">
+    <div class="label">2. Voice Card</div>
+    <div class="card-bg voice-card-bg" data-emoji="🎵"></div>
+  </div>
+
+  <div class="test-card">
+    <div class="label">3. Cyber Fortune</div>
+    <div class="card-bg cyber-fortune-bg" data-emoji="🔮"></div>
+  </div>
+
+  <div class="test-card">
+    <div class="label">4. High EQ</div>
+    <div class="card-bg high-eq-bg" data-emoji="💬"></div>
+  </div>
+</body>
+</html>

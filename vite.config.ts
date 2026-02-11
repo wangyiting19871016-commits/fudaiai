@@ -79,16 +79,20 @@ export default defineConfig({
         changeOrigin: true,
         secure: false
       },
+      '/api/companion': {
+        target: 'http://localhost:3002',
+        changeOrigin: true,
+        secure: false
+      },
       '/api/kling': {
         target: 'http://localhost:3002',
         changeOrigin: true,
         secure: false
       },
       '/api/dashscope': {
-        target: 'https://dashscope.aliyuncs.com',
+        target: 'http://localhost:3002',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/dashscope/, ''),
-        secure: true,
+        secure: false,
         timeout: 300000,        // 5分钟超时（Qwen-VL处理图片需要时间）
         proxyTimeout: 300000,   // 代理超时也设为5分钟
         configure: (proxy, options) => {

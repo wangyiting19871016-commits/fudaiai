@@ -7,6 +7,18 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getVisitorId, initVisitor } from '../utils/visitorId';
 
+// Local testing credit switches (DEV only):
+// VITE_CREDIT_TEST_MODE=bootstrap | unlimited | off
+// VITE_CREDIT_BOOTSTRAP=500000
+const CREDIT_TEST_MODE = (import.meta.env.VITE_CREDIT_TEST_MODE || 'off').toLowerCase();
+const CREDIT_BOOTSTRAP_RAW = Number(import.meta.env.VITE_CREDIT_BOOTSTRAP || 0);
+const IS_DEV_MODE = import.meta.env.DEV;
+const ENABLE_UNLIMITED_CREDITS = IS_DEV_MODE && CREDIT_TEST_MODE === 'unlimited';
+const ENABLE_BOOTSTRAP_CREDITS = IS_DEV_MODE && CREDIT_TEST_MODE === 'bootstrap';
+const CREDIT_BOOTSTRAP = Number.isFinite(CREDIT_BOOTSTRAP_RAW) && CREDIT_BOOTSTRAP_RAW > 0
+  ? CREDIT_BOOTSTRAP_RAW
+  : 100000;
+
 /**
  * 交易类型
  */
@@ -83,9 +95,19 @@ function limitTransactions(transactions: Transaction[], maxCount = 100): Transac
  */
 function createInitialState(): CreditData {
   const visitorId = getVisitorId();
+  const initialCredits = ENABLE_UNLIMITED_CREDITS
+    ? CREDIT_BOOTSTRAP
+    : ENABLE_BOOTSTRAP_CREDITS
+      ? CREDIT_BOOTSTRAP
+      : 100;
+  const initialDescription = ENABLE_UNLIMITED_CREDITS
+    ? `🧪 本地测试：无限积分模式（初始 ${initialCredits}）`
+    : ENABLE_BOOTSTRAP_CREDITS
+      ? `🧪 本地测试：预设积分 ${initialCredits}`
+      : '🎁 新春礼包：赠送100积分体验';
 
   return {
-    credits: 100, // 🎁 新用户赠送100积分
+    credits: initialCredits,
     totalRecharged: 0,
     totalConsumed: 0,
     visitorId,
@@ -93,9 +115,9 @@ function createInitialState(): CreditData {
       {
         id: `txn_welcome_${Date.now()}`,
         type: TransactionType.GIFT,
-        amount: 100,
-        balance: 100,
-        description: '🎁 新春礼包：赠送100积分体验',
+        amount: initialCredits,
+        balance: initialCredits,
+        description: initialDescription,
         createdAt: Date.now(),
       }
     ],
@@ -164,6 +186,11 @@ export const useCreditStore = create<CreditState>()(
        * @returns 是否成功
        */
       consumeCredits: (amount: number, featureId: string, description: string) => {
+        // DEV-only bypass: keep local testing smooth
+        if (ENABLE_UNLIMITED_CREDITS) {
+          return true;
+        }
+
         const { credits } = get().creditData;
 
         // 检查余额是否充足
@@ -237,6 +264,9 @@ export const useCreditStore = create<CreditState>()(
        * @returns 是否充足
        */
       checkCredits: (requiredAmount: number) => {
+        if (ENABLE_UNLIMITED_CREDITS) {
+          return true;
+        }
         return get().creditData.credits >= requiredAmount;
       },
 

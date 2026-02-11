@@ -41,11 +41,11 @@ export const M1_STYLES: Record<string, M1StyleConfig> = {
     prompt_templates: {
       male: {
         positive: "pks, (masterpiece), 3d pixar animation style, ({{HAIR_AGE}}:4.0), ({{ACCESSORIES}}:3.2), ({{FACE}}:2.2), adult male proportions, wearing vibrant red traditional Chinese silk jacket with gold dragon patterns, holding a shiny golden ingot (Yuanbao), soft cinematic lighting, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
-        negative: "--no (realistic photo:1.5), (photorealistic:1.5), photograph, snake, reptile, low quality, distorted, baby face, youthful, teen, child, toddler, boy, kid, childish face, chibi, big head, small body, cute, kawaii, wrong hairstyle, different hair color, different hair length, bald when should have hair"
+        negative: "--no (realistic photo:1.5), (photorealistic:1.5), photograph, low quality, distorted, baby face, youthful, teen, child, toddler, boy, kid, childish face, chibi, big head, small body, cute, kawaii, wrong hairstyle, different hair color, different hair length, bald when should have hair"
       },
       female: {
         positive: "pks, (masterpiece), 3d pixar animation style, ({{HAIR_AGE}}:4.2), ({{ACCESSORIES}}:3.5), ({{FACE}}:2.0), refined facial proportions, wearing vibrant red traditional Chinese silk jacket with gold dragon patterns, holding a shiny golden ingot (Yuanbao), character portrait, bokeh festive background, high-end 3d character design, rendered in Octane, stylized movie look, vibrant colors, clean smooth surfaces",
-        negative: "--no (realistic photo:1.5), (photorealistic:1.5), photograph, snake, reptile, low quality, distorted, baby face, youthful, smooth young skin, teen, child, cute innocent, chibi, big head, small body, wrong hairstyle, different hair color, different hair length, bald when should have hair"
+        negative: "--no (realistic photo:1.5), (photorealistic:1.5), photograph, low quality, distorted, baby face, youthful, smooth young skin, teen, child, cute innocent, chibi, big head, small body, wrong hairstyle, different hair color, different hair length, bald when should have hair"
       }
     }
   },

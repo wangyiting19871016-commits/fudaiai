@@ -65,7 +65,16 @@ const FestivalHomePage: React.FC = () => {
               {/* 上层：清晰的预览图 */}
               {category.previewImage && (
                 <div className="category-preview-bg" style={{
-                  backgroundImage: `url(${category.previewImage})`
+                  backgroundImage: `url(${
+                    category.id === 'family'
+                      ? '/assets/showcase/couple-s350.jpg'
+                      : category.id === 'blessing'
+                        ? '/assets/showcase/baonian-download.png'
+                        : category.previewImage
+                  })`,
+                  backgroundSize: category.id === 'family' ? '100% auto' : undefined,
+                  backgroundPosition: category.id === 'family' ? 'center top' : undefined,
+                  backgroundRepeat: category.id === 'family' ? 'no-repeat' : undefined
                 }} />
               )}
 

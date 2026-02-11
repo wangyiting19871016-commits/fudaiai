@@ -96,9 +96,6 @@ git push
 点击 "Environment Variables"，添加以下变量:
 
 ```bash
-# 阿里云通义千问 (必需)
-VITE_DASHSCOPE_API_KEY=sk-b70b16990ce44557861b081b8c290413
-
 # DeepSeek (必需)
 VITE_DEEPSEEK_API_KEY=sk-a6ed993fee184d05a0636aa75268c6ae
 
@@ -117,7 +114,7 @@ VITE_API_BASE_URL=http://localhost:3002
 
 **注意**:
 - ❌ 不要添加`KLING_ACCESS_KEY`和`KLING_SECRET_KEY` (功能已禁用)
-- ✅ 所有以`VITE_`开头的变量都必须添加
+- ✅ DashScope 密钥只在后端配置：`DASHSCOPE_API_KEY`
 
 #### 3.5 部署
 1. 点击 "Deploy"
@@ -158,7 +155,7 @@ Vercel支持Node.js Serverless Functions:
 3. 连接GitHub仓库
 4. Build Command: `npm install`
 5. Start Command: `node server.js`
-6. 环境变量配置 (同上)
+6. 环境变量配置 (同上，且必须配置 `DASHSCOPE_API_KEY`)
 7. 获得后端URL: `https://你的项目名.onrender.com`
 
 **选项2: Railway.app**

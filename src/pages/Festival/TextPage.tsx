@@ -13,9 +13,11 @@ import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
 import { createNavigationState } from '../../types/navigationState';
 import type { MaterialAtom, CoupletData } from '../../types/material';
+import { BlessingTextBackground } from '../../components/FeatureCardBackgrounds';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival.css';
 import '../../styles/festival-page-glass.css';
+import '../../components/FeatureCardBackgrounds.css';
 
 /**
  * 📝 文案工坊页面 (TextPage)
@@ -135,7 +137,6 @@ const FestivalTextPage: React.FC = () => {
       };
 
       MaterialService.saveMaterial(posterMaterial);
-      console.log('[M9] 海报已保存到素材库');
 
     } catch (error) {
       message.destroy('poster');
@@ -405,17 +406,27 @@ const FestivalTextPage: React.FC = () => {
   };
 
   return (
-    <div className="festival-layout">
-      <div className="festival-text-page">
+    <div className="festival-layout" style={{ position: 'relative' }}>
+      <div className="festival-text-page" style={{ position: 'relative' }}>
+        {/* 🎨 背景装饰层 - 放在内容后面 */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 0,
+          opacity: 0.08,
+          pointerEvents: 'none'
+        }}>
+          <BlessingTextBackground />
+        </div>
         {/* 顶部导航 */}
-        <div className="text-header">
+        <div className="text-header" style={{ position: 'relative', zIndex: 1 }}>
           <BackButton onClick={handleBack} />
           <h1 className="text-title">{feature.icon} {feature.name}</h1>
           <HomeButton />
         </div>
 
         {/* 主内容 */}
-        <div className="text-content">
+        <div className="text-content" style={{ position: 'relative', zIndex: 1 }}>
           {!showResult ? (
             // 输入表单
             <>

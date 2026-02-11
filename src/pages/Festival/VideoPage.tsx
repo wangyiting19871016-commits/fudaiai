@@ -40,6 +40,80 @@ import '../../styles/festival-video.css';
 import '../../styles/festival-result-glass.css';
 import '../../styles/kling-template-modal.css';
 
+// ====== 安全防护：文件类型白名单 ======
+const IMAGE_TYPE_WHITELIST = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/bmp',
+];
+
+const AUDIO_TYPE_WHITELIST = [
+  'audio/mpeg',
+  'audio/mp3',
+  'audio/wav',
+  'audio/x-wav',
+  'audio/ogg',
+  'audio/webm',
+  'audio/mp4',
+  'audio/aac',
+];
+
+// ====== 安全防护：URL验证（防SSRF）======
+function validateMediaURL(url: string, type: 'image' | 'audio'): boolean {
+  try {
+    const parsed = new URL(url);
+
+    // 1. 只允许HTTPS
+    if (parsed.protocol !== 'https:') {
+      console.warn('[Security] 只允许HTTPS协议:', url);
+      return false;
+    }
+
+    // 2. 禁止访问私有IP和内网地址
+    const hostname = parsed.hostname;
+    const privatePatterns = [
+      /^localhost$/i,
+      /^127\./,
+      /^10\./,
+      /^172\.(1[6-9]|2[0-9]|3[01])\./,
+      /^192\.168\./,
+      /^169\.254\./,  // AWS元数据
+    ];
+
+    for (const pattern of privatePatterns) {
+      if (pattern.test(hostname)) {
+        console.error('[Security] 禁止访问内网地址:', hostname);
+        return false;
+      }
+    }
+
+    // 3. 白名单域名（根据实际使用的CDN配置）
+    const trustedDomains = [
+      'oss.aliyuncs.com',
+      'cos.ap-beijing.myqcloud.com',
+      'qiniucdn.com',
+      // TODO: 添加你实际使用的CDN域名
+    ];
+
+    const isTrustedDomain = trustedDomains.some(domain =>
+      hostname.includes(domain)
+    );
+
+    if (!isTrustedDomain) {
+      console.warn('[Security] 不在白名单内的域名:', hostname);
+      // 暂时只警告不阻止，避免影响现有功能
+      // return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('[Security] URL验证失败:', error);
+    return false;
+  }
+}
+
 const FestivalVideoPage: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
@@ -87,8 +161,6 @@ const FestivalVideoPage: React.FC = () => {
     // 优先级1: 从 NavigationState 接收素材（从生成页返回）
     const navState = getNavigationState(location.state);
     if (navState) {
-      console.log('[VideoPage] 收到NavigationState:', navState);
-
       if (navState.image) setImage(navState.image);
       if (navState.audio) setAudio(navState.audio);
       if (navState.text) setText(navState.text);
@@ -99,15 +171,6 @@ const FestivalVideoPage: React.FC = () => {
     // 优先级2: 从临时会话恢复素材
     const tempMaterials = SessionMaterialManager.getAllTempMaterials();
     if (tempMaterials && Object.keys(tempMaterials).length > 0) {
-      console.log('[VideoPage] 从临时会话恢复素材:', tempMaterials);
-
-      // 🔍 调试：检查恢复的图片数据
-      if (tempMaterials.image?.url) {
-        console.log('[VideoPage] 🔍 恢复的图片URL类型:', typeof tempMaterials.image.url);
-        console.log('[VideoPage] 🔍 恢复的图片URL长度:', tempMaterials.image.url.length);
-        console.log('[VideoPage] 🔍 恢复的图片URL前200字符:', tempMaterials.image.url.substring(0, 200));
-      }
-
       if (tempMaterials.text) setText(tempMaterials.text);
       if (tempMaterials.audio) setAudio(tempMaterials.audio.url);
       if (tempMaterials.image) setImage(tempMaterials.image.url);
@@ -125,27 +188,42 @@ const FestivalVideoPage: React.FC = () => {
     }
   }, [taskId, location.state]);
 
+  // ========== Blob URL 清理（防止内存泄露）==========
+  useEffect(() => {
+    return () => {
+      // 组件卸载时清理所有Blob URLs
+      if (audio && audio.startsWith('blob:')) {
+        URL.revokeObjectURL(audio);
+      }
+      if (wanVideoUrl && wanVideoUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(wanVideoUrl);
+      }
+      if (subtitleUrl && subtitleUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(subtitleUrl);
+      }
+    };
+  }, [audio, wanVideoUrl, subtitleUrl]);
+
   // ========== 素材操作：图片 ==========
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // ✅ 安全检查：文件类型
+    if (!IMAGE_TYPE_WHITELIST.includes(file.type)) {
+      message.error('仅支持 JPG、PNG、GIF、WebP 格式的图片');
+      return;
+    }
+
+    // ✅ 安全检查：文件大小（10MB）
+    if (file.size > 10 * 1024 * 1024) {
+      message.error('图片大小不能超过 10MB');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       const imageData = reader.result as string;
-      // 🔍 调试：检查上传的图片数据
-      console.log('[VideoPage] 🔍 上传图片数据类型:', typeof imageData);
-      console.log('[VideoPage] 🔍 上传图片数据长度:', imageData.length);
-
-      // 🔧 精确检测上传数据
-      const uploadMatches = imageData.match(/data:image\//g);
-      const uploadCount = uploadMatches ? uploadMatches.length : 0;
-      console.log('[VideoPage] 🔍 上传数据中"data:image/"数量:', uploadCount);
-
-      if (uploadCount !== 1) {
-        console.error('[VideoPage] ❌ 上传的图片数据异常！应该只有1个data:image/，实际:', uploadCount);
-      }
-
       setImage(imageData);
       SessionMaterialManager.setTempImage(imageData, undefined, 'video-page');
       message.success('图片已上传');
@@ -176,6 +254,18 @@ const FestivalVideoPage: React.FC = () => {
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // ✅ 安全检查：文件类型
+    if (!AUDIO_TYPE_WHITELIST.includes(file.type) && !file.name.match(/\.(mp3|wav|m4a|aac|ogg)$/i)) {
+      message.error('仅支持 MP3、WAV、M4A、AAC、OGG 格式的音频');
+      return;
+    }
+
+    // ✅ 安全检查：文件大小（20MB）
+    if (file.size > 20 * 1024 * 1024) {
+      message.error('音频大小不能超过 20MB');
+      return;
+    }
 
     const url = URL.createObjectURL(file);
     setAudio(url);
@@ -307,7 +397,11 @@ const FestivalVideoPage: React.FC = () => {
 
       // 如果是HTTP URL，先fetch转成blob
       if (image.startsWith('http://') || image.startsWith('https://')) {
-        console.log('[VideoPage] 图片是HTTP URL，转换为blob...');
+        // ✅ 安全检查：URL验证（防SSRF）
+        if (!validateMediaURL(image, 'image')) {
+          throw new Error('图片URL不符合安全要求，请使用HTTPS协议和可信域名');
+        }
+
         try {
           const response = await fetch(image);
           const blob = await response.blob();
@@ -317,32 +411,8 @@ const FestivalVideoPage: React.FC = () => {
             reader.onerror = reject;
             reader.readAsDataURL(blob);
           });
-          console.log('[VideoPage] 图片已转换为data URL');
         } catch (err) {
           console.warn('[VideoPage] HTTP图片转换失败，尝试直接使用:', err);
-        }
-      }
-
-      // 🔍 调试：检查上传前的图片数据
-      console.log('[VideoPage] 准备上传图片，数据类型:', typeof imageToUpload);
-      if (typeof imageToUpload === 'string') {
-        console.log('[VideoPage] 图片数据长度:', imageToUpload.length);
-
-        // 🔧 精确检测：查找所有"data:image/"出现的位置
-        const dataUrlMatches = imageToUpload.match(/data:image\//g);
-        const dataUrlCount = dataUrlMatches ? dataUrlMatches.length : 0;
-        console.log('[VideoPage] 🚨 检测到"data:image/"数量:', dataUrlCount);
-
-        if (dataUrlCount > 1) {
-          console.error('[VideoPage] ❌ 图片数据已损坏，包含多个data URL前缀！');
-          // 找出所有位置
-          let idx = 0;
-          const positions = [];
-          while ((idx = imageToUpload.indexOf('data:image/', idx)) !== -1) {
-            positions.push(idx);
-            idx++;
-          }
-          console.error('[VideoPage] 损坏位置:', positions);
         }
       }
 
@@ -367,7 +437,6 @@ const FestivalVideoPage: React.FC = () => {
         let audioUrl: string;
         if (audio) {
           audioUrl = audio;
-          console.log('[VideoPage] 使用已有音频');
         } else {
           // TTS生成
           if (!selectedVoiceId) {
@@ -389,7 +458,6 @@ const FestivalVideoPage: React.FC = () => {
             throw new Error('语音生成失败');
           }
           audioUrl = URL.createObjectURL(ttsResult.blob);
-          console.log('[VideoPage] TTS生成音频');
         }
 
         // 步骤3: 处理音频 - 转换为Blob
@@ -432,12 +500,6 @@ const FestivalVideoPage: React.FC = () => {
           message: '生成数字人视频中，预计需要90秒'
         });
 
-        // 获取DashScope API Key
-        const dashscopeSlot = slots.find(s => s.provider === 'Qwen');
-        if (!dashscopeSlot?.authKey) {
-          throw new Error('未配置DashScope API Key');
-        }
-
         // 启动进度模拟定时器
         const startTime = Date.now();
         const estimatedTime = 90000; // 90秒
@@ -453,10 +515,11 @@ const FestivalVideoPage: React.FC = () => {
           });
         }, 1000);
 
+        const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+
         // WAN API异步任务 - 通过后端代理调用
         let wanResult;
         try {
-          const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
 
           // 调用后端代理（启用异步模式）
           const response = await fetch(`${backendUrl}/api/dashscope/proxy`, {
@@ -467,7 +530,7 @@ const FestivalVideoPage: React.FC = () => {
             body: JSON.stringify({
               endpoint: '/api/v1/services/aigc/image2video/video-synthesis',
               method: 'POST',
-              headers: {
+              customHeaders: {
                 'X-DashScope-Async': 'enable'  // 关键：启用异步任务模式
               },
               body: {
@@ -495,16 +558,16 @@ const FestivalVideoPage: React.FC = () => {
             throw new Error('未获取到任务ID');
           }
 
-          console.log('[VideoPage] 任务已创建:', taskId);
-
-          // 轮询任务状态
+          // 轮询任务状态 - 渐进式间隔
           let taskStatus = 'PENDING';
           let videoUrl = '';
-          const maxPolls = 60; // 最多轮询60次（5分钟）
+          const maxPolls = 120; // 最多轮询120次（约10分钟）
           let pollCount = 0;
 
           while (taskStatus !== 'SUCCEEDED' && taskStatus !== 'FAILED' && pollCount < maxPolls) {
-            await new Promise(resolve => setTimeout(resolve, 5000)); // 等待5秒
+            // 渐进式轮询：前10次每3秒，之后每5秒
+            const pollInterval = pollCount < 10 ? 3000 : 5000;
+            await new Promise(resolve => setTimeout(resolve, pollInterval));
             pollCount++;
 
             const statusResponse = await fetch(`${backendUrl}/api/dashscope/proxy`, {
@@ -520,7 +583,6 @@ const FestivalVideoPage: React.FC = () => {
             });
 
             if (!statusResponse.ok) {
-              console.error('[VideoPage] 查询任务状态失败:', statusResponse.status);
               continue;
             }
 
@@ -533,15 +595,13 @@ const FestivalVideoPage: React.FC = () => {
             } else if (taskStatus === 'FAILED') {
               throw new Error('视频生成失败');
             }
-
-            console.log('[VideoPage] 任务状态:', taskStatus, `(${pollCount}/${maxPolls})`);
           }
 
           if (!videoUrl) {
             throw new Error('视频生成超时或失败');
           }
 
-          wanResult = { video_url: videoUrl };
+          wanResult = { output: { results: { video_url: videoUrl } } };
 
           clearInterval(progressTimer);
         } catch (error) {
@@ -564,8 +624,7 @@ const FestivalVideoPage: React.FC = () => {
         });
 
         try {
-          console.log('[VideoPage] 调用后处理API烧录字幕（实时字幕+ASR）');
-          const postProcessResponse = await fetch('http://localhost:3002/api/video/post-process', {
+          const postProcessResponse = await fetch(`${backendUrl}/api/video/burn-subtitle`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -583,13 +642,9 @@ const FestivalVideoPage: React.FC = () => {
 
           if (postProcessResult.status === 'success' && postProcessResult.downloadUrl) {
             remoteVideoUrl = postProcessResult.downloadUrl;
-            console.log('[VideoPage] 字幕烧录成功，新视频URL:', remoteVideoUrl);
-          } else {
-            console.warn('[VideoPage] 字幕烧录失败，使用原视频:', postProcessResult.message);
           }
         } catch (subtitleErr) {
           console.error('[VideoPage] 字幕烧录失败:', subtitleErr);
-          console.warn('[VideoPage] 降级使用原视频（无字幕）');
           // 失败不影响流程，继续使用原视频
         }
       }
@@ -601,18 +656,12 @@ const FestivalVideoPage: React.FC = () => {
         message: '加载视频中...'
       });
 
-      console.log('[VideoPage] 开始转换视频为Blob URL:', remoteVideoUrl);
-
       // 转换为Blob URL - 只有blob: URL才支持长按保存
       const videoResponse = await fetch(remoteVideoUrl);
       const videoBlob = await videoResponse.blob();
       const localBlobUrl = URL.createObjectURL(videoBlob);
 
-      console.log('[VideoPage] Blob URL生成成功:', localBlobUrl);
       setWanVideoUrl(localBlobUrl);
-
-      // 🎉 字幕已在后端烧录，无需前端WebVTT字幕
-      console.log('[VideoPage] ✅ 字幕已烧录到视频中，下载后保留字幕');
 
       setGenerationState({
         stage: 'complete',
@@ -623,7 +672,6 @@ const FestivalVideoPage: React.FC = () => {
     } catch (err) {
       console.error('[VideoPage] 生成失败:', err);
       const errorMessage = err instanceof Error ? err.message : '视频生成失败';
-      console.error('[VideoPage] 错误详情:', errorMessage);
       setGenerationState({
         stage: 'error',
         progress: 0,

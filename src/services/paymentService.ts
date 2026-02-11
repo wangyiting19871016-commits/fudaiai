@@ -6,7 +6,7 @@
 import { RechargePackage } from '../pages/Festival/RechargePage';
 import { getVisitorId } from '../utils/visitorId';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
 
 /**
  * 订单状态
@@ -77,8 +77,9 @@ export async function createRechargeOrder(
  */
 export async function getOrderStatus(orderId: string): Promise<Order> {
   try {
+    const visitorId = getVisitorId();
     const response = await fetch(
-      `${API_BASE}/api/payment/order-status/${orderId}`,
+      `${API_BASE}/api/payment/order-status/${orderId}?visitorId=${encodeURIComponent(visitorId)}`,
       {
         method: 'GET',
         headers: {

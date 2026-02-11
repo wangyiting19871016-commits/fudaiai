@@ -674,7 +674,8 @@ const PRESET_SLOTS: APISlot[] = [
     provider: 'Qwen',
     baseUrl: '/api/dashscope/api/v1',
     authType: 'Bearer',
-    authKey: API_VAULT.QWEN.MASTER_KEY,
+    // DashScope 默认走后端代理，不依赖前端密钥
+    authKey: '',
     models: ['qwen-vl-max', 'qwen-vl-plus', 'wan2.2-s2v', 'wan2.2-animate-move'],
     isPreset: true,
     capabilities: ['视觉理解 (Visual Understanding)', '多模态对话 (Multimodal Chat)', '数字人视频 (Digital Human)', '动作视频 (Motion Video)'],

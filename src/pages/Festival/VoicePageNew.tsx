@@ -14,7 +14,27 @@ import type { MaterialAtom } from '../../types/material';
 import { TextSelector } from '../../components/TextSelector';
 import { getNavigationState, createNavigationState, type NavigationState } from '../../types/navigationState';
 import { BackButton } from '../../components/BackButton';
+import { VoiceCardBackground } from '../../components/FeatureCardBackgrounds';
 import '../../styles/festival-voice-new.css';
+import '../../components/FeatureCardBackgrounds.css';
+
+function pickSupportedAudioMimeType(): string | undefined {
+  if (typeof MediaRecorder === 'undefined') return undefined;
+  const candidates = [
+    'audio/mp4;codecs=mp4a.40.2',
+    'audio/mp4',
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/ogg;codecs=opus'
+  ];
+  return candidates.find((type) => {
+    try {
+      return MediaRecorder.isTypeSupported(type);
+    } catch {
+      return false;
+    }
+  });
+}
 
 const VoicePageNew: React.FC = () => {
   const navigate = useNavigate();
@@ -62,7 +82,6 @@ const VoicePageNew: React.FC = () => {
       if (navState.textType) {
         if (navState.textType === 'fortune' || navState.textType === 'couplet') {
           message.warning('运势和春联文案通常较长，建议手动调整为80字以内（约15秒）');
-          console.warn('[VoicePageNew] 长文案类型：', navState.textType);
         }
       }
 
@@ -73,7 +92,6 @@ const VoicePageNew: React.FC = () => {
         if (incomingText.length > 80) {
           incomingText = incomingText.substring(0, 80);
           message.warning('文案过长，已自动截取前80字（建议控制在80字以内，约15秒）');
-          console.log('[VoicePageNew] 文案截断：原长度', navState.text?.length, '→ 80字');
         }
 
         setText(incomingText);
@@ -85,11 +103,6 @@ const VoicePageNew: React.FC = () => {
         } else {
           message.success('已为您自动填充文案');
         }
-
-        // ✅ 流转规则检查3: 来源标注
-        if (navState.sourceFeatureId) {
-          console.log('[VoicePageNew] 文案来源:', navState.sourceFeatureId);
-        }
       }
 
       // 接收图片
@@ -100,7 +113,6 @@ const VoicePageNew: React.FC = () => {
       // 接收返回路径
       if (navState.returnTo) {
         setReturnToPath(navState.returnTo);
-        console.log('[VoicePageNew] 返回路径:', navState.returnTo);
       }
     }
 
@@ -158,20 +170,16 @@ const VoicePageNew: React.FC = () => {
 
     try {
       // 实时调用API生成预览音频
-      console.log('[实时预览] 调用API生成音色:', voiceId);
       const result = await FishAudioService.generateTTS({
         text: '恭喜发财，马年大吉！',
         reference_id: voiceId,
         enhance_audio_quality: false  // 预览快速生成
       });
 
-      console.log('[实时预览] 生成成功:', result.audioUrl);
-
       if (audioRef.current) {
         audioRef.current.src = result.audioUrl;
         await audioRef.current.play();
         audioRef.current.onended = () => {
-          console.log('[实时预览] 播放完成');
           setPlayingVoiceId(null);
         };
         audioRef.current.onerror = () => {
@@ -196,25 +204,71 @@ const VoicePageNew: React.FC = () => {
       }
     } else {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const mediaRecorder = new MediaRecorder(stream);
+        const isLocalhost =
+          window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (!window.isSecureContext && !isLocalhost) {
+          message.error('当前页面不是HTTPS，手机浏览器无法使用录音');
+          return;
+        }
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setActiveTab('select');
+          message.error('当前浏览器不支持录音，已切换到音色合成模式');
+          return;
+        }
+
+        if (typeof MediaRecorder === 'undefined') {
+          setActiveTab('select');
+          message.error('当前浏览器不支持录音，已切换到音色合成模式');
+          return;
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+        const mimeType = pickSupportedAudioMimeType();
+        const mediaRecorder = mimeType
+          ? new MediaRecorder(stream, { mimeType })
+          : new MediaRecorder(stream);
         mediaRecorderRef.current = mediaRecorder;
 
         const chunks: Blob[] = [];
-        mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) {
+            chunks.push(e.data);
+          }
+        };
         mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'audio/webm' });
+          if (chunks.length === 0) {
+            message.error('录音数据为空，请重试或切换音色合成模式');
+            stream.getTracks().forEach(track => track.stop());
+            setIsRecording(false);
+            return;
+          }
+
+          const blobType = chunks[0]?.type || mimeType || 'audio/webm';
+          const blob = new Blob(chunks, { type: blobType });
           setRecordedBlob(blob);
           setRecordedUrl(URL.createObjectURL(blob));
           stream.getTracks().forEach(track => track.stop());
           setIsRecording(false);
         };
 
-        mediaRecorder.start();
+        mediaRecorder.start(250);
         setIsRecording(true);
-      } catch (err) {
+      } catch (err: any) {
         console.error('[VoicePage] 录音失败:', err);
-        message.error('无法访问麦克风，请检查权限');
+        if (err?.name === 'NotAllowedError' || err?.name === 'PermissionDeniedError') {
+          message.error('麦克风权限被拒绝，请在浏览器里允许麦克风访问');
+        } else if (err?.name === 'NotFoundError') {
+          message.error('未检测到麦克风设备');
+        } else {
+          message.error('无法访问麦克风，请检查权限或切换音色合成模式');
+        }
       }
     }
   };
@@ -275,7 +329,6 @@ const VoicePageNew: React.FC = () => {
 
       // 🎯 自动保存到临时会话（不占用素材库50条限制）
       SessionMaterialManager.setTempAudio(audioUrl, text.trim(), 'voice-page');
-      console.log('[VoicePageNew] 音频已保存到临时会话');
     } catch (err) {
       console.error('[VoicePage] 生成失败:', err);
       message.error('生成失败，请重试');
@@ -380,9 +433,20 @@ const VoicePageNew: React.FC = () => {
   };
 
   return (
-    <div className="voice-studio">
+    <div className="voice-studio" style={{ position: 'relative' }}>
+      {/* 🎨 背景装饰层 */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        zIndex: 0,
+        opacity: 0.08,
+        pointerEvents: 'none'
+      }}>
+        <VoiceCardBackground />
+      </div>
+
       {/* 顶部导航 */}
-      <header className="voice-studio__header">
+      <header className="voice-studio__header" style={{ position: 'relative', zIndex: 1 }}>
         <BackButton />
         <h1 className="header-title">语音生成</h1>
         <div className="header-spacer"></div>

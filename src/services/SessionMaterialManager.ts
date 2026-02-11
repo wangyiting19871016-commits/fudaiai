@@ -53,8 +53,16 @@ class SessionMaterialManagerClass {
     try {
       data.lastUpdated = Date.now();
       sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-    } catch (error) {
-      console.error('Failed to save session data:', error);
+    } catch (error: any) {
+      if (error.name === 'QuotaExceededError') {
+        console.warn('[SessionMaterialManager] SessionStorage quota exceeded, clearing...');
+        sessionStorage.removeItem(this.STORAGE_KEY);
+        // Retry with empty data
+        const freshData: SessionData = { lastUpdated: Date.now() };
+        sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(freshData));
+      } else {
+        console.error('Failed to save session data:', error);
+      }
     }
   }
 

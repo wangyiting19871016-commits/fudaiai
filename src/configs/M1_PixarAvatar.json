@@ -24,7 +24,7 @@
       "lora_uuid": "95ec78a639394f48827c31adabc00828",
       "lora_weight": 0.8,
       "prompt_template": "pks, (masterpiece), 3d pixar animation style, \n( {{QWEN_DNA_OUTPUT}} :1.7), \n(detailed individual hair strands, clear forehead silhouette:1.4),\n{{GENDER_SPECIFIC_MODIFIER}},\nwearing a vibrant red traditional Chinese silk jacket with gold dragon patterns, \nholding a shiny golden ingot (Yuanbao), \nsoft cinematic lighting, bokeh festive background, \nhigh-end 3d character design, rendered in Octane, stylized movie look, \nvibrant colors, clean smooth surfaces",
-      "negative_prompt_template": "{{GENDER_NEG}}, snake, reptile, low quality, (distorted:1.2)",
+      "negative_prompt_template": "{{GENDER_NEG}}, low quality, (distorted:1.2)",
       "gender_logic": {
         "male": {
           "modifier": "(adult masculine male, sharp mature features, clean ears:1.5)",
@@ -32,7 +32,7 @@
         },
         "female": {
           "modifier": "(elegant young adult woman, refined sophisticated features:1.4)",
-          "negative_add": "beard, mustache, rough skin, masculine, snake"
+          "negative_add": "beard, mustache, rough skin, masculine"
         }
       },
       "default_params": {
@@ -49,7 +49,7 @@
     }
   },
   "metadata": {
-    "author": "真迹系统",
+    "author": "福袋系统",
     "created": "2026-01-26",
     "技术底座": "FLUX.1-DEV + Pixar-pks-LoRA",
     "适用场景": "运营海报、节日头像、3D角色设计",

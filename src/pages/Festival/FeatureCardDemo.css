@@ -1,0 +1,388 @@
+/**
+ * Feature Card Demo Page Styles
+ * Showcasing the four unique backgrounds
+ */
+
+/* ========================================
+   Page Layout
+   ======================================== */
+.feature-card-demo-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    #0f0c29 0%,
+    #302b63 50%,
+    #24243e 100%
+  );
+  padding: 60px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ========================================
+   Header
+   ======================================== */
+.demo-header {
+  text-align: center;
+  margin-bottom: 60px;
+  animation: fade-in-down 0.8s ease-out;
+}
+
+.demo-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.title-gradient {
+  background: linear-gradient(
+    135deg,
+    #FF6B6B 0%,
+    #FFD700 50%,
+    #FF8C42 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.title-separator {
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 300;
+}
+
+.title-year {
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+}
+
+.demo-subtitle {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* ========================================
+   Cards Grid
+   ======================================== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  max-width: 1400px;
+  margin: 0 auto 80px;
+  padding: 0 20px;
+}
+
+@media (min-width: 768px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ========================================
+   Feature Card
+   ======================================== */
+.feature-card-wrapper {
+  animation: fade-in-up 0.8s ease-out backwards;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feature-card {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.feature-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
+   Card Content
+   ======================================== */
+.card-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  backdrop-filter: blur(2px);
+  transition: backdrop-filter 0.4s ease;
+}
+
+.feature-card:hover .card-content {
+  backdrop-filter: blur(4px);
+}
+
+.card-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 12px currentColor);
+  animation: icon-bounce 2s ease-in-out infinite;
+}
+
+@keyframes icon-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.card-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+}
+
+.card-english-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.card-subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 24px 0;
+  font-weight: 400;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.card-tag {
+  display: inline-block;
+  padding: 8px 20px;
+  border: 2px solid;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  text-shadow: 0 0 10px currentColor;
+  box-shadow: 0 0 20px currentColor;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover .card-tag {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px currentColor;
+}
+
+/* ========================================
+   Hover Overlay
+   ======================================== */
+.card-hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.feature-card:hover .card-hover-overlay {
+  opacity: 1;
+}
+
+/* ========================================
+   Technical Info Section
+   ======================================== */
+.tech-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  animation: fade-in-up 0.8s ease-out backwards;
+  animation-delay: 0.6s;
+}
+
+.info-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-5px);
+}
+
+.info-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.info-card h4 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+}
+
+.info-card p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ========================================
+   Responsive Adjustments
+   ======================================== */
+@media (max-width: 768px) {
+  .feature-card-demo-page {
+    padding: 40px 15px;
+  }
+
+  .demo-header {
+    margin-bottom: 40px;
+  }
+
+  .cards-grid {
+    gap: 25px;
+    margin-bottom: 50px;
+  }
+
+  .card-icon {
+    font-size: 3rem;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+  }
+
+  .card-content {
+    padding: 20px;
+  }
+
+  .tech-info {
+    gap: 20px;
+  }
+
+  .info-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .demo-title {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .title-separator {
+    display: none;
+  }
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+.feature-card:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 4px;
+}
+
+.info-card:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}

@@ -1,10 +1,6 @@
-/**
- * API代理端点 - 安全地代理第三方API调用
- * 所有API密钥只在后端环境变量中，前端无法看到
- *
- * 使用方法：在server.js的app.listen之前插入：
- * const apiProxyRoutes = require('./api-proxy-endpoints');
- * apiProxyRoutes(app);
+﻿/**
+ * API浠ｇ悊绔偣 - 瀹夊叏鍦颁唬鐞嗙涓夋柟API璋冪敤
+ * 鎵€鏈堿PI瀵嗛挜鍙湪鍚庣鐜鍙橀噺涓紝鍓嶇鏃犳硶鐪嬪埌
  */
 
 module.exports = function(app) {
@@ -12,55 +8,517 @@ module.exports = function(app) {
   const http = require('http');
   const crypto = require('crypto');
   const express = require('express');
+  const { URL } = require('url');
 
-  // ========== LiblibAI 代理端点 ==========
+  function normalizeEnvValue(raw) {
+    return String(raw || '').trim().replace(/^['"]|['"]$/g, '');
+  }
+
+  function getDashscopeKeyCandidates() {
+    return [
+      { name: 'DASHSCOPE_API_KEY', value: normalizeEnvValue(process.env.DASHSCOPE_API_KEY) },
+      { name: 'QWEN_API_KEY', value: normalizeEnvValue(process.env.QWEN_API_KEY) },
+      { name: 'VITE_DASHSCOPE_API_KEY', value: normalizeEnvValue(process.env.VITE_DASHSCOPE_API_KEY) }
+    ].filter(item => Boolean(item.value));
+  }
+
+  function readDashscopeApiKey() {
+    const candidates = getDashscopeKeyCandidates();
+    if (candidates.length === 0) {
+      return '';
+    }
+
+    const distinctValues = [...new Set(candidates.map(item => item.value))];
+    if (distinctValues.length > 1) {
+      console.warn('[Dashscope代理] 检测到多个不同Key，当前按优先级使用:', candidates.map(item => item.name).join(' > '));
+    }
+
+    return candidates[0].value;
+  }
+
+  function readLiblibKeys() {
+    return {
+      accessKey: normalizeEnvValue(process.env.LIBLIB_ACCESS_KEY),
+      secretKey: normalizeEnvValue(process.env.LIBLIB_SECRET_KEY)
+    };
+  }
+
+  function readDeepseekApiKey() {
+    return normalizeEnvValue(process.env.DEEPSEEK_API_KEY) || normalizeEnvValue(process.env.VITE_DEEPSEEK_API_KEY);
+  }
+
+  async function forwardDashscopeRequest({ endpoint, method = 'POST', body = {}, headers = {} }) {
+    const apiKey = readDashscopeApiKey();
+    if (!apiKey) {
+      return {
+        statusCode: 500,
+        body: { error: 'Dashscope API key not configured' }
+      };
+    }
+
+    const normalizedMethod = String(method || 'POST').toUpperCase();
+    const safeEndpoint = String(endpoint || '');
+    if (!safeEndpoint.startsWith('/api/v1/')) {
+      return {
+        statusCode: 400,
+        body: { error: `Invalid Dashscope endpoint: ${safeEndpoint}` }
+      };
+    }
+
+    const blockedHeaders = new Set(['authorization', 'host', 'content-length']);
+    const passthroughHeaders = {};
+    for (const [key, value] of Object.entries(headers || {})) {
+      if (!key) continue;
+      if (blockedHeaders.has(String(key).toLowerCase())) continue;
+      passthroughHeaders[key] = value;
+    }
+
+    const hasBody = normalizedMethod !== 'GET' && normalizedMethod !== 'HEAD';
+    const postData = hasBody ? JSON.stringify(body || {}) : '';
+
+    const options = {
+      hostname: 'dashscope.aliyuncs.com',
+      path: safeEndpoint,
+      method: normalizedMethod,
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'application/json',
+        ...(hasBody ? {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData)
+        } : {}),
+        ...passthroughHeaders
+      },
+      timeout: 60000
+    };
+
+    return await new Promise((resolve, reject) => {
+      let data = '';
+      const apiReq = https.request(options, (apiRes) => {
+        apiRes.on('data', (chunk) => { data += chunk; });
+        apiRes.on('end', () => {
+          const statusCode = apiRes.statusCode || 500;
+          try {
+            resolve({
+              statusCode,
+              body: data ? JSON.parse(data) : {}
+            });
+          } catch {
+            resolve({
+              statusCode,
+              body: { raw: data }
+            });
+          }
+        });
+      });
+
+      apiReq.on('error', reject);
+      apiReq.on('timeout', () => {
+        apiReq.destroy();
+        reject(new Error('Dashscope request timeout'));
+      });
+
+      if (hasBody && postData) {
+        apiReq.write(postData);
+      }
+      apiReq.end();
+    });
+  }
+
+  // ========== N1N Companion Proxy ==========
+
+  function parseDataUrl(dataUrl) {
+    const match = String(dataUrl || '').match(/^data:(.+?);base64,(.+)$/);
+    if (!match) return null;
+    return {
+      mime: match[1] || 'image/jpeg',
+      buffer: Buffer.from(match[2], 'base64')
+    };
+  }
+
+  function safeJsonExtract(text) {
+    const raw = String(text || '');
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    try {
+      return JSON.parse(match[0]);
+    } catch {
+      return null;
+    }
+  }
+
+  function normalizeAnalysis(raw) {
+    const userGender = String(raw?.user_gender || raw?.gender || '').toLowerCase();
+    const gender = ['male', 'female', 'unknown'].includes(userGender) ? userGender : 'unknown';
+    const confidence = Number(raw?.gender_confidence || 0);
+    const age = Number(raw?.estimated_age || 0);
+    return {
+      user_gender: gender,
+      gender_confidence: Number.isFinite(confidence) ? confidence : 0,
+      estimated_age: Number.isFinite(age) ? age : 0,
+      user_age_range: String(raw?.user_age_range || ''),
+      user_clothing: String(raw?.user_clothing || ''),
+      user_position: String(raw?.user_position || 'center'),
+      user_facing: String(raw?.user_facing || 'facing_camera'),
+      user_visible_range: String(raw?.user_visible_range || 'upper_body'),
+      lighting_direction: String(raw?.lighting_direction || 'front'),
+      color_temperature: String(raw?.color_temperature || 'warm'),
+      brightness: String(raw?.brightness || 'normal'),
+      background_description: String(raw?.background_description || 'warm indoor festive scene'),
+      partner_prompt: String(raw?.partner_prompt || ''),
+      partner_negative_prompt: String(raw?.partner_negative_prompt || '')
+    };
+  }
+
+  function buildMultipartBody(parts, boundary) {
+    const chunks = [];
+    for (const part of parts) {
+      chunks.push(Buffer.from(`--${boundary}\r\n`));
+      if (part.type === 'file') {
+        chunks.push(
+          Buffer.from(
+            `Content-Disposition: form-data; name="${part.name}"; filename="${part.filename}"\r\n` +
+              `Content-Type: ${part.contentType || 'application/octet-stream'}\r\n\r\n`
+          )
+        );
+        chunks.push(part.data);
+        chunks.push(Buffer.from('\r\n'));
+      } else {
+        chunks.push(
+          Buffer.from(
+            `Content-Disposition: form-data; name="${part.name}"\r\n\r\n${part.value}\r\n`
+          )
+        );
+      }
+    }
+    chunks.push(Buffer.from(`--${boundary}--\r\n`));
+    return Buffer.concat(chunks);
+  }
+
+  function n1nJsonRequest(baseUrl, apiKey, path, payload, timeoutMs = 120000) {
+    return new Promise((resolve, reject) => {
+      const base = new URL(baseUrl);
+      const basePath = (base.pathname || '').replace(/\/+$/, '');
+      const reqPath = `${basePath}${path.startsWith('/') ? '' : '/'}${path}`;
+      const postData = JSON.stringify(payload);
+      const isHttps = base.protocol === 'https:';
+      const client = isHttps ? https : http;
+      const req = client.request(
+        {
+          hostname: base.hostname,
+          port: base.port || (isHttps ? 443 : 80),
+          path: reqPath,
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(postData)
+          },
+          timeout: timeoutMs
+        },
+        (apiRes) => {
+          let data = '';
+          apiRes.on('data', (chunk) => {
+            data += chunk;
+          });
+          apiRes.on('end', () => {
+            try {
+              resolve({
+                statusCode: apiRes.statusCode || 500,
+                body: JSON.parse(data || '{}')
+              });
+            } catch {
+              reject(new Error(`N1N JSON parse failed: ${data}`));
+            }
+          });
+        }
+      );
+      req.on('error', reject);
+      req.on('timeout', () => {
+        req.destroy();
+        reject(new Error('N1N request timeout'));
+      });
+      req.write(postData);
+      req.end();
+    });
+  }
+
+  function n1nMultipartRequest(baseUrl, apiKey, path, parts, timeoutMs = 180000) {
+    return new Promise((resolve, reject) => {
+      const boundary = `----n1nBoundary${Date.now()}${Math.random().toString(16).slice(2)}`;
+      const body = buildMultipartBody(parts, boundary);
+      const base = new URL(baseUrl);
+      const basePath = (base.pathname || '').replace(/\/+$/, '');
+      const reqPath = `${basePath}${path.startsWith('/') ? '' : '/'}${path}`;
+      const isHttps = base.protocol === 'https:';
+      const client = isHttps ? https : http;
+      const req = client.request(
+        {
+          hostname: base.hostname,
+          port: base.port || (isHttps ? 443 : 80),
+          path: reqPath,
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': `multipart/form-data; boundary=${boundary}`,
+            'Content-Length': body.length
+          },
+          timeout: timeoutMs
+        },
+        (apiRes) => {
+          let data = '';
+          apiRes.on('data', (chunk) => {
+            data += chunk;
+          });
+          apiRes.on('end', () => {
+            try {
+              resolve({
+                statusCode: apiRes.statusCode || 500,
+                body: JSON.parse(data || '{}')
+              });
+            } catch {
+              reject(new Error(`N1N multipart parse failed: ${data}`));
+            }
+          });
+        }
+      );
+      req.on('error', reject);
+      req.on('timeout', () => {
+        req.destroy();
+        reject(new Error('N1N multipart timeout'));
+      });
+      req.write(body);
+      req.end();
+    });
+  }
+
+  app.post('/api/companion/generate', express.json({ limit: '20mb' }), async (req, res) => {
+    try {
+      const n1nBaseUrl = process.env.N1N_BASE_URL || 'https://api.n1n.ai/v1';
+      const n1nApiKey = process.env.N1N_API_KEY;
+      const analysisModel = process.env.N1N_COMPANION_ANALYSIS_MODEL || 'gpt-4.1-mini';
+      const imageModel = process.env.N1N_COMPANION_IMAGE_MODEL || 'gpt-image-1';
+
+      if (!n1nApiKey) {
+        return res.status(500).json({
+          success: false,
+          error: 'N1N_API_KEY not configured'
+        });
+      }
+
+      const { imageDataUrl } = req.body || {};
+      const parsed = parseDataUrl(imageDataUrl);
+      if (!parsed || !parsed.buffer || parsed.buffer.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing valid imageDataUrl'
+        });
+      }
+
+      const analysisPrompt = [
+        'You are a strict photo analysis model. Return JSON only.',
+        'Fields: user_gender(male/female/unknown), gender_confidence(0-1), estimated_age(number),',
+        'user_age_range, user_clothing, user_position(left/center/right), user_facing(facing_left/facing_right/facing_camera),',
+        'user_visible_range(head_only/upper_body/full_body), lighting_direction(left/right/front/back), color_temperature(warm/neutral/cool),',
+        'brightness(bright/normal/dim), background_description, partner_prompt, partner_negative_prompt.',
+        'Do not guess male by default. If uncertain, use unknown.'
+      ].join(' ');
+
+      const analysisResp = await n1nJsonRequest(
+        n1nBaseUrl,
+        n1nApiKey,
+        '/chat/completions',
+        {
+          model: analysisModel,
+          stream: false,
+          temperature: 0.25,
+          max_tokens: 700,
+          messages: [
+            { role: 'system', content: analysisPrompt },
+            {
+              role: 'user',
+              content: [
+                { type: 'text', text: 'Analyze this portrait and return strict JSON only.' },
+                { type: 'image_url', image_url: { url: imageDataUrl } }
+              ]
+            }
+          ]
+        },
+        120000
+      );
+
+      if (analysisResp.statusCode < 200 || analysisResp.statusCode >= 300) {
+        return res.status(analysisResp.statusCode).json({
+          success: false,
+          error: analysisResp.body?.error?.message || 'N1N analysis failed',
+          details: analysisResp.body
+        });
+      }
+
+      const content = analysisResp.body?.choices?.[0]?.message?.content || '';
+      const parsedAnalysis = safeJsonExtract(
+        Array.isArray(content) ? content.map((x) => x?.text || '').join('\n') : content
+      );
+      const analysis = normalizeAnalysis(parsedAnalysis || {});
+
+      const partnerGender =
+        analysis.user_gender === 'female'
+          ? 'male'
+          : analysis.user_gender === 'male'
+            ? 'female'
+            : 'unknown';
+
+      const partnerVariants = [
+        'natural smile, elegant posture',
+        'clean look, warm expression',
+        'soft cinematic portrait lighting'
+      ];
+      const variant = partnerVariants[Math.floor(Math.random() * partnerVariants.length)];
+
+      const generationPrompt = [
+        'Create a realistic two-person portrait from the source photo.',
+        'Keep the original person identity unchanged. Do not alter facial proportions or skin tone.',
+        'Do not make the original person darker or uglier. Mild flattering beautification only.',
+        partnerGender === 'unknown'
+          ? 'Add one compatible partner with natural pose and matching age.'
+          : `Add one ${partnerGender} partner with matching age and harmonious style.`,
+        `Keep lighting ${analysis.lighting_direction || 'front'} and color temperature ${analysis.color_temperature || 'warm'}.`,
+        `Background style: ${analysis.background_description || 'warm festive portrait scene'}.`,
+        `Outfit coordination: ${analysis.user_clothing || 'style-coordinated traditional festive clothing'}.`,
+        variant,
+        analysis.partner_prompt || ''
+      ]
+        .filter(Boolean)
+        .join(' ');
+
+      const negativePrompt =
+        analysis.partner_negative_prompt ||
+        'deformed, ugly, blurry, low quality, bad anatomy, dark skin shift, duplicated person';
+
+      const imageResp = await n1nMultipartRequest(
+        n1nBaseUrl,
+        n1nApiKey,
+        '/images/edits',
+        [
+          { type: 'field', name: 'model', value: imageModel },
+          { type: 'field', name: 'prompt', value: generationPrompt },
+          { type: 'field', name: 'n', value: '1' },
+          {
+            type: 'file',
+            name: 'image',
+            filename: 'source.jpg',
+            contentType: parsed.mime,
+            data: parsed.buffer
+          }
+        ],
+        200000
+      );
+
+      if (imageResp.statusCode < 200 || imageResp.statusCode >= 300) {
+        return res.status(imageResp.statusCode).json({
+          success: false,
+          error: imageResp.body?.error?.message || 'N1N image edit failed',
+          details: imageResp.body
+        });
+      }
+
+      const first = imageResp.body?.data?.[0];
+      const imageUrl = first?.url
+        ? first.url
+        : first?.b64_json
+          ? `data:image/png;base64,${first.b64_json}`
+          : '';
+
+      if (!imageUrl) {
+        return res.status(500).json({
+          success: false,
+          error: 'No image returned from N1N'
+        });
+      }
+
+      return res.json({
+        success: true,
+        imageUrl,
+        analysis,
+        model: {
+          analysis: analysisModel,
+          image: imageModel
+        }
+      });
+    } catch (error) {
+      console.error('[Companion Generate] error:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Companion generation failed'
+      });
+    }
+  });
+
+  // ========== LiblibAI 绛惧悕杈呭姪鍑芥暟 ==========
 
   /**
-   * LiblibAI Text2Img 代理
+   * 鐢熸垚LiblibAI鏂扮鍚嶏紙HMAC-SHA1 + URL-safe Base64锛?
+   */
+  function generateLiblibSignature(uri, secretKey) {
+    const timestamp = Date.now();
+    const nonce = Math.random().toString(36).substring(2, 15);
+    const signString = `${uri}&${timestamp}&${nonce}`;
+    const signature = crypto.createHmac('sha1', secretKey)
+      .update(signString)
+      .digest('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+
+    return { signature, timestamp, nonce };
+  }
+
+  /**
+   * 鏋勫缓LiblibAI鏌ヨ瀛楃涓?
+   */
+  function buildLiblibQueryString(uri, accessKey, secretKey) {
+    const { signature, timestamp, nonce } = generateLiblibSignature(uri, secretKey);
+    return `${uri}?AccessKey=${encodeURIComponent(accessKey)}&Signature=${encodeURIComponent(signature)}&Timestamp=${timestamp}&SignatureNonce=${encodeURIComponent(nonce)}`;
+  }
+
+  // ========== LiblibAI 浠ｇ悊绔偣 ==========
+
+  /**
+   * LiblibAI Text2Img 浠ｇ悊
    * POST /api/liblib/text2img
    */
-  app.post('/api/liblib/text2img', express.json(), async (req, res) => {
+  app.post('/api/liblib/text2img', express.json({ limit: '50mb' }), async (req, res) => {
     try {
-      const accessKey = process.env.LIBLIB_ACCESS_KEY || 'z8_g6KeL5Vac48fUL6am2A';
-      const secretKey = process.env.LIBLIB_SECRET_KEY || 'FbPajEW5edStMVxBJuRUDu7fwr1Hy5Up';
+      const { accessKey, secretKey } = readLiblibKeys();
 
       if (!accessKey || !secretKey) {
         return res.status(500).json({
           success: false,
-          error: 'LiblibAI密钥未配置'
+          error: 'LiblibAI key not configured'
         });
       }
 
-      // 从请求体获取参数
       const requestBody = req.body;
 
-      // 生成签名
-      const timestamp = Date.now();
-      const nonce = Math.random().toString(36).substring(2, 15);
-      const signString = `${accessKey}${timestamp}${nonce}${secretKey}`;
-      const sign = crypto.createHash('md5').update(signString).digest('hex');
+      // 鉁?鏂扮鍚嶆柟寮?
+      const uri = '/api/generate/webui/text2img';
+      const queryPath = buildLiblibQueryString(uri, accessKey, secretKey);
 
-      console.log('[LiblibAI代理] Text2Img请求:', {
-        workflow: requestBody.workflow_uuid,
-        timestamp,
-        nonce
+      console.log('[LiblibAI浠ｇ悊] Text2Img璇锋眰:', {
+        workflow: requestBody.workflow_uuid
       });
 
-      // 调用LiblibAI API
+      // 璋冪敤LiblibAI API
       const liblibResponse = await new Promise((resolve, reject) => {
         const postData = JSON.stringify(requestBody);
 
         const options = {
-          hostname: 'api.liblibai.com',
-          path: '/api/generate/webui/text2img',  // ✅ 使用 Web UI API，匹配前端的 templateUuid 格式
+          hostname: 'openapi.liblibai.cloud',
+          path: queryPath,
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(postData),
-            'x-access-key': accessKey,
-            'x-timestamp': timestamp.toString(),
-            'x-nonce': nonce,
-            'x-sign': sign
+            'Content-Length': Buffer.byteLength(postData)
           },
           timeout: 30000
         };
@@ -73,7 +531,7 @@ module.exports = function(app) {
               const response = JSON.parse(data);
               resolve(response);
             } catch (e) {
-              reject(new Error(`解析LiblibAI响应失败: ${data}`));
+              reject(new Error(`瑙ｆ瀽LiblibAI鍝嶅簲澶辫触: ${data}`));
             }
           });
         });
@@ -81,23 +539,22 @@ module.exports = function(app) {
         apiReq.on('error', reject);
         apiReq.on('timeout', () => {
           apiReq.destroy();
-          reject(new Error('LiblibAI请求超时'));
+          reject(new Error('LiblibAI璇锋眰瓒呮椂'));
         });
 
         apiReq.write(postData);
         apiReq.end();
       });
 
-      console.log('[LiblibAI代理] 响应:', {
+      console.log('[LiblibAI浠ｇ悊] 鍝嶅簲:', {
         code: liblibResponse.code,
-        message: liblibResponse.message,
         hasUuid: !!liblibResponse.data?.generate_uuid
       });
 
       res.json(liblibResponse);
 
     } catch (error) {
-      console.error('[LiblibAI代理] 错误:', error);
+      console.error('[LiblibAI浠ｇ悊] 閿欒:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -106,117 +563,39 @@ module.exports = function(app) {
   });
 
   /**
-   * LiblibAI 查询任务状态代理
-   * GET /api/liblib/query/:uuid
-   */
-  app.get('/api/liblib/query/:uuid', async (req, res) => {
-    try {
-      const { uuid } = req.params;
-      const accessKey = process.env.LIBLIB_ACCESS_KEY || 'z8_g6KeL5Vac48fUL6am2A';
-      const secretKey = process.env.LIBLIB_SECRET_KEY || 'FbPajEW5edStMVxBJuRUDu7fwr1Hy5Up';
-
-      if (!accessKey || !secretKey) {
-        return res.status(500).json({
-          success: false,
-          error: 'LiblibAI密钥未配置'
-        });
-      }
-
-      // 生成签名
-      const timestamp = Date.now();
-      const nonce = Math.random().toString(36).substring(2, 15);
-      const signString = `${accessKey}${timestamp}${nonce}${secretKey}`;
-      const sign = crypto.createHash('md5').update(signString).digest('hex');
-
-      // 调用LiblibAI查询API
-      const liblibResponse = await new Promise((resolve, reject) => {
-        const options = {
-          hostname: 'api.liblibai.com',
-          path: `/api/www/v1/workflows/run/${uuid}`,
-          method: 'GET',
-          headers: {
-            'x-access-key': accessKey,
-            'x-timestamp': timestamp.toString(),
-            'x-nonce': nonce,
-            'x-sign': sign
-          },
-          timeout: 10000
-        };
-
-        const apiReq = https.request(options, (apiRes) => {
-          let data = '';
-          apiRes.on('data', (chunk) => { data += chunk; });
-          apiRes.on('end', () => {
-            try {
-              const response = JSON.parse(data);
-              resolve(response);
-            } catch (e) {
-              reject(new Error(`解析LiblibAI响应失败: ${data}`));
-            }
-          });
-        });
-
-        apiReq.on('error', reject);
-        apiReq.on('timeout', () => {
-          apiReq.destroy();
-          reject(new Error('LiblibAI查询超时'));
-        });
-
-        apiReq.end();
-      });
-
-      res.json(liblibResponse);
-
-    } catch (error) {
-      console.error('[LiblibAI查询代理] 错误:', error);
-      res.status(500).json({
-        success: false,
-        error: error.message
-      });
-    }
-  });
-
-  /**
-   * LiblibAI 状态查询代理
+   * LiblibAI 鐘舵€佹煡璇唬鐞?
    * POST /api/liblib/status
    */
   app.post('/api/liblib/status', express.json({ limit: '10mb' }), async (req, res) => {
     try {
-      const accessKey = process.env.LIBLIB_ACCESS_KEY || 'z8_g6KeL5Vac48fUL6am2A';
-      const secretKey = process.env.LIBLIB_SECRET_KEY || 'FbPajEW5edStMVxBJuRUDu7fwr1Hy5Up';
+      const { accessKey, secretKey } = readLiblibKeys();
 
       if (!accessKey || !secretKey) {
         return res.status(500).json({
           success: false,
-          error: 'LiblibAI密钥未配置'
+          error: 'LiblibAI key not configured'
         });
       }
 
       const { generateUuid } = req.body;
 
-      // 生成签名
-      const timestamp = Date.now();
-      const nonce = Math.random().toString(36).substring(2, 15);
-      const signString = `${accessKey}${timestamp}${nonce}${secretKey}`;
-      const sign = crypto.createHash('md5').update(signString).digest('hex');
+      // 鉁?鏂扮鍚嶆柟寮?
+      const uri = '/api/generate/webui/status';
+      const queryPath = buildLiblibQueryString(uri, accessKey, secretKey);
 
-      console.log('[LiblibAI状态代理] 查询UUID:', generateUuid);
+      console.log('[LiblibAI鐘舵€佷唬鐞哴 鏌ヨUUID:', generateUuid);
 
-      // 调用LiblibAI状态查询API
+      // 璋冪敤LiblibAI鐘舵€佹煡璇PI
       const liblibResponse = await new Promise((resolve, reject) => {
         const postData = JSON.stringify({ generateUuid });
 
         const options = {
-          hostname: 'api.liblibai.com',
-          path: '/api/generate/webui/status',
+          hostname: 'openapi.liblibai.cloud',
+          path: queryPath,
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(postData),
-            'x-access-key': accessKey,
-            'x-timestamp': timestamp.toString(),
-            'x-nonce': nonce,
-            'x-sign': sign
+            'Content-Length': Buffer.byteLength(postData)
           },
           timeout: 30000
         };
@@ -229,7 +608,7 @@ module.exports = function(app) {
               const response = JSON.parse(data);
               resolve(response);
             } catch (e) {
-              reject(new Error(`解析LiblibAI响应失败: ${data}`));
+              reject(new Error(`瑙ｆ瀽LiblibAI鍝嶅簲澶辫触: ${data}`));
             }
           });
         });
@@ -237,7 +616,7 @@ module.exports = function(app) {
         apiReq.on('error', reject);
         apiReq.on('timeout', () => {
           apiReq.destroy();
-          reject(new Error('LiblibAI状态查询超时'));
+          reject(new Error('LiblibAI status request timeout'));
         });
 
         apiReq.write(postData);
@@ -246,7 +625,7 @@ module.exports = function(app) {
 
       res.json(liblibResponse);
     } catch (error) {
-      console.error('[LiblibAI状态代理] 错误:', error);
+      console.error('[LiblibAI鐘舵€佷唬鐞哴 閿欒:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -254,74 +633,55 @@ module.exports = function(app) {
     }
   });
 
-  // ========== Fish Audio 代理端点 ==========
-
   /**
-   * Fish Audio TTS 代理
-   * POST /api/fish/tts
+   * LiblibAI ComfyUI 鐢熸垚浠ｇ悊 (M6鑰佺収鐗囦慨澶嶄笓鐢?
+   * POST /api/liblib/api/generate/comfyui/app
    */
-  app.post('/api/fish/tts', express.json(), async (req, res) => {
+  app.post('/api/liblib/api/generate/comfyui/app', express.json({ limit: '50mb' }), async (req, res) => {
     try {
-      const apiKey = process.env.FISH_AUDIO_API_KEY || '58864427d9e44e4ca76febe5b50639e6';
+      const { accessKey, secretKey } = readLiblibKeys();
 
-      if (!apiKey) {
+      if (!accessKey || !secretKey) {
         return res.status(500).json({
           success: false,
-          error: 'Fish Audio API密钥未配置'
+          error: 'LiblibAI key not configured'
         });
       }
 
-      const { text, reference_id, format = 'mp3', latency = 'normal' } = req.body;
+      const requestBody = req.body;
 
-      if (!text || !reference_id) {
-        return res.status(400).json({
-          success: false,
-          error: '缺少必需参数: text, reference_id'
-        });
-      }
+      // 鉁?鏂扮鍚嶆柟寮?
+      const uri = '/api/generate/comfyui/app';
+      const queryPath = buildLiblibQueryString(uri, accessKey, secretKey);
 
-      console.log('[Fish Audio代理] TTS请求:', {
-        textLength: text.length,
-        reference_id,
-        format
+      console.log('[LiblibAI ComfyUI浠ｇ悊] 鐢熸垚璇锋眰:', {
+        templateUuid: requestBody.templateUuid
       });
 
-      // 调用Fish Audio API
-      const fishResponse = await new Promise((resolve, reject) => {
-        const postData = JSON.stringify({
-          text,
-          reference_id,
-          format,
-          latency
-        });
+      // 璋冪敤LiblibAI ComfyUI API
+      const liblibResponse = await new Promise((resolve, reject) => {
+        const postData = JSON.stringify(requestBody);
 
         const options = {
-          hostname: 'api.fish.audio',
-          path: '/v1/tts',
+          hostname: 'openapi.liblibai.cloud',
+          path: queryPath,
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(postData),
-            'Authorization': `Bearer ${apiKey}`
+            'Content-Length': Buffer.byteLength(postData)
           },
-          timeout: 60000 // Fish Audio可能需要较长时间
+          timeout: 30000
         };
 
         const apiReq = https.request(options, (apiRes) => {
-          // Fish Audio返回音频流
-          const chunks = [];
-          apiRes.on('data', (chunk) => chunks.push(chunk));
+          let data = '';
+          apiRes.on('data', (chunk) => { data += chunk; });
           apiRes.on('end', () => {
-            if (apiRes.statusCode === 200) {
-              const audioBuffer = Buffer.concat(chunks);
-              resolve({
-                success: true,
-                audio: audioBuffer,
-                contentType: apiRes.headers['content-type']
-              });
-            } else {
-              const errorData = Buffer.concat(chunks).toString();
-              reject(new Error(`Fish Audio API错误 ${apiRes.statusCode}: ${errorData}`));
+            try {
+              const response = JSON.parse(data);
+              resolve(response);
+            } catch (e) {
+              reject(new Error(`瑙ｆ瀽LiblibAI ComfyUI鍝嶅簲澶辫触: ${data}`));
             }
           });
         });
@@ -329,25 +689,22 @@ module.exports = function(app) {
         apiReq.on('error', reject);
         apiReq.on('timeout', () => {
           apiReq.destroy();
-          reject(new Error('Fish Audio请求超时'));
+          reject(new Error('LiblibAI ComfyUI璇锋眰瓒呮椂'));
         });
 
         apiReq.write(postData);
         apiReq.end();
       });
 
-      if (fishResponse.success) {
-        console.log('[Fish Audio代理] TTS成功，音频大小:', fishResponse.audio.length);
+      console.log('[LiblibAI ComfyUI浠ｇ悊] 鍝嶅簲:', {
+        code: liblibResponse.code,
+        hasUuid: !!liblibResponse.data?.generateUuid
+      });
 
-        // 直接返回音频流
-        res.set('Content-Type', fishResponse.contentType || 'audio/mpeg');
-        res.send(fishResponse.audio);
-      } else {
-        throw new Error('Fish Audio返回失败');
-      }
+      res.json(liblibResponse);
 
     } catch (error) {
-      console.error('[Fish Audio代理] 错误:', error);
+      console.error('[LiblibAI ComfyUI浠ｇ悊] 閿欒:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -356,110 +713,69 @@ module.exports = function(app) {
   });
 
   /**
-   * Fish Audio 声音克隆代理
-   * POST /api/fish/voices
+   * LiblibAI ComfyUI 鐘舵€佹煡璇唬鐞?(M6鑰佺収鐗囦慨澶嶄笓鐢?
+   * POST /api/liblib/api/generate/comfy/status
    */
-  app.post('/api/fish/voices', async (req, res) => {
+  app.post('/api/liblib/api/generate/comfy/status', express.json({ limit: '10mb' }), async (req, res) => {
     try {
-      const apiKey = process.env.FISH_AUDIO_API_KEY || '58864427d9e44e4ca76febe5b50639e6';
+      const { accessKey, secretKey } = readLiblibKeys();
 
-      if (!apiKey) {
+      if (!accessKey || !secretKey) {
         return res.status(500).json({
           success: false,
-          error: 'Fish Audio API密钥未配置'
+          error: 'LiblibAI key not configured'
         });
       }
 
-      // 使用multipart/form-data解析（需要multer中间件）
-      const multer = require('multer');
-      const upload = multer({ storage: multer.memoryStorage() });
+      const { generateUuid } = req.body;
 
-      // 处理文件上传
-      upload.single('voices')(req, res, async (err) => {
-        if (err) {
-          return res.status(400).json({
-            success: false,
-            error: `文件上传失败: ${err.message}`
+      // 鉁?鏂扮鍚嶆柟寮?
+      const uri = '/api/generate/comfy/status';
+      const queryPath = buildLiblibQueryString(uri, accessKey, secretKey);
+
+      console.log('[LiblibAI ComfyUI鐘舵€佷唬鐞哴 鏌ヨUUID:', generateUuid);
+
+      // 璋冪敤LiblibAI ComfyUI鐘舵€丄PI
+      const liblibResponse = await new Promise((resolve, reject) => {
+        const postData = JSON.stringify({ generateUuid });
+
+        const options = {
+          hostname: 'openapi.liblibai.cloud',
+          path: queryPath,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(postData)
+          },
+          timeout: 30000
+        };
+
+        const apiReq = https.request(options, (apiRes) => {
+          let data = '';
+          apiRes.on('data', (chunk) => { data += chunk; });
+          apiRes.on('end', () => {
+            try {
+              const response = JSON.parse(data);
+              resolve(response);
+            } catch (e) {
+              reject(new Error(`瑙ｆ瀽LiblibAI ComfyUI鐘舵€佸搷搴斿け璐? ${data}`));
+            }
           });
-        }
-
-        const { name, description, visibility = 'private' } = req.body;
-        const audioFile = req.file;
-
-        if (!name || !audioFile) {
-          return res.status(400).json({
-            success: false,
-            error: '缺少必需参数: name, voices (audio file)'
-          });
-        }
-
-        console.log('[Fish Audio代理] 声音克隆请求:', {
-          name,
-          visibility,
-          audioSize: audioFile.size
         });
 
-        // 构造FormData
-        const FormData = require('form-data');
-        const formData = new FormData();
-        formData.append('name', name);
-        if (description) formData.append('description', description);
-        formData.append('visibility', visibility);
-        formData.append('voices', audioFile.buffer, {
-          filename: audioFile.originalname,
-          contentType: audioFile.mimetype
+        apiReq.on('error', reject);
+        apiReq.on('timeout', () => {
+          apiReq.destroy();
+          reject(new Error('LiblibAI ComfyUI status request timeout'));
         });
 
-        // 调用Fish Audio API
-        try {
-          const fishResponse = await new Promise((resolve, reject) => {
-            const options = {
-              hostname: 'api.fish.audio',
-              path: '/v1/voices',
-              method: 'POST',
-              headers: {
-                ...formData.getHeaders(),
-                'Authorization': `Bearer ${apiKey}`
-              },
-              timeout: 120000 // 声音克隆可能需要更长时间
-            };
-
-            const apiReq = https.request(options, (apiRes) => {
-              let data = '';
-              apiRes.on('data', (chunk) => { data += chunk; });
-              apiRes.on('end', () => {
-                try {
-                  const response = JSON.parse(data);
-                  if (apiRes.statusCode === 200 || apiRes.statusCode === 201) {
-                    resolve(response);
-                  } else {
-                    reject(new Error(`Fish Audio API错误 ${apiRes.statusCode}: ${data}`));
-                  }
-                } catch (e) {
-                  reject(new Error(`解析Fish Audio响应失败: ${data}`));
-                }
-              });
-            });
-
-            apiReq.on('error', reject);
-            apiReq.on('timeout', () => {
-              apiReq.destroy();
-              reject(new Error('Fish Audio声音克隆超时'));
-            });
-
-            formData.pipe(apiReq);
-          });
-
-          console.log('[Fish Audio代理] 声音克隆成功:', fishResponse);
-          res.json(fishResponse);
-
-        } catch (apiError) {
-          throw apiError;
-        }
+        apiReq.write(postData);
+        apiReq.end();
       });
 
+      res.json(liblibResponse);
     } catch (error) {
-      console.error('[Fish Audio代理] 声音克隆错误:', error);
+      console.error('[LiblibAI ComfyUI鐘舵€佷唬鐞哴 閿欒:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -467,241 +783,161 @@ module.exports = function(app) {
     }
   });
 
+  // ========== Fish Audio 浠ｇ悊绔偣锛堜繚鎸佷笉鍙橈級==========
+
   /**
-   * Fish Audio 模型创建代理
-   * POST /api/fish/model
+   * Fish Audio TTS 浠ｇ悊
+   * POST /api/fish/tts
    */
-  app.post('/api/fish/model', async (req, res) => {
+  app.post('/api/fish/tts', express.json({ limit: '50mb' }), async (req, res) => {
     try {
-      const apiKey = process.env.FISH_AUDIO_API_KEY || '58864427d9e44e4ca76febe5b50639e6';
+      const apiKey = process.env.FISH_AUDIO_API_KEY;
 
       if (!apiKey) {
-        return res.status(500).json({
-          success: false,
-          error: 'Fish Audio API密钥未配置'
-        });
+        return res.status(500).json({ error: 'Fish Audio API key not configured' });
       }
 
-      // 使用multipart/form-data解析
-      const multer = require('multer');
-      const upload = multer({ storage: multer.memoryStorage() });
+      const postData = JSON.stringify(req.body);
 
-      upload.single('voices')(req, res, async (err) => {
-        if (err) {
-          return res.status(400).json({
-            success: false,
-            error: `文件上传失败: ${err.message}`
+      const options = {
+        hostname: 'api.fish.audio',
+        path: '/v1/tts',
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData)
+        },
+        timeout: 60000
+      };
+
+      const fishResponse = await new Promise((resolve, reject) => {
+        const chunks = [];
+
+        const apiReq = https.request(options, (apiRes) => {
+          apiRes.on('data', (chunk) => chunks.push(chunk));
+          apiRes.on('end', () => {
+            resolve({
+              statusCode: apiRes.statusCode,
+              headers: apiRes.headers,
+              body: Buffer.concat(chunks)
+            });
           });
-        }
-
-        const { name, description, visibility = 'private' } = req.body;
-        const audioFile = req.file;
-
-        if (!name || !audioFile) {
-          return res.status(400).json({
-            success: false,
-            error: '缺少必需参数: name, voices (audio file)'
-          });
-        }
-
-        console.log('[Fish Audio代理] 模型创建请求:', {
-          name,
-          visibility,
-          audioSize: audioFile.size
         });
 
-        // 构造FormData
-        const FormData = require('form-data');
-        const formData = new FormData();
-        formData.append('name', name);
-        if (description) formData.append('description', description);
-        formData.append('visibility', visibility);
-        formData.append('voices', audioFile.buffer, {
-          filename: audioFile.originalname,
-          contentType: audioFile.mimetype
+        apiReq.on('error', reject);
+        apiReq.on('timeout', () => {
+          apiReq.destroy();
+          reject(new Error('Fish Audio璇锋眰瓒呮椂'));
         });
 
-        // 调用Fish Audio API（模型创建可能使用相同端点）
-        try {
-          const fishResponse = await new Promise((resolve, reject) => {
-            const options = {
-              hostname: 'api.fish.audio',
-              path: '/v1/voices',
-              method: 'POST',
-              headers: {
-                ...formData.getHeaders(),
-                'Authorization': `Bearer ${apiKey}`
-              },
-              timeout: 120000
-            };
-
-            const apiReq = https.request(options, (apiRes) => {
-              let data = '';
-              apiRes.on('data', (chunk) => { data += chunk; });
-              apiRes.on('end', () => {
-                try {
-                  const response = JSON.parse(data);
-                  if (apiRes.statusCode === 200 || apiRes.statusCode === 201) {
-                    resolve(response);
-                  } else {
-                    reject(new Error(`Fish Audio API错误 ${apiRes.statusCode}: ${data}`));
-                  }
-                } catch (e) {
-                  reject(new Error(`解析Fish Audio响应失败: ${data}`));
-                }
-              });
-            });
-
-            apiReq.on('error', reject);
-            apiReq.on('timeout', () => {
-              apiReq.destroy();
-              reject(new Error('Fish Audio模型创建超时'));
-            });
-
-            formData.pipe(apiReq);
-          });
-
-          console.log('[Fish Audio代理] 模型创建成功:', fishResponse);
-          res.json(fishResponse);
-
-        } catch (apiError) {
-          throw apiError;
-        }
+        apiReq.write(postData);
+        apiReq.end();
       });
+
+      res.setHeader('Content-Type', fishResponse.headers['content-type'] || 'audio/mpeg');
+      res.status(fishResponse.statusCode).send(fishResponse.body);
 
     } catch (error) {
-      console.error('[Fish Audio代理] 模型创建错误:', error);
-      res.status(500).json({
-        success: false,
-        error: error.message
-      });
+      console.error('[Fish Audio TTS] 閿欒:', error);
+      res.status(500).json({ error: error.message });
     }
   });
 
-  // ========== Dashscope (Qwen-VL) 代理端点 ==========
+  // ========== Dashscope 浠ｇ悊绔偣锛堜繚鎸佷笉鍙橈級==========
 
   /**
-   * Dashscope API 代理
+   * Dashscope浠ｇ悊
    * POST /api/dashscope/proxy
    */
   app.post('/api/dashscope/proxy', express.json({ limit: '50mb' }), async (req, res) => {
     try {
-      const apiKey = process.env.VITE_DASHSCOPE_API_KEY;
+      const { endpoint, method, body: reqBody, customHeaders, headers } = req.body;
+      const passthroughHeaders = {
+        ...(customHeaders || {}),
+        ...(headers || {})
+      };
 
-      if (!apiKey) {
-        return res.status(500).json({
-          success: false,
-          error: 'Dashscope API密钥未配置'
-        });
-      }
-
-      const { endpoint, method = 'POST', body, headers: customHeaders = {} } = req.body;
-
-      console.log('[Dashscope代理] 请求:', { endpoint, method, customHeaders });
-
-      const dashscopeResponse = await new Promise((resolve, reject) => {
-        const postData = JSON.stringify(body);
-
-        // 合并自定义headers（如X-DashScope-Async）
-        const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Length': Buffer.byteLength(postData),
-          ...customHeaders  // 允许传递自定义headers
-        };
-
-        const options = {
-          hostname: 'dashscope.aliyuncs.com',
-          path: endpoint,
-          method: method,
-          headers: headers,
-          timeout: 60000
-        };
-
-        const apiReq = https.request(options, (apiRes) => {
-          let data = '';
-          apiRes.on('data', (chunk) => { data += chunk; });
-          apiRes.on('end', () => {
-            try {
-              const response = JSON.parse(data);
-              resolve(response);
-            } catch (e) {
-              reject(new Error(`解析Dashscope响应失败: ${data}`));
-            }
-          });
-        });
-
-        apiReq.on('error', reject);
-        apiReq.on('timeout', () => {
-          apiReq.destroy();
-          reject(new Error('Dashscope请求超时'));
-        });
-
-        apiReq.write(postData);
-        apiReq.end();
+      console.log('[Dashscope浠ｇ悊] 璇锋眰:', { endpoint, method, customHeaders: passthroughHeaders });
+      const response = await forwardDashscopeRequest({
+        endpoint,
+        method,
+        body: reqBody,
+        headers: passthroughHeaders
       });
-
-      console.log('[Dashscope代理] 响应成功');
-      res.json(dashscopeResponse);
+      res.status(response.statusCode).json(response.body);
 
     } catch (error) {
-      console.error('[Dashscope代理] 错误:', error);
-      res.status(500).json({
-        success: false,
-        error: error.message
-      });
+      console.error('[Dashscope浠ｇ悊] 閿欒:', error);
+      res.status(500).json({ error: error.message });
     }
   });
 
-  // ========== DeepSeek 代理端点 ==========
+  // 兼容历史路径：/api/dashscope/api/v1/*
+  // 这样前端旧代码不需要携带前端密钥也能通过后端统一代理
+  app.use('/api/dashscope/api/v1', express.json({ limit: '50mb' }), async (req, res) => {
+    try {
+      const endpoint = req.originalUrl.replace(/^\/api\/dashscope/, '');
+      const reqHeaders = {};
+      if (req.headers['x-dashscope-async']) {
+        reqHeaders['X-DashScope-Async'] = String(req.headers['x-dashscope-async']);
+      }
+
+      const response = await forwardDashscopeRequest({
+        endpoint,
+        method: req.method,
+        body: req.body,
+        headers: reqHeaders
+      });
+
+      res.status(response.statusCode).json(response.body);
+    } catch (error) {
+      console.error('[Dashscope兼容代理] 错误:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ========== DeepSeek 浠ｇ悊绔偣锛堜繚鎸佷笉鍙橈級==========
 
   /**
-   * DeepSeek API 代理
+   * DeepSeek浠ｇ悊
    * POST /api/deepseek/proxy
    */
   app.post('/api/deepseek/proxy', express.json({ limit: '50mb' }), async (req, res) => {
     try {
-      const apiKey = process.env.VITE_DEEPSEEK_API_KEY;
+      const apiKey = readDeepseekApiKey();
 
       if (!apiKey) {
-        return res.status(500).json({
-          success: false,
-          error: 'DeepSeek API密钥未配置'
-        });
+        return res.status(500).json({ error: 'DeepSeek API key not configured' });
       }
 
-      const { messages, model = 'deepseek-chat', ...otherParams } = req.body;
+      const { endpoint, method, body: reqBody, customHeaders } = req.body;
+      const postData = JSON.stringify(reqBody);
 
-      console.log('[DeepSeek代理] 请求:', { model, messagesCount: messages?.length });
+      const options = {
+        hostname: 'api.deepseek.com',
+        path: endpoint,
+        method: method || 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData),
+          ...customHeaders
+        },
+        timeout: 60000
+      };
 
       const deepseekResponse = await new Promise((resolve, reject) => {
-        const postData = JSON.stringify({
-          model,
-          messages,
-          ...otherParams
-        });
-
-        const options = {
-          hostname: 'api.deepseek.com',
-          path: '/chat/completions',
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Length': Buffer.byteLength(postData)
-          },
-          timeout: 60000
-        };
+        let data = '';
 
         const apiReq = https.request(options, (apiRes) => {
-          let data = '';
           apiRes.on('data', (chunk) => { data += chunk; });
           apiRes.on('end', () => {
             try {
               const response = JSON.parse(data);
               resolve(response);
             } catch (e) {
-              reject(new Error(`解析DeepSeek响应失败: ${data}`));
+              reject(new Error(`瑙ｆ瀽DeepSeek鍝嶅簲澶辫触: ${data}`));
             }
           });
         });
@@ -709,113 +945,88 @@ module.exports = function(app) {
         apiReq.on('error', reject);
         apiReq.on('timeout', () => {
           apiReq.destroy();
-          reject(new Error('DeepSeek请求超时'));
+          reject(new Error('DeepSeek璇锋眰瓒呮椂'));
         });
 
         apiReq.write(postData);
         apiReq.end();
       });
 
-      console.log('[DeepSeek代理] 响应成功');
       res.json(deepseekResponse);
 
     } catch (error) {
-      console.error('[DeepSeek代理] 错误:', error);
-      res.status(500).json({
-        success: false,
-        error: error.message
-      });
+      console.error('[DeepSeek浠ｇ悊] 閿欒:', error);
+      res.status(500).json({ error: error.message });
     }
   });
 
-  // ========================================
-  // DeepSeek Chat Completions 端点（别名路由）
-  // ========================================
+  /**
+   * DeepSeek Chat绔偣
+   * POST /api/deepseek/chat/completions
+   */
   app.post('/api/deepseek/chat/completions', express.json({ limit: '50mb' }), async (req, res) => {
     try {
-      const apiKey = process.env.VITE_DEEPSEEK_API_KEY;
+      const apiKey = readDeepseekApiKey();
 
       if (!apiKey) {
-        console.error('[DeepSeek] API密钥未配置');
-        return res.status(500).json({
-          success: false,
-          error: 'DeepSeek API密钥未配置'
-        });
+        return res.status(500).json({ error: 'DeepSeek API key not configured' });
       }
 
-      const { messages, model = 'deepseek-chat', ...otherParams } = req.body;
+      const postData = JSON.stringify(req.body);
 
-      console.log('[DeepSeek] 请求:', { model, messagesCount: messages?.length, endpoint: '/chat/completions' });
+      const options = {
+        hostname: 'api.deepseek.com',
+        path: '/v1/chat/completions',
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData)
+        },
+        timeout: 60000
+      };
 
       const deepseekResponse = await new Promise((resolve, reject) => {
-        const postData = JSON.stringify({
-          model,
-          messages,
-          ...otherParams
-        });
-
-        const options = {
-          hostname: 'api.deepseek.com',
-          path: '/chat/completions',
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Length': Buffer.byteLength(postData)
-          },
-          timeout: 60000
-        };
+        let data = '';
 
         const apiReq = https.request(options, (apiRes) => {
-          let data = '';
           apiRes.on('data', (chunk) => { data += chunk; });
           apiRes.on('end', () => {
             try {
               const response = JSON.parse(data);
-              console.log('[DeepSeek] 响应状态:', apiRes.statusCode);
-              if (apiRes.statusCode !== 200) {
-                reject(new Error(`DeepSeek API错误: ${response.error?.message || JSON.stringify(response)}`));
-              } else {
-                resolve(response);
-              }
+              resolve(response);
             } catch (e) {
-              reject(new Error(`解析DeepSeek响应失败: ${data}`));
+              reject(new Error(`瑙ｆ瀽DeepSeek鍝嶅簲澶辫触: ${data}`));
             }
           });
         });
 
-        apiReq.on('error', (err) => {
-          console.error('[DeepSeek] 请求错误:', err);
-          reject(err);
-        });
+        apiReq.on('error', reject);
         apiReq.on('timeout', () => {
           apiReq.destroy();
-          reject(new Error('DeepSeek请求超时'));
+          reject(new Error('DeepSeek璇锋眰瓒呮椂'));
         });
 
         apiReq.write(postData);
         apiReq.end();
       });
 
-      console.log('[DeepSeek] 响应成功');
       res.json(deepseekResponse);
 
     } catch (error) {
-      console.error('[DeepSeek] 错误:', error.message);
-      res.status(500).json({
-        success: false,
-        error: error.message || '未知错误'
-      });
+      console.error('[DeepSeek Chat] 閿欒:', error);
+      res.status(500).json({ error: error.message });
     }
   });
 
-  console.log('✅ API代理端点已加载：');
-  console.log('   - POST /api/liblib/text2img (LiblibAI图片生成)');
-  console.log('   - GET /api/liblib/query/:uuid (LiblibAI查询状态)');
-  console.log('   - POST /api/fish/tts (Fish Audio语音生成)');
-  console.log('   - POST /api/fish/voices (Fish Audio声音克隆)');
-  console.log('   - POST /api/fish/model (Fish Audio模型创建)');
-  console.log('   - POST /api/dashscope/proxy (Dashscope/Qwen-VL代理)');
-  console.log('   - POST /api/deepseek/proxy (DeepSeek代理)');
-  console.log('   - POST /api/deepseek/chat/completions (DeepSeek Chat端点)');
+  console.log('鉁?API浠ｇ悊绔偣宸插姞杞斤細');
+  console.log('   - POST /api/liblib/text2img (LiblibAI鍥剧墖鐢熸垚)');
+  console.log('   - POST /api/liblib/status (LiblibAI鐘舵€佹煡璇?');
+  console.log('   - POST /api/liblib/api/generate/comfyui/app (LiblibAI ComfyUI鐢熸垚-M6涓撶敤)');
+  console.log('   - POST /api/liblib/api/generate/comfy/status (LiblibAI ComfyUI鐘舵€佹煡璇?M6涓撶敤)');
+  console.log('   - POST /api/fish/tts (Fish Audio璇煶鐢熸垚)');
+  console.log('   - POST /api/dashscope/proxy (Dashscope/Qwen-VL浠ｇ悊)');
+  console.log('   - POST /api/deepseek/proxy (DeepSeek浠ｇ悊)');
+  console.log('   - POST /api/deepseek/chat/completions (DeepSeek Chat绔偣)');
 };
+

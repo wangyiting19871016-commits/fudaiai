@@ -75,20 +75,15 @@ const M2TemplateSelectionPage: React.FC = () => {
         }
         const data = await response.json();
 
-        console.log('[M2 Template] 🔍 API 返回数据:', data);
-        console.log('[M2 Template] 🔍 第一个模板:', data.templates?.[0]);
-
         // 给每个模板添加category字段（从文件名提取）
         const templatesWithCategory = (data.templates || []).map((t: M2Template) => {
           // 从asset-database.json获取category信息
           // 这里简化处理：从suggestedName或其他字段推断
-          console.log('[M2 Template] 🔍 模板 imagePath 类型:', typeof t.imagePath, '值:', t.imagePath);
           return t;
         });
 
         setAllTemplates(templatesWithCategory);
         setTemplates(templatesWithCategory);
-        console.log(`[M2 Template] 加载了 ${templatesWithCategory.length} 个${selectedGender}模板`);
       } catch (err: any) {
         console.error('[M2 Template] 加载失败:', err);
         setError(err.message || '加载模板失败');
@@ -133,7 +128,6 @@ const M2TemplateSelectionPage: React.FC = () => {
       const preservedTemplate = templates.find(t => t.id === preserveTemplateId);
       if (preservedTemplate) {
         setSelectedTemplate(preservedTemplate);
-        console.log('[M2 Template] 自动选中保留的模板:', preservedTemplate.id);
       }
     }
   }, [templates, preserveTemplateId, selectedTemplate]);

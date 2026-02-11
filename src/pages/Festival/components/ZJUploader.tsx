@@ -141,8 +141,6 @@ const ZJUploader: React.FC<ZJUploaderProps> = ({
           canvas.width = cropWidth * scale;
           canvas.height = cropHeight * scale;
 
-          console.log('[ZJUploader] Canvas尺寸:', canvas.width, 'x', canvas.height);
-
           // 绘制裁剪后的图片
           ctx.drawImage(
             img,
@@ -154,15 +152,9 @@ const ZJUploader: React.FC<ZJUploaderProps> = ({
           const quality = isMobile ? 0.7 : 0.9;
           const result = canvas.toDataURL('image/jpeg', quality);
 
-          const sizeMB = (result.length / 1024 / 1024).toFixed(2);
-          console.log('[ZJUploader] 压缩后Base64大小:', sizeMB, 'MB');
-
           // 如果还是太大，再次降质压缩
           if (isMobile && result.length > 2 * 1024 * 1024) {
-            console.warn('[ZJUploader] 图片仍然过大，进行二次压缩...');
             const result2 = canvas.toDataURL('image/jpeg', 0.5);
-            const size2MB = (result2.length / 1024 / 1024).toFixed(2);
-            console.log('[ZJUploader] 二次压缩后大小:', size2MB, 'MB');
             resolve(result2);
           } else {
             resolve(result);

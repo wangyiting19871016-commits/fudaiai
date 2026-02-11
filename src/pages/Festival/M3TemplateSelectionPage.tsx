@@ -52,20 +52,15 @@ const M3TemplateSelectionPage: React.FC = () => {
         }
         const data = await response.json();
 
-        console.log('[M3 Template] 🔍 API 返回数据:', data);
-        console.log('[M3 Template] 🔍 第一个模板:', data.templates?.[0]);
-
-        // 🔥 测试每个图片URL是否可访问
+        // 测试每个图片URL是否可访问
         const templatesWithStatus = data.templates || [];
-        templatesWithStatus.forEach((t: M3Template, index: number) => {
+        templatesWithStatus.forEach((t: M3Template) => {
           const img = new Image();
-          img.onload = () => console.log(`✅ [${index}] ${t.name} 加载成功`);
-          img.onerror = () => console.error(`❌ [${index}] ${t.name} 加载失败\nURL: ${t.imagePath}`);
+          img.onerror = () => console.error(`❌ ${t.name} 加载失败\nURL: ${t.imagePath}`);
           img.src = t.imagePath;
         });
 
         setTemplates(templatesWithStatus);
-        console.log(`[M3 Template] 加载了 ${templatesWithStatus.length} 个情侣模板`);
       } catch (err: any) {
         console.error('[M3 Template] 加载失败:', err);
         setError(err.message || '加载模板失败');
@@ -84,7 +79,6 @@ const M3TemplateSelectionPage: React.FC = () => {
       const preservedTemplate = templates.find(t => t.id === preserveTemplateId);
       if (preservedTemplate) {
         setSelectedTemplate(preservedTemplate);
-        console.log('[M3 Template] 自动选中保留的模板:', preservedTemplate.id);
       }
     }
   }, [templates, preserveTemplateId, selectedTemplate]);

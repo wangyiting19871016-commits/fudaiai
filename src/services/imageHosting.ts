@@ -32,11 +32,11 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
       console.log('[COS] 🔍 File转base64完成，长度:', base64Data.length);
     }
 
-    // 🔧 调用后端上传（密钥在后端，避免前端暴露）
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+    // 🔧 调用后端上传（同源 /api 形式，避免跨域CORS；开发期由Vite代理，部署期由后端同域提供）
+    const uploadUrl = '/api/upload-cos';
     console.log('[COS] 🔍 base64Data长度:', base64Data.length);
-    console.log('[COS] 🔍 调用后端上传:', `${backendUrl}/api/upload-cos`);
-    const response = await fetch(`${backendUrl}/api/upload-cos`, {
+    console.log('[COS] 🔍 调用后端上传:', uploadUrl);
+    const response = await fetch(uploadUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ image: base64Data }),
@@ -49,7 +49,10 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`上传失败: ${errorText}`);
+      const hint = !errorText
+        ? '（响应为空：常见原因是后端3002未启动/被占用，或Vite代理未转发成功。请先确认 http://localhost:3002/api/health 可访问）'
+        : '';
+      throw new Error(`上传失败: status=${response.status} ${errorText}${hint}`);
     }
 
     // 🔧 直接用response.json()避免文本处理bug
@@ -243,10 +246,10 @@ export async function uploadAudioToTencentCOS(blob: Blob, format: string = 'mp3'
       reader.readAsDataURL(blob);
     });
 
-    // 🔧 调用后端上传音频（密钥在后端）
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
-    console.log('[COS] 🔍 发送音频上传请求到后端:', `${backendUrl}/api/upload-cos`);
-    const response = await fetch(`${backendUrl}/api/upload-cos`, {
+    // 🔧 调用后端上传音频（同源 /api 形式，避免跨域CORS；开发期由Vite代理，部署期由后端同域提供）
+    const uploadUrl = '/api/upload-cos';
+    console.log('[COS] 🔍 发送音频上传请求到后端:', uploadUrl);
+    const response = await fetch(uploadUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -261,7 +264,10 @@ export async function uploadAudioToTencentCOS(blob: Blob, format: string = 'mp3'
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`上传失败: ${errorText}`);
+      const hint = !errorText
+        ? '（响应为空：常见原因是后端3002未启动/被占用，或Vite代理未转发成功。请先确认 http://localhost:3002/api/health 可访问）'
+        : '';
+      throw new Error(`上传失败: status=${response.status} ${errorText}${hint}`);
     }
 
     // 🔧 直接用response.json()

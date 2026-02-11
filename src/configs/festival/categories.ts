@@ -1,17 +1,14 @@
-/**
- * 功能分类配置
- *
- * 扩展方式：直接在 CATEGORIES 数组中添加新分类
+﻿/**
+ * 春节功能分类配置
  */
-
 export interface Category {
   id: string;
   name: string;
   icon: string;
   description: string;
   gradient: [string, string];
-  previewImage?: string;  // 预览图路径
-  order: number;  // 排序权重
+  previewImage?: string;
+  order: number;
 }
 
 export const CATEGORIES: Category[] = [
@@ -19,9 +16,9 @@ export const CATEGORIES: Category[] = [
     id: 'avatar',
     name: '新年形象',
     icon: '',
-    description: 'AI生成专属新年头像',
+    description: 'AI 生成专属新年头像',
     gradient: ['#D32F2F', '#FF6B6B'],
-    previewImage: '/assets/showcase/avatar-animated.png',
+    previewImage: '/assets/showcase/new-year-avatar-latest.png',
     order: 1
   },
   {
@@ -30,7 +27,7 @@ export const CATEGORIES: Category[] = [
     icon: '',
     description: '情侣合照 · 老照片修复',
     gradient: ['#FF6B6B', '#FFA07A'],
-    previewImage: '/assets/showcase/couple-photo.png',
+    previewImage: '/assets/showcase/couple-s350.jpg',
     order: 2
   },
   {
@@ -39,7 +36,7 @@ export const CATEGORIES: Category[] = [
     icon: '',
     description: '特效视频 · 数字人拜年',
     gradient: ['#FF6B6B', '#FFA07A'],
-    previewImage: '/assets/showcase/home-video-preview.gif',
+    previewImage: '/assets/showcase/digital-human-preview.gif',
     order: 2.5
   },
   {
@@ -48,8 +45,17 @@ export const CATEGORIES: Category[] = [
     icon: '',
     description: '文案 · 语音 · 春联',
     gradient: ['#FFD700', '#FFA000'],
-    previewImage: '/assets/showcase/blessing-example.jpg',
+    previewImage: '/assets/showcase/baonian-download.png',
     order: 3
+  },
+  {
+    id: 'companion',
+    name: '未来伴侣',
+    icon: '',
+    description: '我的未来伴侣是何模样？',
+    gradient: ['#7C4DFF', '#E040FB'],
+    previewImage: '/assets/showcase/future-companion-card.png',
+    order: 3.5
   },
   {
     id: 'fun',
@@ -62,9 +68,8 @@ export const CATEGORIES: Category[] = [
   }
 ];
 
-// 辅助函数
 export const getCategoryById = (id: string): Category | undefined => {
-  return CATEGORIES.find(c => c.id === id);
+  return CATEGORIES.find((c) => c.id === id);
 };
 
 export const getSortedCategories = (): Category[] => {

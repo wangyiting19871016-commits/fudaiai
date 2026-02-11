@@ -14,9 +14,36 @@ const crypto = require('crypto'); // 🔑 用于LiblibAI签名和支付签名
 const COS = require('cos-nodejs-sdk-v5'); // 腾讯云COS SDK
 const jwt = require('jsonwebtoken'); // JWT用于可灵API鉴权
 const rateLimit = require('express-rate-limit'); // 速率限制
+const adminRoutes = require('./server/adminRoutes'); // 管理后台路由
 // crypto已在上方引入，无需重复声明
 // const db = require('./src/backend/db');  // ⚠️ Zhenji项目模块，暂时注释
 // const { executeTask } = require('./src/backend/executor');  // ⚠️ Zhenji项目模块，暂时注释
+
+function normalizeEnvValue(raw) {
+  return String(raw || '').trim().replace(/^['"]|['"]$/g, '');
+}
+
+function getDashscopeKeyCandidates() {
+  return [
+    { name: 'DASHSCOPE_API_KEY', value: normalizeEnvValue(process.env.DASHSCOPE_API_KEY) },
+    { name: 'QWEN_API_KEY', value: normalizeEnvValue(process.env.QWEN_API_KEY) },
+    { name: 'VITE_DASHSCOPE_API_KEY', value: normalizeEnvValue(process.env.VITE_DASHSCOPE_API_KEY) }
+  ].filter(item => Boolean(item.value));
+}
+
+function readDashscopeApiKey() {
+  const candidates = getDashscopeKeyCandidates();
+  if (candidates.length === 0) {
+    return '';
+  }
+
+  const distinctValues = [...new Set(candidates.map(item => item.value))];
+  if (distinctValues.length > 1) {
+    console.warn('[DashScope Config] 检测到多个不同Key，当前按优先级使用:', candidates.map(item => item.name).join(' > '));
+  }
+
+  return candidates[0].value;
+}
 
 // 物理目录强制补全
 const tempDirPath = path.resolve(__dirname, 'temp_processing');
@@ -50,8 +77,31 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage,
+  limits: {
+    fileSize: 100 * 1024 * 1024, // 100MB限制
+    files: 1 // 单次只允许上传1个文件
+  },
+  fileFilter: (req, file, cb) => {
+    // 允许的文件类型
+    const allowedMimes = [
+      'video/webm',
+      'video/mp4',
+      'video/quicktime',
+      'audio/mpeg',
+      'audio/wav',
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ];
+
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`不支持的文件类型: ${file.mimetype}`), false);
+    }
+  },
   // 捕获 Multer 错误
   onError: (err, req, res, next) => {
     console.error(`🚨 [CRITICAL]: 文件写入物理失败，原因: ${err.message}`);
@@ -79,6 +129,51 @@ const envCorsOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
 const allowedOrigins = IS_PRODUCTION
   ? envCorsOrigins
   : [...new Set([...defaultDevOrigins, ...envCorsOrigins])];
+
+function validateRuntimeConfig() {
+  const hardErrors = [];
+  const softWarnings = [];
+
+  if (getDashscopeKeyCandidates().length === 0) {
+    hardErrors.push('缺少 DashScope Key（DASHSCOPE_API_KEY / QWEN_API_KEY / VITE_DASHSCOPE_API_KEY）');
+  }
+
+  if (!normalizeEnvValue(process.env.LIBLIB_ACCESS_KEY) || !normalizeEnvValue(process.env.LIBLIB_SECRET_KEY)) {
+    hardErrors.push('缺少 LiblibAI 密钥（LIBLIB_ACCESS_KEY / LIBLIB_SECRET_KEY）');
+  }
+
+  if (!normalizeEnvValue(process.env.FISH_AUDIO_API_KEY)) {
+    softWarnings.push('缺少 FISH_AUDIO_API_KEY（语音功能将不可用）');
+  }
+
+  if (!normalizeEnvValue(process.env.VITE_TENCENT_COS_SECRET_ID) || !normalizeEnvValue(process.env.VITE_TENCENT_COS_SECRET_KEY)) {
+    hardErrors.push('缺少 COS 密钥（VITE_TENCENT_COS_SECRET_ID / VITE_TENCENT_COS_SECRET_KEY）');
+  }
+
+  if (IS_PRODUCTION && allowedOrigins.length === 0) {
+    hardErrors.push('生产环境未配置 CORS_ALLOWED_ORIGINS');
+  }
+
+  if (!normalizeEnvValue(process.env.HUPIJIAO_APP_ID) || !normalizeEnvValue(process.env.HUPIJIAO_APP_SECRET)) {
+    softWarnings.push('缺少虎皮椒支付密钥（支付功能将不可用）');
+  }
+
+  if (softWarnings.length > 0) {
+    softWarnings.forEach((message) => console.warn(`[Config Warning] ${message}`));
+  }
+
+  if (hardErrors.length > 0) {
+    hardErrors.forEach((message) => console.error(`[Config Error] ${message}`));
+    if (IS_PRODUCTION) {
+      console.error('[Config Error] 生产环境配置不完整，服务终止启动');
+      process.exit(1);
+    } else {
+      console.warn('[Config Warning] 开发环境继续运行（建议尽快修复上述配置）');
+    }
+  }
+}
+
+validateRuntimeConfig();
 
 function sanitizeSegmentBoundary(value) {
   const num = Number(value);
@@ -150,6 +245,9 @@ app.use((req, res, next) => {
   console.log(`✨ [3002 信号] 成功接收到来自网页的请求！`);
   next();
 });
+
+// 🔐 Admin Routes (管理后台路由)
+app.use('/api/admin', adminRoutes);
 
 // 🔑 LiblibAI签名API（备用端点，用于外网访问）
 app.post('/api/sign-liblib', express.json({ limit: '50mb' }), (req, res) => {
@@ -785,10 +883,31 @@ function downloadFile(url, destPath) {
   });
 }
 
+function getMediaDurationMs(mediaPath, fallbackMs = 5000) {
+  return new Promise((resolve) => {
+    ffmpeg.ffprobe(mediaPath, (err, metadata) => {
+      if (err) {
+        console.warn(`⚠️ [时长探测] 失败，使用默认时长 ${fallbackMs}ms:`, err.message);
+        resolve(fallbackMs);
+        return;
+      }
+
+      const durationSec = metadata?.format?.duration;
+      if (!Number.isFinite(durationSec) || durationSec <= 0) {
+        console.warn(`⚠️ [时长探测] 无有效时长，使用默认时长 ${fallbackMs}ms`);
+        resolve(fallbackMs);
+        return;
+      }
+
+      resolve(Math.max(1000, Math.floor(durationSec * 1000)));
+    });
+  });
+}
+
 // 阿里云ASR API - 获取音频文字及时间轴
 async function getAudioTranscription(audioUrl) {
   return new Promise((resolve, reject) => {
-    const DASHSCOPE_API_KEY = process.env.VITE_DASHSCOPE_API_KEY;
+    const DASHSCOPE_API_KEY = readDashscopeApiKey();
 
     if (!DASHSCOPE_API_KEY) {
       console.error('❌ [ASR] Dashscope API Key 未配置');
@@ -848,10 +967,10 @@ async function getAudioTranscription(audioUrl) {
   });
 }
 
-// 简单字幕生成：按音频时长平均分配文本（快速方案）
+// 智能字幕生成：按字数权重分配时间，避免时间轴堆叠
 function generateSimpleSRT(text, audioDurationMs, outputPath) {
   try {
-    console.log('[SRT简单模式] 文本:', text, '时长:', audioDurationMs);
+    console.log('[SRT智能模式] 文本:', text, '时长:', audioDurationMs);
 
     // 按标点符号分段
     const segments = text.split(/([。！？；.!?;])/).filter(s => s.trim());
@@ -871,23 +990,47 @@ function generateSimpleSRT(text, audioDurationMs, outputPath) {
       return outputPath;
     }
 
-    console.log('[SRT简单模式] 分段:', sentences);
+    const sentenceCharCounts = sentences.map((sentence) => {
+      const normalized = sentence.replace(/[\s，。！？；,.!?;:：'"“”‘’（）()【】\[\]]/g, '');
+      return Math.max(normalized.length, 1);
+    });
+    const totalChars = sentenceCharCounts.reduce((sum, len) => sum + len, 0);
+    const safeDurationMs = Math.max(Math.floor(audioDurationMs || 0), 1000);
+    const minSegmentMs = 1200;
+    let segmentDurations = [];
 
-    // 平均分配时间
-    const timePerSegment = audioDurationMs / sentences.length;
+    if (safeDurationMs <= sentences.length * minSegmentMs) {
+      const avgMs = Math.max(500, Math.floor(safeDurationMs / sentences.length));
+      segmentDurations = sentences.map(() => avgMs);
+    } else {
+      const remainingMs = safeDurationMs - (sentences.length * minSegmentMs);
+      segmentDurations = sentenceCharCounts.map((chars) => {
+        const weightedExtra = Math.floor((chars / totalChars) * remainingMs);
+        return minSegmentMs + weightedExtra;
+      });
+    }
+
+    const assignedMs = segmentDurations.reduce((sum, ms) => sum + ms, 0);
+    const adjustMs = safeDurationMs - assignedMs;
+    if (segmentDurations.length > 0 && adjustMs !== 0) {
+      segmentDurations[segmentDurations.length - 1] += adjustMs;
+    }
 
     const formatTime = (ms) => {
-      const hours = Math.floor(ms / 3600000);
-      const minutes = Math.floor((ms % 3600000) / 60000);
-      const seconds = Math.floor((ms % 60000) / 1000);
-      const milliseconds = ms % 1000;
+      const safeMs = Math.max(0, Math.floor(ms));
+      const hours = Math.floor(safeMs / 3600000);
+      const minutes = Math.floor((safeMs % 3600000) / 60000);
+      const seconds = Math.floor((safeMs % 60000) / 1000);
+      const milliseconds = safeMs % 1000;
       return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')},${String(milliseconds).padStart(3, '0')}`;
     };
 
+    let cursorMs = 0;
     let srtContent = '';
     sentences.forEach((sentence, index) => {
-      const startTime = index * timePerSegment;
-      const endTime = (index + 1) * timePerSegment;
+      const startTime = cursorMs;
+      cursorMs += segmentDurations[index];
+      const endTime = Math.min(cursorMs, safeDurationMs);
 
       srtContent += `${index + 1}\n`;
       srtContent += `${formatTime(startTime)} --> ${formatTime(endTime)}\n`;
@@ -897,11 +1040,11 @@ function generateSimpleSRT(text, audioDurationMs, outputPath) {
     // 使用 UTF-8 with BOM 编码，确保FFmpeg正确识别中文
     const BOM = '\uFEFF';
     fs.writeFileSync(outputPath, BOM + srtContent, 'utf8');
-    console.log('✅ [SRT简单模式] 字幕已生成:', outputPath);
+    console.log('✅ [SRT智能模式] 字幕已生成:', outputPath);
     console.log('✅ [SRT简单模式] 字幕内容预览:\n', srtContent.substring(0, 200));
     return outputPath;
   } catch (error) {
-    console.error('❌ [SRT简单模式] 失败:', error);
+    console.error('❌ [SRT智能模式] 失败:', error);
     throw error;
   }
 }
@@ -1136,8 +1279,9 @@ app.post('/api/video/compose', express.json({ limit: '50mb' }), async (req, res)
 });
 
 // 视频后处理接口 - 字幕烧录 + 装饰元素叠加（春节拜年专用）
-app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req, res) => {
+app.post(['/api/video/post-process', '/api/video/burn-subtitle'], express.json({ limit: '50mb' }), async (req, res) => {
   let tempVideoPath = null;
+  let tempAudioPath = null;
   let tempSrtPath = null;
   const tempDecorationPaths = [];
 
@@ -1187,47 +1331,28 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
       }
     }
 
-    // 生成简单字幕（按时长平均分配，不用ASR）
+    // 先尝试下载音频，用于保留最终音轨
+    if (audioUrl) {
+      try {
+        tempAudioPath = path.join(tempDirPath, `temp_audio_${timestamp}.mp3`);
+        await downloadFile(audioUrl, tempAudioPath);
+        console.log('✅ [视频后处理] 音频下载完成');
+      } catch (err) {
+        tempAudioPath = null;
+        console.warn('⚠️ [视频后处理] 音频下载失败，将尝试保留原视频音轨');
+      }
+    }
+
+    // 生成智能字幕（按字数权重分配时间轴）
     if (enableRealtimeSubtitle && subtitle && subtitle.trim()) {
       try {
-        console.log('🎬 [简单字幕] 开始生成...');
-
-        // 获取音频时长
-        let audioDurationMs = 5000; // 默认5秒
-
-        if (audioUrl) {
-          try {
-            // 下载音频
-            const tempAudioPath = path.join(tempDirPath, `temp_audio_${timestamp}.mp3`);
-            await downloadFile(audioUrl, tempAudioPath);
-
-            // 用ffprobe获取时长
-            audioDurationMs = await new Promise((resolve, reject) => {
-              ffmpeg.ffprobe(tempAudioPath, (err, metadata) => {
-                if (err) {
-                  console.warn('⚠️ [简单字幕] 无法获取音频时长，使用默认5秒');
-                  resolve(5000);
-                } else {
-                  const duration = metadata.format.duration * 1000; // 转为毫秒
-                  console.log('✅ [简单字幕] 音频时长:', duration, 'ms');
-                  resolve(duration);
-                }
-              });
-            });
-
-            // 删除临时音频
-            fs.unlinkSync(tempAudioPath);
-          } catch (err) {
-            console.warn('⚠️ [简单字幕] 处理音频失败，使用默认时长');
-          }
-        }
-
-        // 生成简单SRT字幕
+        const durationSourcePath = tempAudioPath || tempVideoPath;
+        const durationMs = await getMediaDurationMs(durationSourcePath, 5000);
         tempSrtPath = path.join(tempDirPath, `temp_subtitle_${timestamp}.srt`);
-        generateSimpleSRT(subtitle.trim(), audioDurationMs, tempSrtPath);
-        console.log('✅ [简单字幕] 字幕已生成');
+        generateSimpleSRT(subtitle.trim(), durationMs, tempSrtPath);
+        console.log('✅ [智能字幕] 字幕已生成');
       } catch (error) {
-        console.warn('⚠️ [简单字幕] 生成失败，将使用静态字幕:', error.message);
+        console.warn('⚠️ [智能字幕] 生成失败，将使用静态字幕:', error.message);
       }
     }
 
@@ -1245,6 +1370,9 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
       ffmpeg.setFfmpegPath(ffmpegPath);
 
       let command = ffmpeg(tempVideoPath);
+      if (tempAudioPath && fs.existsSync(tempAudioPath)) {
+        command = command.input(tempAudioPath);
+      }
 
       // 构建复杂滤镜链
       const filters = [];
@@ -1252,6 +1380,7 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
 
       // 1. 添加装饰元素叠加（使用overlay滤镜）
       if (tempDecorationPaths.length > 0) {
+        const decorationInputStartIndex = tempAudioPath ? 2 : 1;
         tempDecorationPaths.forEach((decoration, index) => {
           command = command.input(decoration.tempPath);
 
@@ -1268,7 +1397,8 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
           }
 
           const outputLabel = `[overlay${index}]`;
-          const overlayFilter = `${currentInput}[${index + 1}:v]overlay=${overlayPosition}${outputLabel}`;
+          const overlayInputIndex = decorationInputStartIndex + index;
+          const overlayFilter = `${currentInput}[${overlayInputIndex}:v]overlay=${overlayPosition}${outputLabel}`;
           filters.push(overlayFilter);
           currentInput = outputLabel;
         });
@@ -1288,7 +1418,7 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
         const subtitleFilter = `${currentInput}subtitles='${escapedSrtPath}':` +
           `force_style='FontName=Microsoft YaHei,FontSize=28,` +
           `PrimaryColour=&HFFFFFF&,OutlineColour=&H000000&,BorderStyle=1,` +
-          `Outline=2,Shadow=1,MarginV=50,Alignment=2'[output]`;
+          `Outline=2,Shadow=1,MarginV=30,Alignment=2'[output]`;
 
         filters.push(subtitleFilter);
         currentInput = '[output]';
@@ -1315,7 +1445,7 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
           `boxcolor=black@0.5:` +
           `boxborderw=10:` +
           `x=(w-text_w)/2:` +
-          `y=h-th-100[output]`; // 修复：120 -> 100
+          `y=h-th-30[output]`;
 
         filters.push(subtitleFilter);
         currentInput = '[output]';
@@ -1331,10 +1461,13 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
       command = command
         .outputOptions([
           '-map', currentInput === '[0:v]' ? '0:v' : currentInput,
+          '-map', tempAudioPath ? '1:a:0' : '0:a?',
           '-c:v libx264',
-          '-c:a copy',
+          '-c:a aac',
+          '-b:a 192k',
           '-preset ultrafast',
-          '-crf 23'
+          '-crf 23',
+          '-movflags +faststart'
         ])
         .output(outputPath);
 
@@ -1354,6 +1487,9 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
         if (tempVideoPath && fs.existsSync(tempVideoPath)) {
           fs.unlinkSync(tempVideoPath);
         }
+        if (tempAudioPath && fs.existsSync(tempAudioPath)) {
+          fs.unlinkSync(tempAudioPath);
+        }
         if (tempSrtPath && fs.existsSync(tempSrtPath)) {
           fs.unlinkSync(tempSrtPath);
         }
@@ -1366,7 +1502,7 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
         const downloadUrl = `http://localhost:${PORT}/downloads/${outputFileName}`;
         res.json({
           status: 'success',
-          message: '视频后处理完成',
+          message: '字幕烧录完成',
           downloadUrl: downloadUrl,
           fileName: outputFileName
         });
@@ -1379,6 +1515,9 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
         // 清理临时文件
         if (tempVideoPath && fs.existsSync(tempVideoPath)) {
           fs.unlinkSync(tempVideoPath);
+        }
+        if (tempAudioPath && fs.existsSync(tempAudioPath)) {
+          fs.unlinkSync(tempAudioPath);
         }
         if (tempSrtPath && fs.existsSync(tempSrtPath)) {
           fs.unlinkSync(tempSrtPath);
@@ -1405,6 +1544,9 @@ app.post('/api/video/post-process', express.json({ limit: '50mb' }), async (req,
     // 清理临时文件
     if (tempVideoPath && fs.existsSync(tempVideoPath)) {
       fs.unlinkSync(tempVideoPath);
+    }
+    if (tempAudioPath && fs.existsSync(tempAudioPath)) {
+      fs.unlinkSync(tempAudioPath);
     }
     if (tempSrtPath && fs.existsSync(tempSrtPath)) {
       fs.unlinkSync(tempSrtPath);
@@ -2679,6 +2821,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 🎯 Frontend available at: http://localhost:${PORT}`);
   console.log(`🚀 后端服务已在 ${PORT} 端口就绪，准备调用 FFmpeg`);
+  console.log(`🔑 DashScope API Key: ${readDashscopeApiKey() ? '已加载' : '未加载'}`);
   console.log(`
 🔍 Checking FFmpeg installation...`);
   

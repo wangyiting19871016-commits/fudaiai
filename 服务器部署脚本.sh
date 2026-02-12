@@ -1,6 +1,8 @@
 #!/bin/bash
-# 服务器端自动部署脚本
-# 放在服务器 /root/deploy.sh
+set -e
+
+# Server-side deploy script
+# place on server as /root/deploy.sh
 
 echo "========================================="
 echo "  福袋AI - 服务器自动部署"
@@ -11,24 +13,16 @@ cd /root/fudaiai
 
 echo "[1/6] 拉取最新代码..."
 git pull origin master
-if [ $? -ne 0 ]; then
-    echo "❌ 代码拉取失败"
-    exit 1
-fi
 echo "✅ 代码已更新"
 echo ""
 
 echo "[2/6] 安装依赖..."
-npm install --production
+npm install
 echo "✅ 依赖已安装"
 echo ""
 
 echo "[3/6] 构建前端..."
 npm run build
-if [ $? -ne 0 ]; then
-    echo "❌ 构建失败"
-    exit 1
-fi
 echo "✅ 构建完成"
 echo ""
 
@@ -48,8 +42,8 @@ curl -s http://127.0.0.1:3002/api/health
 echo ""
 
 echo "========================================="
-echo "  ✅ 部署完成！"
-echo "  📊 PM2状态:"
+echo "  ✅ 部署完成"
+echo "  📊 PM2状态"
 echo "========================================="
 pm2 list
 

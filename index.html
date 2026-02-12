@@ -2,26 +2,19 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 🔄 强制不缓存（手机端必需） -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <!-- 移动端优化配置 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
     <title>福袋AI · 马年福袋</title>
     <style>
-        /* 全局触摸优化 */
         * {
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
         }
-        
-        /* 允许文本选择（特定元素） */
+
         input, textarea {
             -webkit-user-select: text;
             user-select: text;
@@ -29,22 +22,7 @@
     </style>
 </head>
 <body>
-
-        <div id="root"></div>
-        <!-- Vite will transform this to a bundled script in production -->
-        <script type="module" src="/src/main.tsx"></script>
-
-        <!-- 📱 移动端调试工具 vConsole（仅开发环境） -->
-        <script>
-          // 临时启用vConsole用于手机调试（生产环境请删除此段）
-          const script = document.createElement('script');
-          script.src = 'https://unpkg.com/vconsole@latest/dist/vconsole.min.js';
-          script.onload = function() {
-            new window.VConsole();
-            console.log('📱 vConsole 已启用 - 点击右下角绿色按钮打开控制台');
-          };
-          document.head.appendChild(script);
-        </script>
-
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

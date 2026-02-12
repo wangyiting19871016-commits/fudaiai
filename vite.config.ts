@@ -78,6 +78,19 @@ export default defineConfig(({ mode }) => {
     worker: {
       format: 'es',
     },
+    build: {
+      sourcemap: false,
+      cssCodeSplit: true,
+      chunkSizeWarningLimit: 900,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-ui': ['antd', 'framer-motion']
+          }
+        }
+      }
+    },
     server: {
       host: '0.0.0.0',  // 允许局域网访问
       proxy: {

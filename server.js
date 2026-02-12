@@ -320,7 +320,25 @@ app.post('/api/sign-liblib', express.json({ limit: '50mb' }), (req, res) => {
 // ----------------------------------
 
 // 静态文件服务
-app.use(express.static(path.join(__dirname, 'dist')));
+const distDir = path.join(__dirname, 'dist');
+
+app.use('/assets', express.static(path.join(distDir, 'assets'), {
+  maxAge: '30d',
+  immutable: true,
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
+  }
+}));
+
+app.use(express.static(distDir, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
+      return;
+    }
+    res.setHeader('Cache-Control', 'public, max-age=300');
+  }
+}));
 
 // 健康检查接口
 app.get('/api/health', (req, res) => {
@@ -2787,6 +2805,7 @@ apiProxyRoutes(app);
 
 // 处理所有其他请求，返回前端应用（必须放在最后）
 app.use((req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 

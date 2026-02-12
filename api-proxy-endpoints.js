@@ -454,6 +454,649 @@ module.exports = function(app) {
     }
   });
 
+  app.post('/api/companion/generate-simple', express.json({ limit: '40mb' }), async (req, res) => {
+    try {
+      const n1nBaseUrl = process.env.N1N_BASE_URL || 'https://api.n1n.ai/v1';
+      const n1nApiKey = process.env.N1N_API_KEY;
+      const primaryImageModel = 'gpt-image-1.5';
+      const fallbackImageModel = 'flux-kontext-pro';
+      const modelCandidates = [primaryImageModel, fallbackImageModel];
+
+      if (!n1nApiKey) {
+        return res.status(500).json({
+          success: false,
+          error: 'N1N_API_KEY not configured'
+        });
+      }
+
+      const { imageDataUrl } = req.body || {};
+      const parsed = parseDataUrl(imageDataUrl);
+      if (!parsed || !parsed.buffer || parsed.buffer.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing valid imageDataUrl'
+        });
+      }
+
+      const officialPromptDefault =
+        '基于上传的图片作为参考，创作一幅自然真实的画面：主体身旁陪伴一位虚构的伴侣人物，这位伴侣应与主体相契合，且非真实存在的人物。' +
+        '伴侣形象需在情感和社会层面与主体适配，避免过度理想化或夸张。' +
+        '其外貌、背景和特征应与主体及其世界自然融合，不落入刻板印象或理想化标准。' +
+        '将二人置于可信的日常场景中，采用自然光线和真实比例捕捉。' +
+        '他们的身体语言应传递舒适与熟悉感，亲近但不造作或过度浪漫。' +
+        '整体成像应如一张自然抓拍，呈现两人天生契合的踏实、温暖和情感真实感。' +
+        '可添加些许时尚质感，但避免奇幻元素或模特式摆拍。';
+
+      const prompt = String(req.body?.prompt || officialPromptDefault).trim();
+      if (!prompt) {
+        return res.status(400).json({
+          success: false,
+          error: 'prompt is required'
+        });
+      }
+      const requestedSize = String(req.body?.size || '').trim();
+      const allowedSizes = new Set(['1024x1024', '1024x1536', '1536x1024', 'auto']);
+      const outputSize = allowedSizes.has(requestedSize) ? requestedSize : '1024x1536';
+      const outputQuality = 'high';
+      const outputFormat = 'png';
+
+      let lastError = 'N1N image edit failed in simple mode';
+      let lastStatusCode = 500;
+      let lastDetails = null;
+
+      for (const imageModel of modelCandidates) {
+        const imageResp = await n1nMultipartRequest(
+          n1nBaseUrl,
+          n1nApiKey,
+          '/images/edits',
+          [
+            { type: 'field', name: 'model', value: imageModel },
+            { type: 'field', name: 'prompt', value: prompt },
+            { type: 'field', name: 'size', value: outputSize },
+            { type: 'field', name: 'quality', value: outputQuality },
+            { type: 'field', name: 'output_format', value: outputFormat },
+            { type: 'field', name: 'n', value: '1' },
+            {
+              type: 'file',
+              name: 'image',
+              filename: 'source.jpg',
+              contentType: parsed.mime,
+              data: parsed.buffer
+            }
+          ],
+          200000
+        );
+
+        if (imageResp.statusCode >= 200 && imageResp.statusCode < 300) {
+          const first = imageResp.body?.data?.[0];
+          const imageUrl = first?.url
+            ? first.url
+            : first?.b64_json
+              ? `data:image/png;base64,${first.b64_json}`
+              : '';
+
+          if (imageUrl) {
+            return res.json({
+              success: true,
+              imageUrl,
+              prompt,
+              model_used: imageModel,
+              model: {
+                image: imageModel
+              },
+              size: outputSize,
+              quality: outputQuality,
+              outputFormat
+            });
+          }
+
+          lastError = 'No image returned from N1N in simple mode';
+          lastStatusCode = 500;
+          lastDetails = imageResp.body;
+          continue;
+        }
+
+        lastError =
+          imageResp.body?.error?.message ||
+          imageResp.body?.message ||
+          `N1N image edit failed in simple mode (${imageResp.statusCode})`;
+        lastStatusCode = imageResp.statusCode || 500;
+        lastDetails = imageResp.body;
+      }
+
+      return res.status(lastStatusCode).json({
+        success: false,
+        error: lastError,
+        details: lastDetails
+      });
+    } catch (error) {
+      console.error('[Companion Generate Simple] error:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Companion generation simple failed'
+      });
+    }
+  });
+
+  function toImageUrlFromN1NItem(item) {
+    if (item?.url) return item.url;
+    if (item?.b64_json) return `data:image/png;base64,${item.b64_json}`;
+    return '';
+  }
+
+  function clampNumber(value, min, max, fallback) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function normalizeIdentityJudge(raw) {
+    const scoreRaw = raw?.identity_score ?? raw?.identityScore ?? raw?.score;
+    const score = clampNumber(scoreRaw, 0, 100, 0);
+    return {
+      identity_score: score,
+      reason: String(raw?.reason || '')
+    };
+  }
+
+  async function judgeIdentitySimilarity({
+    n1nBaseUrl,
+    n1nApiKey,
+    analysisModel,
+    referenceImageUrl,
+    candidateImageUrl
+  }) {
+    const judgePrompt = [
+      'You are a strict portrait identity judge. Return JSON only.',
+      'Compare IMAGE_A (reference) and IMAGE_B (candidate).',
+      'Only score the original person identity similarity from 0 to 100.',
+      'Focus on facial geometry, eye shape, nose, lips, skin tone, age impression, hairline and hairstyle.',
+      'Ignore background, clothing, and the newly added partner.',
+      'Output JSON schema: {"identity_score": number, "reason": string}.'
+    ].join(' ');
+
+    const resp = await n1nJsonRequest(
+      n1nBaseUrl,
+      n1nApiKey,
+      '/chat/completions',
+      {
+        model: analysisModel,
+        stream: false,
+        temperature: 0,
+        max_tokens: 280,
+        messages: [
+          { role: 'system', content: judgePrompt },
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: 'IMAGE_A is reference. IMAGE_B is candidate.' },
+              { type: 'image_url', image_url: { url: referenceImageUrl } },
+              { type: 'image_url', image_url: { url: candidateImageUrl } }
+            ]
+          }
+        ]
+      },
+      120000
+    );
+
+    if (resp.statusCode < 200 || resp.statusCode >= 300) {
+      return {
+        identity_score: 0,
+        reason: `judge_failed_${resp.statusCode}`
+      };
+    }
+
+    const content = resp.body?.choices?.[0]?.message?.content || '';
+    const parsed = safeJsonExtract(
+      Array.isArray(content) ? content.map((x) => x?.text || '').join('\n') : content
+    );
+    return normalizeIdentityJudge(parsed || {});
+  }
+
+  app.post('/api/companion/generate-v2', express.json({ limit: '25mb' }), async (req, res) => {
+    try {
+      const n1nBaseUrl = process.env.N1N_BASE_URL || 'https://api.n1n.ai/v1';
+      const n1nApiKey = process.env.N1N_API_KEY;
+      const analysisModel = process.env.N1N_COMPANION_ANALYSIS_MODEL || 'gpt-4.1-mini';
+      const imageModel = process.env.N1N_COMPANION_IMAGE_MODEL || 'gpt-image-1';
+
+      if (!n1nApiKey) {
+        return res.status(500).json({
+          success: false,
+          error: 'N1N_API_KEY not configured'
+        });
+      }
+
+      const { imageDataUrl } = req.body || {};
+      const candidateCount = clampNumber(req.body?.candidateCount, 1, 2, 1);
+      const passScore = clampNumber(req.body?.passScore, 60, 95, 78);
+      const enableRetry = req.body?.enableRetry === true;
+
+      const parsed = parseDataUrl(imageDataUrl);
+      if (!parsed || !parsed.buffer || parsed.buffer.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing valid imageDataUrl'
+        });
+      }
+
+      const analysisPrompt = [
+        'You are a strict portrait analyzer. Return JSON only.',
+        'Fields: user_gender(male/female/unknown), estimated_age(number), user_age_range, user_clothing,',
+        'user_position(left/center/right), user_visible_range(head_only/upper_body/full_body),',
+        'lighting_direction(left/right/front/back), color_temperature(warm/neutral/cool), background_description.'
+      ].join(' ');
+
+      const analysisResp = await n1nJsonRequest(
+        n1nBaseUrl,
+        n1nApiKey,
+        '/chat/completions',
+        {
+          model: analysisModel,
+          stream: false,
+          temperature: 0.1,
+          max_tokens: 500,
+          messages: [
+            { role: 'system', content: analysisPrompt },
+            {
+              role: 'user',
+              content: [
+                { type: 'text', text: 'Analyze this portrait and return strict JSON only.' },
+                { type: 'image_url', image_url: { url: imageDataUrl } }
+              ]
+            }
+          ]
+        },
+        120000
+      );
+
+      if (analysisResp.statusCode < 200 || analysisResp.statusCode >= 300) {
+        return res.status(analysisResp.statusCode).json({
+          success: false,
+          error: analysisResp.body?.error?.message || 'N1N analysis failed',
+          details: analysisResp.body
+        });
+      }
+
+      const analysisContent = analysisResp.body?.choices?.[0]?.message?.content || '';
+      const parsedAnalysis = safeJsonExtract(
+        Array.isArray(analysisContent) ? analysisContent.map((x) => x?.text || '').join('\n') : analysisContent
+      );
+      const analysis = normalizeAnalysis(parsedAnalysis || {});
+
+      const partnerGender =
+        analysis.user_gender === 'female'
+          ? 'male'
+          : analysis.user_gender === 'male'
+            ? 'female'
+            : 'unknown';
+
+      const promptBase = [
+        'Create a realistic two-person portrait by editing the source photo.',
+        'Identity lock for original person: keep exact face identity unchanged.',
+        'Do not change facial geometry, eye shape, nose, lips, skin tone, hairline, hairstyle, or age impression.',
+        'Do not beautify, de-age, reshape, retouch, or face-swap the original person.',
+        'Keep the original person position and framing as close as possible.',
+        partnerGender === 'unknown'
+          ? 'Add exactly one compatible partner with natural pose and matching age.'
+          : `Add exactly one ${partnerGender} partner with matching age and harmonious style.`,
+        `Keep lighting direction ${analysis.lighting_direction || 'front'} and color temperature ${analysis.color_temperature || 'neutral'}.`,
+        `Background style: ${analysis.background_description || 'natural portrait background'}.`,
+        `Outfit coordination only for the new partner. Original clothing remains: ${analysis.user_clothing || 'unchanged'}.`,
+        'Forbidden: identity drift, skin tone shift, duplicate original person, anatomy deformation, blur, low quality.'
+      ].join(' ');
+
+      const stricterPrompt = [
+        promptBase,
+        'Hard lock: if identity cannot be preserved exactly, leave the original person untouched and only add the partner.'
+      ].join(' ');
+
+      const rounds = [{ prompt: promptBase, count: candidateCount }];
+      if (enableRetry) {
+        rounds.push({ prompt: stricterPrompt, count: 1 });
+      }
+
+      const candidates = [];
+      let best = null;
+
+      for (let roundIndex = 0; roundIndex < rounds.length; roundIndex += 1) {
+        const round = rounds[roundIndex];
+        const imageResp = await n1nMultipartRequest(
+          n1nBaseUrl,
+          n1nApiKey,
+          '/images/edits',
+          [
+            { type: 'field', name: 'model', value: imageModel },
+            { type: 'field', name: 'prompt', value: round.prompt },
+            { type: 'field', name: 'n', value: String(round.count) },
+            {
+              type: 'file',
+              name: 'image',
+              filename: 'source.jpg',
+              contentType: parsed.mime,
+              data: parsed.buffer
+            }
+          ],
+          240000
+        );
+
+        if (imageResp.statusCode < 200 || imageResp.statusCode >= 300) {
+          if (roundIndex === rounds.length - 1 && candidates.length === 0) {
+            return res.status(imageResp.statusCode).json({
+              success: false,
+              error: imageResp.body?.error?.message || 'N1N image edit failed',
+              details: imageResp.body
+            });
+          }
+          continue;
+        }
+
+        const rawItems = Array.isArray(imageResp.body?.data) ? imageResp.body.data : [];
+        const roundCandidates = rawItems
+          .map((item, idx) => ({
+            id: `r${roundIndex + 1}_${idx + 1}`,
+            round: roundIndex + 1,
+            imageUrl: toImageUrlFromN1NItem(item)
+          }))
+          .filter((item) => Boolean(item.imageUrl));
+
+        if (roundCandidates.length === 0) {
+          continue;
+        }
+
+        const judged = await Promise.all(
+          roundCandidates.map(async (item) => {
+            try {
+              const judge = await judgeIdentitySimilarity({
+                n1nBaseUrl,
+                n1nApiKey,
+                analysisModel,
+                referenceImageUrl: imageDataUrl,
+                candidateImageUrl: item.imageUrl
+              });
+              return {
+                ...item,
+                identityScore: judge.identity_score,
+                reason: judge.reason
+              };
+            } catch (err) {
+              return {
+                ...item,
+                identityScore: 0,
+                reason: `judge_exception_${err?.message || 'unknown'}`
+              };
+            }
+          })
+        );
+
+        candidates.push(...judged);
+        best = candidates.reduce((acc, cur) => {
+          if (!acc) return cur;
+          return cur.identityScore > acc.identityScore ? cur : acc;
+        }, best);
+
+        if (best && best.identityScore >= passScore) {
+          break;
+        }
+      }
+
+      if (!best || !best.imageUrl) {
+        return res.status(500).json({
+          success: false,
+          error: 'No valid candidate generated in v2'
+        });
+      }
+
+      const sortedCandidates = [...candidates].sort((a, b) => b.identityScore - a.identityScore);
+
+      return res.json({
+        success: true,
+        imageUrl: best.imageUrl,
+        passed: best.identityScore >= passScore,
+        passScore,
+        bestCandidate: best,
+        candidates: sortedCandidates,
+        analysis,
+        model: {
+          analysis: analysisModel,
+          image: imageModel
+        }
+      });
+    } catch (error) {
+      console.error('[Companion Generate V2] error:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Companion generation v2 failed'
+      });
+    }
+  });
+
+  app.post('/api/companion/generate-v3', express.json({ limit: '30mb' }), async (req, res) => {
+    try {
+      const n1nBaseUrl = process.env.N1N_BASE_URL || 'https://api.n1n.ai/v1';
+      const n1nApiKey = process.env.N1N_API_KEY;
+      const analysisModel = process.env.N1N_COMPANION_ANALYSIS_MODEL || 'gpt-4.1-mini';
+      const imageModel = process.env.N1N_COMPANION_IMAGE_MODEL || 'gpt-image-1';
+
+      if (!n1nApiKey) {
+        return res.status(500).json({
+          success: false,
+          error: 'N1N_API_KEY not configured'
+        });
+      }
+
+      const { imageDataUrl, maskDataUrl } = req.body || {};
+      const analysisImageDataUrl = req.body?.analysisImageDataUrl || imageDataUrl;
+      const referenceImageDataUrl = req.body?.referenceImageDataUrl || analysisImageDataUrl;
+      const stylePrompt = String(req.body?.stylePrompt || '').trim();
+      const candidateCount = clampNumber(req.body?.candidateCount, 1, 2, 1);
+      const passScore = clampNumber(req.body?.passScore, 60, 95, 82);
+
+      const parsed = parseDataUrl(imageDataUrl);
+      const parsedMask = parseDataUrl(maskDataUrl);
+      if (!parsed || !parsed.buffer || parsed.buffer.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing valid imageDataUrl'
+        });
+      }
+      if (!parsedMask || !parsedMask.buffer || parsedMask.buffer.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing valid maskDataUrl'
+        });
+      }
+
+      let analysis = normalizeAnalysis({});
+      let partnerGender = 'unknown';
+      if (!stylePrompt) {
+        const analysisPrompt = [
+          'You are a strict portrait analyzer. Return JSON only.',
+          'Fields: user_gender(male/female/unknown), estimated_age(number), user_clothing,',
+          'lighting_direction(left/right/front/back), color_temperature(warm/neutral/cool), background_description.'
+        ].join(' ');
+
+        const analysisResp = await n1nJsonRequest(
+          n1nBaseUrl,
+          n1nApiKey,
+          '/chat/completions',
+          {
+            model: analysisModel,
+            stream: false,
+            temperature: 0.1,
+            max_tokens: 320,
+            messages: [
+              { role: 'system', content: analysisPrompt },
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: 'Analyze this portrait and return strict JSON only.' },
+                  { type: 'image_url', image_url: { url: analysisImageDataUrl } }
+                ]
+              }
+            ]
+          },
+          120000
+        );
+
+        if (analysisResp.statusCode < 200 || analysisResp.statusCode >= 300) {
+          return res.status(analysisResp.statusCode).json({
+            success: false,
+            error: analysisResp.body?.error?.message || 'N1N analysis failed in v3',
+            details: analysisResp.body
+          });
+        }
+
+        const analysisContent = analysisResp.body?.choices?.[0]?.message?.content || '';
+        const parsedAnalysis = safeJsonExtract(
+          Array.isArray(analysisContent) ? analysisContent.map((x) => x?.text || '').join('\n') : analysisContent
+        );
+        analysis = normalizeAnalysis(parsedAnalysis || {});
+        partnerGender =
+          analysis.user_gender === 'female'
+            ? 'male'
+            : analysis.user_gender === 'male'
+              ? 'female'
+              : 'unknown';
+      }
+
+      const generationPrompt = stylePrompt
+        ? [
+            'Edit image with strict mask lock.',
+            'Only paint in transparent mask area.',
+            'Do not modify any non-transparent area.',
+            'Keep original person identity exactly unchanged outside editable area.',
+            stylePrompt
+          ].join(' ')
+        : [
+            'Edit image with strict mask lock.',
+            'Only paint in transparent mask area.',
+            'Do not modify any non-transparent area.',
+            'Keep original person identity exactly unchanged outside editable area.',
+            'No beautify, no face reshaping, no skin retouch on existing person.',
+            'The existing person in the non-editable region must remain exactly unchanged.',
+            partnerGender === 'unknown'
+              ? 'Add exactly one compatible partner in editable area.'
+              : `Add exactly one ${partnerGender} partner in editable area.`,
+            `Match lighting ${analysis.lighting_direction || 'front'} and color temperature ${analysis.color_temperature || 'neutral'}.`,
+            `Background style: ${analysis.background_description || 'natural portrait background'}.`,
+            'Result must be realistic and harmonious.'
+          ].join(' ');
+
+      const imageResp = await n1nMultipartRequest(
+        n1nBaseUrl,
+        n1nApiKey,
+        '/images/edits',
+        [
+          { type: 'field', name: 'model', value: imageModel },
+          { type: 'field', name: 'prompt', value: generationPrompt },
+          { type: 'field', name: 'n', value: String(candidateCount) },
+          {
+            type: 'file',
+            name: 'image',
+            filename: 'source.jpg',
+            contentType: parsed.mime,
+            data: parsed.buffer
+          },
+          {
+            type: 'file',
+            name: 'mask',
+            filename: 'mask.png',
+            contentType: parsedMask.mime || 'image/png',
+            data: parsedMask.buffer
+          }
+        ],
+        240000
+      );
+
+      if (imageResp.statusCode < 200 || imageResp.statusCode >= 300) {
+        return res.status(imageResp.statusCode).json({
+          success: false,
+          error: imageResp.body?.error?.message || 'N1N image edit (v3) failed',
+          details: imageResp.body
+        });
+      }
+
+      const rawItems = Array.isArray(imageResp.body?.data) ? imageResp.body.data : [];
+      const roundCandidates = rawItems
+        .map((item, idx) => ({
+          id: `v3_${idx + 1}`,
+          round: 1,
+          imageUrl: toImageUrlFromN1NItem(item)
+        }))
+        .filter((item) => Boolean(item.imageUrl));
+
+      if (roundCandidates.length === 0) {
+        return res.status(500).json({
+          success: false,
+          error: 'No candidate generated in v3'
+        });
+      }
+
+      if (stylePrompt) {
+        const simpleCandidates = roundCandidates.map((item) => ({
+          ...item,
+          identityScore: 0,
+          reason: 'official_prompt_mode'
+        }));
+        const best = simpleCandidates[0];
+        return res.json({
+          success: true,
+          imageUrl: best.imageUrl,
+          passed: true,
+          passScore: 0,
+          bestCandidate: best,
+          candidates: simpleCandidates,
+          analysis,
+          model: {
+            analysis: analysisModel,
+            image: imageModel
+          }
+        });
+      }
+
+      const judged = await Promise.all(
+        roundCandidates.map(async (item) => {
+          const judge = await judgeIdentitySimilarity({
+            n1nBaseUrl,
+            n1nApiKey,
+            analysisModel,
+            referenceImageUrl: referenceImageDataUrl,
+            candidateImageUrl: item.imageUrl
+          });
+          return {
+            ...item,
+            identityScore: judge.identity_score,
+            reason: judge.reason
+          };
+        })
+      );
+
+      const sortedCandidates = [...judged].sort((a, b) => b.identityScore - a.identityScore);
+      const best = sortedCandidates[0];
+
+      return res.json({
+        success: true,
+        imageUrl: best.imageUrl,
+        passed: best.identityScore >= passScore,
+        passScore,
+        bestCandidate: best,
+        candidates: sortedCandidates,
+        analysis,
+        model: {
+          analysis: analysisModel,
+          image: imageModel
+        }
+      });
+    } catch (error) {
+      console.error('[Companion Generate V3] error:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Companion generation v3 failed'
+      });
+    }
+  });
+
   // ========== LiblibAI 绛惧悕杈呭姪鍑芥暟 ==========
 
   /**

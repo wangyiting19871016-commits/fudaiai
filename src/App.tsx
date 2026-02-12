@@ -67,7 +67,7 @@ const AppLayout: React.FC = () => {
       
       {/* 内容区域：如果有导航栏，则添加 padding-top */}
       <div style={{ paddingTop: showNav ? '70px' : '0' }}>
-        <Suspense fallback={<div style={{ minHeight: '100vh', background: '#fff' }} />}>
+        <Suspense fallback={<div style={{ minHeight: '100vh', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>页面加载中...</div>}>
           <Routes>
           {/* 🎯 默认跳转到春节H5 */}
           <Route path="/" element={<Navigate to="/festival/home" replace />} />
@@ -118,6 +118,7 @@ const AppLayout: React.FC = () => {
             <Route path="m2-template-select" element={<M2TemplateSelectionPage />} />
             <Route path="m3-template-select" element={<M3TemplateSelectionPage />} />
             <Route path="companion/test-v2" element={<Navigate to="/festival/companion" replace />} />
+            <Route path="contact" element={<Navigate to="/festival/home" replace />} />
             <Route path="companion" element={<CompanionUploadPage />} />
             <Route path="companion/generating" element={<CompanionGeneratingPage />} />
             <Route path="companion/result" element={<CompanionResultPage />} />

@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CATEGORIES } from '../../configs/festival/categories';
 import { BottomNav } from '../../components/BottomNav';
@@ -13,8 +13,15 @@ import '../../styles/festival-home-glass.css';
 const HomePageGlass: React.FC = () => {
   const navigate = useNavigate();
   const [allowLazyAssets, setAllowLazyAssets] = useState(false);
+  const navLockRef = useRef(false);
 
   const handleCategoryClick = (categoryId: string) => {
+    if (navLockRef.current) return;
+    navLockRef.current = true;
+    window.setTimeout(() => {
+      navLockRef.current = false;
+    }, 700);
+
     // 视频与未来伴侣走独立链路
     if (categoryId === 'video') {
       navigate('/festival/video');
@@ -78,6 +85,15 @@ const HomePageGlass: React.FC = () => {
 
     const timer = setTimeout(activateLazyAssets, 700);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const timer = window.setTimeout(() => {
+      void import('./VideoPage');
+      void import('./CompanionUploadPage');
+    }, 400);
+    return () => window.clearTimeout(timer);
   }, []);
 
   return (

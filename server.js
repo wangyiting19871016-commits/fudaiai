@@ -336,7 +336,9 @@ app.use('/assets', express.static(path.join(distDir, 'assets'), {
 app.use(express.static(distDir, {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html')) {
-      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       return;
     }
     res.setHeader('Cache-Control', 'public, max-age=300');
@@ -2052,6 +2054,26 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
  *
  * 替代Vite中间件，直接在后端处理，避免响应重复问题
  */
+function sanitizeCosPublicUrl(url) {
+  let value = String(url || '').trim().replace(/[\r\n\t]/g, '');
+  const firstProto = value.search(/https?:\/\//i);
+  if (firstProto === -1) return '';
+  if (firstProto > 0) value = value.slice(firstProto);
+
+  const mediaUrlMatch = value.match(/https?:\/\/[^\s"'<>]+?\.(jpg|jpeg|png|webp|mp3|wav|m4a|ogg|mp4)(\?[^\s"'<>]*)?/i);
+  if (mediaUrlMatch && mediaUrlMatch[0]) return mediaUrlMatch[0];
+
+  const protoMatches = [...value.matchAll(/https?:\/\//gi)];
+  if (protoMatches.length > 1) {
+    const cutAt = protoMatches[1].index ?? -1;
+    if (cutAt > 0) {
+      value = value.slice(0, cutAt);
+    }
+  }
+
+  return value;
+}
+
 app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) => {
   try {
     const { image, type, format } = req.body;
@@ -2113,7 +2135,7 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
         // 🔧 【修复URL重复问题 - 多重验证】参考：docs/CONTEXT_HANDOFF.md
 
         // 第1层：手动构建干净URL（不使用COS返回的Location）
-        let cleanUrl = `https://${bucket}.cos.${region}.myqcloud.com/${fileName}`;
+        let cleanUrl = sanitizeCosPublicUrl(`https://${bucket}.cos.${region}.myqcloud.com/${fileName}`);
 
         // 第2层：检测并修复URL中的重复https://
         const httpsCount = (cleanUrl.match(/https:\/\//g) || []).length;
@@ -2124,7 +2146,7 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
         }
 
         // 第3层：JSON序列化后二次验证
-        const responseData = { url: cleanUrl };
+        const responseData = { url: sanitizeCosPublicUrl(cleanUrl) };
         const jsonString = JSON.stringify(responseData);
         const jsonHttpsCount = (jsonString.match(/https:\/\//g) || []).length;
 
@@ -2136,6 +2158,10 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
             const fixedUrl = urlMatch[1].split('https://').filter(p => p);
             responseData.url = 'https://' + fixedUrl[fixedUrl.length - 1];
           }
+        }
+
+        if (!responseData.url) {
+          return res.status(500).json({ error: 'Failed to build COS URL' });
         }
 
         console.log('[COS Backend] ✅ 上传成功:', responseData.url);
@@ -2153,7 +2179,7 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
           return;
         }
 
-        res.end(JSON.stringify(responseData));
+        return res.json(responseData);
       }
     );
 
@@ -2808,7 +2834,9 @@ apiProxyRoutes(app);
 
 // 处理所有其他请求，返回前端应用（必须放在最后）
 app.use((req, res) => {
-  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 

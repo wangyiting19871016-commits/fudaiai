@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
@@ -12,9 +12,79 @@ const STORAGE_KEY = 'festival_companion_input_image';
 const RESULT_KEY = 'festival_companion_result';
 const RUN_LOCK_KEY = 'festival_companion_generating_lock';
 
+type CompanionRuntimeState = {
+  inputImage?: string;
+  resultJson?: string;
+};
+
+declare global {
+  interface Window {
+    __festivalCompanionRuntimeState?: CompanionRuntimeState;
+  }
+}
+
+function getRuntimeState(): CompanionRuntimeState {
+  if (typeof window === 'undefined') return {};
+  if (!window.__festivalCompanionRuntimeState) {
+    window.__festivalCompanionRuntimeState = {};
+  }
+  return window.__festivalCompanionRuntimeState;
+}
+
+function safeSessionGet(key: string): string {
+  try {
+    return sessionStorage.getItem(key) || '';
+  } catch {
+    return '';
+  }
+}
+
+function safeSessionSet(key: string, value: string): void {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    // keep runtime-only fallback
+  }
+}
+
+function safeSessionRemove(key: string): void {
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    // ignore
+  }
+}
+
+function readInputImage(): string {
+  return safeSessionGet(STORAGE_KEY) || getRuntimeState().inputImage || '';
+}
+
+function storeInputImage(imageDataUrl: string): void {
+  const runtime = getRuntimeState();
+  runtime.inputImage = imageDataUrl;
+  safeSessionSet(STORAGE_KEY, imageDataUrl);
+}
+
+function clearCompanionResult(): void {
+  safeSessionRemove(RESULT_KEY);
+  const runtime = getRuntimeState();
+  delete runtime.resultJson;
+}
+
+function clearCompanionRunLock(): void {
+  safeSessionRemove(RUN_LOCK_KEY);
+}
+
 const CompanionUploadPage: React.FC = () => {
   const navigate = useNavigate();
   const [imageDataUrl, setImageDataUrl] = useState('');
+
+  useEffect(() => {
+    const cachedImage = readInputImage();
+    if (cachedImage) {
+      setImageDataUrl(cachedImage);
+    }
+  }, []);
 
   const handleUploadComplete = (base64: string) => {
     setImageDataUrl(base64);
@@ -22,9 +92,9 @@ const CompanionUploadPage: React.FC = () => {
 
   const handleStart = () => {
     if (!imageDataUrl) return;
-    sessionStorage.removeItem(RESULT_KEY);
-    sessionStorage.removeItem(RUN_LOCK_KEY);
-    sessionStorage.setItem(STORAGE_KEY, imageDataUrl);
+    clearCompanionResult();
+    clearCompanionRunLock();
+    storeInputImage(imageDataUrl);
     navigate('/festival/companion/generating');
   };
 
@@ -43,7 +113,12 @@ const CompanionUploadPage: React.FC = () => {
           </div>
 
           {!imageDataUrl && (
-            <ZJUploader onUploadComplete={handleUploadComplete} aspectRatio="3:4" maxSizeMB={5} />
+            <ZJUploader
+              onUploadComplete={handleUploadComplete}
+              aspectRatio="3:4"
+              maxSizeMB={15}
+              preserveOriginal={true}
+            />
           )}
 
           {imageDataUrl && (

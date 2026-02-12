@@ -7,6 +7,30 @@ export interface UploadResult {
   error?: string;
 }
 
+function sanitizeCosUrl(raw: unknown): string {
+  if (typeof raw !== 'string') return '';
+
+  let value = raw.trim().replace(/[\r\n\t]/g, '');
+  const firstProto = value.search(/https?:\/\//i);
+  if (firstProto === -1) return '';
+  if (firstProto > 0) value = value.slice(firstProto);
+
+  const mediaUrlMatch = value.match(/https?:\/\/[^\s"'<>]+?\.(jpg|jpeg|png|webp|mp3|wav|m4a|ogg|mp4)(\?[^\s"'<>]*)?/i);
+  if (mediaUrlMatch?.[0]) {
+    return mediaUrlMatch[0];
+  }
+
+  const protoMatches = [...value.matchAll(/https?:\/\//gi)];
+  if (protoMatches.length > 1) {
+    const cutAt = protoMatches[1].index ?? -1;
+    if (cutAt > 0) {
+      value = value.slice(0, cutAt);
+    }
+  }
+
+  return value;
+}
+
 /**
  * 上传图片到腾讯云COS（通过后端中间件）
  * @param file 本地图片文件或base64字符串
@@ -65,51 +89,9 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
       throw new Error('后端返回的数据中没有url字段');
     }
 
-    let finalUrl = data.url;
-
-    // 🔧 强制清理URL：只保留从第一个https://到第一个文件扩展名
-    if (typeof finalUrl === 'string') {
-      console.log('[COS] 🔍 开始清理URL，原始长度:', finalUrl.length);
-      console.log('[COS] 🔍 原始URL前80字符:', finalUrl.substring(0, 80));
-
-      const extensions = ['.jpg', '.jpeg', '.png', '.mp3', '.wav', '.mp4'];
-
-      // 查找第一个https://的位置
-      const firstHttpsIndex = finalUrl.indexOf('https://');
-      console.log('[COS] 🔍 第一个https://位置:', firstHttpsIndex);
-
-      if (firstHttpsIndex === -1) {
-        throw new Error('无效的URL：不包含https://');
-      }
-
-      // 从第一个https://开始查找扩展名
-      let found = false;
-      for (const ext of extensions) {
-        const extIndex = finalUrl.indexOf(ext, firstHttpsIndex);
-        console.log(`[COS] 🔍 查找${ext}:`, extIndex);
-
-        if (extIndex > 0) {
-          // 截取从第一个https://到第一个扩展名结束
-          const cleanUrl = finalUrl.substring(firstHttpsIndex, extIndex + ext.length);
-
-          console.log('[COS] 🔍 cleanUrl:', cleanUrl);
-          console.log('[COS] 🔍 cleanUrl === finalUrl:', cleanUrl === finalUrl);
-
-          if (cleanUrl !== finalUrl) {
-            console.log('[COS] 🔧 URL已修复！');
-            console.log('[COS] 🔧 原URL长度:', finalUrl.length);
-            console.log('[COS] 🔧 新URL长度:', cleanUrl.length);
-          }
-
-          finalUrl = cleanUrl;
-          found = true;
-          break;
-        }
-      }
-
-      if (!found) {
-        console.warn('[COS] ⚠️ 未找到任何文件扩展名，使用原始URL');
-      }
+    const finalUrl = sanitizeCosUrl(data.url);
+    if (!finalUrl) {
+      throw new Error('后端返回的COS URL无效');
     }
 
     console.log('[COS] ✅ 最终URL:', finalUrl);
@@ -277,27 +259,9 @@ export async function uploadAudioToTencentCOS(blob: Blob, format: string = 'mp3'
       throw new Error('后端返回的数据中没有url字段');
     }
 
-    let finalUrl = data.url;
-
-    // 🔧 强制清理URL
-    if (typeof finalUrl === 'string') {
-      const extensions = ['.mp3', '.wav', '.m4a', '.ogg'];
-      const firstHttpsIndex = finalUrl.indexOf('https://');
-      if (firstHttpsIndex === -1) {
-        throw new Error('无效的音频URL');
-      }
-
-      for (const ext of extensions) {
-        const extIndex = finalUrl.indexOf(ext, firstHttpsIndex);
-        if (extIndex > 0) {
-          const cleanUrl = finalUrl.substring(firstHttpsIndex, extIndex + ext.length);
-          if (cleanUrl !== finalUrl) {
-            console.log('[COS Audio] 🔧 URL已修复');
-          }
-          finalUrl = cleanUrl;
-          break;
-        }
-      }
+    const finalUrl = sanitizeCosUrl(data.url);
+    if (!finalUrl) {
+      throw new Error('无效的音频URL');
     }
 
     console.log('[COS] ✅ 音频最终URL:', finalUrl);

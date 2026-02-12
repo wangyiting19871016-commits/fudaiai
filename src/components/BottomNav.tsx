@@ -20,6 +20,11 @@ export const BottomNav: React.FC = () => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
+  const handleNavigate = (path: string) => {
+    if (isActive(path)) return;
+    navigate(path);
+  };
+
   return (
     <div style={{
       position: 'fixed',
@@ -42,7 +47,8 @@ export const BottomNav: React.FC = () => {
         return (
           <button
             key={tab.id}
-            onClick={() => navigate(tab.path)}
+            type="button"
+            onClick={() => handleNavigate(tab.path)}
             style={{
               flex: 1,
               display: 'flex',
@@ -58,7 +64,8 @@ export const BottomNav: React.FC = () => {
               cursor: 'pointer',
               transition: 'all 0.2s',
               padding: '8px 0',
-              minWidth: 0
+              minWidth: 0,
+              touchAction: 'manipulation'
             }}
           >
             <span style={{

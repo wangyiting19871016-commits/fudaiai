@@ -114,6 +114,36 @@ function validateMediaURL(url: string, type: 'image' | 'audio'): boolean {
   }
 }
 
+function sanitizeRemoteMediaUrl(raw: string): string {
+  let value = String(raw || '').trim().replace(/[\r\n\t]/g, '');
+  if (!value) return '';
+  if (value.startsWith('/')) return value;
+  if (value.startsWith('blob:') || value.startsWith('data:')) return value;
+
+  const firstProto = value.search(/https?:\/\//i);
+  if (firstProto > 0) {
+    value = value.slice(firstProto);
+  }
+
+  const protoMatches = [...value.matchAll(/https?:\/\//gi)];
+  if (protoMatches.length > 1) {
+    const cutAt = protoMatches[1].index ?? -1;
+    if (cutAt > 0) {
+      value = value.slice(0, cutAt);
+    }
+  }
+
+  return value.trim();
+}
+
+function isBlobUrl(url: string): boolean {
+  return typeof url === 'string' && url.startsWith('blob:');
+}
+
+function getBackendBaseUrl(): string {
+  return String(import.meta.env.VITE_API_BASE_URL || '').trim();
+}
+
 const FestivalVideoPage: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
@@ -172,7 +202,14 @@ const FestivalVideoPage: React.FC = () => {
     const tempMaterials = SessionMaterialManager.getAllTempMaterials();
     if (tempMaterials && Object.keys(tempMaterials).length > 0) {
       if (tempMaterials.text) setText(tempMaterials.text);
-      if (tempMaterials.audio) setAudio(tempMaterials.audio.url);
+      if (tempMaterials.audio) {
+        const restoredAudioUrl = tempMaterials.audio.url || '';
+        if (isBlobUrl(restoredAudioUrl)) {
+          SessionMaterialManager.clearTempMaterial('audio');
+        } else {
+          setAudio(restoredAudioUrl);
+        }
+      }
       if (tempMaterials.image) setImage(tempMaterials.image.url);
 
       return;
@@ -269,7 +306,6 @@ const FestivalVideoPage: React.FC = () => {
 
     const url = URL.createObjectURL(file);
     setAudio(url);
-    SessionMaterialManager.setTempAudio(url, text, 'video-page');
     message.success('音频已上传');
   };
 
@@ -314,7 +350,6 @@ const FestivalVideoPage: React.FC = () => {
       // 创建blob URL
       const audioUrl = URL.createObjectURL(ttsResult.blob);
       setAudio(audioUrl);
-      SessionMaterialManager.setTempAudio(audioUrl, text.trim(), 'video-page');
 
       message.destroy('tts');
       message.success('音频生成成功');
@@ -421,6 +456,10 @@ const FestivalVideoPage: React.FC = () => {
       if (!imageUploadResult.success) {
         throw new Error(imageUploadResult.error || '图片上传失败');
       }
+      const safeImageUrl = sanitizeRemoteMediaUrl(String(imageUploadResult.url || ''));
+      if (!safeImageUrl) {
+        throw new Error('图片上传URL异常，请重试');
+      }
 
       setGenerationState({
         stage: 'uploading',
@@ -472,8 +511,15 @@ const FestivalVideoPage: React.FC = () => {
           const response = await fetch(audioUrl);
           audioBlob = await response.blob();
         } else if (audioUrl.startsWith('blob:')) {
-          const response = await fetch(audioUrl);
-          audioBlob = await response.blob();
+          try {
+            const response = await fetch(audioUrl);
+            if (!response.ok) {
+              throw new Error(`blob audio fetch failed: ${response.status}`);
+            }
+            audioBlob = await response.blob();
+          } catch {
+            throw new Error('闊抽涓存椂閾炬帴宸插け鏁堬紝璇烽噸鏂颁笂浼犳垨閲嶆柊鐢熸垚闊抽');
+          }
         } else if (audioUrl.startsWith('data:')) {
           const response = await fetch(audioUrl);
           audioBlob = await response.blob();
@@ -486,6 +532,11 @@ const FestivalVideoPage: React.FC = () => {
         if (!audioUploadResult.success) {
           throw new Error(audioUploadResult.error || '音频上传失败');
         }
+        const safeAudioUrl = sanitizeRemoteMediaUrl(String(audioUploadResult.url || ''));
+        if (!safeAudioUrl) {
+          throw new Error('音频上传URL异常，请重试');
+        }
+        audioUploadResult.url = safeAudioUrl;
 
         setGenerationState({
           stage: 'tts',
@@ -515,55 +566,75 @@ const FestivalVideoPage: React.FC = () => {
           });
         }, 1000);
 
-        const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+        const backendUrl = getBackendBaseUrl() || 'http://localhost:3002';
 
         // WAN API异步任务 - 通过后端代理调用
         let wanResult;
         try {
 
-          // 调用后端代理（启用异步模式）
-          const response = await fetch(`${backendUrl}/api/dashscope/proxy`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              endpoint: '/api/v1/services/aigc/image2video/video-synthesis',
-              method: 'POST',
-              customHeaders: {
-                'X-DashScope-Async': 'enable'  // 关键：启用异步任务模式
-              },
-              body: {
-                model: 'wan2.2-s2v',
-                input: {
-                  image_url: imageUploadResult.url,
-                  audio_url: audioUploadResult.url
-                },
-                parameters: {
-                  resolution: '720P'
-                }
-              }
-            })
-          });
+          const preferredModel = (import.meta.env.VITE_WAN_MODEL || '').trim();
+          const modelCandidates = Array.from(new Set([preferredModel, 'wan2.2-s2v'].filter(Boolean)));
 
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`视频生成请求失败: ${response.status} ${errorText}`);
+          let taskId = '';
+          let createTaskError = '';
+          for (const modelName of modelCandidates) {
+            const response = await fetch(`${backendUrl}/api/dashscope/proxy`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                endpoint: '/api/v1/services/aigc/image2video/video-synthesis',
+                method: 'POST',
+                customHeaders: {
+                  'X-DashScope-Async': 'enable'
+                },
+                body: {
+                  model: modelName,
+                  input: {
+                    image_url: safeImageUrl,
+                    audio_url: audioUploadResult.url
+                  },
+                  parameters: {
+                    resolution: '720P'
+                  }
+                }
+              })
+            });
+
+            const resultText = await response.text();
+            let resultJson: any = null;
+            try {
+              resultJson = JSON.parse(resultText);
+            } catch {
+              resultJson = null;
+            }
+
+            if (response.ok) {
+              const maybeTaskId = resultJson?.output?.task_id || '';
+              if (maybeTaskId) {
+                taskId = maybeTaskId;
+                break;
+              }
+            }
+
+            createTaskError = resultJson?.message || resultJson?.error || resultText || `model=${modelName} failed`;
+            if ([400, 401, 403, 404].includes(response.status)) {
+              throw new Error(createTaskError);
+            }
           }
 
-          const initialResult = await response.json();
-          const taskId = initialResult.output?.task_id;
-
           if (!taskId) {
-            throw new Error('未获取到任务ID');
+            throw new Error(`未获取到任务ID: ${createTaskError}`);
           }
 
           // 轮询任务状态 - 渐进式间隔
           let taskStatus = 'PENDING';
           let videoUrl = '';
-          const maxPolls = 120; // 最多轮询120次（约10分钟）
+          const maxPolls = 36; // fail fast: avoid long fake-progress stalls
           let pollCount = 0;
 
+          let consecutiveStatusErrors = 0;
           while (taskStatus !== 'SUCCEEDED' && taskStatus !== 'FAILED' && pollCount < maxPolls) {
             // 渐进式轮询：前10次每3秒，之后每5秒
             const pollInterval = pollCount < 10 ? 3000 : 5000;
@@ -583,9 +654,25 @@ const FestivalVideoPage: React.FC = () => {
             });
 
             if (!statusResponse.ok) {
+              consecutiveStatusErrors += 1;
+              let statusErrorMessage = `状态查询失败(${statusResponse.status})`;
+              try {
+                const statusErrorText = await statusResponse.text();
+                const statusErrorJson = JSON.parse(statusErrorText);
+                statusErrorMessage = statusErrorJson?.message || statusErrorJson?.error || statusErrorMessage;
+              } catch {
+                // ignore
+              }
+              if ([400, 401, 403, 404].includes(statusResponse.status)) {
+                throw new Error(statusErrorMessage);
+              }
+              if (consecutiveStatusErrors >= 3) {
+                throw new Error(statusErrorMessage);
+              }
               continue;
             }
 
+            consecutiveStatusErrors = 0;
             const statusData = await statusResponse.json();
             taskStatus = statusData.output?.task_status || 'UNKNOWN';
 
@@ -656,12 +743,22 @@ const FestivalVideoPage: React.FC = () => {
         message: '加载视频中...'
       });
 
-      // 转换为Blob URL - 只有blob: URL才支持长按保存
-      const videoResponse = await fetch(remoteVideoUrl);
-      const videoBlob = await videoResponse.blob();
-      const localBlobUrl = URL.createObjectURL(videoBlob);
-
-      setWanVideoUrl(localBlobUrl);
+      // Try blob URL first for better download behavior; fallback to remote URL if fetch is blocked.
+      const safeRemoteVideoUrl = sanitizeRemoteMediaUrl(String(remoteVideoUrl || '')) || String(remoteVideoUrl || '').trim();
+      if (!safeRemoteVideoUrl) {
+        throw new Error('瑙嗛URL寮傚父锛岃閲嶈瘯');
+      }
+      try {
+        const videoResponse = await fetch(safeRemoteVideoUrl);
+        if (!videoResponse.ok) {
+          throw new Error(`video fetch failed: ${videoResponse.status}`);
+        }
+        const videoBlob = await videoResponse.blob();
+        const localBlobUrl = URL.createObjectURL(videoBlob);
+        setWanVideoUrl(localBlobUrl);
+      } catch {
+        setWanVideoUrl(safeRemoteVideoUrl);
+      }
 
       setGenerationState({
         stage: 'complete',
@@ -1007,35 +1104,16 @@ const FestivalVideoPage: React.FC = () => {
           <>
             <div className="result-actions">
               {/* 主功能按钮 - 2x2网格，参考ResultPage */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '12px',
-                marginBottom: '16px',
-                padding: '0 16px'
-              }}>
+              <div className="video-result-button-grid">
                 <button
                   className="action-btn action-btn-primary"
                   onClick={handleDownload}
-                  style={{
-                    padding: '14px 20px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    borderRadius: '12px'
-                  }}
                 >
                   保存视频
                 </button>
                 <button
-                  className={`action-btn ${isSaved ? 'action-btn-secondary' : 'action-btn-primary'}`}
+                  className={`action-btn ${isSaved ? 'action-btn-secondary is-saved' : 'action-btn-primary'}`}
                   onClick={handleSave}
-                  style={{
-                    padding: '14px 20px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    borderRadius: '12px',
-                    opacity: isSaved ? 0.7 : 1
-                  }}
                 >
                   {isSaved ? '已下载' : '下载视频'}
                 </button>
@@ -1050,24 +1128,12 @@ const FestivalVideoPage: React.FC = () => {
                       message: ''
                     });
                   }}
-                  style={{
-                    padding: '14px 20px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    borderRadius: '12px'
-                  }}
                 >
                   重新生成
                 </button>
                 <button
                   className="action-btn action-btn-primary"
                   onClick={() => navigate('/')}
-                  style={{
-                    padding: '14px 20px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    borderRadius: '12px'
-                  }}
                 >
                   返回首页
                 </button>
@@ -1368,3 +1434,4 @@ const FestivalVideoPage: React.FC = () => {
 };
 
 export default FestivalVideoPage;
+

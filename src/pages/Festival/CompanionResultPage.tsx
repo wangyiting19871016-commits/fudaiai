@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import { BackButton } from '../../components/BackButton';
@@ -11,23 +11,71 @@ import '../../styles/festival-design-system.css';
 import '../../styles/festival-result-glass.css';
 import '../../styles/festival-companion.css';
 
+const STORAGE_KEY = 'festival_companion_input_image';
 const RESULT_KEY = 'festival_companion_result';
-const INPUT_KEY = 'festival_companion_input_image';
+
+type CompanionRuntimeState = {
+  inputImage?: string;
+  resultJson?: string;
+};
+
+declare global {
+  interface Window {
+    __festivalCompanionRuntimeState?: CompanionRuntimeState;
+  }
+}
+
+function getRuntimeState(): CompanionRuntimeState {
+  if (typeof window === 'undefined') return {};
+  if (!window.__festivalCompanionRuntimeState) {
+    window.__festivalCompanionRuntimeState = {};
+  }
+  return window.__festivalCompanionRuntimeState;
+}
+
+function safeSessionGet(key: string): string {
+  try {
+    return sessionStorage.getItem(key) || '';
+  } catch {
+    return '';
+  }
+}
+
+function safeSessionSet(key: string, value: string): void {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    // keep runtime-only fallback
+  }
+}
+
+function readCompanionResult(): any {
+  const raw = safeSessionGet(RESULT_KEY) || getRuntimeState().resultJson || '';
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+function readCompanionInputImage(): string {
+  return safeSessionGet(STORAGE_KEY) || getRuntimeState().inputImage || '';
+}
+
+function storeCompanionInputImage(imageDataUrl: string): void {
+  const runtime = getRuntimeState();
+  runtime.inputImage = imageDataUrl;
+  safeSessionSet(STORAGE_KEY, imageDataUrl);
+}
 
 const CompanionResultPage: React.FC = () => {
   const navigate = useNavigate();
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
-  const result = useMemo(() => {
-    try {
-      return JSON.parse(sessionStorage.getItem(RESULT_KEY) || '{}');
-    } catch {
-      return {};
-    }
-  }, []);
-
-  const sourceImage = result?.sourceImage || '';
+  const result = useMemo(() => readCompanionResult(), []);
+  const sourceImage = result?.sourceImage || readCompanionInputImage() || '';
   const resultImage = result?.resultImage || '';
 
   const currentMaterial = useMemo<MaterialAtom | null>(() => {
@@ -82,7 +130,7 @@ const CompanionResultPage: React.FC = () => {
 
   const handleRegenerate = () => {
     if (sourceImage) {
-      sessionStorage.setItem(INPUT_KEY, sourceImage);
+      storeCompanionInputImage(sourceImage);
     }
     navigate('/festival/companion');
   };

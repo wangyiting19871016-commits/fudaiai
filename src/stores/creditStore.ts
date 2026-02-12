@@ -99,12 +99,12 @@ function createInitialState(): CreditData {
     ? CREDIT_BOOTSTRAP
     : ENABLE_BOOTSTRAP_CREDITS
       ? CREDIT_BOOTSTRAP
-      : 100;
+      : 10000; // 测试阶段改为10000积分
   const initialDescription = ENABLE_UNLIMITED_CREDITS
     ? `🧪 本地测试：无限积分模式（初始 ${initialCredits}）`
     : ENABLE_BOOTSTRAP_CREDITS
       ? `🧪 本地测试：预设积分 ${initialCredits}`
-      : '🎁 新春礼包：赠送100积分体验';
+      : '🎁 新春礼包：赠送10000积分体验';
 
   return {
     credits: initialCredits,

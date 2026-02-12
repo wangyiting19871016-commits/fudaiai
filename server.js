@@ -112,6 +112,7 @@ const upload = multer({
 const app = express();
 const PORT = process.env.PORT || 3002;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const ENABLE_REQUEST_LOG = process.env.ENABLE_REQUEST_LOG === 'true' || !IS_PRODUCTION;
 
 // CORS allowlist:
 // - production should only allow frontend domains from env
@@ -240,11 +241,13 @@ app.use(cors({
 }));
 
 // 安装"前置信号雷达" (Global Request Radar)
-app.use((req, res, next) => {
-  console.log(`📡 [雷达捕捉到信号]: ${req.method} -> ${req.url}`);
-  console.log(`✨ [3002 信号] 成功接收到来自网页的请求！`);
-  next();
-});
+if (ENABLE_REQUEST_LOG) {
+  app.use((req, res, next) => {
+    console.log(`📡 [雷达捕捉到信号]: ${req.method} -> ${req.url}`);
+    console.log(`✨ [3002 信号] 成功接收到来自网页的请求！`);
+    next();
+  });
+}
 
 // 🔐 Admin Routes (管理后台路由)
 app.use('/api/admin', adminRoutes);

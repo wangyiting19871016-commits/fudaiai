@@ -1,4 +1,5 @@
 ﻿import React from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CATEGORIES } from '../../configs/festival/categories';
 import { BottomNav } from '../../components/BottomNav';
@@ -11,6 +12,7 @@ import '../../styles/festival-home-glass.css';
  */
 const HomePageGlass: React.FC = () => {
   const navigate = useNavigate();
+  const [allowLazyAssets, setAllowLazyAssets] = useState(false);
 
   const handleCategoryClick = (categoryId: string) => {
     // 视频与未来伴侣走独立链路
@@ -29,7 +31,7 @@ const HomePageGlass: React.FC = () => {
 
   const cardBackgrounds: Record<string, string> = {
     avatar: '/assets/showcase/new-year-avatar-latest.png',
-    family: '/assets/showcase/couple-s350.jpg',
+    family: '/assets/showcase/couple.jpg',
     video: '/assets/showcase/digital-human-preview.gif',
     blessing: '/assets/showcase/baonian-download.png',
     companion: '/assets/showcase/future-companion-card.png',
@@ -53,6 +55,30 @@ const HomePageGlass: React.FC = () => {
     { img: '/assets/showcase/gallery-5.jpg', label: '古典人像' },
     { img: '/assets/showcase/gallery-6.jpg', label: 'Q版娃娃' }
   ];
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const activateLazyAssets = () => setAllowLazyAssets(true);
+    const win = window as Window & {
+      requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+
+    if (typeof win.requestIdleCallback === 'function') {
+      const idleId = win.requestIdleCallback(activateLazyAssets, { timeout: 1200 });
+      return () => {
+        if (typeof win.cancelIdleCallback === 'function') {
+          win.cancelIdleCallback(idleId);
+        }
+      };
+    }
+
+    const timer = setTimeout(activateLazyAssets, 700);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="festival-home-glass">
@@ -172,18 +198,22 @@ const HomePageGlass: React.FC = () => {
                       borderColor: `${category.gradient[0]}30`
                     }}
                   >
-                    {cardBackgrounds[category.id] && (
-                      <div
+                    {cardBackgrounds[category.id] && (index < 2 || allowLazyAssets) && (
+                      <img
+                        src={cardBackgrounds[category.id]}
+                        alt={`${category.name}-bg`}
                         className="card-bg-image"
+                        loading={index < 2 ? 'eager' : 'lazy'}
+                        decoding="async"
                         style={{
-                          backgroundImage: `url(${cardBackgrounds[category.id]})`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
                           position: 'absolute',
                           top: 0,
                           left: 0,
                           right: 0,
                           bottom: 0,
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
                           zIndex: 0
                         }}
                       />
@@ -291,14 +321,18 @@ const HomePageGlass: React.FC = () => {
             <div className="showcase-scroll-inner">
               {[...showcaseImages, ...showcaseImages, ...showcaseImages].map((item, idx) => (
                 <div key={idx} className="showcase-item">
-                  <div
-                    className="showcase-placeholder"
-                    style={{
-                      backgroundImage: `url(${item.img})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    }}
-                  />
+                  {allowLazyAssets ? (
+                    <img
+                      src={item.img}
+                      alt={item.label}
+                      className="showcase-placeholder"
+                      loading="lazy"
+                      decoding="async"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div className="showcase-placeholder" />
+                  )}
                   <div className="showcase-label">#{item.label}</div>
                 </div>
               ))}

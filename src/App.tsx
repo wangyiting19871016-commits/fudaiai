@@ -116,10 +116,12 @@ const AppLayout: React.FC = () => {
             <Route path="payment-success" element={<PaymentSuccessPage />} />
             <Route path="m2-template-select" element={<M2TemplateSelectionPage />} />
             <Route path="m3-template-select" element={<M3TemplateSelectionPage />} />
+            <Route path="companion/test-v2" element={<Navigate to="/festival/companion" replace />} />
             <Route path="companion" element={<CompanionUploadPage />} />
             <Route path="companion/generating" element={<CompanionGeneratingPage />} />
             <Route path="companion/result" element={<CompanionResultPage />} />
           </Route>
+          <Route path="*" element={<Navigate to="/festival/home" replace />} />
         </Routes>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useCreditStore } from './stores/creditStore';
 import { MissionProvider } from './stores/MissionContext';
@@ -11,40 +11,40 @@ import Navigation from './components/Navigation';
 import { initAnalyticsInterceptor } from './utils/analyticsInterceptor';
 
 // 强制引用 src/pages 下的文件
-import Home from './pages/Home';
-import PathPage from './pages/PathPage';
-import LabPage from './pages/LabPage';
-import EditorPage from './pages/EditorPage';
-import P4LabPage from './pages/P4LabPage';
+const Home = lazy(() => import('./pages/Home'));
+const PathPage = lazy(() => import('./pages/PathPage'));
+const LabPage = lazy(() => import('./pages/LabPage'));
+const EditorPage = lazy(() => import('./pages/EditorPage'));
+const P4LabPage = lazy(() => import('./pages/P4LabPage'));
 
 // 🧧 春节H5页面（全新独立）
 import FestivalLayout from './pages/Festival/Layout';
 import HomePageGlass from './pages/Festival/HomePageGlass';
-import FestivalLabPage from './pages/Festival/LabPage';
-import FestivalResultPage from './pages/Festival/ResultPage';
-import FestivalVoicePage from './pages/Festival/VoicePageNew';
-import FestivalTextPage from './pages/Festival/TextPage';
-import FestivalCategoryPage from './pages/Festival/CategoryPage';
-import FestivalVideoPage from './pages/Festival/VideoPage';
-import VideoCategoryPage from './pages/Festival/VideoCategoryPage';
-import TemplateSelectionPage from './pages/Festival/TemplateSelectionPage';
-import FortunePage from './pages/Festival/FortunePage';
-import MaterialLibraryPage from './pages/Festival/MaterialLibraryPage';
-import FortuneCardPage from './pages/Festival/FortuneCardPage';
-import SmartReplyPage from './pages/Festival/SmartReplyPage';
-import RechargePage from './pages/Festival/RechargePage';
-import PaymentSuccessPage from './pages/Festival/PaymentSuccessPage';
-import M2TemplateSelectionPage from './pages/Festival/M2TemplateSelectionPage';
-import M3TemplateSelectionPage from './pages/Festival/M3TemplateSelectionPage';
-import CompanionUploadPage from './pages/Festival/CompanionUploadPage';
-import CompanionGeneratingPage from './pages/Festival/CompanionGeneratingPage';
-import CompanionResultPage from './pages/Festival/CompanionResultPage';
+const FestivalLabPage = lazy(() => import('./pages/Festival/LabPage'));
+const FestivalResultPage = lazy(() => import('./pages/Festival/ResultPage'));
+const FestivalVoicePage = lazy(() => import('./pages/Festival/VoicePageNew'));
+const FestivalTextPage = lazy(() => import('./pages/Festival/TextPage'));
+const FestivalCategoryPage = lazy(() => import('./pages/Festival/CategoryPage'));
+const FestivalVideoPage = lazy(() => import('./pages/Festival/VideoPage'));
+const VideoCategoryPage = lazy(() => import('./pages/Festival/VideoCategoryPage'));
+const TemplateSelectionPage = lazy(() => import('./pages/Festival/TemplateSelectionPage'));
+const FortunePage = lazy(() => import('./pages/Festival/FortunePage'));
+const MaterialLibraryPage = lazy(() => import('./pages/Festival/MaterialLibraryPage'));
+const FortuneCardPage = lazy(() => import('./pages/Festival/FortuneCardPage'));
+const SmartReplyPage = lazy(() => import('./pages/Festival/SmartReplyPage'));
+const RechargePage = lazy(() => import('./pages/Festival/RechargePage'));
+const PaymentSuccessPage = lazy(() => import('./pages/Festival/PaymentSuccessPage'));
+const M2TemplateSelectionPage = lazy(() => import('./pages/Festival/M2TemplateSelectionPage'));
+const M3TemplateSelectionPage = lazy(() => import('./pages/Festival/M3TemplateSelectionPage'));
+const CompanionUploadPage = lazy(() => import('./pages/Festival/CompanionUploadPage'));
+const CompanionGeneratingPage = lazy(() => import('./pages/Festival/CompanionGeneratingPage'));
+const CompanionResultPage = lazy(() => import('./pages/Festival/CompanionResultPage'));
 
 // 管理后台页面
-import AdminLoginPage from './pages/Admin/LoginPage';
-import AdminDashboardPage from './pages/Admin/DashboardPage';
-import AdminUsersPage from './pages/Admin/UsersPage';
-import AdminAPILogsPage from './pages/Admin/APILogsPage';
+const AdminLoginPage = lazy(() => import('./pages/Admin/LoginPage'));
+const AdminDashboardPage = lazy(() => import('./pages/Admin/DashboardPage'));
+const AdminUsersPage = lazy(() => import('./pages/Admin/UsersPage'));
+const AdminAPILogsPage = lazy(() => import('./pages/Admin/APILogsPage'));
 
 // ⚠️ 已废弃页面（已移除）
 // - DigitalHumanPage.tsx → 合并到VideoPage.tsx (2026-02-06)
@@ -67,7 +67,8 @@ const AppLayout: React.FC = () => {
       
       {/* 内容区域：如果有导航栏，则添加 padding-top */}
       <div style={{ paddingTop: showNav ? '70px' : '0' }}>
-        <Routes>
+        <Suspense fallback={<div style={{ minHeight: '100vh', background: '#fff' }} />}>
+          <Routes>
           {/* 🎯 默认跳转到春节H5 */}
           <Route path="/" element={<Navigate to="/festival/home" replace />} />
 
@@ -122,7 +123,8 @@ const AppLayout: React.FC = () => {
             <Route path="companion/result" element={<CompanionResultPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/festival/home" replace />} />
-        </Routes>
+          </Routes>
+        </Suspense>
       </div>
     </div>
   );

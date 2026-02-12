@@ -84,9 +84,25 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 900,
       rollupOptions: {
         output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-ui': ['antd', 'framer-motion']
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return;
+
+            if (
+              id.includes('/node_modules/react/') ||
+              id.includes('/node_modules/react-dom/') ||
+              id.includes('/node_modules/react-router/') ||
+              id.includes('/node_modules/react-router-dom/')
+            ) {
+              return 'vendor-react';
+            }
+
+            if (
+              id.includes('/node_modules/antd/') ||
+              id.includes('/node_modules/@ant-design/') ||
+              id.includes('/node_modules/framer-motion/')
+            ) {
+              return 'vendor-ui';
+            }
           }
         }
       }

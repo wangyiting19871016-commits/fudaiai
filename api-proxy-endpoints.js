@@ -791,24 +791,30 @@ module.exports = function(app) {
    */
   app.post('/api/fish/tts', express.json({ limit: '50mb' }), async (req, res) => {
     try {
+      // 使用Render代理服务（解决国内网络访问Fish Audio问题）
+      const proxyUrl = process.env.FISH_AUDIO_PROXY_URL || 'https://fish-audio-proxy.onrender.com';
       const apiKey = process.env.FISH_AUDIO_API_KEY;
 
       if (!apiKey) {
         return res.status(500).json({ error: 'Fish Audio API key not configured' });
       }
 
+      console.log(`[Fish Audio] 通过Render代理: ${proxyUrl}`);
+
       const postData = JSON.stringify(req.body);
 
+      // 解析代理URL
+      const proxyUrlObj = new URL(proxyUrl);
+
       const options = {
-        hostname: 'api.fish.audio',
+        hostname: proxyUrlObj.hostname,
         path: '/v1/tts',
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(postData)
         },
-        timeout: 60000
+        timeout: 120000  // 增加到120秒（Render冷启动需要时间）
       };
 
       const fishResponse = await new Promise((resolve, reject) => {

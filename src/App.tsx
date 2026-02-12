@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useCreditStore } from './stores/creditStore';
 import { MissionProvider } from './stores/MissionContext';
@@ -10,118 +10,142 @@ import { VoiceProvider } from './stores/VoiceStore';
 import Navigation from './components/Navigation';
 import { initAnalyticsInterceptor } from './utils/analyticsInterceptor';
 
-const Home = lazy(() => import('./pages/Home'));
-const PathPage = lazy(() => import('./pages/PathPage'));
-const LabPage = lazy(() => import('./pages/LabPage'));
-const EditorPage = lazy(() => import('./pages/EditorPage'));
-const P4LabPage = lazy(() => import('./pages/P4LabPage'));
+// 强制引用 src/pages 下的文件
+import Home from './pages/Home';
+import PathPage from './pages/PathPage';
+import LabPage from './pages/LabPage';
+import EditorPage from './pages/EditorPage';
+import P4LabPage from './pages/P4LabPage';
 
-const FestivalLayout = lazy(() => import('./pages/Festival/Layout'));
-const HomePageGlass = lazy(() => import('./pages/Festival/HomePageGlass'));
-const FestivalLabPage = lazy(() => import('./pages/Festival/LabPage'));
-const FestivalResultPage = lazy(() => import('./pages/Festival/ResultPage'));
-const FestivalVoicePage = lazy(() => import('./pages/Festival/VoicePageNew'));
-const FestivalTextPage = lazy(() => import('./pages/Festival/TextPage'));
-const FestivalCategoryPage = lazy(() => import('./pages/Festival/CategoryPage'));
-const FestivalVideoPage = lazy(() => import('./pages/Festival/VideoPage'));
-const VideoCategoryPage = lazy(() => import('./pages/Festival/VideoCategoryPage'));
-const TemplateSelectionPage = lazy(() => import('./pages/Festival/TemplateSelectionPage'));
-const FortunePage = lazy(() => import('./pages/Festival/FortunePage'));
-const MaterialLibraryPage = lazy(() => import('./pages/Festival/MaterialLibraryPage'));
-const FortuneCardPage = lazy(() => import('./pages/Festival/FortuneCardPage'));
-const SmartReplyPage = lazy(() => import('./pages/Festival/SmartReplyPage'));
-const RechargePage = lazy(() => import('./pages/Festival/RechargePage'));
-const PaymentSuccessPage = lazy(() => import('./pages/Festival/PaymentSuccessPage'));
-const M2TemplateSelectionPage = lazy(() => import('./pages/Festival/M2TemplateSelectionPage'));
-const M3TemplateSelectionPage = lazy(() => import('./pages/Festival/M3TemplateSelectionPage'));
-const CompanionUploadPage = lazy(() => import('./pages/Festival/CompanionUploadPage'));
-const CompanionGeneratingPage = lazy(() => import('./pages/Festival/CompanionGeneratingPage'));
-const CompanionResultPage = lazy(() => import('./pages/Festival/CompanionResultPage'));
+// 🧧 春节H5页面（全新独立）
+import FestivalLayout from './pages/Festival/Layout';
+import HomePageGlass from './pages/Festival/HomePageGlass';
+import FestivalLabPage from './pages/Festival/LabPage';
+import FestivalResultPage from './pages/Festival/ResultPage';
+import FestivalVoicePage from './pages/Festival/VoicePageNew';
+import FestivalTextPage from './pages/Festival/TextPage';
+import FestivalCategoryPage from './pages/Festival/CategoryPage';
+import FestivalVideoPage from './pages/Festival/VideoPage';
+import VideoCategoryPage from './pages/Festival/VideoCategoryPage';
+import TemplateSelectionPage from './pages/Festival/TemplateSelectionPage';
+import FortunePage from './pages/Festival/FortunePage';
+import MaterialLibraryPage from './pages/Festival/MaterialLibraryPage';
+import FortuneCardPage from './pages/Festival/FortuneCardPage';
+import SmartReplyPage from './pages/Festival/SmartReplyPage';
+import RechargePage from './pages/Festival/RechargePage';
+import PaymentSuccessPage from './pages/Festival/PaymentSuccessPage';
+import M2TemplateSelectionPage from './pages/Festival/M2TemplateSelectionPage';
+import M3TemplateSelectionPage from './pages/Festival/M3TemplateSelectionPage';
+import CompanionUploadPage from './pages/Festival/CompanionUploadPage';
+import CompanionGeneratingPage from './pages/Festival/CompanionGeneratingPage';
+import CompanionResultPage from './pages/Festival/CompanionResultPage';
 
-const AdminLoginPage = lazy(() => import('./pages/Admin/LoginPage'));
-const AdminDashboardPage = lazy(() => import('./pages/Admin/DashboardPage'));
-const AdminUsersPage = lazy(() => import('./pages/Admin/UsersPage'));
-const AdminAPILogsPage = lazy(() => import('./pages/Admin/APILogsPage'));
+// 管理后台页面
+import AdminLoginPage from './pages/Admin/LoginPage';
+import AdminDashboardPage from './pages/Admin/DashboardPage';
+import AdminUsersPage from './pages/Admin/UsersPage';
+import AdminAPILogsPage from './pages/Admin/APILogsPage';
 
+// ⚠️ 已废弃页面（已移除）
+// - DigitalHumanPage.tsx → 合并到VideoPage.tsx (2026-02-06)
+// - KlingEffectsPage.tsx → 功能下线 (2026-02-08)
+// - VideoPageNew.tsx → 重命名为VideoPageMultiMode.tsx.backup备份 (2026-02-08)
+
+// 布局组件，用于处理路由相关的布局逻辑
 const AppLayout: React.FC = () => {
   const location = useLocation();
+  
+  // 仅在 /p4-lab 路径下显示导航栏
+  // 修正：根据用户需求，在P1/P2/P4中彻底留白，只在P4LAB显示
+  // 注意：用户输入说的是 /p4lab，但路由配置里是 /p4-lab，这里做兼容
   const showNav = location.pathname === '/p4-lab' || location.pathname === '/p4lab';
-
+  
   return (
     <div style={{ width: '100vw', minHeight: '100vh', background: '#222' }}>
+      {/* 动态导航栏：仅在 P4LAB 显示 */}
       {showNav && <Navigation />}
-
+      
+      {/* 内容区域：如果有导航栏，则添加 padding-top */}
       <div style={{ paddingTop: showNav ? '70px' : '0' }}>
-        <Suspense fallback={null}>
-          <Routes>
-            <Route path="/" element={<Navigate to="/festival/home" replace />} />
+        <Routes>
+          {/* 🎯 默认跳转到春节H5 */}
+          <Route path="/" element={<Navigate to="/festival/home" replace />} />
 
-            <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-            <Route path="/admin/users" element={<AdminUsersPage />} />
-            <Route path="/admin/api-logs" element={<AdminAPILogsPage />} />
-            <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
+          {/* 🔐 管理后台 */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/api-logs" element={<AdminAPILogsPage />} />
+          <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
 
-            <Route path="/p1" element={<Home />} />
-            <Route path="/path/:taskId" element={<PathPage />} />
-            <Route path="/lab/:id" element={<LabPage />} />
-            <Route path="/p3-direct" element={<LabPage />} />
-            <Route path="/lab/direct-fire" element={<LabPage />} />
-            <Route path="/p4" element={<EditorPage />} />
-            <Route path="/editor" element={<EditorPage />} />
-            <Route path="/p4-lab" element={<P4LabPage />} />
-            <Route path="/p4lab" element={<P4LabPage />} />
+          {/* 现有页面（内部测试，通过具体路径访问） */}
+          <Route path="/p1" element={<Home />} />
+          <Route path="/path/:taskId" element={<PathPage />} />
+          <Route path="/lab/:id" element={<LabPage />} />
+          <Route path="/p3-direct" element={<LabPage />} />
+          <Route path="/lab/direct-fire" element={<LabPage />} />
+          <Route path="/p4" element={<EditorPage />} />
+          <Route path="/editor" element={<EditorPage />} />
+          <Route path="/p4-lab" element={<P4LabPage />} />
+          <Route path="/p4lab" element={<P4LabPage />} />
+          
+          {/* 🧧 春节H5（全新独立） */}
+          <Route path="/festival" element={<FestivalLayout />}>
+            <Route index element={<HomePageGlass />} />
+            <Route path="home" element={<HomePageGlass />} />
+            <Route path="category/video" element={<VideoCategoryPage />} />
+            <Route path="video-category" element={<VideoCategoryPage />} />
+            <Route path="category/:categoryId" element={<FestivalCategoryPage />} />
+            <Route path="template-select/:featureId" element={<TemplateSelectionPage />} />
+            <Route path="lab/:missionId" element={<FestivalLabPage />} />
+            <Route path="fortune/:missionId" element={<FortunePage />} />
+            <Route path="result/:taskId" element={<FestivalResultPage />} />
+            <Route path="voice/:taskId" element={<FestivalVoicePage />} />
+            <Route path="voice" element={<FestivalVoicePage />} />
+            <Route path="text/:featureId" element={<FestivalTextPage />} />
+            <Route path="video/:taskId" element={<FestivalVideoPage />} />
+            <Route path="video" element={<FestivalVideoPage />} />
+            <Route path="materials" element={<MaterialLibraryPage />} />
+            <Route path="fortune-card" element={<FortuneCardPage />} />
+            <Route path="smart-reply" element={<SmartReplyPage />} />
 
-            <Route path="/festival" element={<FestivalLayout />}>
-              <Route index element={<HomePageGlass />} />
-              <Route path="home" element={<HomePageGlass />} />
-              <Route path="category/video" element={<VideoCategoryPage />} />
-              <Route path="video-category" element={<VideoCategoryPage />} />
-              <Route path="category/:categoryId" element={<FestivalCategoryPage />} />
-              <Route path="template-select/:featureId" element={<TemplateSelectionPage />} />
-              <Route path="lab/:missionId" element={<FestivalLabPage />} />
-              <Route path="fortune/:missionId" element={<FortunePage />} />
-              <Route path="result/:taskId" element={<FestivalResultPage />} />
-              <Route path="voice/:taskId" element={<FestivalVoicePage />} />
-              <Route path="voice" element={<FestivalVoicePage />} />
-              <Route path="text/:featureId" element={<FestivalTextPage />} />
-              <Route path="video/:taskId" element={<FestivalVideoPage />} />
-              <Route path="video" element={<FestivalVideoPage />} />
-              <Route path="materials" element={<MaterialLibraryPage />} />
-              <Route path="fortune-card" element={<FortuneCardPage />} />
-              <Route path="smart-reply" element={<SmartReplyPage />} />
-
-              <Route path="digital-human" element={<Navigate to="/festival/video" replace />} />
-              <Route path="kling-effects" element={<Navigate to="/festival/category/video" replace />} />
-              <Route path="recharge" element={<RechargePage />} />
-              <Route path="payment-success" element={<PaymentSuccessPage />} />
-              <Route path="m2-template-select" element={<M2TemplateSelectionPage />} />
-              <Route path="m3-template-select" element={<M3TemplateSelectionPage />} />
-              <Route path="companion" element={<CompanionUploadPage />} />
-              <Route path="companion/generating" element={<CompanionGeneratingPage />} />
-              <Route path="companion/result" element={<CompanionResultPage />} />
-            </Route>
-          </Routes>
-        </Suspense>
+            {/* 已废弃路由 - 重定向到主要功能 */}
+            <Route path="digital-human" element={<Navigate to="/festival/video" replace />} />
+            <Route path="kling-effects" element={<Navigate to="/festival/category/video" replace />} />
+            <Route path="recharge" element={<RechargePage />} />
+            <Route path="payment-success" element={<PaymentSuccessPage />} />
+            <Route path="m2-template-select" element={<M2TemplateSelectionPage />} />
+            <Route path="m3-template-select" element={<M3TemplateSelectionPage />} />
+            <Route path="companion" element={<CompanionUploadPage />} />
+            <Route path="companion/generating" element={<CompanionGeneratingPage />} />
+            <Route path="companion/result" element={<CompanionResultPage />} />
+          </Route>
+        </Routes>
       </div>
     </div>
   );
 };
 
+// 这是一个全新的 App 组件
 const App: React.FC = () => {
   const initVisitor = useCreditStore((state) => state.initVisitor);
   const creditData = useCreditStore((state) => state.creditData);
 
+  // 初始化访客ID和积分
   useEffect(() => {
     initVisitor();
+    // 初始化数据分析拦截器
     initAnalyticsInterceptor();
   }, [initVisitor]);
 
+  // 新用户欢迎提示（仅首次）
   useEffect(() => {
+    // 检查是否是新用户（有赠送积分的交易记录）
     const hasWelcomeGift = creditData.transactions.some(
-      (t) => t.type === 'gift' && t.description.includes('新春礼包')
+      t => t.type === 'gift' && t.description.includes('新春礼包')
     );
 
+    // 如果有赠送记录且是首次访问（总消耗为0），显示欢迎提示
     if (hasWelcomeGift && creditData.totalConsumed === 0 && creditData.totalRecharged === 0) {
       const hasShownWelcome = sessionStorage.getItem('festival_welcome_shown');
       if (!hasShownWelcome) {
@@ -140,10 +164,10 @@ const App: React.FC = () => {
           <MissionProvider>
             <AssetProvider>
               <ProtocolProvider>
-                <Router>
-                  <AppLayout />
-                </Router>
-              </ProtocolProvider>
+              <Router>
+                <AppLayout />
+              </Router>
+            </ProtocolProvider>
             </AssetProvider>
           </MissionProvider>
         </VoiceProvider>

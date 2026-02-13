@@ -1,6 +1,8 @@
 export interface CompanionGenerateResponse {
   success: boolean;
   imageUrl?: string;
+  error_code?: string;
+  details?: unknown;
   analysis?: {
     user_gender?: string;
     estimated_age?: number;
@@ -44,15 +46,19 @@ export async function generateCompanionPhoto(
 ): Promise<CompanionGenerateResponse> {
   const apiBase = getApiBase();
   const size = await detectOutputSize(imageDataUrl);
+  const requestId = `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
   const payload = { imageDataUrl, size };
-  const endpoint = '/api/companion/generate-simple';
+  const endpoint = `/api/companion/generate-simple?_r=${requestId}`;
 
   const resp = await fetch(`${apiBase}${endpoint}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, max-age=0',
+      Pragma: 'no-cache'
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
+    cache: 'no-store'
   });
 
   const raw = await resp.text();
@@ -70,6 +76,16 @@ export async function generateCompanionPhoto(
 
   if (resp.ok && data.success) {
     return data as CompanionGenerateResponse;
+  }
+
+  if (data.error_code === 'COMPANION_UNAVAILABLE' || resp.status === 503) {
+    throw new Error('未来伴侣功能暂不可用，请稍后重试');
+  }
+  if (data.error_code === 'INVALID_INPUT') {
+    throw new Error('上传图片无效，请重新上传后再试');
+  }
+  if (data.error_code === 'CONFIG_ERROR') {
+    throw new Error('服务配置异常，请联系管理员');
   }
 
   throw new Error(data.error || `Companion generate failed: ${resp.status}`);

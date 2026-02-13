@@ -277,7 +277,13 @@ module.exports = function(app) {
                 body: JSON.parse(data || '{}')
               });
             } catch {
-              reject(new Error(`N1N multipart parse failed: ${data}`));
+              // Cloudflare 524等错误返回HTML而非JSON
+              const code = apiRes.statusCode || 500;
+              if (code === 524) {
+                reject(new Error('N1N API Cloudflare timeout (524), image may be too large or API overloaded'));
+              } else {
+                reject(new Error(`N1N response not JSON (HTTP ${code}): ${data.substring(0, 200)}`));
+              }
             }
           });
         }
@@ -455,77 +461,125 @@ module.exports = function(app) {
   });
 
   app.post('/api/companion/generate-simple', express.json({ limit: '40mb' }), async (req, res) => {
+    const sendCompanionError = (statusCode, error, errorCode, details) => {
+      return res.status(statusCode).json({
+        success: false,
+        error,
+        error_code: errorCode,
+        details: details || null
+      });
+    };
+
+    const isCompanionUnavailable = (statusCode, errorMessage) => {
+      if (statusCode >= 500) return true;
+      const text = String(errorMessage || '').toLowerCase();
+      return (
+        text.includes('timeout') ||
+        text.includes('timed out') ||
+        text.includes('cloudflare') ||
+        text.includes('overloaded') ||
+        text.includes('temporarily unavailable') ||
+        text.includes('econnreset') ||
+        text.includes('socket hang up') ||
+        text.includes('connection reset')
+      );
+    };
+
     try {
       const n1nBaseUrl = process.env.N1N_BASE_URL || 'https://api.n1n.ai/v1';
       const n1nApiKey = process.env.N1N_API_KEY;
-      const primaryImageModel = 'gpt-image-1.5';
-      const fallbackImageModel = 'flux-kontext-pro';
-      const modelCandidates = [primaryImageModel, fallbackImageModel];
+      const primaryImageModel = String(process.env.N1N_COMPANION_PRIMARY_IMAGE_MODEL || 'gpt-image-1.5').trim();
+      // 不再降级到 flux（flux 导致西方化面孔），只用 gpt-image-1.5
+      const modelCandidates = [primaryImageModel];
 
       if (!n1nApiKey) {
-        return res.status(500).json({
-          success: false,
-          error: 'N1N_API_KEY not configured'
-        });
+        return sendCompanionError(500, 'N1N_API_KEY not configured', 'CONFIG_ERROR');
       }
 
       const { imageDataUrl } = req.body || {};
       const parsed = parseDataUrl(imageDataUrl);
       if (!parsed || !parsed.buffer || parsed.buffer.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: 'Missing valid imageDataUrl'
-        });
+        return sendCompanionError(400, 'Missing valid imageDataUrl', 'INVALID_INPUT');
       }
 
-      const officialPromptDefault =
-        '基于上传的图片作为参考，创作一幅自然真实的画面：主体身旁陪伴一位虚构的伴侣人物，这位伴侣应与主体相契合，且非真实存在的人物。' +
-        '伴侣形象需在情感和社会层面与主体适配，避免过度理想化或夸张。' +
-        '其外貌、背景和特征应与主体及其世界自然融合，不落入刻板印象或理想化标准。' +
-        '将二人置于可信的日常场景中，采用自然光线和真实比例捕捉。' +
-        '他们的身体语言应传递舒适与熟悉感，亲近但不造作或过度浪漫。' +
-        '整体成像应如一张自然抓拍，呈现两人天生契合的踏实、温暖和情感真实感。' +
-        '可添加些许时尚质感，但避免奇幻元素或模特式摆拍。';
-
-      const prompt = String(req.body?.prompt || officialPromptDefault).trim();
-      if (!prompt) {
-        return res.status(400).json({
-          success: false,
-          error: 'prompt is required'
-        });
+      // 压缩图片以加速上传，避免Cloudflare 524超时
+      let compressedBuffer = parsed.buffer;
+      let compressedMime = parsed.mime;
+      try {
+        const sharp = require('sharp');
+        const originalSize = parsed.buffer.length;
+        compressedBuffer = await sharp(parsed.buffer)
+          .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+          .jpeg({ quality: 85 })
+          .toBuffer();
+        compressedMime = 'image/jpeg';
+        console.log(`[Companion] 图片压缩: ${(originalSize/1024).toFixed(0)}KB -> ${(compressedBuffer.length/1024).toFixed(0)}KB`);
+      } catch (compressErr) {
+        console.warn('[Companion] 图片压缩失败，使用原图:', compressErr.message);
       }
+
+      // 提示词遵循官方指南：先说改什么，再列锁定项，最后强调不许改其他
+      const gptImagePrompt =
+        'Add one companion person standing next to the original person in the photo. ' +
+        'The companion should be a natural, realistic partner of similar age and matching ethnicity/skin tone. ' +
+        'Place both people in a natural, casual couple photo setting with warm lighting. ' +
+        'Only two people in the final image. ' +
+        'DO NOT change the original person\'s face, facial features, skin tone, hair, body shape, pose, expression, or identity in any way. ' +
+        'The original person must remain 100% identical to the uploaded photo. ' +
+        'Do not modify, beautify, or alter the original person at all. Keep their exact likeness.';
+
+      const customPrompt = String(req.body?.prompt || '').trim();
+
       const requestedSize = String(req.body?.size || '').trim();
       const allowedSizes = new Set(['1024x1024', '1024x1536', '1536x1024', 'auto']);
       const outputSize = allowedSizes.has(requestedSize) ? requestedSize : '1024x1536';
-      const outputQuality = 'high';
-      const outputFormat = 'png';
+      const outputQuality = 'auto';
+      const outputFormat = 'jpeg';
 
       let lastError = 'N1N image edit failed in simple mode';
       let lastStatusCode = 500;
       let lastDetails = null;
 
       for (const imageModel of modelCandidates) {
-        const imageResp = await n1nMultipartRequest(
-          n1nBaseUrl,
-          n1nApiKey,
-          '/images/edits',
-          [
-            { type: 'field', name: 'model', value: imageModel },
-            { type: 'field', name: 'prompt', value: prompt },
-            { type: 'field', name: 'size', value: outputSize },
-            { type: 'field', name: 'quality', value: outputQuality },
-            { type: 'field', name: 'output_format', value: outputFormat },
-            { type: 'field', name: 'n', value: '1' },
-            {
-              type: 'file',
-              name: 'image',
-              filename: 'source.jpg',
-              contentType: parsed.mime,
-              data: parsed.buffer
-            }
-          ],
-          200000
-        );
+        const prompt = customPrompt || gptImagePrompt;
+        let imageResp = null;
+        try {
+          imageResp = await n1nMultipartRequest(
+            n1nBaseUrl,
+            n1nApiKey,
+            '/images/edits',
+            [
+              { type: 'field', name: 'model', value: imageModel },
+              { type: 'field', name: 'prompt', value: prompt },
+              { type: 'field', name: 'size', value: outputSize },
+              { type: 'field', name: 'quality', value: outputQuality },
+              { type: 'field', name: 'output_format', value: outputFormat },
+              { type: 'field', name: 'input_fidelity', value: 'high' },
+              { type: 'field', name: 'n', value: '1' },
+              {
+                type: 'file',
+                name: 'image',
+                filename: 'source.jpg',
+                contentType: compressedMime,
+                data: compressedBuffer
+              }
+            ],
+            180000
+          );
+        } catch (requestError) {
+          const message = requestError?.message || 'N1N image edit request failed';
+          lastError = message;
+          lastStatusCode = message.includes('timeout') ? 504 : 500;
+          lastDetails = { message, model: imageModel };
+          continue;
+        }
+
+        if (!imageResp) {
+          lastError = `N1N image edit empty response (${imageModel})`;
+          lastStatusCode = 500;
+          lastDetails = { model: imageModel };
+          continue;
+        }
 
         if (imageResp.statusCode >= 200 && imageResp.statusCode < 300) {
           const first = imageResp.body?.data?.[0];
@@ -564,17 +618,29 @@ module.exports = function(app) {
         lastDetails = imageResp.body;
       }
 
-      return res.status(lastStatusCode).json({
-        success: false,
-        error: lastError,
-        details: lastDetails
-      });
+      if (isCompanionUnavailable(lastStatusCode, lastError)) {
+        return sendCompanionError(
+          503,
+          'Companion service temporarily unavailable',
+          'COMPANION_UNAVAILABLE',
+          {
+            upstreamStatus: lastStatusCode,
+            upstreamError: lastError,
+            upstreamDetails: lastDetails
+          }
+        );
+      }
+
+      return sendCompanionError(lastStatusCode, lastError, 'UPSTREAM_REQUEST_ERROR', lastDetails);
     } catch (error) {
       console.error('[Companion Generate Simple] error:', error);
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Companion generation simple failed'
-      });
+      const message = error?.message || 'Companion generation simple failed';
+      if (isCompanionUnavailable(500, message)) {
+        return sendCompanionError(503, 'Companion service temporarily unavailable', 'COMPANION_UNAVAILABLE', {
+          message
+        });
+      }
+      return sendCompanionError(500, message, 'INTERNAL_ERROR');
     }
   });
 
@@ -1442,54 +1508,89 @@ module.exports = function(app) {
         return res.status(500).json({ error: 'Fish Audio API key not configured' });
       }
 
-      console.log(`[Fish Audio] 通过Render代理: ${proxyUrl}`);
-
-      const postData = JSON.stringify(req.body);
-
-      // 解析代理URL
+            const postData = JSON.stringify(req.body);
       const proxyUrlObj = new URL(proxyUrl);
 
-      const options = {
-        hostname: proxyUrlObj.hostname,
-        path: '/v1/tts',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(postData)
-        },
-        timeout: 120000  // 增加到120秒（Render冷启动需要时间）
-      };
+      // Helper: send TTS request with configurable timeout
+      const sendTTSRequest = (timeoutMs) => {
+        return new Promise((resolve, reject) => {
+          const chunks = [];
+          const options = {
+            hostname: proxyUrlObj.hostname,
+            path: '/v1/tts',
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': Buffer.byteLength(postData)
+            },
+            timeout: timeoutMs
+          };
 
-      const fishResponse = await new Promise((resolve, reject) => {
-        const chunks = [];
-
-        const apiReq = https.request(options, (apiRes) => {
-          apiRes.on('data', (chunk) => chunks.push(chunk));
-          apiRes.on('end', () => {
-            resolve({
-              statusCode: apiRes.statusCode,
-              headers: apiRes.headers,
-              body: Buffer.concat(chunks)
+          const apiReq = https.request(options, (apiRes) => {
+            apiRes.on('data', (chunk) => chunks.push(chunk));
+            apiRes.on('end', () => {
+              resolve({
+                statusCode: apiRes.statusCode,
+                headers: apiRes.headers,
+                body: Buffer.concat(chunks)
+              });
             });
           });
-        });
 
-        apiReq.on('error', reject);
-        apiReq.on('timeout', () => {
-          apiReq.destroy();
-          reject(new Error('Fish Audio璇锋眰瓒呮椂'));
-        });
+          apiReq.on('error', reject);
+          apiReq.on('timeout', () => {
+            apiReq.destroy();
+            reject(new Error('TIMEOUT'));
+          });
 
-        apiReq.write(postData);
-        apiReq.end();
-      });
+          apiReq.write(postData);
+          apiReq.end();
+        });
+      };
+
+      // Helper: warm up Render proxy (wake from cold start)
+      const warmUp = () => {
+        return new Promise((resolve) => {
+          const pingReq = https.request({
+            hostname: proxyUrlObj.hostname,
+            path: '/',
+            method: 'GET',
+            timeout: 60000
+          }, (pingRes) => {
+            pingRes.on('data', () => {});
+            pingRes.on('end', () => resolve(true));
+          });
+          pingReq.on('error', () => resolve(false));
+          pingReq.on('timeout', () => { pingReq.destroy(); resolve(false); });
+          pingReq.end();
+        });
+      };
+
+      console.log('[Fish Audio] Attempt 1 - proxy:', proxyUrl);
+
+      let fishResponse;
+      try {
+        fishResponse = await sendTTSRequest(90000);
+      } catch (err1) {
+        if (err1.message === 'TIMEOUT') {
+          console.log('[Fish Audio] Attempt 1 timed out, warming up Render...');
+          await warmUp();
+          console.log('[Fish Audio] Attempt 2 - retrying after warm-up');
+          fishResponse = await sendTTSRequest(120000);
+        } else {
+          throw err1;
+        }
+      }
 
       res.setHeader('Content-Type', fishResponse.headers['content-type'] || 'audio/mpeg');
       res.status(fishResponse.statusCode).send(fishResponse.body);
 
     } catch (error) {
-      console.error('[Fish Audio TTS] 閿欒:', error);
-      res.status(500).json({ error: error.message });
+      console.error('[Fish Audio TTS] Error:', error.message || error);
+      const msg = error.message === 'TIMEOUT'
+        ? 'Fish Audio service temporarily unavailable, please retry'
+        : (error.message || 'Fish Audio request failed');
+      res.status(500).json({ error: msg });
     }
   });
 
@@ -1561,7 +1662,7 @@ module.exports = function(app) {
       }
 
       const { endpoint, method, body: reqBody, customHeaders } = req.body;
-      const postData = JSON.stringify(reqBody);
+      const postData = JSON.stringify(reqBody || {});
 
       const options = {
         hostname: 'api.deepseek.com',

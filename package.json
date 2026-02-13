@@ -11,6 +11,7 @@
     "server": "node server.js",
     "start": "npm run build && npm run server",
     "dev:all": "concurrently \"npm run dev\" \"node server.js\"",
+    "smoke:deploy": "node tools/deploy-smoke.js --base https://www.fudaiai.com",
     "loadtest:health": "node tools/loadtest-smoke.js --path /api/health --concurrency 20 --duration 180",
     "loadtest:order": "node tools/loadtest-smoke.js --path /api/payment/create-order --method POST --concurrency 20 --duration 180 --body \"{\\\"visitorId\\\":\\\"lt_user\\\",\\\"packageId\\\":\\\"starter\\\"}\"",
     "loadtest:order-status": "node tools/loadtest-smoke.js --path /api/payment/order-status/ord_dummy --concurrency 20 --duration 180"
@@ -51,6 +52,7 @@
     "react-draggable": "^4.5.0",
     "react-router-dom": "^7.11.0",
     "react-zoom-pan-pinch": "^3.7.0",
+    "sharp": "^0.34.5",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
     "uuid": "^13.0.0",

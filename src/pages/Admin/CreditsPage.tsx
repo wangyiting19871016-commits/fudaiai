@@ -65,7 +65,8 @@ const AdminCreditsPage: React.FC = () => {
       }
 
       const response = await fetch(`${API_BASE}/api/admin/credits/codes`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store'
       });
 
       if (response.status === 401) {
@@ -95,7 +96,8 @@ const AdminCreditsPage: React.FC = () => {
     try {
       const token = getToken();
       const res = await fetch(`${API_BASE}/api/admin/credits/user/${encodeURIComponent(directVisitorId.trim())}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store'
       });
       const data = await res.json();
       if (res.ok) {

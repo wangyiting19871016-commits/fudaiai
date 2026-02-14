@@ -1536,7 +1536,7 @@ app.post('/api/video/compose', express.json({ limit: '50mb' }), async (req, res)
 
         // 杩斿洖涓嬭浇閾炬帴锛堜娇鐢ㄨ姹傛潵婧愭瀯寤篣RL锛屽吋瀹圭Щ鍔ㄧ灞€鍩熺綉璁块棶锛?
         const reqOrigin = getRequestOrigin(req);
-        const downloadUrl = `${reqOrigin}/downloads/${outputFileName}`;
+        const downloadUrl = `${reqOrigin}/api/downloads/${outputFileName}`;
         res.json({
           status: 'success',
           message: '瑙嗛鍚堟垚瀹屾垚',
@@ -1871,7 +1871,7 @@ app.post(['/api/video/post-process', '/api/video/burn-subtitle'], express.json({
 
         // 浣跨敤璇锋眰鏉ユ簮鏋勫缓URL锛屽吋瀹圭Щ鍔ㄧ灞€鍩熺綉璁块棶
         const reqOrigin = getRequestOrigin(req);
-        const downloadUrl = `${reqOrigin}/downloads/${outputFileName}`;
+        const downloadUrl = `${reqOrigin}/api/downloads/${outputFileName}`;
         res.json({
           status: 'success',
           message: '瀛楀箷鐑у綍瀹屾垚',
@@ -2798,6 +2798,7 @@ app.get('/api/media/proxy', async (req, res) => {
 
 // 娣诲姞涓嬭浇璺敱
 app.use('/downloads', express.static(path.join(__dirname, 'downloads')));
+app.use('/api/downloads', express.static(path.join(__dirname, 'downloads')));
 
 // 娣诲姞涓存椂澶勭悊鐩綍鐨勯潤鎬佽祫婧愭槧灏?
 app.use('/temp_processing', express.static(path.join(__dirname, 'temp_processing')));

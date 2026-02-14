@@ -18,14 +18,14 @@ export const API_VAULT = {
     DEFAULT_ENDPOINT: '/images/generations'
   },
   LIBLIB: {
-    // ✅ 改为通过后端代理调用
-    PROXY_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002',
+    // ✅ 使用相对路径，由 Vite 代理转发到后端（兼容移动端局域网访问）
+    PROXY_BASE_URL: '',
     PROXY_TEXT2IMG: '/api/liblib/text2img',
     PROXY_QUERY: '/api/liblib/query'
   },
   FISH_AUDIO: {
-    // ✅ 改为通过后端代理调用
-    PROXY_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002',
+    // ✅ 使用相对路径，由 Vite 代理转发到后端（兼容移动端局域网访问）
+    PROXY_BASE_URL: '',
     PROXY_TTS: '/api/fish/tts'
   },
   QWEN: {

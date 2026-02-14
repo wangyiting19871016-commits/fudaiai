@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import { BackButton } from '../../components/BackButton';
@@ -13,6 +13,7 @@ import '../../styles/festival-companion.css';
 
 const STORAGE_KEY = 'festival_companion_input_image';
 const RESULT_KEY = 'festival_companion_result';
+const AUTO_DEFAULT_COMPANION_IMAGE_ID = 'material_companion_autosave_default';
 
 type CompanionRuntimeState = {
   inputImage?: string;
@@ -73,6 +74,7 @@ const CompanionResultPage: React.FC = () => {
   const navigate = useNavigate();
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const autoSavedImageRef = useRef<string>('');
 
   const result = useMemo(() => readCompanionResult(), []);
   const sourceImage = result?.sourceImage || readCompanionInputImage() || '';
@@ -98,6 +100,29 @@ const CompanionResultPage: React.FC = () => {
       }
     };
   }, [resultImage, sourceImage]);
+
+  // 默认自动保存到我的作品（仅保留一张默认伴侣图，新生成会覆盖）
+  useEffect(() => {
+    if (!currentMaterial?.data?.url) return;
+    const imageUrl = currentMaterial.data.url;
+    if (autoSavedImageRef.current === imageUrl) return;
+
+    try {
+      MaterialService.saveMaterial({
+        ...currentMaterial,
+        id: AUTO_DEFAULT_COMPANION_IMAGE_ID,
+        metadata: {
+          ...currentMaterial.metadata,
+          autoSavedDefault: true,
+          autoSaveBucket: 'festival-companion-default',
+          autoSavedAt: Date.now(),
+        },
+      });
+      autoSavedImageRef.current = imageUrl;
+    } catch (error) {
+      console.error('[CompanionResult] 默认自动保存失败:', error);
+    }
+  }, [currentMaterial]);
 
   const handleSaveMaterial = () => {
     if (!currentMaterial) return;

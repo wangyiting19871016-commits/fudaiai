@@ -6,6 +6,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getVisitorId, initVisitor } from '../utils/visitorId';
+import { getBackendBaseUrl } from '../utils/backendBase';
 
 // Local testing credit switches (DEV only):
 // VITE_CREDIT_TEST_MODE=bootstrap | unlimited | off
@@ -99,12 +100,12 @@ function createInitialState(): CreditData {
     ? CREDIT_BOOTSTRAP
     : ENABLE_BOOTSTRAP_CREDITS
       ? CREDIT_BOOTSTRAP
-      : 10000; // 测试阶段改为10000积分
+      : 100; // 新用户赠送100积分体验
   const initialDescription = ENABLE_UNLIMITED_CREDITS
     ? `🧪 本地测试：无限积分模式（初始 ${initialCredits}）`
     : ENABLE_BOOTSTRAP_CREDITS
       ? `🧪 本地测试：预设积分 ${initialCredits}`
-      : '🎁 新春礼包：赠送10000积分体验';
+      : '🎁 新用户礼包：赠送100积分体验';
 
   return {
     credits: initialCredits,
@@ -345,3 +346,127 @@ export const useCreditActions = () => ({
   checkCredits: useCreditStore((state) => state.checkCredits),
   getTransactionHistory: useCreditStore((state) => state.getTransactionHistory),
 });
+
+// ========== 服务端积分 API ==========
+
+const API_BASE = getBackendBaseUrl();
+
+/**
+ * 从服务端同步积分余额到本地
+ */
+export async function syncCreditsFromServer(): Promise<void> {
+  const visitorId = getVisitorId();
+  if (!visitorId) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/balance/${visitorId}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.success && typeof data.balance === 'number') {
+      useCreditStore.setState((state) => ({
+        creditData: {
+          ...state.creditData,
+          credits: data.balance,
+          totalRecharged: data.totalRecharged ?? state.creditData.totalRecharged,
+          totalConsumed: data.totalConsumed ?? state.creditData.totalConsumed,
+        },
+      }));
+    }
+  } catch {
+    // 离线模式：使用本地缓存
+  }
+}
+
+/**
+ * 迁移本地积分到服务端（首次同步）
+ */
+export async function migrateLocalCreditsToServer(): Promise<void> {
+  const visitorId = getVisitorId();
+  if (!visitorId) return;
+  try {
+    const { credits } = useCreditStore.getState().creditData;
+    const res = await fetch(`${API_BASE}/api/credits/migrate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visitorId, localCredits: credits }),
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.success && typeof data.balance === 'number') {
+      useCreditStore.setState((state) => ({
+        creditData: { ...state.creditData, credits: data.balance },
+      }));
+    }
+  } catch {
+    // 离线模式
+  }
+}
+
+/**
+ * 服务端扣减积分（优先服务端，失败回退本地）
+ */
+export async function consumeCreditsServer(
+  amount: number,
+  featureId: string,
+  description: string
+): Promise<boolean> {
+  if (ENABLE_UNLIMITED_CREDITS) return true;
+
+  const visitorId = getVisitorId();
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/consume`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visitorId, amount, featureId, description }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      useCreditStore.setState((state) => ({
+        creditData: {
+          ...state.creditData,
+          credits: data.newBalance,
+          totalConsumed: state.creditData.totalConsumed + amount,
+          transactions: limitTransactions([
+            ...state.creditData.transactions,
+            {
+              id: data.transactionId || generateTransactionId(),
+              type: TransactionType.CONSUME,
+              amount: -amount,
+              balance: data.newBalance,
+              description,
+              featureId,
+              createdAt: Date.now(),
+            },
+          ]),
+        },
+      }));
+      return true;
+    }
+    return false;
+  } catch {
+    // 服务端不可用，回退到本地扣减
+    const { consumeCredits } = useCreditStore.getState();
+    return consumeCredits(amount, featureId, description);
+  }
+}
+
+/**
+ * 服务端退款积分
+ */
+export async function refundCreditsServer(
+  amount: number,
+  description: string
+): Promise<void> {
+  const visitorId = getVisitorId();
+  try {
+    await fetch(`${API_BASE}/api/credits/refund`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visitorId, amount, description }),
+    });
+  } catch {
+    // ignore server error
+  }
+  // 同时更新本地
+  const { refundCredits } = useCreditStore.getState();
+  refundCredits(amount, `refund_${Date.now()}`, description);
+}

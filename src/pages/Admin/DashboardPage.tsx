@@ -34,6 +34,8 @@ const AdminDashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [showPwdModal, setShowPwdModal] = useState(false);
+  const [pwdForm, setPwdForm] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
 
   // 获取统计数据
   const fetchStats = async () => {
@@ -82,6 +84,43 @@ const AdminDashboardPage: React.FC = () => {
     };
   }, [autoRefresh]);
 
+  const handleChangePassword = async () => {
+    const { oldPassword, newPassword, confirmPassword } = pwdForm;
+    if (!oldPassword || !newPassword) {
+      message.error('请填写完整');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      message.error('两次输入的新密码不一致');
+      return;
+    }
+    if (newPassword.length < 6) {
+      message.error('新密码至少6位');
+      return;
+    }
+    try {
+      const token = localStorage.getItem('admin_token');
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+      const res = await fetch(`${API_BASE}/api/admin/change-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ oldPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        message.success('密码修改成功，请重新登录');
+        setShowPwdModal(false);
+        setPwdForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
+        localStorage.removeItem('admin_token');
+        navigate('/admin/login');
+      } else {
+        message.error(data.error || '修改失败');
+      }
+    } catch {
+      message.error('网络错误');
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_username');
@@ -113,6 +152,18 @@ const AdminDashboardPage: React.FC = () => {
           </button>
           <button onClick={() => navigate('/admin/api-logs')}>
             📝 API日志
+          </button>
+          <button onClick={() => navigate('/admin/credits')}>
+            🎁 积分管理
+          </button>
+          <button onClick={() => navigate('/admin/qrcode')}>
+            📱 推广二维码
+          </button>
+          <button onClick={() => navigate('/admin/feedback')}>
+            💬 用户反馈
+          </button>
+          <button onClick={() => setShowPwdModal(true)} className="action-btn" style={{ fontSize: '13px' }}>
+            🔑 改密码
           </button>
           <button onClick={handleLogout} className="logout-btn">
             退出登录
@@ -249,6 +300,42 @@ const AdminDashboardPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* 修改密码弹窗 */}
+      {showPwdModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+          <div style={{ background: '#fff', borderRadius: 12, padding: 24, width: 360, maxWidth: '90vw' }}>
+            <h3 style={{ margin: '0 0 16px', fontSize: 18 }}>修改管理员密码</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <input
+                type="password"
+                placeholder="当前密码"
+                value={pwdForm.oldPassword}
+                onChange={(e) => setPwdForm({ ...pwdForm, oldPassword: e.target.value })}
+                style={{ padding: '8px 12px', border: '1px solid #ddd', borderRadius: 6, fontSize: 14 }}
+              />
+              <input
+                type="password"
+                placeholder="新密码（至少6位）"
+                value={pwdForm.newPassword}
+                onChange={(e) => setPwdForm({ ...pwdForm, newPassword: e.target.value })}
+                style={{ padding: '8px 12px', border: '1px solid #ddd', borderRadius: 6, fontSize: 14 }}
+              />
+              <input
+                type="password"
+                placeholder="确认新密码"
+                value={pwdForm.confirmPassword}
+                onChange={(e) => setPwdForm({ ...pwdForm, confirmPassword: e.target.value })}
+                style={{ padding: '8px 12px', border: '1px solid #ddd', borderRadius: 6, fontSize: 14 }}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 16, justifyContent: 'flex-end' }}>
+              <button onClick={() => { setShowPwdModal(false); setPwdForm({ oldPassword: '', newPassword: '', confirmPassword: '' }); }} style={{ padding: '8px 16px', border: '1px solid #ddd', borderRadius: 6, background: '#fff', cursor: 'pointer' }}>取消</button>
+              <button onClick={handleChangePassword} style={{ padding: '8px 16px', border: 'none', borderRadius: 6, background: '#1890ff', color: '#fff', cursor: 'pointer' }}>确认修改</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -3,7 +3,8 @@
  * 自动在HTTP请求头中发送访客信息
  */
 
-import { getVisitorData } from './visitorId';
+import { getVisitorData, getChannel } from './visitorId';
+import { getBackendBaseUrl } from './backendBase';
 
 /**
  * 初始化分析拦截器
@@ -24,10 +25,12 @@ export function initAnalyticsInterceptor() {
 
       // 添加访客信息到请求头
       headers.set('X-Visitor-Id', visitorData.id);
+      headers.set('X-Visitor-Channel', getChannel());
       headers.set(
         'X-Visitor-Data',
         encodeURIComponent(JSON.stringify({
           createdAt: visitorData.createdAt,
+          channel: getChannel(),
           deviceInfo: visitorData.deviceInfo
         }))
       );
@@ -57,7 +60,7 @@ export function trackPageView(path: string) {
   if (!visitorData) return;
 
   // 通过Image请求发送（不阻塞主流程）
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+  const API_BASE = getBackendBaseUrl();
   const img = new Image();
   img.src = `${API_BASE}/api/track/pageview?visitorId=${visitorData.id}&path=${encodeURIComponent(path)}&ts=${Date.now()}`;
 }
@@ -69,7 +72,7 @@ export function trackFeature(featureId: string, featureName: string) {
   const visitorData = getVisitorData();
   if (!visitorData) return;
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+  const API_BASE = getBackendBaseUrl();
   const img = new Image();
   img.src = `${API_BASE}/api/track/feature?visitorId=${visitorData.id}&featureId=${featureId}&featureName=${encodeURIComponent(featureName)}&ts=${Date.now()}`;
 }

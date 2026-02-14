@@ -32,6 +32,23 @@ interface SessionData {
 
 class SessionMaterialManagerClass {
   private readonly STORAGE_KEY = 'festival_session_materials';
+  private readonly SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+  private readonly MATERIAL_TTL_MS = 12 * 60 * 60 * 1000;
+
+  private isTempMaterialExpired(material?: TempMaterial): boolean {
+    if (!material) return false;
+    const createdAt = Number(material.createdAt || 0);
+    if (!createdAt) return false;
+    return Date.now() - createdAt > this.MATERIAL_TTL_MS;
+  }
+
+  private purgeExpiredMaterials(sessionData: SessionData): SessionData {
+    const next = { ...sessionData };
+    if (this.isTempMaterialExpired(next.tempText)) delete next.tempText;
+    if (this.isTempMaterialExpired(next.tempAudio)) delete next.tempAudio;
+    if (this.isTempMaterialExpired(next.tempImage)) delete next.tempImage;
+    return next;
+  }
 
   /**
    * 获取会话数据
@@ -39,7 +56,15 @@ class SessionMaterialManagerClass {
   private getSessionData(): SessionData {
     try {
       const data = sessionStorage.getItem(this.STORAGE_KEY);
-      return data ? JSON.parse(data) : {};
+      if (!data) return {};
+      const parsed = JSON.parse(data) as SessionData;
+      const lastUpdated = Number(parsed?.lastUpdated || 0);
+      if (lastUpdated > 0 && Date.now() - lastUpdated > this.SESSION_TTL_MS) {
+        sessionStorage.removeItem(this.STORAGE_KEY);
+        return {};
+      }
+      const normalized = this.purgeExpiredMaterials(parsed);
+      return normalized;
     } catch (error) {
       console.error('Failed to read session data:', error);
       return {};

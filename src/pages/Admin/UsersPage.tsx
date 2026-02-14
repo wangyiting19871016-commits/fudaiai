@@ -99,6 +99,15 @@ const AdminUsersPage: React.FC = () => {
           <button onClick={() => navigate('/admin/api-logs')}>
             📝 API日志
           </button>
+          <button onClick={() => navigate('/admin/credits')}>
+            🎁 积分管理
+          </button>
+          <button onClick={() => navigate('/admin/qrcode')}>
+            📱 推广二维码
+          </button>
+          <button onClick={() => navigate('/admin/feedback')}>
+            💬 用户反馈
+          </button>
           <button onClick={handleLogout} className="logout-btn">
             退出登录
           </button>

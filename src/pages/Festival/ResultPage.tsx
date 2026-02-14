@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import { MissionExecutor, MissionResult } from '../../services/MissionExecutor';
@@ -25,6 +25,7 @@ import '../../styles/festival-result-glass.css';
  */
 
 const FestivalResultPage: React.FC = () => {
+  const AUTO_DEFAULT_IMAGE_ID = 'material_image_autosave_default';
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
   const [result, setResult] = useState<MissionResult | null>(null);
@@ -38,6 +39,7 @@ const FestivalResultPage: React.FC = () => {
   const [showDownloadModal, setShowDownloadModal] = useState(false); // 显示下载引导
   const [showAdvancedEditor, setShowAdvancedEditor] = useState(false); // 显示高级编辑器
   const [editedImage, setEditedImage] = useState<string>(''); // 编辑后的图片
+  const autoSavedImageRef = useRef<string>('');
 
   useEffect(() => {
     // 自动清理过期任务（7天前的）
@@ -103,6 +105,29 @@ const FestivalResultPage: React.FC = () => {
 
     setCurrentMaterial(material);
   }, [result, imageLoaded]);
+
+  // 默认自动保存到我的作品（仅保留一张默认图，新生成会覆盖）
+  useEffect(() => {
+    if (!currentMaterial?.data?.url) return;
+    const imageUrl = currentMaterial.data.url;
+    if (autoSavedImageRef.current === imageUrl) return;
+
+    try {
+      MaterialService.saveMaterial({
+        ...currentMaterial,
+        id: AUTO_DEFAULT_IMAGE_ID,
+        metadata: {
+          ...currentMaterial.metadata,
+          autoSavedDefault: true,
+          autoSaveBucket: 'festival-image-default',
+          autoSavedAt: Date.now(),
+        },
+      });
+      autoSavedImageRef.current = imageUrl;
+    } catch (error) {
+      console.error('[ResultPage] 默认自动保存失败:', error);
+    }
+  }, [currentMaterial, AUTO_DEFAULT_IMAGE_ID]);
 
   // 获取功能名称（显示用）
   const getFeatureName = (featureId?: string): string => {

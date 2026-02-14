@@ -4,10 +4,100 @@ import path from 'path'
 import crypto from 'crypto'
 const COS = require('cos-nodejs-sdk-v5')
 
-// 手动加载.env文件（用于middleware）
-require('dotenv').config()
+// COS上传中间件 — 在Vite层直接处理，绕过proxy响应体重复问题
+function cosUploadMiddleware() {
+  const bucket = process.env.VITE_TENCENT_COS_BUCKET || 'fudaiai-1400086527';
+  const region = process.env.VITE_TENCENT_COS_REGION || 'ap-shanghai';
+  const secretId = process.env.VITE_TENCENT_COS_SECRET_ID;
+  const secretKey = process.env.VITE_TENCENT_COS_SECRET_KEY;
 
-// COS上传已移至后端server.js，通过/api/upload-cos代理访问
+  console.log('[COS Middleware] 初始化:', { bucket, region, hasKeys: !!(secretId && secretKey) });
+
+  return {
+    name: 'cos-upload-middleware',
+    configureServer(server: any) {
+      server.middlewares.use('/api/upload-cos', async (req: any, res: any) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405;
+          res.end('Method Not Allowed');
+          return;
+        }
+
+        let body = '';
+        let processed = false;
+
+        req.on('data', (chunk: any) => { body += chunk.toString(); });
+        req.on('end', async () => {
+          if (processed) return;
+          processed = true;
+
+          try {
+            const { image, type, format } = JSON.parse(body);
+            if (!image) {
+              res.statusCode = 400;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: 'Missing image data' }));
+              return;
+            }
+
+            if (!secretId || !secretKey) {
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: 'COS密钥未配置' }));
+              return;
+            }
+
+            const cos = new COS({ SecretId: secretId, SecretKey: secretKey });
+
+            // 支持图片和音频
+            let base64Data: string;
+            let fileExtension: string;
+            if (type === 'audio') {
+              base64Data = image.replace(/^data:audio\/\w+;base64,/, '');
+              fileExtension = format || 'mp3';
+            } else {
+              base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+              fileExtension = 'jpg';
+            }
+
+            const buffer = Buffer.from(base64Data, 'base64');
+            const fileName = `festival/user/${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExtension}`;
+
+            console.log('[COS Middleware] 上传:', fileName, '类型:', type || 'image', '大小:', buffer.length);
+
+            cos.putObject(
+              { Bucket: bucket, Region: region, Key: fileName, Body: buffer, ACL: 'public-read' },
+              (err: any, data: any) => {
+                if (res.writableEnded) return;
+
+                if (err) {
+                  console.error('[COS Middleware] 上传失败:', err.message);
+                  res.statusCode = 500;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ error: err.message }));
+                  return;
+                }
+
+                const url = `https://${bucket}.cos.${region}.myqcloud.com/${fileName}`;
+                console.log('[COS Middleware] 上传成功:', url);
+
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.setHeader('Cache-Control', 'no-store');
+                res.end(JSON.stringify({ url }));
+              }
+            );
+          } catch (error: any) {
+            if (res.writableEnded) return;
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: error.message }));
+          }
+        });
+      });
+    }
+  };
+}
 
 // LiblibAI签名中间件（内联版本）
 function signMiddleware() {
@@ -62,9 +152,26 @@ function signMiddleware() {
 export default defineConfig(({ mode }) => {
   // 加载环境变量
   const env = loadEnv(mode, process.cwd(), '')
+  Object.assign(process.env, env)
+
+  if (mode === 'production') {
+    const viteApiBase = String(env.VITE_API_BASE_URL || '').trim()
+    const blocked =
+      !viteApiBase ||
+      !viteApiBase.startsWith('https://') ||
+      /localhost|127\.0\.0\.\d|192\.168\.\d|10\.\d{1,3}\.\d|172\.(1[6-9]|2\d|3[01])\./.test(viteApiBase)
+    if (blocked) {
+      console.error('\n❌ [构建校验] VITE_API_BASE_URL 不合规:')
+      console.error(`   当前值: "${viteApiBase}"`)
+      console.error('   生产构建要求: 必须是 HTTPS 线上域名，禁止 localhost / 内网地址')
+      console.error('   示例: https://www.fudaiai.com')
+      console.error('   请检查 .env.production 文件\n')
+      process.exit(1)
+    }
+  }
 
   return {
-    plugins: [react(), signMiddleware()], // 移除cosUploadMiddleware，改用后端
+    plugins: [react(), cosUploadMiddleware(), signMiddleware()],
     root: './',
     resolve: {
       alias: {
@@ -74,6 +181,8 @@ export default defineConfig(({ mode }) => {
     // 确保环境变量正确注入到客户端代码
     define: {
       'import.meta.env.VITE_API_BASE_URL': JSON.stringify(env.VITE_API_BASE_URL),
+      'import.meta.env.VITE_CREDIT_ENFORCE': JSON.stringify(env.VITE_CREDIT_ENFORCE || 'off'),
+      'import.meta.env.VITE_CREDIT_TEST_MODE': JSON.stringify(env.VITE_CREDIT_TEST_MODE || 'off'),
     },
     worker: {
       format: 'es',
@@ -110,24 +219,50 @@ export default defineConfig(({ mode }) => {
     server: {
       host: '0.0.0.0',  // 允许局域网访问
       proxy: {
-        // 图片/音频上传代理到后端（避免Vite中间件的响应重复问题）
         '/api/upload-cos': {
-          target: 'http://localhost:3002',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
-          secure: false
+          secure: false,
+          selfHandleResponse: true,
+          configure: (proxy: any) => {
+            proxy.on('proxyRes', (proxyRes: any, req: any, res: any) => {
+              const chunks: Buffer[] = [];
+              proxyRes.on('data', (chunk: Buffer) => chunks.push(chunk));
+              proxyRes.on('end', () => {
+                const raw = Buffer.concat(chunks).toString('utf8');
+                // 提取干净URL：找第一个https://到下一个引号
+                const idx = raw.indexOf('https://');
+                let cleaned = raw;
+                if (idx >= 0) {
+                  const quote = raw.indexOf('"', idx);
+                  const cleanUrl = quote > idx ? raw.substring(idx, quote) : raw.substring(idx);
+                  // 检查URL内是否包含第二个https://（重复标志）
+                  const second = cleanUrl.indexOf('https://', 8);
+                  const finalUrl = second > 0 ? cleanUrl.substring(0, second) : cleanUrl;
+                  cleaned = JSON.stringify({ url: finalUrl });
+                }
+                res.writeHead(proxyRes.statusCode || 200, {
+                  'Content-Type': 'application/json',
+                  'Cache-Control': 'no-store',
+                  'Content-Length': Buffer.byteLength(cleaned)
+                });
+                res.end(cleaned);
+              });
+            });
+          }
         },
         '/api/companion': {
-          target: 'http://localhost:3002',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
           secure: false
         },
         '/api/kling': {
-          target: 'http://localhost:3002',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
           secure: false
         },
         '/api/dashscope': {
-          target: 'http://localhost:3002',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
           secure: false,
           timeout: 300000,        // 5分钟超时（Qwen-VL处理图片需要时间）
@@ -171,21 +306,11 @@ export default defineConfig(({ mode }) => {
           secure: true
         },
         '/api/liblib': {
-          target: 'https://openapi.liblibai.cloud',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/liblib/, ''),
-          secure: true,
+          secure: false,
           timeout: 600000,
-          proxyTimeout: 600000,
-          configure: (proxy) => {
-            proxy.on('proxyReq', (proxyReq, req, res) => {
-              proxyReq.setHeader('Connection', 'keep-alive');
-            });
-            proxy.on('proxyRes', (proxyRes, req, res) => {
-              res.setHeader('Cache-Control', 'no-cache');
-              res.setHeader('Connection', 'keep-alive');
-            });
-          }
+          proxyTimeout: 600000
         },
         // [FIX] 新增 N1N API 代理（GPT-4o视觉模型）
         '/api/n1n': {
@@ -195,12 +320,43 @@ export default defineConfig(({ mode }) => {
           secure: true
         },
         '/api/fish': {
-          target: 'https://api.fish.audio',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/fish/, ''),
-          secure: true,
+          secure: false,
           timeout: 600000,
           proxyTimeout: 600000
+        },
+        '/api/credits': {
+          target: 'http://127.0.0.1:3002',
+          changeOrigin: true,
+          secure: false
+        },
+        '/api/video': {
+          target: 'http://127.0.0.1:3002',
+          changeOrigin: true,
+          secure: false,
+          timeout: 300000,
+          proxyTimeout: 300000
+        },
+        '/api/track': {
+          target: 'http://127.0.0.1:3002',
+          changeOrigin: true,
+          secure: false
+        },
+        '/api/admin': {
+          target: 'http://127.0.0.1:3002',
+          changeOrigin: true,
+          secure: false
+        },
+        '/api/feedback': {
+          target: 'http://127.0.0.1:3002',
+          changeOrigin: true,
+          secure: false
+        },
+        '/downloads': {
+          target: 'http://127.0.0.1:3002',
+          changeOrigin: true,
+          secure: false
         }
       }
     }

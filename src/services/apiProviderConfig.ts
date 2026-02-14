@@ -7,21 +7,21 @@ export interface ProviderConfig {
   authHeader: (key: string) => Record<string, string>;
 }
 
-// 登记供应商 (已保留硅基流动作为备案)
+// 登记供应商 (密钥已移至后端环境变量，前端不再存储)
 export const PROVIDER_REGISTRY: Record<string, ProviderConfig> = {
   SiliconFlow: {
     baseUrl: "https://api.siliconflow.cn/v1",
-    masterKey: "sk-tpcfhwsckdrngcfeymudxjgnuhxadegbqzjztnakfceutvwy",
+    masterKey: "",
     authHeader: (key) => ({ Authorization: `Bearer ${key}` })
   },
   FishAudio: {
     baseUrl: "https://api.fish.audio/v1",
-    masterKey: "你的_FISH_AUDIO_KEY_此处预留",
+    masterKey: "",
     authHeader: (key) => ({ Authorization: `Bearer ${key}` })
   },
   Gemini: {
     baseUrl: "https://generativelanguage.googleapis.com/v1",
-    masterKey: "AIzaSyAQ6NygEXo0pdJXS7du57rPjUS0T4BBpVc",
+    masterKey: "",
     authHeader: (key) => ({ "x-goog-api-key": key })
   }
 };

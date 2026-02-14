@@ -1,23 +1,31 @@
-// 加载环境变量
-require('dotenv').config();
+// 鍔犺浇鐜鍙橀噺
+// 鐢熶骇鐜浼樺厛璇?.env.production锛堣窡闅?git锛夛紝鍏滃簳璇?.env锛堟湰鍦版墜鍔ㄧ淮鎶わ級
+const path = require('path');
+const fs = require('fs');
+const envProductionPath = path.join(__dirname, '.env.production');
+if (process.env.NODE_ENV === 'production' && fs.existsSync(envProductionPath)) {
+  require('dotenv').config({ path: envProductionPath });
+} else {
+  require('dotenv').config();
+}
 
 const express = require('express');
 const cors = require('cors');
 const { exec } = require('child_process');
-const path = require('path');
 const multer = require('multer');
 const ffmpeg = require('fluent-ffmpeg');
-const fs = require('fs');
 const https = require('https');
 const http = require('http');
-const crypto = require('crypto'); // 🔑 用于LiblibAI签名和支付签名
-const COS = require('cos-nodejs-sdk-v5'); // 腾讯云COS SDK
-const jwt = require('jsonwebtoken'); // JWT用于可灵API鉴权
-const rateLimit = require('express-rate-limit'); // 速率限制
-const adminRoutes = require('./server/adminRoutes'); // 管理后台路由
-// crypto已在上方引入，无需重复声明
-// const db = require('./src/backend/db');  // ⚠️ Zhenji项目模块，暂时注释
-// const { executeTask } = require('./src/backend/executor');  // ⚠️ Zhenji项目模块，暂时注释
+const net = require('net');
+const { Readable } = require('stream');
+const crypto = require('crypto'); // 馃攽 鐢ㄤ簬LiblibAI绛惧悕鍜屾敮浠樼鍚?
+const COS = require('cos-nodejs-sdk-v5'); // 鑵捐浜慍OS SDK
+const jwt = require('jsonwebtoken'); // JWT鐢ㄤ簬鍙伒API閴存潈
+const rateLimit = require('express-rate-limit'); // 閫熺巼闄愬埗
+const adminRoutes = require('./server/adminRoutes'); // 绠＄悊鍚庡彴璺敱
+// crypto宸插湪涓婃柟寮曞叆锛屾棤闇€閲嶅澹版槑
+// const db = require('./src/backend/db');  // 鈿狅笍 Zhenji椤圭洰妯″潡锛屾殏鏃舵敞閲?
+// const { executeTask } = require('./src/backend/executor');  // 鈿狅笍 Zhenji椤圭洰妯″潡锛屾殏鏃舵敞閲?
 
 function normalizeEnvValue(raw) {
   return String(raw || '').trim().replace(/^['"]|['"]$/g, '');
@@ -39,40 +47,40 @@ function readDashscopeApiKey() {
 
   const distinctValues = [...new Set(candidates.map(item => item.value))];
   if (distinctValues.length > 1) {
-    console.warn('[DashScope Config] 检测到多个不同Key，当前按优先级使用:', candidates.map(item => item.name).join(' > '));
+    console.warn('[DashScope Config] 妫€娴嬪埌澶氫釜涓嶅悓Key锛屽綋鍓嶆寜浼樺厛绾т娇鐢?', candidates.map(item => item.name).join(' > '));
   }
 
   return candidates[0].value;
 }
 
-// 物理目录强制补全
+// 鐗╃悊鐩綍寮哄埗琛ュ叏
 const tempDirPath = path.resolve(__dirname, 'temp_processing');
 if (!fs.existsSync(tempDirPath)) {
   fs.mkdirSync(tempDirPath, { recursive: true });
-  console.log('✅ [System] 物理创建 temp_processing 成功');
+  console.log('鉁?[System] 鐗╃悊鍒涘缓 temp_processing 鎴愬姛');
 }
 
-// 强制绝对路径锁定
+// 寮哄埗缁濆璺緞閿佸畾
 const absoluteTempDir = path.resolve(__dirname, 'temp_processing').replace(/\\/g, '/');
-// 强制确保物理目录存在
+// 寮哄埗纭繚鐗╃悊鐩綍瀛樺湪
 if (!fs.existsSync(absoluteTempDir)) {
   fs.mkdirSync(absoluteTempDir, { recursive: true });
 }
-console.log(`✅ 物理保存路径已锁定: ${absoluteTempDir}`);
+console.log(`鉁?鐗╃悊淇濆瓨璺緞宸查攣瀹? ${absoluteTempDir}`);
 
-// 确保下载目录存在
+// 纭繚涓嬭浇鐩綍瀛樺湪
 const downloadDir = path.join(__dirname, 'downloads');
 fs.mkdirSync(downloadDir, { recursive: true });
-console.log(`✅ 下载目录已初始化: ${downloadDir}`);
+console.log(`鉁?涓嬭浇鐩綍宸插垵濮嬪寲: ${downloadDir}`);
 
-// 统一物理路径：使用 diskStorage 直接存储到 temp_processing 目录
+// 缁熶竴鐗╃悊璺緞锛氫娇鐢?diskStorage 鐩存帴瀛樺偍鍒?temp_processing 鐩綍
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // 强制使用绝对路径，不产生任何名为 uploads 的子文件夹
+    // 寮哄埗浣跨敤缁濆璺緞锛屼笉浜х敓浠讳綍鍚嶄负 uploads 鐨勫瓙鏂囦欢澶?
     cb(null, absoluteTempDir);
   },
   filename: (req, file, cb) => {
-    // 使用 -blob 结尾的文件名，便于识别
+    // 浣跨敤 -blob 缁撳熬鐨勬枃浠跺悕锛屼究浜庤瘑鍒?
     cb(null, Date.now() + '-blob.webm');
   }
 });
@@ -80,11 +88,11 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: 100 * 1024 * 1024, // 100MB限制
-    files: 1 // 单次只允许上传1个文件
+    fileSize: 100 * 1024 * 1024, // 100MB闄愬埗
+    files: 1 // 鍗曟鍙厑璁镐笂浼?涓枃浠?
   },
   fileFilter: (req, file, cb) => {
-    // 允许的文件类型
+    // 鍏佽鐨勬枃浠剁被鍨?
     const allowedMimes = [
       'video/webm',
       'video/mp4',
@@ -99,17 +107,18 @@ const upload = multer({
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error(`不支持的文件类型: ${file.mimetype}`), false);
+      cb(new Error(`涓嶆敮鎸佺殑鏂囦欢绫诲瀷: ${file.mimetype}`), false);
     }
   },
-  // 捕获 Multer 错误
+  // 鎹曡幏 Multer 閿欒
   onError: (err, req, res, next) => {
-    console.error(`🚨 [CRITICAL]: 文件写入物理失败，原因: ${err.message}`);
+    console.error(`馃毃 [CRITICAL]: 鏂囦欢鍐欏叆鐗╃悊澶辫触锛屽師鍥? ${err.message}`);
     next(err);
   }
 });
 
 const app = express();
+app.set('trust proxy', true);
 const PORT = process.env.PORT || 3002;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const ENABLE_REQUEST_LOG = process.env.ENABLE_REQUEST_LOG === 'true' || !IS_PRODUCTION;
@@ -121,7 +130,9 @@ const defaultDevOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'http://127.0.0.1:5173',
-  'http://127.0.0.1:5174'
+  'http://127.0.0.1:5174',
+  'http://192.168.2.2:5173',
+  'http://192.168.2.2:5174'
 ];
 const envCorsOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
   .split(',')
@@ -136,27 +147,27 @@ function validateRuntimeConfig() {
   const softWarnings = [];
 
   if (getDashscopeKeyCandidates().length === 0) {
-    hardErrors.push('缺少 DashScope Key（DASHSCOPE_API_KEY / QWEN_API_KEY / VITE_DASHSCOPE_API_KEY）');
+    hardErrors.push('Missing DashScope Key: DASHSCOPE_API_KEY / QWEN_API_KEY / VITE_DASHSCOPE_API_KEY');
   }
 
   if (!normalizeEnvValue(process.env.LIBLIB_ACCESS_KEY) || !normalizeEnvValue(process.env.LIBLIB_SECRET_KEY)) {
-    hardErrors.push('缺少 LiblibAI 密钥（LIBLIB_ACCESS_KEY / LIBLIB_SECRET_KEY）');
+    hardErrors.push('Missing LiblibAI keys: LIBLIB_ACCESS_KEY / LIBLIB_SECRET_KEY');
   }
 
   if (!normalizeEnvValue(process.env.FISH_AUDIO_API_KEY)) {
-    softWarnings.push('缺少 FISH_AUDIO_API_KEY（语音功能将不可用）');
+    softWarnings.push('缂哄皯 FISH_AUDIO_API_KEY锛堣闊冲姛鑳藉皢涓嶅彲鐢級');
   }
 
   if (!normalizeEnvValue(process.env.VITE_TENCENT_COS_SECRET_ID) || !normalizeEnvValue(process.env.VITE_TENCENT_COS_SECRET_KEY)) {
-    hardErrors.push('缺少 COS 密钥（VITE_TENCENT_COS_SECRET_ID / VITE_TENCENT_COS_SECRET_KEY）');
+    hardErrors.push('Missing COS keys: VITE_TENCENT_COS_SECRET_ID / VITE_TENCENT_COS_SECRET_KEY');
   }
 
   if (IS_PRODUCTION && allowedOrigins.length === 0) {
-    hardErrors.push('生产环境未配置 CORS_ALLOWED_ORIGINS');
+    hardErrors.push('鐢熶骇鐜鏈厤缃?CORS_ALLOWED_ORIGINS');
   }
 
   if (!normalizeEnvValue(process.env.HUPIJIAO_APP_ID) || !normalizeEnvValue(process.env.HUPIJIAO_APP_SECRET)) {
-    softWarnings.push('缺少虎皮椒支付密钥（支付功能将不可用）');
+    softWarnings.push('Missing HUPIJIAO_APP_ID/HUPIJIAO_APP_SECRET (payment may be unavailable)');
   }
 
   if (softWarnings.length > 0) {
@@ -166,10 +177,10 @@ function validateRuntimeConfig() {
   if (hardErrors.length > 0) {
     hardErrors.forEach((message) => console.error(`[Config Error] ${message}`));
     if (IS_PRODUCTION) {
-      console.error('[Config Error] 生产环境配置不完整，服务终止启动');
+      console.error('[Config Error] 鐢熶骇鐜閰嶇疆涓嶅畬鏁达紝鏈嶅姟缁堟鍚姩');
       process.exit(1);
     } else {
-      console.warn('[Config Warning] 开发环境继续运行（建议尽快修复上述配置）');
+      console.warn('[Config Warning] Development mode continues with incomplete config');
     }
   }
 }
@@ -181,21 +192,21 @@ function sanitizeSegmentBoundary(value) {
   return Number.isFinite(num) ? Math.max(0, num) : NaN;
 }
 
-// 统一的JWT生成函数（解决时间同步问题）
+// 缁熶竴鐨凧WT鐢熸垚鍑芥暟锛堣В鍐虫椂闂村悓姝ラ棶棰橈級
 function generateKlingJWT() {
   const KLING_ACCESS_KEY = process.env.KLING_ACCESS_KEY;
   const KLING_SECRET_KEY = process.env.KLING_SECRET_KEY;
   
   if (!KLING_ACCESS_KEY || !KLING_SECRET_KEY) {
-    throw new Error('可灵API密钥未配置');
+    throw new Error('Kling API key is not configured');
   }
   
-  // 使用更宽松的时间窗口，避免时钟不同步
+  // 浣跨敤鏇村鏉剧殑鏃堕棿绐楀彛锛岄伩鍏嶆椂閽熶笉鍚屾
   const now = Math.floor(Date.now() / 1000);
   return jwt.sign({
     iss: KLING_ACCESS_KEY,
-    exp: now + 3600,  // 1小时，更宽松
-    nbf: now - 30,    // 30秒前生效，避免时钟快
+    exp: now + 3600,  // 1灏忔椂锛屾洿瀹芥澗
+    nbf: now - 30,    // 30绉掑墠鐢熸晥锛岄伩鍏嶆椂閽熷揩
     jti: `kling_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }, KLING_SECRET_KEY, {
     algorithm: 'HS256',
@@ -203,13 +214,13 @@ function generateKlingJWT() {
   });
 }
 
-// 可灵API速率限制配置（防止超过资源包限制）
+// 鍙伒API閫熺巼闄愬埗閰嶇疆锛堥槻姝㈣秴杩囪祫婧愬寘闄愬埗锛?
 const klingRateLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1分钟窗口
-  max: 5, // 每分钟最多5次请求
+  windowMs: 60 * 1000, // 1鍒嗛挓绐楀彛
+  max: 5, // 姣忓垎閽熸渶澶?娆¤姹?
   message: {
     status: 'error',
-    message: '请求过于频繁，请等待1分钟后重试',
+    message: 'Too many requests, please retry after 1 minute',
     code: 429
   },
   standardHeaders: true,
@@ -233,26 +244,114 @@ app.use(cors({
       return callback(null, true);
     }
 
-    console.warn(`🚫 [CORS] Blocked origin: ${origin}`);
+    console.warn(`馃毇 [CORS] Blocked origin: ${origin}`);
     callback(new Error('Not allowed by CORS'));
   },
   methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true
 }));
 
-// 安装"前置信号雷达" (Global Request Radar)
+// 瀹夎"鍓嶇疆淇″彿闆疯揪" (Global Request Radar)
 if (ENABLE_REQUEST_LOG) {
   app.use((req, res, next) => {
-    console.log(`📡 [雷达捕捉到信号]: ${req.method} -> ${req.url}`);
-    console.log(`✨ [3002 信号] 成功接收到来自网页的请求！`);
+    console.log(`馃摗 [闆疯揪鎹曟崏鍒颁俊鍙穄: ${req.method} -> ${req.url}`);
+    console.log(`[3002 Signal] Request accepted from web page`);
     next();
   });
 }
 
-// 🔐 Admin Routes (管理后台路由)
+// 馃攼 Admin Routes (绠＄悊鍚庡彴璺敱)
 app.use('/api/admin', adminRoutes);
 
-// 🔑 LiblibAI签名API（备用端点，用于外网访问）
+// ========== 绉垎 API ==========
+const DataService = require('./server/DataService');
+
+// 鑾峰彇鐢ㄦ埛绉垎浣欓
+app.get('/api/credits/balance/:visitorId', (req, res) => {
+  try {
+    const { visitorId } = req.params;
+    if (!visitorId) return res.status(400).json({ error: '缂哄皯璁垮ID' });
+    const data = DataService.getOrInitCredits(visitorId);
+    res.json({ success: true, balance: data.credits, totalRecharged: data.totalRecharged, totalConsumed: data.totalConsumed });
+  } catch (error) {
+    console.error('[Credits] 鑾峰彇浣欓澶辫触:', error);
+    res.status(500).json({ error: '鑾峰彇浣欓澶辫触' });
+  }
+});
+
+// 娑堣€楃Н鍒?
+app.post('/api/credits/consume', express.json(), (req, res) => {
+  try {
+    const { visitorId, amount, featureId, description } = req.body;
+    if (!visitorId || !amount) return res.status(400).json({ error: '缂哄皯鍙傛暟' });
+    const result = DataService.consumeServerCredits(visitorId, Number(amount), featureId, description);
+    if (!result.success) return res.status(400).json(result);
+    res.json(result);
+  } catch (error) {
+    console.error('[Credits] 鎵ｅ噺澶辫触:', error);
+    res.status(500).json({ error: '鎵ｅ噺澶辫触' });
+  }
+});
+
+// 澧炲姞绉垎
+// /api/credits/add removed - use /api/admin/credits/add-to-user (protected) instead
+
+// 閫€娆剧Н鍒?
+app.post('/api/credits/refund', express.json(), (req, res) => {
+  try {
+    const { visitorId, amount, description } = req.body;
+    if (!visitorId || !amount) return res.status(400).json({ error: '缂哄皯鍙傛暟' });
+    const result = DataService.refundServerCredits(visitorId, Number(amount), description);
+    res.json(result);
+  } catch (error) {
+    console.error('[Credits] 閫€娆惧け璐?', error);
+    res.status(500).json({ error: 'Refund failed' });
+  }
+});
+
+// 杩佺Щ鏈湴绉垎鍒版湇鍔＄
+app.post('/api/credits/migrate', express.json(), (req, res) => {
+  try {
+    const { visitorId, localCredits } = req.body;
+    if (!visitorId) return res.status(400).json({ error: '缂哄皯璁垮ID' });
+    const result = DataService.migrateCredits(visitorId, localCredits);
+    res.json(result);
+  } catch (error) {
+    console.error('[Credits] 杩佺Щ澶辫触:', error);
+    res.status(500).json({ error: '杩佺Щ澶辫触' });
+  }
+});
+
+// 馃巵 绀煎搧鐮佸厬鎹紙鍏戞崲鍚庡悓鏃跺啓鍏ユ湇鍔＄绉垎锛?
+app.post('/api/credits/redeem', express.json(), (req, res) => {
+  try {
+    const { code, visitorId } = req.body;
+
+    if (!code || !visitorId) {
+      return res.status(400).json({ error: '缂哄皯绀煎搧鐮佹垨璁垮ID' });
+    }
+
+    const result = DataService.redeemGiftCode(code.trim().toUpperCase(), visitorId);
+
+    if (!result.success) {
+      return res.status(400).json({ error: result.error });
+    }
+
+    // 鍚屾鍐欏叆鏈嶅姟绔Н鍒?
+    DataService.addServerCredits(visitorId, result.credits, `redeem_${Date.now()}`, result.description);
+
+    res.json({
+      success: true,
+      credits: result.credits,
+      description: result.description
+    });
+  } catch (error) {
+    console.error('[Credits] 鍏戞崲绀煎搧鐮佸け璐?', error);
+    res.status(500).json({ error: '鍏戞崲澶辫触' });
+  }
+});
+
+// 馃攽 LiblibAI绛惧悕API锛堝鐢ㄧ鐐癸紝鐢ㄤ簬澶栫綉璁块棶锛?
 app.post('/api/sign-liblib', express.json({ limit: '50mb' }), (req, res) => {
   try {
     const { secret, message } = req.body;
@@ -261,7 +360,7 @@ app.post('/api/sign-liblib', express.json({ limit: '50mb' }), (req, res) => {
       return res.status(400).json({ error: 'Missing secret or message' });
     }
 
-    // 使用crypto计算HMAC-SHA1签名
+    // 浣跨敤crypto璁＄畻HMAC-SHA1绛惧悕
     const hmac = crypto.createHmac('sha1', secret);
     hmac.update(message);
     const signature = hmac.digest('base64')
@@ -269,17 +368,17 @@ app.post('/api/sign-liblib', express.json({ limit: '50mb' }), (req, res) => {
       .replace(/\//g, '_')
       .replace(/=+$/g, '');
 
-    console.log('🔑 [签名API] 签名成功');
+    console.log('馃攽 [绛惧悕API] 绛惧悕鎴愬姛');
     res.json({ signature });
   } catch (error) {
-    console.error('🔑 [签名API] 错误:', error.message);
+    console.error('馃攽 [绛惧悕API] 閿欒:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
 
 // --- Zhenji Refactor API Routes ---
-// ⚠️ 以下路由依赖 src/backend/db 和 src/backend/executor
-// ⚠️ 暂时注释，不影响 Festival 功能（M2、FFmpeg等）
+// 鈿狅笍 浠ヤ笅璺敱渚濊禆 src/backend/db 鍜?src/backend/executor
+// 鈿狅笍 鏆傛椂娉ㄩ噴锛屼笉褰卞搷 Festival 鍔熻兘锛圡2銆丗Fmpeg绛夛級
 
 // // Skills CRUD
 // app.get('/api/skills', (req, res) => {
@@ -322,7 +421,7 @@ app.post('/api/sign-liblib', express.json({ limit: '50mb' }), (req, res) => {
 // });
 // ----------------------------------
 
-// 静态文件服务
+// 闈欐€佹枃浠舵湇鍔?
 const distDir = path.join(__dirname, 'dist');
 
 app.use('/assets', express.static(path.join(distDir, 'assets'), {
@@ -345,16 +444,16 @@ app.use(express.static(distDir, {
   }
 }));
 
-// 健康检查接口
+// 鍋ュ悍妫€鏌ユ帴鍙?
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
-// 检查 FFmpeg 是否在系统路径中，或扫描常见安装路径
+// 妫€鏌?FFmpeg 鏄惁鍦ㄧ郴缁熻矾寰勪腑锛屾垨鎵弿甯歌瀹夎璺緞
 const checkFfmpegInPath = (callback) => {
-  // 常见的 FFmpeg 安装路径（Windows）
+  // 甯歌鐨?FFmpeg 瀹夎璺緞锛圵indows锛?
   const commonPaths = [
-    'ffmpeg', // 默认 PATH
+    'ffmpeg', // 榛樿 PATH
     'E:\\ffmpeg\\ffmpeg-8.0.1-essentials_build\\bin\\ffmpeg.exe',
     'C:\\ffmpeg\\bin\\ffmpeg.exe',
     'C:\\Program Files\\ffmpeg\\bin\\ffmpeg.exe',
@@ -362,7 +461,7 @@ const checkFfmpegInPath = (callback) => {
     'D:\\ffmpeg\\bin\\ffmpeg.exe'
   ];
 
-  // 逐个尝试路径
+  // 閫愪釜灏濊瘯璺緞
   let currentIndex = 0;
   
   const tryNextPath = () => {
@@ -386,9 +485,9 @@ const checkFfmpegInPath = (callback) => {
   tryNextPath();
 };
 
-// FFmpeg 状态检查接口 - 确保返回 200 OK
+// FFmpeg 鐘舵€佹鏌ユ帴鍙?- 纭繚杩斿洖 200 OK
 app.get('/api/ffmpeg-check', (req, res) => {
-  console.log('🧪 [检测中] 正在响应前端的 FFmpeg 状态请求...');
+  console.log('馃И [妫€娴嬩腑] 姝ｅ湪鍝嶅簲鍓嶇鐨?FFmpeg 鐘舵€佽姹?..');
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
     status: 'active',
@@ -397,57 +496,57 @@ app.get('/api/ffmpeg-check', (req, res) => {
   });
 });
 
-// 三轨剥离接口实现
+// 涓夎建鍓ョ鎺ュ彛瀹炵幇
 app.post('/api/audio/separate', express.json({ limit: '50mb' }), (req, res) => {
   try {
     const { videoBlob, readStartTime, readEndTime, singStartTime, singEndTime } = req.body;
     
-    console.log('三轨剥离请求:', { 
+    console.log('涓夎建鍓ョ璇锋眰:', { 
       readStartTime, 
       readEndTime, 
       singStartTime, 
       singEndTime 
     });
     
-    // 这里是三轨剥离的实现，使用 FFmpeg 进行音频处理
-    // 实际项目中，这里会调用 FFmpeg 命令进行音频分离和切割
+    // 杩欓噷鏄笁杞ㄥ墺绂荤殑瀹炵幇锛屼娇鐢?FFmpeg 杩涜闊抽澶勭悊
+    // 瀹為檯椤圭洰涓紝杩欓噷浼氳皟鐢?FFmpeg 鍛戒护杩涜闊抽鍒嗙鍜屽垏鍓?
     
-    // 模拟三轨剥离过程
+    // 妯℃嫙涓夎建鍓ョ杩囩▼
     setTimeout(() => {
-      // 模拟生成的文件路径
+      // 妯℃嫙鐢熸垚鐨勬枃浠惰矾寰?
       const bgmPath = `truth_bgm_${Date.now()}.wav`;
       const readVocalPath = `truth_read_${Date.now()}.wav`;
       const singVocalPath = `truth_sing_${Date.now()}.wav`;
       
       res.json({
         status: 'success',
-        message: '三轨剥离完成',
+        message: '涓夎建鍓ョ瀹屾垚',
         tracks: [
-          { type: 'bgm', path: bgmPath, name: '背景音乐' },
-          { type: 'read', path: readVocalPath, name: '读人声' },
-          { type: 'sing', path: singVocalPath, name: '唱人声' }
+          { type: 'bgm', path: bgmPath, name: '鑳屾櫙闊充箰' },
+          { type: 'read', path: readVocalPath, name: 'Read Vocal' },
+          { type: 'sing', path: singVocalPath, name: 'Sing Vocal' }
         ],
         originalVideo: videoBlob
       });
       
-      console.log('三轨剥离完成，生成了 3 个音频文件');
-    }, 5000); // 模拟 5 秒的处理时间
+      console.log('Triple-track split completed, generated 3 audio files');
+    }, 5000); // 妯℃嫙 5 绉掔殑澶勭悊鏃堕棿
   } catch (error) {
-    console.error('三轨剥离失败:', error.message);
+    console.error('涓夎建鍓ョ澶辫触:', error.message);
     res.status(500).json({
       status: 'error',
-      message: '三轨剥离失败',
+      message: '涓夎建鍓ョ澶辫触',
       error: error.message
     });
   }
 });
 
-// 实装 AI 三轨剥离接口
+// 瀹炶 AI 涓夎建鍓ョ鎺ュ彛
 app.post('/api/audio/process-triple-split', express.json({ limit: '50mb' }), (req, res) => {
   try {
     const { videoUrl, step1Start, step1End, step2Start, step2End } = req.body;
     
-    console.log('AI 三轨剥离请求:', { 
+    console.log('AI 涓夎建鍓ョ璇锋眰:', { 
       videoUrl, 
       step1Start, 
       step1End, 
@@ -455,168 +554,168 @@ app.post('/api/audio/process-triple-split', express.json({ limit: '50mb' }), (re
       step2End 
     });
     
-    // 确保有视频数据
+    // 纭繚鏈夎棰戞暟鎹?
     if (!videoUrl) {
       return res.status(400).json({
         status: 'error',
-        message: '缺少视频 URL',
-        error: '请提供视频 URL'
+        message: '缂哄皯瑙嗛 URL',
+        error: '璇锋彁渚涜棰?URL'
       });
     }
     
-    // 模拟 AI 三轨剥离过程
+    // 妯℃嫙 AI 涓夎建鍓ョ杩囩▼
     setTimeout(() => {
-      // 生成的文件路径
+      // 鐢熸垚鐨勬枃浠惰矾寰?
       const bgmPath = `pure_bgm_${Date.now()}.mp3`;
       const readVocalPath = `read_part_${Date.now()}.mp3`;
       const singVocalPath = `sing_part_${Date.now()}.mp3`;
       
-      // 模拟时长计算
+      // 妯℃嫙鏃堕暱璁＄畻
       const readDuration = step1End - step1Start;
       const singDuration = step2End - step2Start;
       
-      // 生成下载链接
+      // 鐢熸垚涓嬭浇閾炬帴
       const baseUrl = `http://localhost:3001/downloads`;
       
       res.json({
         status: 'success',
-        message: 'AI 三轨剥离完成',
+        message: 'AI 涓夎建鍓ョ瀹屾垚',
         tracks: [
           { 
             type: 'bgm', 
             path: bgmPath, 
-            name: '纯 BGM',
-            duration: 60, // 假设 BGM 总时长 60 秒
-            icon: '🎸',
+            name: '绾?BGM',
+            duration: 60, // 鍋囪 BGM 鎬绘椂闀?60 绉?
+            icon: '馃幐',
             downloadUrl: `${baseUrl}/${bgmPath}`
           },
           { 
             type: 'read', 
             path: readVocalPath, 
-            name: '读人声',
+            name: 'Read Vocal',
             duration: readDuration,
-            icon: '🗣️',
+            icon: 'read',
             step: 1,
             downloadUrl: `${baseUrl}/${readVocalPath}`
           },
           { 
             type: 'sing', 
             path: singVocalPath, 
-            name: '唱人声',
+            name: 'Sing Vocal',
             duration: singDuration,
-            icon: '🎤',
+            icon: '馃帳',
             step: 2,
             downloadUrl: `${baseUrl}/${singVocalPath}`
           }
         ]
       });
       
-      console.log('AI 三轨剥离完成，生成了 3 个音频文件');
-    }, 5000); // 模拟 5 秒的处理时间
+      console.log('AI triple-track split completed, generated 3 audio files');
+    }, 5000); // 妯℃嫙 5 绉掔殑澶勭悊鏃堕棿
   } catch (error) {
-    console.error('AI 三轨剥离失败:', error.message);
+    console.error('AI 涓夎建鍓ョ澶辫触:', error.message);
     res.status(500).json({
       status: 'error',
-      message: 'AI 三轨剥离失败',
+      message: 'AI 涓夎建鍓ョ澶辫触',
       error: error.message
     });
   }
 });
 
-// 实装通用二轨剥离接口 - 使用 fluent-ffmpeg 进行分离
-// 支持 FormData 上传视频文件和动态时间片段切割
+// 瀹炶閫氱敤浜岃建鍓ョ鎺ュ彛 - 浣跨敤 fluent-ffmpeg 杩涜鍒嗙
+// 鏀寔 FormData 涓婁紶瑙嗛鏂囦欢鍜屽姩鎬佹椂闂寸墖娈靛垏鍓?
 app.post('/api/audio/split-traditional', (req, res, next) => {
-  console.log('✨ [实战信号] 网页请求终于到了！开始处理文件...');
-  console.log('🚀 [紧急日志] 1. 路由已被命中！');
-  console.log('🚀 [紧急日志] 2. 请求头类型:', req.headers['content-type']);
-  // 手动调用 multer 
+  console.log('[split-traditional] Request received');
+  console.log('[split-traditional] Route matched');
+  console.log('[split-traditional] Content-Type:', req.headers['content-type']);
+  // 鎵嬪姩璋冪敤 multer 
   upload.single('video')(req, res, async (err) => {
     if (err) {
-      console.error('❌ [紧急日志] 3. Multer 写入失败:', err.message);
+      console.error('[split-traditional] Multer failed:', err.message);
       return res.status(500).json({ error: err.message });
     }
-    console.log('✅ [紧急日志] 4. Multer 写入成功，文件路径:', req.file ? req.file.path : '无文件');
+    console.log('[split-traditional] Multer success, file path:', req.file ? req.file.path : 'none');
     
     let tempFiles = [];
     try {
-      // 强制控制台高亮日志
-      console.error('!!!!!!!!!!!!!!!!!! 收到拆分指令，开始工作 !!!!!!!!!!!!!!!!!!');
+      // 寮哄埗鎺у埗鍙伴珮浜棩蹇?
+      console.error('!!!!!!!!!!!!!!!!!! split command received, start processing !!!!!!!!!!!!!!!!!!');
     
-    // 生产线监控：接收到请求
-    console.log('>>> 接收到前端请求，准备解析 FormData...');
+    // 鐢熶骇绾跨洃鎺э細鎺ユ敹鍒拌姹?
+    console.log('>>> Received request, preparing to parse FormData...');
     
-    // 强行锁定文件源：必须接收到文件流
+    // 寮鸿閿佸畾鏂囦欢婧愶細蹇呴』鎺ユ敹鍒版枃浠舵祦
     if (!req.file) {
-      throw new Error('后端未接收到任何视频文件流');
+      throw new Error('Backend did not receive any video file stream');
     }
     
-    // 生产线监控：Multer 文件保存成功
-    console.log(`>>> Multer 文件上传成功，文件大小：${req.file.size} 字节`);
-    console.log(`>>> Multer 实际保存路径：${req.file.path}`);
+    // 鐢熶骇绾跨洃鎺э細Multer 鏂囦欢淇濆瓨鎴愬姛
+    console.log(`>>> Multer upload success, file size: ${req.file.size} bytes`);
+    console.log(`>>> Multer saved path: ${req.file.path}`);
     
-    // 2. 修复 322 行的崩溃：弹性 statSync 调用
+    // 2. 淇 322 琛岀殑宕╂簝锛氬脊鎬?statSync 璋冪敤
     const absolutePath = path.resolve(req.file.path);
     if (!fs.existsSync(absolutePath)) {
-      console.error('❌ 致命错误：文件物理不存在于路径:', absolutePath);
-      return res.status(500).json({ error: '文件未能在磁盘生成' });
+      console.error('Fatal error: file does not physically exist at path:', absolutePath);
+      return res.status(500).json({ error: 'File was not created on disk' });
     }
     const stats = fs.statSync(absolutePath);
-    console.log(`>>> 文件物理大小: ${stats.size} 字节`);
+    console.log(`>>> 鏂囦欢鐗╃悊澶у皬: ${stats.size} 瀛楄妭`);
     
-    // 计算文件大小（KB）
+    // 璁＄畻鏂囦欢澶у皬锛圞B锛?
     const fileSizeKB = Math.round(req.file.size / 1024);
     
-    // 打印通用的终端信息
-    console.log(`>>> 接收到视频文件，大小为 ${fileSizeKB} KB，开始执行 FFmpeg 拆分`);
+    // 鎵撳嵃閫氱敤鐨勭粓绔俊鎭?
+    console.log(`>>> 鎺ユ敹鍒拌棰戞枃浠讹紝澶у皬涓?${fileSizeKB} KB锛屽紑濮嬫墽琛?FFmpeg 鎷嗗垎`);
     
-    // 生成输出文件名 - 通用命名，使用绝对路径
+    // 鐢熸垚杈撳嚭鏂囦欢鍚?- 閫氱敤鍛藉悕锛屼娇鐢ㄧ粷瀵硅矾寰?
     const pureBgmPath = path.resolve(absoluteTempDir, 'pure_bgm.mp3');
     const pureVocalPath = path.resolve(absoluteTempDir, 'pure_vocal.mp3');
     const tempVocalPath = path.resolve(absoluteTempDir, `temp_vocal_${Date.now()}.mp3`);
     
-    // 3. 确保上传的文件路径是绝对路径
-    const absoluteSourcePath = absolutePath; // 使用上面已经解析好的绝对路径
+    // 3. 纭繚涓婁紶鐨勬枃浠惰矾寰勬槸缁濆璺緞
+    const absoluteSourcePath = absolutePath; // 浣跨敤涓婇潰宸茬粡瑙ｆ瀽濂界殑缁濆璺緞
     
-    // 添加到临时文件列表，以便后续清理
+    // 娣诲姞鍒颁复鏃舵枃浠跺垪琛紝浠ヤ究鍚庣画娓呯悊
     tempFiles.push(absoluteSourcePath, pureBgmPath, pureVocalPath, tempVocalPath);
     
-    // 物理文件确认：在执行 FFmpeg 之前，打印录制文件的物理路径
-    console.log(`>>> 准备执行 FFmpeg，录制文件物理路径: ${absoluteSourcePath}`);
-    console.log(`>>> 文件大小: ${fs.statSync(absoluteSourcePath).size} 字节`);
-    console.log(`>>> 确认文件真实存在: ${fs.existsSync(absoluteSourcePath)}`);
+    // 鐗╃悊鏂囦欢纭锛氬湪鎵ц FFmpeg 涔嬪墠锛屾墦鍗板綍鍒舵枃浠剁殑鐗╃悊璺緞
+    console.log(`>>> 鍑嗗鎵ц FFmpeg锛屽綍鍒舵枃浠剁墿鐞嗚矾寰? ${absoluteSourcePath}`);
+    console.log(`>>> 鏂囦欢澶у皬: ${fs.statSync(absoluteSourcePath).size} 瀛楄妭`);
+    console.log(`>>> 纭鏂囦欢鐪熷疄瀛樺湪: ${fs.existsSync(absoluteSourcePath)}`);
     
-    // 增加带时间戳的日志
-    console.log('--- 准备写入新文件，当前时间：' + new Date().toLocaleString() + ' ---');
+    // 澧炲姞甯︽椂闂存埑鐨勬棩蹇?
+    console.log(`--- Prepare output files, current time: ${new Date().toLocaleString()} ---`);
     
-    // 生产线监控：准备启动 FFmpeg
-    console.log('>>> 正在启动 FFmpeg，开始提取 BGM...');
+    // 鐢熶骇绾跨洃鎺э細鍑嗗鍚姩 FFmpeg
+    console.log('>>> 姝ｅ湪鍚姩 FFmpeg锛屽紑濮嬫彁鍙?BGM...');
     
-    // 第一步：提取 BGM（使用物理陷波滤镜）
-    // 使用 equalizer 滤镜，对 1000Hz 中心频率进行 -25dB 压制
-    // 移除 -ac 2，保持单声道处理，减少逻辑冲突
-    // 强制使用 libmp3lame 重新编码，确保每一帧数据重新计算
+    // 绗竴姝ワ細鎻愬彇 BGM锛堜娇鐢ㄧ墿鐞嗛櫡娉㈡护闀滐級
+    // 浣跨敤 equalizer 婊ら暅锛屽 1000Hz 涓績棰戠巼杩涜 -25dB 鍘嬪埗
+    // 绉婚櫎 -ac 2锛屼繚鎸佸崟澹伴亾澶勭悊锛屽噺灏戦€昏緫鍐茬獊
+    // 寮哄埗浣跨敤 libmp3lame 閲嶆柊缂栫爜锛岀‘淇濇瘡涓€甯ф暟鎹噸鏂拌绠?
     const bgmCommand = `ffmpeg -i "${absoluteSourcePath}" -y -vn -af "equalizer=f=1000:width_type=h:width=2000:g=-25,volume=1.5" -c:a libmp3lame -aq 4 "${pureBgmPath}"`;
     
-    // 第二步：提取人声（使用砖墙带通滤镜）
-    // 使用 bandpass 滤镜，只允许 1650Hz 中心频率附近 3000Hz 带宽通过
-    // 移除 -ac 2，保持单声道处理，减少逻辑冲突
-    // 强制使用 libmp3lame 重新编码，确保每一帧数据重新计算
+    // 绗簩姝ワ細鎻愬彇浜哄０锛堜娇鐢ㄧ爾澧欏甫閫氭护闀滐級
+    // 浣跨敤 bandpass 婊ら暅锛屽彧鍏佽 1650Hz 涓績棰戠巼闄勮繎 3000Hz 甯﹀閫氳繃
+    // 绉婚櫎 -ac 2锛屼繚鎸佸崟澹伴亾澶勭悊锛屽噺灏戦€昏緫鍐茬獊
+    // 寮哄埗浣跨敤 libmp3lame 閲嶆柊缂栫爜锛岀‘淇濇瘡涓€甯ф暟鎹噸鏂拌绠?
     const vocalCommand = `ffmpeg -i "${absoluteSourcePath}" -y -vn -af "bandpass=f=1650:width_type=h:width=3000,volume=2.0" -c:a libmp3lame -aq 4 "${pureVocalPath}"`;
     
-    // 验证强化：打印两个完全不同的命令字符串
-    console.log('🎬 [BGM 提取指令]:', bgmCommand);
-    console.log('🎬 [人声提取指令]:', vocalCommand);
+    // 楠岃瘉寮哄寲锛氭墦鍗颁袱涓畬鍏ㄤ笉鍚岀殑鍛戒护瀛楃涓?
+    console.log('馃幀 [BGM 鎻愬彇鎸囦护]:', bgmCommand);
+    console.log('馃幀 [浜哄０鎻愬彇鎸囦护]:', vocalCommand);
     
-    // 执行 BGM 提取
+    // 鎵ц BGM 鎻愬彇
     await new Promise((resolve, reject) => {
       exec(bgmCommand, (error, stdout, stderr) => {
         if (error) {
-          console.error('>>> FFmpeg 处理失败: BGM 提取失败');
-          console.error('>>> FFmpeg 错误信息:', error.message);
-          console.error('>>> FFmpeg 标准输出:', stdout);
-          console.error('>>> FFmpeg 错误输出:', stderr);
+          console.error('>>> FFmpeg 澶勭悊澶辫触: BGM 鎻愬彇澶辫触');
+          console.error('>>> FFmpeg 閿欒淇℃伅:', error.message);
+          console.error('>>> FFmpeg 鏍囧噯杈撳嚭:', stdout);
+          console.error('>>> FFmpeg 閿欒杈撳嚭:', stderr);
           
-          const ffmpegError = new Error(`BGM 提取失败: ${error.message}`);
+          const ffmpegError = new Error(`BGM 鎻愬彇澶辫触: ${error.message}`);
           ffmpegError.ffmpegError = {
             message: error.message,
             stdout: stdout,
@@ -627,25 +726,25 @@ app.post('/api/audio/split-traditional', (req, res, next) => {
           return;
         }
         
-        console.log('>>> FFmpeg 处理完成: BGM 提取成功');
-        console.log('>>> FFmpeg 标准输出:', stdout);
-        console.log('>>> FFmpeg 错误输出:', stderr);
+        console.log('>>> FFmpeg 澶勭悊瀹屾垚: BGM 鎻愬彇鎴愬姛');
+        console.log('>>> FFmpeg 鏍囧噯杈撳嚭:', stdout);
+        console.log('>>> FFmpeg 閿欒杈撳嚭:', stderr);
         resolve(null);
       });
     });
     
-    // 生产线监控：准备启动 FFmpeg 提取人声
-    console.log('>>> 正在启动 FFmpeg，开始提取人声...');
+    // 鐢熶骇绾跨洃鎺э細鍑嗗鍚姩 FFmpeg 鎻愬彇浜哄０
+    console.log('>>> 姝ｅ湪鍚姩 FFmpeg锛屽紑濮嬫彁鍙栦汉澹?..');
     
     await new Promise((resolve, reject) => {
       exec(vocalCommand, (error, stdout, stderr) => {
         if (error) {
-          console.error('>>> FFmpeg 处理失败: 人声提取失败');
-          console.error('>>> FFmpeg 错误信息:', error.message);
-          console.error('>>> FFmpeg 标准输出:', stdout);
-          console.error('>>> FFmpeg 错误输出:', stderr);
+          console.error('>>> FFmpeg 澶勭悊澶辫触: 浜哄０鎻愬彇澶辫触');
+          console.error('>>> FFmpeg 閿欒淇℃伅:', error.message);
+          console.error('>>> FFmpeg 鏍囧噯杈撳嚭:', stdout);
+          console.error('>>> FFmpeg 閿欒杈撳嚭:', stderr);
           
-          const ffmpegError = new Error(`人声提取失败: ${error.message}`);
+          const ffmpegError = new Error(`浜哄０鎻愬彇澶辫触: ${error.message}`);
           ffmpegError.ffmpegError = {
             message: error.message,
             stdout: stdout,
@@ -656,62 +755,62 @@ app.post('/api/audio/split-traditional', (req, res, next) => {
           return;
         }
         
-        console.log('>>> FFmpeg 处理完成: 完整人声提取成功');
-        console.log('>>> FFmpeg 标准输出:', stdout);
-        console.log('>>> FFmpeg 错误输出:', stderr);
+        console.log('>>> FFmpeg 澶勭悊瀹屾垚: 瀹屾暣浜哄０鎻愬彇鎴愬姛');
+        console.log('>>> FFmpeg 鏍囧噯杈撳嚭:', stdout);
+        console.log('>>> FFmpeg 閿欒杈撳嚭:', stderr);
         resolve(null);
       });
     });
     
-    // 第三步：处理动态时间片段切割
+    // 绗笁姝ワ細澶勭悊鍔ㄦ€佹椂闂寸墖娈靛垏鍓?
     const segments = [];
-    // 返回相对路径，让前端自行拼接完整 URL
+    // 杩斿洖鐩稿璺緞锛岃鍓嶇鑷鎷兼帴瀹屾暣 URL
     const basePath = '/temp_processing';
     
-    // 检查是否有步骤时间片段
+    // 妫€鏌ユ槸鍚︽湁姝ラ鏃堕棿鐗囨
     if (req.body.segments) {
       let segmentsData;
       try {
         segmentsData = JSON.parse(req.body.segments);
-        console.log(`>>> 解析到 ${segmentsData.length} 个时间片段`);
+        console.log(`>>> Parsed ${segmentsData.length} time segments`);
       } catch (e) {
-        console.error('>>> 解析 segments 参数失败，使用默认值:', e.message);
+        console.error('>>> Failed to parse segments, using default:', e.message);
         segmentsData = [];
       }
       
-      // 处理每个时间片段
+      // 澶勭悊姣忎釜鏃堕棿鐗囨
       for (let i = 0; i < segmentsData.length; i++) {
         const segment = segmentsData[i];
         const startTime = sanitizeSegmentBoundary(segment.startTime);
         const endTime = sanitizeSegmentBoundary(segment.endTime);
         
         if (!Number.isFinite(startTime) || !Number.isFinite(endTime)) {
-          console.warn(`>>> 跳过非法片段 ${i}: startTime=${segment.startTime}, endTime=${segment.endTime}`);
+          console.warn(`>>> 璺宠繃闈炴硶鐗囨 ${i}: startTime=${segment.startTime}, endTime=${segment.endTime}`);
           continue;
         }
 
         if (startTime > 0 && endTime > startTime) {
-          // 生成片段文件名，使用标准化路径
+          // 鐢熸垚鐗囨鏂囦欢鍚嶏紝浣跨敤鏍囧噯鍖栬矾寰?
           const segmentVocalPath = path.join(absoluteTempDir, `segment_vocal_${i}.mp3`);
           tempFiles.push(segmentVocalPath);
           
-          // 生产线监控：准备切割片段
-          console.log(`>>> 正在启动 FFmpeg，开始切割片段 ${i}...`);
+          // 鐢熶骇绾跨洃鎺э細鍑嗗鍒囧壊鐗囨
+          console.log(`>>> 姝ｅ湪鍚姩 FFmpeg锛屽紑濮嬪垏鍓茬墖娈?${i}...`);
           
-          // 切割片段
+          // 鍒囧壊鐗囨
           const segmentCommand = `ffmpeg -i "${pureVocalPath}" -y -ss ${startTime} -t ${endTime - startTime} -vn -af "volume=1.8" "${segmentVocalPath}"`;
           
-          console.log(`>>> 执行片段 ${i} 切割命令: ${segmentCommand}`);
+          console.log(`>>> 鎵ц鐗囨 ${i} 鍒囧壊鍛戒护: ${segmentCommand}`);
           
           await new Promise((resolve, reject) => {
             exec(segmentCommand, (error, stdout, stderr) => {
               if (error) {
-                console.error(`>>> FFmpeg 处理失败: 片段 ${i} 切割失败`);
-                console.error(`>>> FFmpeg 错误信息:`, error.message);
-                console.error(`>>> FFmpeg 标准输出:`, stdout);
-                console.error(`>>> FFmpeg 错误输出:`, stderr);
+                console.error(`>>> FFmpeg 澶勭悊澶辫触: 鐗囨 ${i} 鍒囧壊澶辫触`);
+                console.error(`>>> FFmpeg 閿欒淇℃伅:`, error.message);
+                console.error(`>>> FFmpeg 鏍囧噯杈撳嚭:`, stdout);
+                console.error(`>>> FFmpeg 閿欒杈撳嚭:`, stderr);
                 
-                const ffmpegError = new Error(`片段 ${i} 切割失败: ${error.message}`);
+                const ffmpegError = new Error(`鐗囨 ${i} 鍒囧壊澶辫触: ${error.message}`);
                 ffmpegError.ffmpegError = {
                   message: error.message,
                   stdout: stdout,
@@ -722,14 +821,14 @@ app.post('/api/audio/split-traditional', (req, res, next) => {
                 return;
               }
               
-              console.log(`>>> FFmpeg 处理完成: 片段 ${i} 切割成功`);
-              console.log(`>>> FFmpeg 标准输出:`, stdout);
-              console.log(`>>> FFmpeg 错误输出:`, stderr);
+              console.log(`>>> FFmpeg 澶勭悊瀹屾垚: 鐗囨 ${i} 鍒囧壊鎴愬姛`);
+              console.log(`>>> FFmpeg 鏍囧噯杈撳嚭:`, stdout);
+              console.log(`>>> FFmpeg 閿欒杈撳嚭:`, stderr);
               resolve(null);
             });
           });
           
-          // 添加到返回列表
+          // 娣诲姞鍒拌繑鍥炲垪琛?
             segments.push({
               segmentIndex: i,
               path: `segment_vocal_${i}.mp3`,
@@ -739,16 +838,16 @@ app.post('/api/audio/split-traditional', (req, res, next) => {
       }
     }
     
-    console.log('>>> 文件处理完成，正在返回结果...');
+    console.log('>>> 鏂囦欢澶勭悊瀹屾垚锛屾鍦ㄨ繑鍥炵粨鏋?..');
     
-    // 禁用静默成功：验证物理文件是否生成
-    console.log('>>> 开始验证物理文件是否生成...');
+    // 绂佺敤闈欓粯鎴愬姛锛氶獙璇佺墿鐞嗘枃浠舵槸鍚︾敓鎴?
+    console.log('>>> 寮€濮嬮獙璇佺墿鐞嗘枃浠舵槸鍚︾敓鎴?..');
     
-    // 等待磁盘文件写完（简单的延迟，确保文件写入完成）
-    console.log('>>> 等待磁盘文件写入完成...');
+    // 绛夊緟纾佺洏鏂囦欢鍐欏畬锛堢畝鍗曠殑寤惰繜锛岀‘淇濇枃浠跺啓鍏ュ畬鎴愶級
+    console.log('>>> 绛夊緟纾佺洏鏂囦欢鍐欏叆瀹屾垚...');
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // 验证 BGM 文件，多次尝试直到文件存在或超时
+    // 楠岃瘉 BGM 鏂囦欢锛屽娆″皾璇曠洿鍒版枃浠跺瓨鍦ㄦ垨瓒呮椂
     let bgmExists = false;
     let vocalExists = false;
     let attempts = 0;
@@ -756,17 +855,17 @@ app.post('/api/audio/split-traditional', (req, res, next) => {
     
     while (attempts < maxAttempts && (!bgmExists || !vocalExists)) {
       attempts++;
-      console.log(`>>> 第 ${attempts} 次验证文件...`);
+      console.log(`>>> 绗?${attempts} 娆￠獙璇佹枃浠?..`);
       
       bgmExists = fs.existsSync(pureBgmPath);
       vocalExists = fs.existsSync(pureVocalPath);
       
       if (!bgmExists) {
-        console.log(`>>> BGM 文件尚未生成: ${pureBgmPath}`);
+        console.log(`>>> BGM 鏂囦欢灏氭湭鐢熸垚: ${pureBgmPath}`);
       }
       
       if (!vocalExists) {
-        console.log(`>>> 人声文件尚未生成: ${pureVocalPath}`);
+        console.log(`>>> 浜哄０鏂囦欢灏氭湭鐢熸垚: ${pureVocalPath}`);
       }
       
       if (!bgmExists || !vocalExists) {
@@ -774,96 +873,96 @@ app.post('/api/audio/split-traditional', (req, res, next) => {
       }
     }
     
-    // 最终验证
+    // 鏈€缁堥獙璇?
     if (!bgmExists) {
-      throw new Error(`BGM 文件生成失败，路径不存在: ${pureBgmPath}`);
+      throw new Error(`BGM 鏂囦欢鐢熸垚澶辫触锛岃矾寰勪笉瀛樺湪: ${pureBgmPath}`);
     }
     
     if (!vocalExists) {
-      throw new Error(`人声文件生成失败，路径不存在: ${pureVocalPath}`);
+      throw new Error(`浜哄０鏂囦欢鐢熸垚澶辫触锛岃矾寰勪笉瀛樺湪: ${pureVocalPath}`);
     }
     
-    // 验证文件大小，确保文件不是空的
+    // 楠岃瘉鏂囦欢澶у皬锛岀‘淇濇枃浠朵笉鏄┖鐨?
     const bgmSize = fs.statSync(pureBgmPath).size;
     const vocalSize = fs.statSync(pureVocalPath).size;
     
-    // 物理文件大小审计
-    console.log('📊 BGM大小:', bgmSize, ' | 人声大小:', vocalSize);
+    // 鐗╃悊鏂囦欢澶у皬瀹¤
+    console.log('馃搳 BGM澶у皬:', bgmSize, ' | 浜哄０澶у皬:', vocalSize);
     
-    // 检查两个文件大小是否完全相同
+    // 妫€鏌ヤ袱涓枃浠跺ぇ灏忔槸鍚﹀畬鍏ㄧ浉鍚?
     if (bgmSize === vocalSize) {
-      console.warn('⚠️ [警告] 物理过滤未生效，请检查输入源编码');
+      console.warn('鈿狅笍 [璀﹀憡] 鐗╃悊杩囨护鏈敓鏁堬紝璇锋鏌ヨ緭鍏ユ簮缂栫爜');
     }
     
     if (bgmSize === 0) {
-      throw new Error(`BGM 文件生成失败，文件为空: ${pureBgmPath}`);
+      throw new Error(`BGM 鏂囦欢鐢熸垚澶辫触锛屾枃浠朵负绌? ${pureBgmPath}`);
     }
     
     if (vocalSize === 0) {
-      throw new Error(`人声文件生成失败，文件为空: ${pureVocalPath}`);
+      throw new Error(`浜哄０鏂囦欢鐢熸垚澶辫触锛屾枃浠朵负绌? ${pureVocalPath}`);
     }
     
-    console.log('>>> 物理文件验证通过，准备返回结果...');
+    console.log('>>> 鐗╃悊鏂囦欢楠岃瘉閫氳繃锛屽噯澶囪繑鍥炵粨鏋?..');
     
-    // 返回成功响应 - 通用格式
+    // 杩斿洖鎴愬姛鍝嶅簲 - 閫氱敤鏍煎紡
     res.json({
       status: 'success',
-      message: '音频二轨剥离完成',
+      message: '闊抽浜岃建鍓ョ瀹屾垚',
       tracks: [
         {
           type: 'bgm',
           path: 'pure_bgm.mp3',
-          name: '纯 BGM',
-          duration: 60, // 实际项目中可以从 FFmpeg 输出中提取
-          icon: '🎸',
+          name: '绾?BGM',
+          duration: 60, // 瀹為檯椤圭洰涓彲浠ヤ粠 FFmpeg 杈撳嚭涓彁鍙?
+          icon: '馃幐',
           downloadUrl: `${basePath}/pure_bgm.mp3`
         },
         {
           type: 'vocal',
           path: 'pure_vocal.mp3',
-          name: '全量人声',
-          duration: 60, // 实际项目中可以从 FFmpeg 输出中提取
-          icon: '🗣️',
+          name: '鍏ㄩ噺浜哄０',
+          duration: 60, // 瀹為檯椤圭洰涓彲浠ヤ粠 FFmpeg 杈撳嚭涓彁鍙?
+          icon: 'vocal',
           downloadUrl: `${basePath}/pure_vocal.mp3`
         }
       ],
-      segments: segments // 动态生成的片段列表
+      segments: segments // 鍔ㄦ€佺敓鎴愮殑鐗囨鍒楄〃
     });
     
-    console.log('>>> 拆分完成，返回结果给前端');
+    console.log('>>> 鎷嗗垎瀹屾垚锛岃繑鍥炵粨鏋滅粰鍓嶇');
     
-    // 强制关闭自动清理：注释掉所有 fs.unlink 代码
+    // 寮哄埗鍏抽棴鑷姩娓呯悊锛氭敞閲婃帀鎵€鏈?fs.unlink 浠ｇ爜
     // try {
     //   if (fs.existsSync(tempVocalPath)) {
     //     fs.unlinkSync(tempVocalPath);
-    //     console.log(`>>> 已清理临时文件: ${tempVocalPath}`);
+    //     console.log(`>>> 宸叉竻鐞嗕复鏃舵枃浠? ${tempVocalPath}`);
     //   }
     // } catch (err) {
-    //   console.error(`>>> 清理临时文件失败: ${tempVocalPath}`, err.message);
+    //   console.error(`>>> 娓呯悊涓存椂鏂囦欢澶辫触: ${tempVocalPath}`, err.message);
     // }
     
     } catch (error) {
-      console.error('>>> 音频剥离失败:', error.message);
-      console.error('>>> 错误堆栈:', error.stack);
+      console.error('>>> 闊抽鍓ョ澶辫触:', error.message);
+      console.error('>>> 閿欒鍫嗘爤:', error.stack);
       
-      // 强制关闭自动清理：注释掉所有 fs.unlink 代码
+      // 寮哄埗鍏抽棴鑷姩娓呯悊锛氭敞閲婃帀鎵€鏈?fs.unlink 浠ｇ爜
       // tempFiles.forEach(file => {
       //   try {
       //     if (fs.existsSync(file)) {
       //       fs.unlinkSync(file);
-      //       console.log(`>>> 已清理临时文件: ${file}`);
+      //       console.log(`>>> 宸叉竻鐞嗕复鏃舵枃浠? ${file}`);
       //     }
       //   } catch (err) {
-      //     console.error(`>>> 清理文件失败: ${file}`, err.message);
+      //     console.error(`>>> 娓呯悊鏂囦欢澶辫触: ${file}`, err.message);
       //   }
       // });
       
-      // 返回 JSON 格式的错误信息，包含详细的 FFmpeg 报错
+      // 杩斿洖 JSON 鏍煎紡鐨勯敊璇俊鎭紝鍖呭惈璇︾粏鐨?FFmpeg 鎶ラ敊
       const responseBody = {
         error: error.message,
         status: 'error',
-        message: '音频剥离失败',
-        // 如果是FFmpeg错误，保留原始错误信息
+        message: '闊抽鍓ョ澶辫触',
+        // 濡傛灉鏄疐Fmpeg閿欒锛屼繚鐣欏師濮嬮敊璇俊鎭?
         ffmpegError: error.ffmpegError || undefined
       };
 
@@ -876,30 +975,141 @@ app.post('/api/audio/split-traditional', (req, res, next) => {
   });
 });
 
-// 辅助函数：下载文件到本地
-function downloadFile(url, destPath) {
+// 杈呭姪鍑芥暟锛氫笅杞芥枃浠跺埌鏈湴
+function getRequestOrigin(req) {
+  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+  const forwardedHost = String(req.headers['x-forwarded-host'] || '').split(',')[0].trim();
+  const protocol = forwardedProto || req.protocol || 'http';
+  const host = forwardedHost || req.get('host') || '';
+  return `${protocol}://${host}`;
+}
+
+function isPrivateIp(ip) {
+  const value = String(ip || '').trim().toLowerCase();
+  if (!value) return true;
+  if (value === '0.0.0.0') return true;
+  if (value === '::1') return true;
+  if (value.startsWith('fe80:')) return true;
+  if (value.startsWith('fc') || value.startsWith('fd')) return true;
+
+  const parts = value.split('.').map((x) => Number(x));
+  if (parts.length === 4 && parts.every((x) => Number.isInteger(x) && x >= 0 && x <= 255)) {
+    const [a, b] = parts;
+    if (a === 10) return true;
+    if (a === 127) return true;
+    if (a === 169 && b === 254) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    if (a === 100 && b >= 64 && b <= 127) return true;
+    if (a === 198 && (b === 18 || b === 19)) return true;
+    if (a === 192 && b === 0) return true;
+  }
+  return false;
+}
+
+function isBlockedDownloadHostname(hostname) {
+  const host = String(hostname || '').trim().toLowerCase();
+  if (!host) return true;
+  if (host === 'localhost' || host.endsWith('.localhost')) return true;
+  if (host === '127.0.0.1' || host === '::1') return true;
+  if (host === '0.0.0.0') return true;
+  if (host === '169.254.169.254') return true;
+  if (net.isIP(host) && isPrivateIp(host)) return true;
+  return false;
+}
+
+function getMaxDownloadBytes(destPath) {
+  const ext = String(path.extname(destPath || '')).toLowerCase();
+  if (['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) return 25 * 1024 * 1024;
+  if (['.mp3', '.wav', '.m4a', '.ogg'].includes(ext)) return 80 * 1024 * 1024;
+  if (['.mp4', '.webm', '.mov', '.mkv'].includes(ext)) return 350 * 1024 * 1024;
+  return 200 * 1024 * 1024;
+}
+
+function downloadFile(url, destPath, redirectCount = 0) {
   return new Promise((resolve, reject) => {
-    const protocol = url.startsWith('https') ? https : http;
-    const file = fs.createWriteStream(destPath);
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      reject(new Error('下载链接无效'));
+      return;
+    }
 
-    protocol.get(url, (response) => {
-      if (response.statusCode !== 200) {
-        reject(new Error(`下载失败: HTTP ${response.statusCode}`));
-        return;
+    if (isBlockedDownloadHostname(parsedUrl.hostname)) {
+      reject(new Error('下载链接被拒绝'));
+      return;
+    }
+
+    const protocol = parsedUrl.protocol === 'https:' ? https : http;
+    const request = protocol.get(
+      {
+        hostname: parsedUrl.hostname,
+        port: parsedUrl.port || undefined,
+        path: `${parsedUrl.pathname}${parsedUrl.search}`,
+        headers: {
+          'User-Agent': 'Mozilla/5.0',
+          'Accept': '*/*'
+        }
+      },
+      (response) => {
+        const statusCode = response.statusCode || 0;
+        if ([301, 302, 303, 307, 308].includes(statusCode) && response.headers.location) {
+          if (redirectCount >= 5) {
+            reject(new Error('下载重定向次数过多'));
+            return;
+          }
+          const redirectedUrl = new URL(response.headers.location, parsedUrl).toString();
+          response.resume();
+          downloadFile(redirectedUrl, destPath, redirectCount + 1).then(resolve).catch(reject);
+          return;
+        }
+
+        if (statusCode !== 200) {
+          response.resume();
+          reject(new Error(`下载失败: HTTP ${statusCode}`));
+          return;
+        }
+
+        const maxBytes = getMaxDownloadBytes(destPath);
+        const contentLengthRaw = response.headers['content-length'];
+        const contentLength = typeof contentLengthRaw === 'string' ? Number(contentLengthRaw) : Array.isArray(contentLengthRaw) ? Number(contentLengthRaw[0]) : NaN;
+        if (Number.isFinite(contentLength) && contentLength > maxBytes) {
+          response.resume();
+          reject(new Error('下载文件过大'));
+          return;
+        }
+
+        const file = fs.createWriteStream(destPath);
+        let downloadedBytes = 0;
+        response.on('data', (chunk) => {
+          downloadedBytes += chunk.length;
+          if (downloadedBytes > maxBytes) {
+            request.destroy(new Error('下载文件过大'));
+            try {
+              response.destroy();
+            } catch {}
+          }
+        });
+        response.pipe(file);
+
+        file.on('finish', () => {
+          file.close();
+          resolve(destPath);
+        });
+
+        file.on('error', (err) => {
+          fs.unlink(destPath, () => {});
+          reject(err);
+        });
       }
+    );
 
-      response.pipe(file);
+    request.setTimeout(90000, () => {
+      request.destroy(new Error('下载超时'));
+    });
 
-      file.on('finish', () => {
-        file.close();
-        resolve(destPath);
-      });
-
-      file.on('error', (err) => {
-        fs.unlink(destPath, () => {});
-        reject(err);
-      });
-    }).on('error', (err) => {
+    request.on('error', (err) => {
       fs.unlink(destPath, () => {});
       reject(err);
     });
@@ -910,14 +1120,14 @@ function getMediaDurationMs(mediaPath, fallbackMs = 5000) {
   return new Promise((resolve) => {
     ffmpeg.ffprobe(mediaPath, (err, metadata) => {
       if (err) {
-        console.warn(`⚠️ [时长探测] 失败，使用默认时长 ${fallbackMs}ms:`, err.message);
+        console.warn(`鈿狅笍 [鏃堕暱鎺㈡祴] 澶辫触锛屼娇鐢ㄩ粯璁ゆ椂闀?${fallbackMs}ms:`, err.message);
         resolve(fallbackMs);
         return;
       }
 
       const durationSec = metadata?.format?.duration;
       if (!Number.isFinite(durationSec) || durationSec <= 0) {
-        console.warn(`⚠️ [时长探测] 无有效时长，使用默认时长 ${fallbackMs}ms`);
+        console.warn(`鈿狅笍 [鏃堕暱鎺㈡祴] 鏃犳湁鏁堟椂闀匡紝浣跨敤榛樿鏃堕暱 ${fallbackMs}ms`);
         resolve(fallbackMs);
         return;
       }
@@ -927,14 +1137,14 @@ function getMediaDurationMs(mediaPath, fallbackMs = 5000) {
   });
 }
 
-// 阿里云ASR API - 获取音频文字及时间轴
+// 闃块噷浜慉SR API - 鑾峰彇闊抽鏂囧瓧鍙婃椂闂磋酱
 async function getAudioTranscription(audioUrl) {
   return new Promise((resolve, reject) => {
     const DASHSCOPE_API_KEY = readDashscopeApiKey();
 
     if (!DASHSCOPE_API_KEY) {
-      console.error('❌ [ASR] Dashscope API Key 未配置');
-      return reject(new Error('ASR API Key 未配置'));
+      console.error('[ASR] Dashscope API key not configured');
+      return reject(new Error('ASR API key not configured'));
     }
 
     const options = {
@@ -955,7 +1165,7 @@ async function getAudioTranscription(audioUrl) {
       parameters: {
         format: 'json',
         sample_rate: 16000,
-        enable_words: true // 启用词级时间戳
+        enable_words: true // 鍚敤璇嶇骇鏃堕棿鎴?
       }
     });
 
@@ -969,19 +1179,19 @@ async function getAudioTranscription(audioUrl) {
       res.on('end', () => {
         try {
           const response = JSON.parse(data);
-          console.log('✅ [ASR] 转录成功');
-          console.log('🔍 [ASR] 响应数据:', JSON.stringify(response, null, 2));
-          console.log('🔍 [ASR] sentences数量:', response.output?.sentences?.length || 0);
+          console.log('鉁?[ASR] 杞綍鎴愬姛');
+          console.log('馃攳 [ASR] 鍝嶅簲鏁版嵁:', JSON.stringify(response, null, 2));
+          console.log('馃攳 [ASR] sentences鏁伴噺:', response.output?.sentences?.length || 0);
           resolve(response);
         } catch (error) {
-          console.error('❌ [ASR] 响应解析失败:', data);
-          reject(new Error('ASR响应解析失败'));
+          console.error('鉂?[ASR] 鍝嶅簲瑙ｆ瀽澶辫触:', data);
+          reject(new Error('ASR鍝嶅簲瑙ｆ瀽澶辫触'));
         }
       });
     });
 
     req.on('error', (error) => {
-      console.error('❌ [ASR] 请求失败:', error);
+      console.error('鉂?[ASR] 璇锋眰澶辫触:', error);
       reject(error);
     });
 
@@ -990,31 +1200,54 @@ async function getAudioTranscription(audioUrl) {
   });
 }
 
-// 智能字幕生成：按字数权重分配时间，避免时间轴堆叠
+// 鏅鸿兘瀛楀箷鐢熸垚锛氭寜瀛楁暟鏉冮噸鍒嗛厤鏃堕棿锛岄伩鍏嶆椂闂磋酱鍫嗗彔
 function generateSimpleSRT(text, audioDurationMs, outputPath) {
   try {
-    console.log('[SRT智能模式] 文本:', text, '时长:', audioDurationMs);
+    console.log("[SRT] text:", text.substring(0, 60), "duration:", audioDurationMs);
 
-    // 按标点符号分段
-    const segments = text.split(/([。！？；.!?;])/).filter(s => s.trim());
+    // Split by ALL Chinese/English punctuation including commas
+    const splitPattern = /([。！？；，.!?;,])/;
+    const segments = text.split(splitPattern).filter(s => s.trim());
 
-    // 合并文本和标点
-    const sentences = [];
+    // Merge text with trailing punctuation
+    const rawSentences = [];
     for (let i = 0; i < segments.length; i += 2) {
-      const content = segments[i] + (segments[i + 1] || '');
-      if (content.trim()) {
-        sentences.push(content.trim());
+      const content = segments[i] + (segments[i + 1] || "");
+      if (content.trim()) rawSentences.push(content.trim());
+    }
+
+    // Merge short fragments (max 15 chars per segment)
+    const MAX_CHARS = 15;
+    const sentences = [];
+    let buf = "";
+    for (const seg of rawSentences) {
+      if (buf.length + seg.length <= MAX_CHARS) {
+        buf += seg;
+      } else {
+        if (buf) sentences.push(buf);
+        buf = seg;
+      }
+    }
+    if (buf) sentences.push(buf);
+
+    // Fallback: force split by char count if still 1 long segment
+    if (sentences.length <= 1 && text.length > MAX_CHARS) {
+      sentences.length = 0;
+      for (let i = 0; i < text.length; i += MAX_CHARS) {
+        sentences.push(text.substring(i, Math.min(i + MAX_CHARS, text.length)));
       }
     }
 
+    console.log("[SRT] segments:", sentences.length);
+
     if (sentences.length === 0) {
-      console.warn('⚠️ [SRT简单模式] 文本为空');
+      console.warn('鈿狅笍 [SRT绠€鍗曟ā寮廬 鏂囨湰涓虹┖');
       fs.writeFileSync(outputPath, '', 'utf8');
       return outputPath;
     }
 
     const sentenceCharCounts = sentences.map((sentence) => {
-      const normalized = sentence.replace(/[\s，。！？；,.!?;:：'"“”‘’（）()【】\[\]]/g, '');
+      const normalized = sentence.replace(/[\s\uff0c\u3002\uff01\uff1f\uff1b,.!?;:\uff1a?"\u201c\u201d\u2018\u2019\uff08\uff09()\u3010\u3011\[\]]/g, '');
       return Math.max(normalized.length, 1);
     });
     const totalChars = sentenceCharCounts.reduce((sum, len) => sum + len, 0);
@@ -1060,26 +1293,75 @@ function generateSimpleSRT(text, audioDurationMs, outputPath) {
       srtContent += `${sentence}\n\n`;
     });
 
-    // 使用 UTF-8 with BOM 编码，确保FFmpeg正确识别中文
-    const BOM = '\uFEFF';
-    fs.writeFileSync(outputPath, BOM + srtContent, 'utf8');
-    console.log('✅ [SRT智能模式] 字幕已生成:', outputPath);
-    console.log('✅ [SRT简单模式] 字幕内容预览:\n', srtContent.substring(0, 200));
+    // 浣跨敤 UTF-8 with BOM 缂栫爜锛岀‘淇滷Fmpeg姝ｇ‘璇嗗埆涓枃
+    fs.writeFileSync(outputPath, srtContent, 'utf8');
+    console.log('鉁?[SRT鏅鸿兘妯″紡] 瀛楀箷宸茬敓鎴?', outputPath);
+    console.log('鉁?[SRT绠€鍗曟ā寮廬 瀛楀箷鍐呭棰勮:\n', srtContent.substring(0, 200));
     return outputPath;
   } catch (error) {
-    console.error('❌ [SRT智能模式] 失败:', error);
+    console.error('鉂?[SRT鏅鸿兘妯″紡] 澶辫触:', error);
     throw error;
   }
 }
 
-// 生成SRT字幕文件（ASR模式）
+function parseSrtTimestampToMs(value) {
+  const text = String(value || '').trim();
+  const match = text.match(/^(\d{2}):(\d{2}):(\d{2}),(\d{3})$/);
+  if (!match) return NaN;
+  const h = Number(match[1]);
+  const m = Number(match[2]);
+  const s = Number(match[3]);
+  const ms = Number(match[4]);
+  if (![h, m, s, ms].every(Number.isFinite)) return NaN;
+  return (((h * 60 + m) * 60) + s) * 1000 + ms;
+}
+
+function validateSrtFile(srtPath, durationMs) {
+  if (!srtPath || !fs.existsSync(srtPath)) return { ok: false, reason: 'srt_missing' };
+  let content = '';
+  try {
+    content = fs.readFileSync(srtPath, 'utf8');
+  } catch {
+    return { ok: false, reason: 'srt_read_failed' };
+  }
+
+  const lines = content.split(/\r?\n/);
+  let lastEnd = 0;
+  let cueCount = 0;
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = String(lines[i] || '').trim();
+    if (!line) continue;
+    if (!/^\d+$/.test(line)) continue;
+
+    const timeLine = String(lines[i + 1] || '').trim();
+    const timeMatch = timeLine.match(/^(.+?)\s*-->\s*(.+?)$/);
+    if (!timeMatch) return { ok: false, reason: 'srt_time_format' };
+
+    const start = parseSrtTimestampToMs(timeMatch[1]);
+    const end = parseSrtTimestampToMs(timeMatch[2]);
+    if (!Number.isFinite(start) || !Number.isFinite(end)) return { ok: false, reason: 'srt_time_parse' };
+    if (start < 0 || end <= start) return { ok: false, reason: 'srt_time_order' };
+    if (start < lastEnd) return { ok: false, reason: 'srt_overlap' };
+    if (Number.isFinite(durationMs) && durationMs > 0 && end > durationMs + 1500) return { ok: false, reason: 'srt_duration_overflow' };
+
+    lastEnd = end;
+    cueCount += 1;
+    i += 1;
+  }
+
+  if (cueCount < 2) return { ok: false, reason: 'srt_not_segmented' };
+  return { ok: true, reason: '' };
+}
+
+// 鐢熸垚SRT瀛楀箷鏂囦欢锛圓SR妯″紡锛?
 function generateSRTFile(transcription, outputPath) {
   try {
-    // 从ASR响应中提取句子和时间戳
+    // 浠嶢SR鍝嶅簲涓彁鍙栧彞瀛愬拰鏃堕棿鎴?
     const sentences = transcription.output?.sentences || [];
 
     if (sentences.length === 0) {
-      console.warn('⚠️ [SRT] 未找到转录句子，生成空字幕');
+      console.warn('[SRT] No transcription sentences found, generating empty subtitle file');
       fs.writeFileSync(outputPath, '', 'utf8');
       return outputPath;
     }
@@ -1091,7 +1373,7 @@ function generateSRTFile(transcription, outputPath) {
       const endTime = sentence.end_time || (startTime + 2000);
       const text = sentence.text || '';
 
-      // 转换时间戳（毫秒 -> SRT格式 HH:MM:SS,mmm）
+      // 杞崲鏃堕棿鎴筹紙姣 -> SRT鏍煎紡 HH:MM:SS,mmm锛?
       const formatTime = (ms) => {
         const hours = Math.floor(ms / 3600000);
         const minutes = Math.floor((ms % 3600000) / 60000);
@@ -1100,160 +1382,161 @@ function generateSRTFile(transcription, outputPath) {
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')},${String(milliseconds).padStart(3, '0')}`;
       };
 
-      // SRT格式：序号\n时间范围\n文本\n空行
+      // SRT鏍煎紡锛氬簭鍙穃n鏃堕棿鑼冨洿\n鏂囨湰\n绌鸿
       srtContent += `${index + 1}\n`;
       srtContent += `${formatTime(startTime)} --> ${formatTime(endTime)}\n`;
       srtContent += `${text}\n\n`;
     });
 
     fs.writeFileSync(outputPath, srtContent, 'utf8');
-    console.log(`✅ [SRT] 字幕文件已生成: ${outputPath}`);
+    console.log(`鉁?[SRT] 瀛楀箷鏂囦欢宸茬敓鎴? ${outputPath}`);
     return outputPath;
   } catch (error) {
-    console.error('❌ [SRT] 生成失败:', error);
+    console.error('鉂?[SRT] 鐢熸垚澶辫触:', error);
     throw error;
   }
 }
 
-// 视频合成接口 - FFmpeg 高质量字幕烧录（优化版：先下载再处理）
+// 瑙嗛鍚堟垚鎺ュ彛 - FFmpeg 楂樿川閲忓瓧骞曠儳褰曪紙浼樺寲鐗堬細鍏堜笅杞藉啀澶勭悊锛?
 app.post('/api/video/compose', express.json({ limit: '50mb' }), async (req, res) => {
-  let tempInputPath = null;  // 临时输入文件路径
+  let tempInputPath = null;  // 涓存椂杈撳叆鏂囦欢璺緞
 
   try {
     const {
-      inputUrl,        // 输入文件URL（图片或视频）
-      type,            // 'image' 或 'video'
-      subtitle,        // 字幕文本
-      duration = 5,    // 图片转视频时的持续时间（秒）
-      outputFormat = 'mp4' // 输出格式
+      inputUrl,        // 杈撳叆鏂囦欢URL锛堝浘鐗囨垨瑙嗛锛?
+      type,            // 'image' 鎴?'video'
+      subtitle,        // 瀛楀箷鏂囨湰
+      duration = 5,    // 鍥剧墖杞棰戞椂鐨勬寔缁椂闂达紙绉掞級
+      outputFormat = 'mp4' // 杈撳嚭鏍煎紡
     } = req.body;
 
-    console.log('🎬 [视频合成] 收到请求:', { inputUrl, type, subtitle, duration, outputFormat });
+    console.log('馃幀 [瑙嗛鍚堟垚] 鏀跺埌璇锋眰:', { inputUrl, type, subtitle, duration, outputFormat });
 
     if (!inputUrl || !type) {
       return res.status(400).json({
         status: 'error',
-        message: '缺少必要参数：inputUrl 和 type'
+        message: '缂哄皯蹇呰鍙傛暟锛歩nputUrl 鍜?type'
       });
     }
 
-    // 生成唯一的输出文件名
+    // 鐢熸垚鍞竴鐨勮緭鍑烘枃浠跺悕
     const timestamp = Date.now();
     const outputFileName = `composed_${timestamp}.${outputFormat}`;
     const outputPath = path.join(downloadDir, outputFileName);
 
-    // 🚀 优化：先下载输入文件到本地临时目录
+    // 馃殌 浼樺寲锛氬厛涓嬭浇杈撳叆鏂囦欢鍒版湰鍦颁复鏃剁洰褰?
     const inputExt = path.extname(inputUrl) || (type === 'image' ? '.png' : '.mp4');
     tempInputPath = path.join(tempDirPath, `temp_input_${timestamp}${inputExt}`);
 
-    console.log('📥 [视频合成] 下载输入文件:', inputUrl);
-    console.log('📁 [视频合成] 临时文件:', tempInputPath);
+    console.log('馃摜 [瑙嗛鍚堟垚] 涓嬭浇杈撳叆鏂囦欢:', inputUrl);
+    console.log('馃搧 [瑙嗛鍚堟垚] 涓存椂鏂囦欢:', tempInputPath);
 
     await downloadFile(inputUrl, tempInputPath);
-    console.log('✅ [视频合成] 下载完成，文件大小:', fs.statSync(tempInputPath).size);
+    console.log('鉁?[瑙嗛鍚堟垚] 涓嬭浇瀹屾垚锛屾枃浠跺ぇ灏?', fs.statSync(tempInputPath).size);
 
-    console.log('📁 [视频合成] 输出路径:', outputPath);
+    console.log('馃搧 [瑙嗛鍚堟垚] 杈撳嚭璺緞:', outputPath);
 
-    // 检查 FFmpeg 可用性
+    // 妫€鏌?FFmpeg 鍙敤鎬?
     checkFfmpegInPath((found, ffmpegPath) => {
       if (!found) {
-        console.error('❌ [视频合成] FFmpeg 未找到');
+        console.error('[video-merge] FFmpeg not found');
         return res.status(500).json({
           status: 'error',
-          message: 'FFmpeg 未安装或未配置在系统路径中'
+          message: 'FFmpeg is not installed or not in PATH'
         });
       }
 
-      console.log('✅ [视频合成] 使用 FFmpeg:', ffmpegPath);
+      console.log('鉁?[瑙嗛鍚堟垚] 浣跨敤 FFmpeg:', ffmpegPath);
       ffmpeg.setFfmpegPath(ffmpegPath);
 
-      // 🚀 使用本地临时文件而不是网络URL
+      // 馃殌 浣跨敤鏈湴涓存椂鏂囦欢鑰屼笉鏄綉缁淯RL
       let command = ffmpeg(tempInputPath);
 
-      // 根据类型处理
+      // 鏍规嵁绫诲瀷澶勭悊
       if (type === 'image') {
-        // 图片转视频：循环显示指定时长
+        // 鍥剧墖杞棰戯細寰幆鏄剧ず鎸囧畾鏃堕暱
         command = command
           .inputOptions([
-            `-loop 1`,           // 循环图片
-            `-t ${duration}`     // 持续时间
+            `-loop 1`,           // 寰幆鍥剧墖
+            `-t ${duration}`     // 鎸佺画鏃堕棿
           ])
           .outputOptions([
-            '-c:v libx264',      // 使用 H.264 编码
-            '-pix_fmt yuv420p',  // 兼容性像素格式
-            '-preset ultrafast', // 🚀 超快速编码（测试用）
-            '-crf 28'            // 稍低质量但更快（18-28，值越大越快）
+            '-c:v libx264',      // 浣跨敤 H.264 缂栫爜
+            '-pix_fmt yuv420p',  // 鍏煎鎬у儚绱犳牸寮?
+            '-preset ultrafast', // 馃殌 瓒呭揩閫熺紪鐮侊紙娴嬭瘯鐢級
+            '-crf 28'            // 绋嶄綆璐ㄩ噺浣嗘洿蹇紙18-28锛屽€艰秺澶ц秺蹇級
           ]);
       } else if (type === 'video') {
-        // 视频处理：保持原有编码
+        // 瑙嗛澶勭悊锛氫繚鎸佸師鏈夌紪鐮?
         command = command
           .outputOptions([
-            '-c:v libx264',      // 重新编码以烧录字幕
-            '-c:a copy',         // 音频流复制（如果有）
-            '-preset ultrafast', // 🚀 超快速编码
+            '-c:v libx264',      // 閲嶆柊缂栫爜浠ョ儳褰曞瓧骞?
+            '-c:a copy',         // 闊抽娴佸鍒讹紙濡傛灉鏈夛級
+            '-preset ultrafast', // 馃殌 瓒呭揩閫熺紪鐮?
             '-crf 28'
           ]);
       }
 
-      // 添加字幕滤镜（如果提供）
+      // 娣诲姞瀛楀箷婊ら暅锛堝鏋滄彁渚涳級
       if (subtitle && subtitle.trim()) {
-        // 转义字幕文本中的特殊字符
+        // 杞箟瀛楀箷鏂囨湰涓殑鐗规畩瀛楃
         const escapedSubtitle = subtitle
           .replace(/\\/g, '\\\\')
           .replace(/'/g, "\\'")
           .replace(/:/g, '\\:')
           .replace(/,/g, '\\,');
 
-        // 高质量字幕样式 - 优化版本
+        // 楂樿川閲忓瓧骞曟牱寮?- 浼樺寲鐗堟湰
         const subtitleFilter = `drawtext=` +
           `text='${escapedSubtitle}':` +
-          `fontfile='C\\:/Windows/Fonts/msyh.ttc':` + // 微软雅黑
-          `fontsize=80:` +         // 字号80（原48，折中方案）
+          (process.platform === 'linux' ? '' : `fontfile='C\:/Windows/Fonts/msyh.ttc':`) +
+          `fontsize=80:` +         // 瀛楀彿80锛堝師48锛屾姌涓柟妗堬級
           `fontcolor=white:` +
-          `borderw=4:` +           // 描边宽度4（原3）
-          `bordercolor=black:` +   // 描边颜色
-          `shadowcolor=black@0.7:` + // 阴影
-          `shadowx=2:` +           // 阴影X偏移
-          `shadowy=2:` +           // 阴影Y偏移
-          `box=1:` +               // 添加背景框
-          `boxcolor=black@0.5:` +  // 半透明黑色背景
-          `boxborderw=12:` +       // 背景框内边距
-          `x=(w-text_w)/2:` +      // 水平居中
-          `y=h-th-120:` +          // 距离底部120px（原50px，更靠上）
-          `enable='between(t,0.5,${type === 'image' ? duration - 0.5 : 'duration-0.5'})'`; // 淡入淡出时间
+          `borderw=4:` +           // 鎻忚竟瀹藉害4锛堝師3锛?
+          `bordercolor=black:` +   // 鎻忚竟棰滆壊
+          `shadowcolor=black@0.7:` + // 闃村奖
+          `shadowx=2:` +           // 闃村奖X鍋忕Щ
+          `shadowy=2:` +           // 闃村奖Y鍋忕Щ
+          `box=1:` +               // 娣诲姞鑳屾櫙妗?
+          `boxcolor=black@0.5:` +  // 鍗婇€忔槑榛戣壊鑳屾櫙
+          `boxborderw=12:` +       // 鑳屾櫙妗嗗唴杈硅窛
+          `x=(w-text_w)/2:` +      // 姘村钩灞呬腑
+          `y=h-th-120:` +          // 璺濈搴曢儴120px锛堝師50px锛屾洿闈犱笂锛?
+          `enable='between(t,0.5,${type === 'image' ? duration - 0.5 : 'duration-0.5'})'`; // 娣″叆娣″嚭鏃堕棿
 
         command = command.videoFilters(subtitleFilter);
-        console.log('📝 [视频合成] 添加字幕滤镜');
+        console.log('馃摑 [瑙嗛鍚堟垚] 娣诲姞瀛楀箷婊ら暅');
       }
 
-      // 设置输出路径
+      // 璁剧疆杈撳嚭璺緞
       command = command.output(outputPath);
 
-      // 监听进度
+      // 鐩戝惉杩涘害
       command.on('start', (commandLine) => {
-        console.log('🎬 [FFmpeg] 命令:', commandLine);
+        console.log('馃幀 [FFmpeg] 鍛戒护:', commandLine);
       });
 
       command.on('progress', (progress) => {
-        console.log(`📊 [FFmpeg] 进度: ${progress.percent ? progress.percent.toFixed(2) : 0}%`);
+        console.log(`馃搳 [FFmpeg] 杩涘害: ${progress.percent ? progress.percent.toFixed(2) : 0}%`);
       });
 
       command.on('end', () => {
-        console.log('✅ [视频合成] 完成:', outputFileName);
+        console.log('鉁?[瑙嗛鍚堟垚] 瀹屾垚:', outputFileName);
 
-        // 🧹 清理临时文件
+        // 馃Ч 娓呯悊涓存椂鏂囦欢
         if (tempInputPath && fs.existsSync(tempInputPath)) {
           fs.unlink(tempInputPath, (err) => {
-            if (err) console.error('⚠️ 删除临时文件失败:', err);
-            else console.log('🧹 已删除临时文件');
+            if (err) console.error('鈿狅笍 鍒犻櫎涓存椂鏂囦欢澶辫触:', err);
+            else console.log('Temporary file deleted');
           });
         }
 
-        // 返回下载链接
-        const downloadUrl = `http://localhost:${PORT}/downloads/${outputFileName}`;
+        // 杩斿洖涓嬭浇閾炬帴锛堜娇鐢ㄨ姹傛潵婧愭瀯寤篣RL锛屽吋瀹圭Щ鍔ㄧ灞€鍩熺綉璁块棶锛?
+        const reqOrigin = getRequestOrigin(req);
+        const downloadUrl = `${reqOrigin}/downloads/${outputFileName}`;
         res.json({
           status: 'success',
-          message: '视频合成完成',
+          message: '瑙嗛鍚堟垚瀹屾垚',
           outputPath: outputPath,
           downloadUrl: downloadUrl,
           fileName: outputFileName
@@ -1261,47 +1544,47 @@ app.post('/api/video/compose', express.json({ limit: '50mb' }), async (req, res)
       });
 
       command.on('error', (err, stdout, stderr) => {
-        console.error('❌ [FFmpeg] 错误:', err.message);
-        console.error('❌ [FFmpeg] stderr:', stderr);
+        console.error('鉂?[FFmpeg] 閿欒:', err.message);
+        console.error('鉂?[FFmpeg] stderr:', stderr);
 
-        // 🧹 清理临时文件
+        // 馃Ч 娓呯悊涓存椂鏂囦欢
         if (tempInputPath && fs.existsSync(tempInputPath)) {
           fs.unlink(tempInputPath, (err) => {
-            if (err) console.error('⚠️ 删除临时文件失败:', err);
+            if (err) console.error('鈿狅笍 鍒犻櫎涓存椂鏂囦欢澶辫触:', err);
           });
         }
 
         res.status(500).json({
           status: 'error',
-          message: 'FFmpeg 处理失败',
+          message: 'FFmpeg 澶勭悊澶辫触',
           error: err.message,
           details: stderr
         });
       });
 
-      // 执行命令
+      // 鎵ц鍛戒护
       command.run();
     });
 
   } catch (error) {
-    console.error('❌ [视频合成] 异常:', error.message);
+    console.error('鉂?[瑙嗛鍚堟垚] 寮傚父:', error.message);
 
-    // 🧹 清理临时文件
+    // 馃Ч 娓呯悊涓存椂鏂囦欢
     if (tempInputPath && fs.existsSync(tempInputPath)) {
       fs.unlink(tempInputPath, (err) => {
-        if (err) console.error('⚠️ 删除临时文件失败:', err);
+        if (err) console.error('鈿狅笍 鍒犻櫎涓存椂鏂囦欢澶辫触:', err);
       });
     }
 
     res.status(500).json({
       status: 'error',
-      message: '视频合成失败',
+      message: '瑙嗛鍚堟垚澶辫触',
       error: error.message
     });
   }
 });
 
-// 视频后处理接口 - 字幕烧录 + 装饰元素叠加（春节拜年专用）
+// 瑙嗛鍚庡鐞嗘帴鍙?- 瀛楀箷鐑у綍 + 瑁呴グ鍏冪礌鍙犲姞锛堟槬鑺傛嫓骞翠笓鐢級
 app.post(['/api/video/post-process', '/api/video/burn-subtitle'], express.json({ limit: '50mb' }), async (req, res) => {
   let tempVideoPath = null;
   let tempAudioPath = null;
@@ -1310,105 +1593,173 @@ app.post(['/api/video/post-process', '/api/video/burn-subtitle'], express.json({
 
   try {
     const {
-      videoUrl,        // WAN生成的原始视频URL
-      audioUrl,        // 音频URL（用于ASR生成实时字幕）
-      subtitle,        // 静态字幕文本（备用）
-      decorations = [], // 装饰元素数组 [{url, position, size}]
-      enableRealtimeSubtitle = true // 是否启用实时字幕
+      videoUrl,        // WAN鐢熸垚鐨勫師濮嬭棰慤RL
+      audioUrl,        // 闊抽URL锛堢敤浜嶢SR鐢熸垚瀹炴椂瀛楀箷锛?
+      subtitle,        // 闈欐€佸瓧骞曟枃鏈紙澶囩敤锛?
+      decorations = [], // 瑁呴グ鍏冪礌鏁扮粍 [{url, position, size}]
+      enableRealtimeSubtitle = true // 鏄惁鍚敤瀹炴椂瀛楀箷
     } = req.body;
+    const isBurnSubtitleRoute = String(req.path || '').endsWith('/api/video/burn-subtitle') || String(req.path || '').endsWith('/video/burn-subtitle');
+    const useRealtimeSubtitle = isBurnSubtitleRoute || enableRealtimeSubtitle === true;
+    const subtitleDebugEnabled = String(process.env.SUBTITLE_DEBUG || '').trim() === '1';
 
-    console.log('🎨 [视频后处理] 收到请求:', {
+    const cleanupTempFiles = () => {
+      try {
+        if (tempVideoPath && fs.existsSync(tempVideoPath)) fs.unlinkSync(tempVideoPath);
+      } catch {}
+      try {
+        if (tempAudioPath && fs.existsSync(tempAudioPath)) fs.unlinkSync(tempAudioPath);
+      } catch {}
+      try {
+        if (tempSrtPath && fs.existsSync(tempSrtPath)) fs.unlinkSync(tempSrtPath);
+      } catch {}
+      try {
+        tempDecorationPaths.forEach(dec => {
+          if (dec?.tempPath && fs.existsSync(dec.tempPath)) fs.unlinkSync(dec.tempPath);
+        });
+      } catch {}
+    };
+
+    const respondDegradedNoSubtitle = (reason) => {
+      cleanupTempFiles();
+      return res.json({
+        status: 'success',
+        message: '字幕已降级为无字幕',
+        subtitleApplied: false,
+        degraded: true,
+        reason: String(reason || ''),
+        downloadUrl: videoUrl,
+        fileName: ''
+      });
+    };
+
+    if (subtitleDebugEnabled) {
+      const diagLog = `[${new Date().toISOString()}] path=${req.path} isBurnSubtitle=${isBurnSubtitleRoute} useRealtime=${useRealtimeSubtitle} audioUrl=${!!audioUrl} subtitle=${!!(subtitle && subtitle.trim())} enableRealtimeSubtitle=${enableRealtimeSubtitle}\n`;
+      fs.appendFileSync(path.join(__dirname, 'subtitle_debug.log'), diagLog);
+    }
+
+    console.log('馃帹 [瑙嗛鍚庡鐞哴 鏀跺埌璇锋眰:', {
       videoUrl,
       audioUrl,
       subtitle,
       decorationCount: decorations.length,
-      enableRealtimeSubtitle
+      enableRealtimeSubtitle: useRealtimeSubtitle,
+      subtitleMode: useRealtimeSubtitle ? 'realtime-srt' : 'static-drawtext'
     });
 
     if (!videoUrl) {
       return res.status(400).json({
         status: 'error',
-        message: '缺少必要参数：videoUrl'
+        message: '缂哄皯蹇呰鍙傛暟锛歷ideoUrl'
       });
     }
 
-    // 生成唯一的输出文件名
+    // 鐢熸垚鍞竴鐨勮緭鍑烘枃浠跺悕
     const timestamp = Date.now();
     const outputFileName = `processed_${timestamp}.mp4`;
     const outputPath = path.join(downloadDir, outputFileName);
 
-    // 下载原始视频到临时目录
+    // 涓嬭浇鍘熷瑙嗛鍒颁复鏃剁洰褰?
     tempVideoPath = path.join(tempDirPath, `temp_video_${timestamp}.mp4`);
-    console.log('📥 [视频后处理] 下载原始视频:', videoUrl);
+    console.log('馃摜 [瑙嗛鍚庡鐞哴 涓嬭浇鍘熷瑙嗛:', videoUrl);
     await downloadFile(videoUrl, tempVideoPath);
-    console.log('✅ [视频后处理] 下载完成');
+    console.log('鉁?[瑙嗛鍚庡鐞哴 涓嬭浇瀹屾垚');
 
-    // 下载装饰元素图片
+    // 涓嬭浇瑁呴グ鍏冪礌鍥剧墖
     for (let i = 0; i < decorations.length; i++) {
       const decoration = decorations[i];
       if (decoration.url) {
         const tempPath = path.join(tempDirPath, `temp_decoration_${timestamp}_${i}.png`);
         await downloadFile(decoration.url, tempPath);
         tempDecorationPaths.push({ ...decoration, tempPath });
-        console.log(`📥 [视频后处理] 下载装饰元素 ${i + 1}`);
+        console.log(`馃摜 [瑙嗛鍚庡鐞哴 涓嬭浇瑁呴グ鍏冪礌 ${i + 1}`);
       }
     }
 
-    // 先尝试下载音频，用于保留最终音轨
-    if (audioUrl) {
+    // 鍏堝皾璇曚笅杞介煶棰戯紝鐢ㄤ簬淇濈暀鏈€缁堥煶杞?
+    if (audioUrl && useRealtimeSubtitle) {
       try {
         tempAudioPath = path.join(tempDirPath, `temp_audio_${timestamp}.mp3`);
         await downloadFile(audioUrl, tempAudioPath);
-        console.log('✅ [视频后处理] 音频下载完成');
+        console.log('鉁?[瑙嗛鍚庡鐞哴 闊抽涓嬭浇瀹屾垚');
       } catch (err) {
         tempAudioPath = null;
-        console.warn('⚠️ [视频后处理] 音频下载失败，将尝试保留原视频音轨');
+        console.warn('[video-post] audio download failed, will try to keep original video audio');
       }
     }
 
-    // 生成智能字幕（按字数权重分配时间轴）
-    if (enableRealtimeSubtitle && subtitle && subtitle.trim()) {
+    // 鍏堟鏌?FFmpeg 鍙敤鎬у苟璁剧疆璺緞锛堝繀椤诲湪 ffprobe 涔嬪墠锛?
+    const ffmpegReady = await new Promise((resolve) => {
+      checkFfmpegInPath((found, fp) => resolve({ found, path: fp }));
+    });
+
+    if (!ffmpegReady.found) {
+      console.error('[video-post] FFmpeg not found');
+      return res.status(500).json({
+        status: 'error',
+        message: 'FFmpeg is not installed or not in PATH'
+      });
+    }
+
+    console.log('鉁?[瑙嗛鍚庡鐞哴 浣跨敤 FFmpeg:', ffmpegReady.path);
+    ffmpeg.setFfmpegPath(ffmpegReady.path);
+
+    let subtitleDurationMs = 0;
+
+    // 鐢熸垚鏅鸿兘瀛楀箷锛堟寜瀛楁暟鏉冮噸鍒嗛厤鏃堕棿杞达級
+    if (useRealtimeSubtitle && subtitle && subtitle.trim()) {
       try {
         const durationSourcePath = tempAudioPath || tempVideoPath;
+        console.log('[subtitle] duration source:', durationSourcePath, 'exists:', fs.existsSync(durationSourcePath));
         const durationMs = await getMediaDurationMs(durationSourcePath, 5000);
+        subtitleDurationMs = durationMs;
+        console.log('✅ [时长探测] 媒体时长:', durationMs, 'ms, 来源:', durationSourcePath === tempAudioPath ? 'audio' : 'video');
+        if (subtitleDebugEnabled) {
+          fs.appendFileSync(path.join(__dirname, 'subtitle_debug.log'), `[DURATION] source=${durationSourcePath === tempAudioPath ? 'audio' : 'video'} durationMs=${durationMs}\n`);
+        }
         tempSrtPath = path.join(tempDirPath, `temp_subtitle_${timestamp}.srt`);
         generateSimpleSRT(subtitle.trim(), durationMs, tempSrtPath);
-        console.log('✅ [智能字幕] 字幕已生成');
+        console.log('[subtitle] subtitle file generated');
+        if (subtitleDebugEnabled) {
+          const size = fs.existsSync(tempSrtPath) ? fs.statSync(tempSrtPath).size : 0;
+          fs.appendFileSync(path.join(__dirname, 'subtitle_debug.log'), `[SRT-GENERATED] tempSrtPath=${tempSrtPath} size=${size}\n`);
+        }
+        if (isBurnSubtitleRoute) {
+          const validation = validateSrtFile(tempSrtPath, durationMs);
+          if (!validation.ok) {
+            return respondDegradedNoSubtitle(validation.reason);
+          }
+        }
       } catch (error) {
-        console.warn('⚠️ [智能字幕] 生成失败，将使用静态字幕:', error.message);
+        console.warn('[subtitle] generate subtitle failed, fallback to static subtitle:', error.message);
+        if (subtitleDebugEnabled) {
+          fs.appendFileSync(require('path').join(__dirname, 'subtitle_debug.log'), `[SRT-FAILED] error=${error.message}\n`);
+        }
+        if (isBurnSubtitleRoute) {
+          return respondDegradedNoSubtitle('srt_generate_failed');
+        }
       }
     }
 
-    // 检查 FFmpeg 可用性
-    checkFfmpegInPath((found, ffmpegPath) => {
-      if (!found) {
-        console.error('❌ [视频后处理] FFmpeg 未找到');
-        return res.status(500).json({
-          status: 'error',
-          message: 'FFmpeg 未安装或未配置在系统路径中'
-        });
-      }
-
-      console.log('✅ [视频后处理] 使用 FFmpeg:', ffmpegPath);
-      ffmpeg.setFfmpegPath(ffmpegPath);
+    {
 
       let command = ffmpeg(tempVideoPath);
       if (tempAudioPath && fs.existsSync(tempAudioPath)) {
         command = command.input(tempAudioPath);
       }
 
-      // 构建复杂滤镜链
+      // 鏋勫缓澶嶆潅婊ら暅閾?
       const filters = [];
       let currentInput = '[0:v]';
 
-      // 1. 添加装饰元素叠加（使用overlay滤镜）
+      // 1. 娣诲姞瑁呴グ鍏冪礌鍙犲姞锛堜娇鐢╫verlay婊ら暅锛?
       if (tempDecorationPaths.length > 0) {
         const decorationInputStartIndex = tempAudioPath ? 2 : 1;
         tempDecorationPaths.forEach((decoration, index) => {
           command = command.input(decoration.tempPath);
 
-          // 计算位置
-          let overlayPosition = 'x=10:y=10'; // 默认左上角
+          // 璁＄畻浣嶇疆
+          let overlayPosition = 'x=10:y=10'; // 榛樿宸︿笂瑙?
           if (decoration.position === 'top-right') {
             overlayPosition = 'x=W-w-10:y=10';
           } else if (decoration.position === 'bottom-left') {
@@ -1427,27 +1778,31 @@ app.post(['/api/video/post-process', '/api/video/burn-subtitle'], express.json({
         });
       }
 
-      // 2. 添加字幕滤镜（实时字幕 or 静态字幕）
+      // 2. 娣诲姞瀛楀箷婊ら暅锛堝疄鏃跺瓧骞?or 闈欐€佸瓧骞曪級
+      if (subtitleDebugEnabled) {
+        fs.appendFileSync(require('path').join(__dirname, 'subtitle_debug.log'), `[FILTER-CHOICE] tempSrtPath=${tempSrtPath} exists=${tempSrtPath ? fs.existsSync(tempSrtPath) : false}\n`);
+      }
       if (tempSrtPath && fs.existsSync(tempSrtPath)) {
-        // 使用实时字幕（SRT文件）
-        // Windows路径转换：C:\temp\sub.srt → C:/temp/sub.srt → C\\:/temp/sub.srt
+        // 浣跨敤瀹炴椂瀛楀箷锛圫RT鏂囦欢锛?
+        // Windows璺緞杞崲锛欳:\temp\sub.srt 鈫?C:/temp/sub.srt 鈫?C\\:/temp/sub.srt
         const escapedSrtPath = tempSrtPath
-          .replace(/\\/g, '/') // 反斜杠转正斜杠
-          .replace(/:/g, '\\:'); // 冒号转义
+          .replace(/\\/g, '/') // 鍙嶆枩鏉犺浆姝ｆ枩鏉?
+          .replace(/:/g, '\\:'); // 鍐掑彿杞箟
 
-        console.log('🎬 [字幕] 原始SRT路径:', tempSrtPath);
-        console.log('🎬 [字幕] 转义后路径:', escapedSrtPath);
+        console.log('馃幀 [瀛楀箷] 鍘熷SRT璺緞:', tempSrtPath);
+        console.log('馃幀 [瀛楀箷] 杞箟鍚庤矾寰?', escapedSrtPath);
 
-        const subtitleFilter = `${currentInput}subtitles='${escapedSrtPath}':` +
-          `force_style='FontName=Microsoft YaHei,FontSize=28,` +
-          `PrimaryColour=&HFFFFFF&,OutlineColour=&H000000&,BorderStyle=1,` +
-          `Outline=2,Shadow=1,MarginV=30,Alignment=2'[output]`;
+        const srtFontName = process.platform === 'linux' ? 'Noto Sans CJK SC' : 'Microsoft YaHei';
+        const subtitleFilter = `${currentInput}subtitles='${escapedSrtPath}':charenc=UTF-8:` +
+          `force_style='FontName=${srtFontName},FontSize=22,` +
+          `PrimaryColour=&H00FFFFFF&,OutlineColour=&H00000000&,BorderStyle=1,` +
+          `Outline=2,Shadow=1,ShadowColour=&H80000000&,MarginV=35,Alignment=2,Bold=1,WrapStyle=2'[output]`;
 
         filters.push(subtitleFilter);
         currentInput = '[output]';
-        console.log('🎬 [字幕] 使用实时字幕（SRT），滤镜:', subtitleFilter.substring(0, 150) + '...');
-      } else if (subtitle && subtitle.trim()) {
-        // fallback: 使用静态字幕（drawtext）- 修复字号和位置
+        console.log('馃幀 [瀛楀箷] 浣跨敤瀹炴椂瀛楀箷锛圫RT锛夛紝婊ら暅:', subtitleFilter.substring(0, 150) + '...');
+      } else if (!isBurnSubtitleRoute && subtitle && subtitle.trim()) {
+        // fallback: 浣跨敤闈欐€佸瓧骞曪紙drawtext锛? 淇瀛楀彿鍜屼綅缃?
         const escapedSubtitle = subtitle
           .replace(/\\/g, '\\\\')
           .replace(/'/g, "\\'")
@@ -1456,8 +1811,8 @@ app.post(['/api/video/post-process', '/api/video/burn-subtitle'], express.json({
 
         const subtitleFilter = `${currentInput}drawtext=` +
           `text='${escapedSubtitle}':` +
-          `fontfile='C\\:/Windows/Fonts/msyh.ttc':` +
-          `fontsize=60:` + // 修复：80 -> 60
+          (process.platform === 'linux' ? '' : `fontfile='C\\:/Windows/Fonts/msyh.ttc':`) +
+          `fontsize=60:` + // 淇锛?0 -> 60
           `fontcolor=white:` +
           `borderw=3:` +
           `bordercolor=black:` +
@@ -1472,99 +1827,82 @@ app.post(['/api/video/post-process', '/api/video/burn-subtitle'], express.json({
 
         filters.push(subtitleFilter);
         currentInput = '[output]';
-        console.log('⚠️ [字幕] 使用静态字幕（fallback）');
+        console.log('[subtitle] using static subtitle fallback');
       }
 
-      // 应用滤镜链
+      // 搴旂敤婊ら暅閾?
       if (filters.length > 0) {
         command = command.complexFilter(filters.join(';'));
       }
 
-      // 设置输出选项
+      // 璁剧疆杈撳嚭閫夐」
       command = command
         .outputOptions([
           '-map', currentInput === '[0:v]' ? '0:v' : currentInput,
           '-map', tempAudioPath ? '1:a:0' : '0:a?',
           '-c:v libx264',
           '-c:a aac',
-          '-b:a 192k',
+          '-b:a 128k',
+          '-ar', '44100',
+          '-ac', '2',
           '-preset ultrafast',
           '-crf 23',
           '-movflags +faststart'
         ])
         .output(outputPath);
 
-      // 监听进度
+      // 鐩戝惉杩涘害
       command.on('start', (commandLine) => {
-        console.log('🎬 [FFmpeg] 命令:', commandLine);
+        console.log('馃幀 [FFmpeg] 鍛戒护:', commandLine);
       });
 
       command.on('progress', (progress) => {
-        console.log(`📊 [FFmpeg] 进度: ${progress.percent ? progress.percent.toFixed(2) : 0}%`);
+        console.log(`馃搳 [FFmpeg] 杩涘害: ${progress.percent ? progress.percent.toFixed(2) : 0}%`);
       });
 
       command.on('end', () => {
-        console.log('✅ [视频后处理] 完成:', outputFileName);
+        console.log('鉁?[瑙嗛鍚庡鐞哴 瀹屾垚:', outputFileName);
 
-        // 清理临时文件
-        if (tempVideoPath && fs.existsSync(tempVideoPath)) {
-          fs.unlinkSync(tempVideoPath);
-        }
-        if (tempAudioPath && fs.existsSync(tempAudioPath)) {
-          fs.unlinkSync(tempAudioPath);
-        }
-        if (tempSrtPath && fs.existsSync(tempSrtPath)) {
-          fs.unlinkSync(tempSrtPath);
-        }
-        tempDecorationPaths.forEach(dec => {
-          if (fs.existsSync(dec.tempPath)) {
-            fs.unlinkSync(dec.tempPath);
-          }
-        });
+        const subtitleApplied = Boolean(tempSrtPath && fs.existsSync(tempSrtPath));
+        cleanupTempFiles();
 
-        const downloadUrl = `http://localhost:${PORT}/downloads/${outputFileName}`;
+        // 浣跨敤璇锋眰鏉ユ簮鏋勫缓URL锛屽吋瀹圭Щ鍔ㄧ灞€鍩熺綉璁块棶
+        const reqOrigin = getRequestOrigin(req);
+        const downloadUrl = `${reqOrigin}/downloads/${outputFileName}`;
         res.json({
           status: 'success',
-          message: '字幕烧录完成',
+          message: '瀛楀箷鐑у綍瀹屾垚',
           downloadUrl: downloadUrl,
-          fileName: outputFileName
+          fileName: outputFileName,
+          subtitleApplied,
+          degraded: false
         });
       });
 
       command.on('error', (err, stdout, stderr) => {
-        console.error('❌ [FFmpeg] 错误:', err.message);
-        console.error('❌ [FFmpeg] stderr:', stderr);
+        console.error('鉂?[FFmpeg] 閿欒:', err.message);
+        console.error('鉂?[FFmpeg] stderr:', stderr);
 
-        // 清理临时文件
-        if (tempVideoPath && fs.existsSync(tempVideoPath)) {
-          fs.unlinkSync(tempVideoPath);
+        cleanupTempFiles();
+
+        if (isBurnSubtitleRoute) {
+          return respondDegradedNoSubtitle('ffmpeg_subtitles_failed');
         }
-        if (tempAudioPath && fs.existsSync(tempAudioPath)) {
-          fs.unlinkSync(tempAudioPath);
-        }
-        if (tempSrtPath && fs.existsSync(tempSrtPath)) {
-          fs.unlinkSync(tempSrtPath);
-        }
-        tempDecorationPaths.forEach(dec => {
-          if (fs.existsSync(dec.tempPath)) {
-            fs.unlinkSync(dec.tempPath);
-          }
-        });
 
         res.status(500).json({
           status: 'error',
-          message: 'FFmpeg 处理失败',
+          message: 'FFmpeg 澶勭悊澶辫触',
           error: err.message
         });
       });
 
       command.run();
-    });
+    }
 
   } catch (error) {
-    console.error('❌ [视频后处理] 异常:', error.message);
+    console.error('鉂?[瑙嗛鍚庡鐞哴 寮傚父:', error.message);
 
-    // 清理临时文件
+    // 娓呯悊涓存椂鏂囦欢
     if (tempVideoPath && fs.existsSync(tempVideoPath)) {
       fs.unlinkSync(tempVideoPath);
     }
@@ -1580,27 +1918,40 @@ app.post(['/api/video/post-process', '/api/video/burn-subtitle'], express.json({
       }
     });
 
+    const isBurnSubtitleRoute = String(req.path || '').endsWith('/api/video/burn-subtitle') || String(req.path || '').endsWith('/video/burn-subtitle');
+    if (isBurnSubtitleRoute) {
+      return res.json({
+        status: 'success',
+        message: '字幕已降级为无字幕',
+        subtitleApplied: false,
+        degraded: true,
+        reason: 'unexpected_error',
+        downloadUrl: String(req.body?.videoUrl || ''),
+        fileName: ''
+      });
+    }
+
     res.status(500).json({
       status: 'error',
-      message: '视频后处理失败',
+      message: 'Video post-processing failed',
       error: error.message
     });
   }
 });
 
-// ========== 可灵AI视频生成 API ==========
+// ========== 鍙伒AI瑙嗛鐢熸垚 API ==========
 
 /**
- * 可灵AI - 图生视频接口
+ * 鍙伒AI - 鍥剧敓瑙嗛鎺ュ彛
  * POST /api/kling/video-generation
  *
- * 请求体:
+ * 璇锋眰浣?
  * {
- *   "image_url": "图片URL",
- *   "prompt": "视频描述(可选)",
- *   "duration": 5 或 10,
- *   "mode": "std" 或 "pro",
- *   "audio_url": "音频URL(可选,用于音画同步)"
+ *   "image_url": "鍥剧墖URL",
+ *   "prompt": "瑙嗛鎻忚堪(鍙€?",
+ *   "duration": 5 鎴?10,
+ *   "mode": "std" 鎴?"pro",
+ *   "audio_url": "闊抽URL(鍙€?鐢ㄤ簬闊崇敾鍚屾)"
  * }
  */
 app.post('/api/kling/video-generation', express.json(), async (req, res) => {
@@ -1610,7 +1961,7 @@ app.post('/api/kling/video-generation', express.json(), async (req, res) => {
     if (!image_url) {
       return res.status(400).json({
         status: 'error',
-        message: '缺少必需参数: image_url'
+        message: '缂哄皯蹇呴渶鍙傛暟: image_url'
       });
     }
 
@@ -1620,36 +1971,36 @@ app.post('/api/kling/video-generation', express.json(), async (req, res) => {
     if (!KLING_ACCESS_KEY || !KLING_SECRET_KEY) {
       return res.status(500).json({
         status: 'error',
-        message: '服务器未配置可灵API密钥'
+        message: '鏈嶅姟鍣ㄦ湭閰嶇疆鍙伒API瀵嗛挜'
       });
     }
 
     const jwtToken = generateKlingJWT();
-    console.log('[可灵API] 创建视频生成任务:', { image_url, prompt, duration, mode });
+    console.log('[鍙伒API] 鍒涘缓瑙嗛鐢熸垚浠诲姟:', { image_url, prompt, duration, mode });
 
-    // 构建请求体（严格按照官方文档）
+    // 鏋勫缓璇锋眰浣擄紙涓ユ牸鎸夌収瀹樻柟鏂囨。锛?
     const requestBody = {
-      model_name: 'kling-v2-6', // 升级到v2.6以支持voice_list参数
-      image: image_url,           // 官方字段名是 image，不是 image_url
+      model_name: 'kling-v2-6', // 鍗囩骇鍒皏2.6浠ユ敮鎸乿oice_list鍙傛暟
+      image: image_url,           // 瀹樻柟瀛楁鍚嶆槸 image锛屼笉鏄?image_url
       prompt: prompt,
-      duration: String(duration), // 官方要求字符串格式
+      duration: String(duration), // 瀹樻柟瑕佹眰瀛楃涓叉牸寮?
       mode: mode
     };
 
-    // 注意：官方图生视频API不支持audio_url参数！
-    // 音画同步需要使用voice_list参数（仅V2.6及后续版本支持）
+    // 娉ㄦ剰锛氬畼鏂瑰浘鐢熻棰慉PI涓嶆敮鎸乤udio_url鍙傛暟锛?
+    // 闊崇敾鍚屾闇€瑕佷娇鐢╲oice_list鍙傛暟锛堜粎V2.6鍙婂悗缁増鏈敮鎸侊級
 
-    // 调用可灵API
+    // 璋冪敤鍙伒API
     const klingResponse = await new Promise((resolve, reject) => {
       const postData = JSON.stringify(requestBody);
 
       const options = {
-        hostname: 'api-beijing.klingai.com',  // 官方域名
-        path: '/v1/videos/image2video',        // 官方端点（注意是videos复数）
+        hostname: 'api-beijing.klingai.com',  // 瀹樻柟鍩熷悕
+        path: '/v1/videos/image2video',        // 瀹樻柟绔偣锛堟敞鎰忔槸videos澶嶆暟锛?
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwtToken}`,  // 使用生成的JWT token
+          'Authorization': `Bearer ${jwtToken}`,  // 浣跨敤鐢熸垚鐨凧WT token
           'Content-Length': Buffer.byteLength(postData)
         }
       };
@@ -1661,7 +2012,7 @@ app.post('/api/kling/video-generation', express.json(), async (req, res) => {
           try {
             resolve(JSON.parse(data));
           } catch (e) {
-            reject(new Error(`解析响应失败: ${data}`));
+            reject(new Error(`瑙ｆ瀽鍝嶅簲澶辫触: ${data}`));
           }
         });
       });
@@ -1671,13 +2022,13 @@ app.post('/api/kling/video-generation', express.json(), async (req, res) => {
       apiReq.end();
     });
 
-    console.log('[可灵API] 任务创建响应:', klingResponse);
+    console.log('[鍙伒API] 浠诲姟鍒涘缓鍝嶅簲:', klingResponse);
 
-    // 按照官方文档解析响应
+    // 鎸夌収瀹樻柟鏂囨。瑙ｆ瀽鍝嶅簲
     if (klingResponse.code !== 0) {
       return res.status(500).json({
         status: 'error',
-        message: klingResponse.message || '可灵API调用失败',
+        message: klingResponse.message || '鍙伒API璋冪敤澶辫触',
         details: klingResponse
       });
     }
@@ -1685,32 +2036,32 @@ app.post('/api/kling/video-generation', express.json(), async (req, res) => {
     if (!klingResponse.data || !klingResponse.data.task_id) {
       return res.status(500).json({
         status: 'error',
-        message: '可灵API响应格式异常',
+        message: '鍙伒API鍝嶅簲鏍煎紡寮傚父',
         details: klingResponse
       });
     }
 
     const taskId = klingResponse.data.task_id;
 
-    // 开始轮询任务状态（最多等待5分钟）
-    const maxAttempts = 60; // 60次 × 5秒 = 5分钟
-    const pollInterval = 5000; // 5秒
+    // 寮€濮嬭疆璇换鍔＄姸鎬侊紙鏈€澶氱瓑寰?鍒嗛挓锛?
+    const maxAttempts = 60; // 60娆?脳 5绉?= 5鍒嗛挓
+    const pollInterval = 5000; // 5绉?
     let attempts = 0;
 
     const pollTask = async () => {
       attempts++;
-      console.log(`[可灵API] 查询任务状态 (${attempts}/${maxAttempts}):`, taskId);
+      console.log(`[鍙伒API] 鏌ヨ浠诲姟鐘舵€?(${attempts}/${maxAttempts}):`, taskId);
 
       const statusResponse = await new Promise((resolve, reject) => {
           const queryToken = generateKlingJWT();
 
         const options = {
-          hostname: 'api-beijing.klingai.com',       // 官方域名
-          path: `/v1/videos/image2video/${taskId}`,  // 官方端点
+          hostname: 'api-beijing.klingai.com',       // 瀹樻柟鍩熷悕
+          path: `/v1/videos/image2video/${taskId}`,  // 瀹樻柟绔偣
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${queryToken}`   // 使用JWT token
+            'Authorization': `Bearer ${queryToken}`   // 浣跨敤JWT token
           }
         };
 
@@ -1721,7 +2072,7 @@ app.post('/api/kling/video-generation', express.json(), async (req, res) => {
             try {
               resolve(JSON.parse(data));
             } catch (e) {
-              reject(new Error(`解析响应失败: ${data}`));
+              reject(new Error(`瑙ｆ瀽鍝嶅簲澶辫触: ${data}`));
             }
           });
         });
@@ -1730,55 +2081,55 @@ app.post('/api/kling/video-generation', express.json(), async (req, res) => {
         apiReq.end();
       });
 
-      // 按照官方文档解析响应
+      // 鎸夌収瀹樻柟鏂囨。瑙ｆ瀽鍝嶅簲
       if (statusResponse.code !== 0) {
-        throw new Error(`查询任务失败: ${statusResponse.message}`);
+        throw new Error(`鏌ヨ浠诲姟澶辫触: ${statusResponse.message}`);
       }
 
       const taskData = statusResponse.data;
       const status = taskData.task_status;  // submitted/processing/succeed/failed
-      console.log(`[可灵API] 任务状态: ${status}`);
+      console.log(`[鍙伒API] 浠诲姟鐘舵€? ${status}`);
 
       if (status === 'succeed') {
-        // 任务成功
+        // 浠诲姟鎴愬姛
         const videoUrl = taskData.task_result?.videos?.[0]?.url;
 
         if (!videoUrl) {
-          throw new Error('任务完成但未找到视频URL');
+          throw new Error('浠诲姟瀹屾垚浣嗘湭鎵惧埌瑙嗛URL');
         }
 
-        console.log('[可灵API] ✅ 视频生成成功:', videoUrl);
+        console.log('[鍙伒API] 鉁?瑙嗛鐢熸垚鎴愬姛:', videoUrl);
         return res.json({
           status: 'success',
           videoUrl: videoUrl,
           taskId: taskId
         });
       } else if (status === 'failed') {
-        // 任务失败
-        throw new Error(`视频生成失败: ${taskData.task_status_msg || '未知错误'}`);
+        // 浠诲姟澶辫触
+        throw new Error(`瑙嗛鐢熸垚澶辫触: ${taskData.task_status_msg || '鏈煡閿欒'}`);
       } else if (attempts >= maxAttempts) {
-        // 超时
-        throw new Error('视频生成超时（5分钟）');
+        // 瓒呮椂
+        throw new Error('Video generation timed out (10 minutes)');
       } else {
-        // 继续轮询（submitted 或 processing 状态）
+        // 缁х画杞锛坰ubmitted 鎴?processing 鐘舵€侊級
         setTimeout(pollTask, pollInterval);
       }
     };
 
-    // 启动轮询
+    // 鍚姩杞
     setTimeout(pollTask, pollInterval);
 
   } catch (error) {
-    console.error('❌ [可灵API] 异常:', error.message);
+    console.error('鉂?[鍙伒API] 寮傚父:', error.message);
     res.status(500).json({
       status: 'error',
-      message: '可灵视频生成失败',
+      message: '鍙伒瑙嗛鐢熸垚澶辫触',
       error: error.message
     });
   }
 });
 
-// ========== 可灵视频特效 API ==========
+// ========== 鍙伒瑙嗛鐗规晥 API ==========
 app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (req, res) => {
   try {
     const { effect_scene, image_url } = req.body;
@@ -1786,7 +2137,7 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
     if (!effect_scene || !image_url) {
       return res.status(400).json({
         status: 'error',
-        message: '缺少必需参数: effect_scene, image_url'
+        message: '缂哄皯蹇呴渶鍙傛暟: effect_scene, image_url'
       });
     }
 
@@ -1796,14 +2147,14 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
     if (!KLING_ACCESS_KEY || !KLING_SECRET_KEY) {
       return res.status(500).json({
         status: 'error',
-        message: '服务器未配置可灵API密钥'
+        message: '鏈嶅姟鍣ㄦ湭閰嶇疆鍙伒API瀵嗛挜'
       });
     }
 
     const jwtToken = generateKlingJWT();
-    console.log('[可灵特效API] 创建视频特效任务:', { effect_scene, image_url });
+    console.log('[鍙伒鐗规晥API] 鍒涘缓瑙嗛鐗规晥浠诲姟:', { effect_scene, image_url });
 
-    // 构建请求体
+    // 鏋勫缓璇锋眰浣?
     const requestBody = {
       effect_scene: effect_scene,
       input: {
@@ -1811,7 +2162,7 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
       }
     };
 
-    // 调用可灵特效API
+    // 璋冪敤鍙伒鐗规晥API
     const klingResponse = await new Promise((resolve, reject) => {
       const postData = JSON.stringify(requestBody);
 
@@ -1833,7 +2184,7 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
           try {
             resolve(JSON.parse(data));
           } catch (e) {
-            reject(new Error(`解析响应失败: ${data}`));
+            reject(new Error(`瑙ｆ瀽鍝嶅簲澶辫触: ${data}`));
           }
         });
       });
@@ -1843,12 +2194,12 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
       apiReq.end();
     });
 
-    console.log('[可灵特效API] 任务创建响应:', klingResponse);
+    console.log('[鍙伒鐗规晥API] 浠诲姟鍒涘缓鍝嶅簲:', klingResponse);
 
     if (klingResponse.code !== 0) {
       return res.status(500).json({
         status: 'error',
-        message: klingResponse.message || '可灵特效API调用失败',
+        message: klingResponse.message || '鍙伒鐗规晥API璋冪敤澶辫触',
         details: klingResponse
       });
     }
@@ -1856,21 +2207,21 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
     if (!klingResponse.data || !klingResponse.data.task_id) {
       return res.status(500).json({
         status: 'error',
-        message: '可灵特效API响应格式异常',
+        message: '鍙伒鐗规晥API鍝嶅簲鏍煎紡寮傚父',
         details: klingResponse
       });
     }
 
     const taskId = klingResponse.data.task_id;
 
-    // 轮询任务状态
+    // 杞浠诲姟鐘舵€?
     const maxAttempts = 60;
     const pollInterval = 5000;
     let attempts = 0;
 
     const pollTask = async () => {
       attempts++;
-      console.log(`[可灵特效API] 查询任务状态 (${attempts}/${maxAttempts}):`, taskId);
+      console.log(`[鍙伒鐗规晥API] 鏌ヨ浠诲姟鐘舵€?(${attempts}/${maxAttempts}):`, taskId);
 
       let statusResponse;
       try {
@@ -1892,7 +2243,7 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${queryToken}`
             },
-            timeout: 10000 // 10秒超时
+            timeout: 10000 // 10绉掕秴鏃?
           };
 
           const apiReq = https.request(options, (apiRes) => {
@@ -1902,39 +2253,39 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
               try {
                 resolve(JSON.parse(data));
               } catch (e) {
-                reject(new Error(`解析响应失败: ${data}`));
+                reject(new Error(`瑙ｆ瀽鍝嶅簲澶辫触: ${data}`));
               }
             });
           });
 
           apiReq.on('error', (err) => {
-            console.warn(`⚠️ [可灵特效API] 网络错误 (${attempts}/${maxAttempts}):`, err.message);
+            console.warn(`鈿狅笍 [鍙伒鐗规晥API] 缃戠粶閿欒 (${attempts}/${maxAttempts}):`, err.message);
             reject(err);
           });
 
           apiReq.on('timeout', () => {
             apiReq.destroy();
-            reject(new Error('请求超时'));
+            reject(new Error('璇锋眰瓒呮椂'));
           });
 
           apiReq.end();
         });
       } catch (networkError) {
-        // 网络错误，重试
-        console.warn(`⚠️ [可灵特效API] 网络错误，将在5秒后重试:`, networkError.message);
+        // 缃戠粶閿欒锛岄噸璇?
+        console.warn(`鈿狅笍 [鍙伒鐗规晥API] 缃戠粶閿欒锛屽皢鍦?绉掑悗閲嶈瘯:`, networkError.message);
         if (attempts < maxAttempts) {
           setTimeout(pollTask, pollInterval);
           return;
         } else {
           return res.status(500).json({
             status: 'error',
-            message: '网络连接失败，请检查网络后重试',
+            message: '缃戠粶杩炴帴澶辫触锛岃妫€鏌ョ綉缁滃悗閲嶈瘯',
             error: networkError.message
           });
         }
       }
 
-      console.log('[可灵特效API] 任务状态响应:', {
+      console.log('[鍙伒鐗规晥API] 浠诲姟鐘舵€佸搷搴?', {
         code: statusResponse.code,
         message: statusResponse.message,
         hasData: !!statusResponse.data,
@@ -1942,27 +2293,27 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
       });
 
         if (statusResponse.code !== 0) {
-          // 签名错误（code === 1000）应该立即失败，不重试
+          // 绛惧悕閿欒锛坈ode === 1000锛夊簲璇ョ珛鍗冲け璐ワ紝涓嶉噸璇?
           if (statusResponse.code === 1000 && statusResponse.message.includes('signature')) {
-            console.error(`❌ [可灵特效API] 签名错误，无法继续重试:`, statusResponse.message);
+            console.error(`鉂?[鍙伒鐗规晥API] 绛惧悕閿欒锛屾棤娉曠户缁噸璇?`, statusResponse.message);
             return res.status(500).json({
               status: 'error',
-              message: 'API签名验证失败，可能是密钥错误或时间同步问题',
+              message: 'API signature verification failed',
               errorCode: statusResponse.code,
               details: statusResponse.message
             });
           }
           
-          console.warn(`⚠️ [可灵特效API] 查询失败，将在5秒后重试 (${attempts}/${maxAttempts}):`, statusResponse.message);
+          console.warn(`鈿狅笍 [鍙伒鐗规晥API] 鏌ヨ澶辫触锛屽皢鍦?绉掑悗閲嶈瘯 (${attempts}/${maxAttempts}):`, statusResponse.message);
           
-          // 其他错误继续重试
+          // 鍏朵粬閿欒缁х画閲嶈瘯
           if (attempts < maxAttempts) {
             setTimeout(pollTask, pollInterval);
             return;
           } else {
             return res.status(500).json({
               status: 'error',
-              message: '查询任务状态失败',
+              message: 'Failed to query task status',
               details: statusResponse
             });
           }
@@ -1970,64 +2321,64 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
 
       const taskStatus = statusResponse.data?.task_status;
       
-      // 处理undefined状态 - 常见于刚创建的任务
+      // 澶勭悊undefined鐘舵€?- 甯歌浜庡垰鍒涘缓鐨勪换鍔?
       if (taskStatus === undefined) {
-        console.log(`🔄 [可灵特效API] 任务状态为undefined，将在5秒后重试 (${attempts}/${maxAttempts})`);
+        console.log(`馃攧 [鍙伒鐗规晥API] 浠诲姟鐘舵€佷负undefined锛屽皢鍦?绉掑悗閲嶈瘯 (${attempts}/${maxAttempts})`);
         if (attempts < maxAttempts) {
           setTimeout(pollTask, pollInterval);
           return;
         } else {
           return res.status(500).json({
             status: 'error',
-            message: '任务状态获取失败，请稍后重试'
+            message: 'Failed to get task status, please retry later'
           });
         }
       }
 
-      console.log(`[可灵特效API] 当前任务状态: ${taskStatus}`);
+      console.log(`[鍙伒鐗规晥API] 褰撳墠浠诲姟鐘舵€? ${taskStatus}`);
 
       if (taskStatus === 'succeed') {
         const videoUrl = statusResponse.data?.task_result?.videos?.[0]?.url;
         if (!videoUrl) {
-          console.error('❌ [可灵特效API] 任务成功但未找到视频URL');
+          console.error('鉂?[鍙伒鐗规晥API] 浠诲姟鎴愬姛浣嗘湭鎵惧埌瑙嗛URL');
           return res.status(500).json({
             status: 'error',
-            message: '未获取到视频URL'
+            message: '鏈幏鍙栧埌瑙嗛URL'
           });
         }
 
-        console.log('[可灵特效API] ✅ 视频生成成功:', videoUrl);
+        console.log('[鍙伒鐗规晥API] 鉁?瑙嗛鐢熸垚鎴愬姛:', videoUrl);
         return res.json({
           status: 'success',
           videoUrl: videoUrl
         });
       } else if (taskStatus === 'failed') {
-        console.error('❌ [可灵特效API] 任务失败:', statusResponse.data?.task_status_msg);
+        console.error('鉂?[鍙伒鐗规晥API] 浠诲姟澶辫触:', statusResponse.data?.task_status_msg);
         return res.status(500).json({
           status: 'error',
-          message: '可灵特效视频生成失败',
+          message: '鍙伒鐗规晥瑙嗛鐢熸垚澶辫触',
           details: statusResponse.data
         });
       } else if (taskStatus === 'submitted' || taskStatus === 'processing') {
-        // 正常状态，继续轮询
+        // 姝ｅ父鐘舵€侊紝缁х画杞
         if (attempts >= maxAttempts) {
-          console.log('⏰ [可灵特效API] 轮询超时，任务仍在处理中');
+          console.log('鈴?[鍙伒鐗规晥API] 杞瓒呮椂锛屼换鍔′粛鍦ㄥ鐞嗕腑');
           return res.status(500).json({
             status: 'error',
-            message: '任务处理超时，请稍后查询结果',
+            message: '浠诲姟澶勭悊瓒呮椂锛岃绋嶅悗鏌ヨ缁撴灉',
             taskId: taskId
           });
         }
         setTimeout(pollTask, pollInterval);
       } else {
-        // 未知状态，记录并继续轮询
-        console.warn(`⚠️ [可灵特效API] 未知任务状态: ${taskStatus}，将在5秒后重试`);
+        // 鏈煡鐘舵€侊紝璁板綍骞剁户缁疆璇?
+        console.warn(`鈿狅笍 [鍙伒鐗规晥API] 鏈煡浠诲姟鐘舵€? ${taskStatus}锛屽皢鍦?绉掑悗閲嶈瘯`);
         if (attempts < maxAttempts) {
           setTimeout(pollTask, pollInterval);
         } else {
           return res.status(500).json({
             status: 'error',
-            message: '任务处理异常',
+            message: '浠诲姟澶勭悊寮傚父',
             taskStatus: taskStatus
           });
         }
@@ -2037,22 +2388,22 @@ app.post('/api/kling/video-effects', klingRateLimiter, express.json(), async (re
     setTimeout(pollTask, pollInterval);
 
   } catch (error) {
-    console.error('❌ [可灵特效API] 异常:', error.message);
+    console.error('鉂?[鍙伒鐗规晥API] 寮傚父:', error.message);
     res.status(500).json({
       status: 'error',
-      message: '可灵特效视频生成失败',
+      message: '鍙伒鐗规晥瑙嗛鐢熸垚澶辫触',
       error: error.message
     });
   }
 });
 
-// ========== 腾讯云COS上传 API ==========
+// ========== 鑵捐浜慍OS涓婁紶 API ==========
 
 /**
- * 图片/音频上传到腾讯云COS
+ * 鍥剧墖/闊抽涓婁紶鍒拌吘璁簯COS
  * POST /api/upload-cos
  *
- * 替代Vite中间件，直接在后端处理，避免响应重复问题
+ * 鏇夸唬Vite涓棿浠讹紝鐩存帴鍦ㄥ悗绔鐞嗭紝閬垮厤鍝嶅簲閲嶅闂
  */
 function sanitizeCosPublicUrl(url) {
   let value = String(url || '').trim().replace(/[\r\n\t]/g, '');
@@ -2060,16 +2411,15 @@ function sanitizeCosPublicUrl(url) {
   if (firstProto === -1) return '';
   if (firstProto > 0) value = value.slice(firstProto);
 
-  const mediaUrlMatch = value.match(/https?:\/\/[^\s"'<>]+?\.(jpg|jpeg|png|webp|mp3|wav|m4a|ogg|mp4)(\?[^\s"'<>]*)?/i);
-  if (mediaUrlMatch && mediaUrlMatch[0]) return mediaUrlMatch[0];
-
+  // Hard cut on duplicated protocol prefix first.
   const protoMatches = [...value.matchAll(/https?:\/\//gi)];
   if (protoMatches.length > 1) {
     const cutAt = protoMatches[1].index ?? -1;
-    if (cutAt > 0) {
-      value = value.slice(0, cutAt);
-    }
+    if (cutAt > 0) value = value.slice(0, cutAt);
   }
+
+  const mediaUrlMatch = value.match(/https?:\/\/[^\s"'<>]+?\.(jpg|jpeg|png|webp|mp3|wav|m4a|ogg|mp4)(\?[^\s"'<>]*)?/i);
+  if (mediaUrlMatch && mediaUrlMatch[0]) return mediaUrlMatch[0];
 
   return value;
 }
@@ -2082,32 +2432,32 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
       return res.status(400).json({ error: 'Missing image data' });
     }
 
-    // 获取腾讯云配置
+    // 鑾峰彇鑵捐浜戦厤缃?
     const secretId = process.env.VITE_TENCENT_COS_SECRET_ID;
     const secretKey = process.env.VITE_TENCENT_COS_SECRET_KEY;
     const bucket = process.env.VITE_TENCENT_COS_BUCKET || 'fudaiai-1400086527';
     const region = process.env.VITE_TENCENT_COS_REGION || 'ap-shanghai';
 
     if (!secretId || !secretKey) {
-      return res.status(500).json({ error: '服务器未配置腾讯云COS密钥' });
+      return res.status(500).json({ error: '鏈嶅姟鍣ㄦ湭閰嶇疆鑵捐浜慍OS瀵嗛挜' });
     }
 
-    // 初始化COS
+    // 鍒濆鍖朇OS
     const cos = new COS({
       SecretId: secretId,
       SecretKey: secretKey
     });
 
-    // Base64转Buffer（支持图片和音频）
+    // Base64杞珺uffer锛堟敮鎸佸浘鐗囧拰闊抽锛?
     let base64Data;
     let fileExtension;
 
     if (type === 'audio') {
-      // 音频文件处理
+      // 闊抽鏂囦欢澶勭悊
       base64Data = image.replace(/^data:audio\/\w+;base64,/, '');
       fileExtension = format || 'mp3';
     } else {
-      // 图片文件处理（默认）
+      // 鍥剧墖鏂囦欢澶勭悊锛堥粯璁わ級
       base64Data = image.replace(/^data:image\/\w+;base64,/, '');
       fileExtension = 'jpg';
     }
@@ -2115,9 +2465,9 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
     const buffer = Buffer.from(base64Data, 'base64');
     const fileName = `festival/user/${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExtension}`;
 
-    console.log('[COS Backend] 上传文件:', fileName, '类型:', type || 'image', '大小:', buffer.length);
+    console.log('[COS Backend] 涓婁紶鏂囦欢:', fileName, '绫诲瀷:', type || 'image', '澶у皬:', buffer.length);
 
-    // 上传到COS
+    // 涓婁紶鍒癈OS
     cos.putObject(
       {
         Bucket: bucket,
@@ -2128,31 +2478,31 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
       },
       (err, data) => {
         if (err) {
-          console.error('[COS Backend] ❌ 上传失败:', err.message);
+          console.error('[COS Backend] 鉂?涓婁紶澶辫触:', err.message);
           return res.status(500).json({ error: err.message });
         }
 
-        // 🔧 【修复URL重复问题 - 多重验证】参考：docs/CONTEXT_HANDOFF.md
+        // 馃敡 銆愪慨澶峌RL閲嶅闂 - 澶氶噸楠岃瘉銆戝弬鑰冿細docs/CONTEXT_HANDOFF.md
 
-        // 第1层：手动构建干净URL（不使用COS返回的Location）
+        // 绗?灞傦細鎵嬪姩鏋勫缓骞插噣URL锛堜笉浣跨敤COS杩斿洖鐨凩ocation锛?
         let cleanUrl = sanitizeCosPublicUrl(`https://${bucket}.cos.${region}.myqcloud.com/${fileName}`);
 
-        // 第2层：检测并修复URL中的重复https://
+        // 绗?灞傦細妫€娴嬪苟淇URL涓殑閲嶅https://
         const httpsCount = (cleanUrl.match(/https:\/\//g) || []).length;
         if (httpsCount > 1) {
-          console.warn('[COS Backend] ⚠️ 检测到URL重复，正在修复...');
+          console.warn('[COS Backend] 鈿狅笍 妫€娴嬪埌URL閲嶅锛屾鍦ㄤ慨澶?..');
           const parts = cleanUrl.split('https://').filter(p => p);
-          cleanUrl = 'https://' + parts[parts.length - 1]; // 取最后一段
+          cleanUrl = 'https://' + parts[parts.length - 1]; // 鍙栨渶鍚庝竴娈?
         }
 
-        // 第3层：JSON序列化后二次验证
+        // 绗?灞傦細JSON搴忓垪鍖栧悗浜屾楠岃瘉
         const responseData = { url: sanitizeCosPublicUrl(cleanUrl) };
         const jsonString = JSON.stringify(responseData);
         const jsonHttpsCount = (jsonString.match(/https:\/\//g) || []).length;
 
         if (jsonHttpsCount > 1) {
-          console.error('[COS Backend] ❌ JSON序列化后仍有重复URL:', jsonString);
-          // 强制修复
+          console.error('[COS Backend] 鉂?JSON搴忓垪鍖栧悗浠嶆湁閲嶅URL:', jsonString);
+          // 寮哄埗淇
           const urlMatch = jsonString.match(/"url":"(https:\/\/[^"]+)"/);
           if (urlMatch) {
             const fixedUrl = urlMatch[1].split('https://').filter(p => p);
@@ -2164,18 +2514,18 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
           return res.status(500).json({ error: 'Failed to build COS URL' });
         }
 
-        console.log('[COS Backend] ✅ 上传成功:', responseData.url);
-        console.log('[COS Backend] 🔍 URL长度:', responseData.url.length);
+        console.log('[COS Backend] 鉁?涓婁紶鎴愬姛:', responseData.url);
+        console.log('[COS Backend] 馃攳 URL闀垮害:', responseData.url.length);
 
-        // 第4层：添加强防缓存响应头（防止代理层重复）
+        // 绗?灞傦細娣诲姞寮洪槻缂撳瓨鍝嶅簲澶达紙闃叉浠ｇ悊灞傞噸澶嶏級
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
 
-        // 第5层：检查响应是否已发送（防止重复发送）
+        // 绗?灞傦細妫€鏌ュ搷搴旀槸鍚﹀凡鍙戦€侊紙闃叉閲嶅鍙戦€侊級
         if (res.writableEnded) {
-          console.warn('[COS Backend] ⚠️ 响应已发送，跳过重复发送');
+          console.warn('[COS Backend] response already sent, skip duplicate send');
           return;
         }
 
@@ -2184,17 +2534,17 @@ app.post('/api/upload-cos', express.json({ limit: '50mb' }), async (req, res) =>
     );
 
   } catch (error) {
-    console.error('[COS Backend] ❌ 异常:', error.message);
+    console.error('[COS Backend] 鉂?寮傚父:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
 
 /**
- * 从COS动态获取M2模板列表
+ * 浠嶤OS鍔ㄦ€佽幏鍙朚2妯℃澘鍒楄〃
  * GET /api/m2-templates?gender=male&category=modern
  *
- * 功能：从COS bucket读取图片，并根据category筛选
- * 支持分类：modern, qipao, hanfu, tangzhuang, caishen, traditional
+ * 鍔熻兘锛氫粠COS bucket璇诲彇鍥剧墖锛屽苟鏍规嵁category绛涢€?
+ * 鏀寔鍒嗙被锛歮odern, qipao, hanfu, tangzhuang, caishen, traditional
  */
 app.get('/api/m2-templates', async (req, res) => {
   try {
@@ -2204,26 +2554,26 @@ app.get('/api/m2-templates', async (req, res) => {
       return res.status(400).json({ error: 'Invalid gender parameter (male/female/child/couple required)' });
     }
 
-    // 获取COS配置
+    // 鑾峰彇COS閰嶇疆
     const secretId = process.env.VITE_TENCENT_COS_SECRET_ID;
     const secretKey = process.env.VITE_TENCENT_COS_SECRET_KEY;
     const bucket = process.env.VITE_TENCENT_COS_BUCKET || 'fudaiai-1400086527';
     const region = process.env.VITE_TENCENT_COS_REGION || 'ap-shanghai';
 
     if (!secretId || !secretKey) {
-      return res.status(500).json({ error: '服务器未配置腾讯云COS密钥' });
+      return res.status(500).json({ error: '鏈嶅姟鍣ㄦ湭閰嶇疆鑵捐浜慍OS瀵嗛挜' });
     }
 
-    // 初始化COS
+    // 鍒濆鍖朇OS
     const cos = new COS({
       SecretId: secretId,
       SecretKey: secretKey
     });
 
-    // 列出指定目录下的所有文件
+    // 鍒楀嚭鎸囧畾鐩綍涓嬬殑鎵€鏈夋枃浠?
     const prefix = `festival-templates/m2/${gender}/`;
 
-    // 读取数据库获取分类信息
+    // 璇诲彇鏁版嵁搴撹幏鍙栧垎绫讳俊鎭?
     const databasePath = path.join(__dirname, 'template-analysis', 'asset-database.json');
     let assetDatabase = {};
     try {
@@ -2231,7 +2581,7 @@ app.get('/api/m2-templates', async (req, res) => {
         assetDatabase = JSON.parse(fs.readFileSync(databasePath, 'utf-8')).assets || {};
       }
     } catch (e) {
-      console.warn('[M2 Templates API] 无法读取数据库，分类功能不可用');
+      console.warn('[M2 Templates API] failed to read local database, category merge disabled');
     }
 
     cos.getBucket(
@@ -2242,36 +2592,36 @@ app.get('/api/m2-templates', async (req, res) => {
       },
       (err, data) => {
         if (err) {
-          console.error('[M2 Templates API] ❌ 获取失败:', err.message);
+          console.error('[M2 Templates API] 鉂?鑾峰彇澶辫触:', err.message);
           return res.status(500).json({ error: err.message });
         }
 
-        // 过滤出图片文件并添加分类信息
+        // 杩囨护鍑哄浘鐗囨枃浠跺苟娣诲姞鍒嗙被淇℃伅
         let templates = data.Contents
           .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file.Key))
           .map(file => {
             const baseUrl = `https://${bucket}.cos.${region}.myqcloud.com/${file.Key}`;
 
-            // 🔥 使用腾讯云数据万象实时处理（URL参数方式）
-            // imageMogr2: 图片处理命令
-            // thumbnail/800x: 缩放到宽度800px
-            // strip: 去除EXIF元信息
-            // format/webp: 转换为WebP格式
-            // quality/85: 质量85
+            // 馃敟 浣跨敤鑵捐浜戞暟鎹竾璞″疄鏃跺鐞嗭紙URL鍙傛暟鏂瑰紡锛?
+            // imageMogr2: 鍥剧墖澶勭悊鍛戒护
+            // thumbnail/800x: 缂╂斁鍒板搴?00px
+            // strip: 鍘婚櫎EXIF鍏冧俊鎭?
+            // format/webp: 杞崲涓篧ebP鏍煎紡
+            // quality/85: 璐ㄩ噺85
             const compressedUrl = `${baseUrl}?imageMogr2/thumbnail/800x/strip/format/webp/quality/85`;
 
             const fileName = file.Key.split('/').pop();
-            const id = fileName.split('.')[0]; // 使用文件名（不含扩展名）作为ID
+            const id = fileName.split('.')[0]; // 浣跨敤鏂囦欢鍚嶏紙涓嶅惈鎵╁睍鍚嶏級浣滀负ID
 
-            // 从数据库获取分类信息
+            // 浠庢暟鎹簱鑾峰彇鍒嗙被淇℃伅
             const assetInfo = assetDatabase[id] || {};
             const assetCategory = assetInfo.category || 'modern';
 
             return {
               id: id,
               name: fileName,
-              imagePath: compressedUrl,  // 🔥 返回压缩后的URL
-              originalImagePath: baseUrl,  // 保留原图URL（如需高清预览）
+              imagePath: compressedUrl,  // 馃敟 杩斿洖鍘嬬缉鍚庣殑URL
+              originalImagePath: baseUrl,  // 淇濈暀鍘熷浘URL锛堝闇€楂樻竻棰勮锛?
               gender: gender,
               category: assetCategory,
               size: file.Size,
@@ -2279,20 +2629,20 @@ app.get('/api/m2-templates', async (req, res) => {
             };
           });
 
-        // 根据category筛选
+        // 鏍规嵁category绛涢€?
         if (category && category !== 'all') {
           if (category === 'traditional') {
-            // 传统装包括：hanfu, tangzhuang, caishen
+            // 浼犵粺瑁呭寘鎷細hanfu, tangzhuang, caishen
             templates = templates.filter(t =>
               ['hanfu', 'tangzhuang', 'caishen'].includes(t.category)
             );
           } else {
-            // 其他分类直接匹配
+            // 鍏朵粬鍒嗙被鐩存帴鍖归厤
             templates = templates.filter(t => t.category === category);
           }
         }
 
-        console.log(`[M2 Templates API] ✅ 返回 ${templates.length} 个${gender}模板 (分类: ${category || 'all'})`);
+        console.log(`[M2 Templates API] 鉁?杩斿洖 ${templates.length} 涓?{gender}妯℃澘 (鍒嗙被: ${category || 'all'})`);
         res.json({
           success: true,
           gender: gender,
@@ -2304,15 +2654,15 @@ app.get('/api/m2-templates', async (req, res) => {
     );
 
   } catch (error) {
-    console.error('[M2 Templates API] ❌ 异常:', error.message);
+    console.error('[M2 Templates API] 鉂?寮傚父:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
 
-// ========== 🔥 M3 情侣模板 API（复制 M2 逻辑）==========
+// ========== 馃敟 M3 鎯呬荆妯℃澘 API锛堝鍒?M2 閫昏緫锛?=========
 app.get('/api/m3-templates', async (req, res) => {
-  console.log('📡 [雷达捕捉到信号]: GET -> /api/m3-templates');
-  console.log('✨ [3002 信号] 成功接收到来自网页的请求！');
+  console.log('馃摗 [闆疯揪鎹曟崏鍒颁俊鍙穄: GET -> /api/m3-templates');
+  console.log('[3002 Signal] request accepted from web page');
 
   try {
     const secretId = process.env.VITE_TENCENT_COS_SECRET_ID;
@@ -2321,16 +2671,16 @@ app.get('/api/m3-templates', async (req, res) => {
     const region = process.env.VITE_TENCENT_COS_REGION || 'ap-shanghai';
 
     if (!secretId || !secretKey) {
-      return res.status(500).json({ error: '服务器未配置腾讯云COS密钥' });
+      return res.status(500).json({ error: '鏈嶅姟鍣ㄦ湭閰嶇疆鑵捐浜慍OS瀵嗛挜' });
     }
 
-    // 初始化COS
+    // 鍒濆鍖朇OS
     const cos = new COS({
       SecretId: secretId,
       SecretKey: secretKey
     });
 
-    // M3 情侣模板目录（不分性别）
+    // M3 鎯呬荆妯℃澘鐩綍锛堜笉鍒嗘€у埆锛?
     const prefix = `festival-templates/m3/`;
 
     cos.getBucket(
@@ -2341,11 +2691,11 @@ app.get('/api/m3-templates', async (req, res) => {
       },
       (err, data) => {
         if (err) {
-          console.error('[M3 Templates API] ❌ 获取失败:', err.message);
+          console.error('[M3 Templates API] 鉂?鑾峰彇澶辫触:', err.message);
           return res.status(500).json({ error: err.message });
         }
 
-        // 过滤出图片文件（排除过大的文件）
+        // 杩囨护鍑哄浘鐗囨枃浠讹紙鎺掗櫎杩囧ぇ鐨勬枃浠讹級
         const excludeFiles = ['4 (68).jpeg', '4 (69).jpeg', '4 (71).jpeg'];
         let templates = data.Contents
           .filter(file => {
@@ -2353,11 +2703,11 @@ app.get('/api/m3-templates', async (req, res) => {
             return /\.(jpg|jpeg|png|webp)$/i.test(file.Key) && !excludeFiles.includes(fileName);
           })
           .map(file => {
-            // 🔥 对文件路径进行URL编码（处理空格、括号等特殊字符）
+            // 馃敟 瀵规枃浠惰矾寰勮繘琛孶RL缂栫爜锛堝鐞嗙┖鏍笺€佹嫭鍙风瓑鐗规畩瀛楃锛?
             const encodedKey = file.Key.split('/').map(part => encodeURIComponent(part)).join('/');
             const baseUrl = `https://${bucket}.cos.${region}.myqcloud.com/${encodedKey}`;
 
-            // 🔥 使用腾讯云数据万象实时处理（URL参数方式）
+            // 馃敟 浣跨敤鑵捐浜戞暟鎹竾璞″疄鏃跺鐞嗭紙URL鍙傛暟鏂瑰紡锛?
             const compressedUrl = `${baseUrl}?imageMogr2/thumbnail/800x/strip/format/webp/quality/85`;
 
             const fileName = file.Key.split('/').pop();
@@ -2366,14 +2716,14 @@ app.get('/api/m3-templates', async (req, res) => {
             return {
               id: id,
               name: fileName,
-              imagePath: compressedUrl,  // 🔥 返回压缩后的URL
-              originalImagePath: baseUrl,  // 保留原图URL
+              imagePath: compressedUrl,  // 馃敟 杩斿洖鍘嬬缉鍚庣殑URL
+              originalImagePath: baseUrl,  // 淇濈暀鍘熷浘URL
               size: file.Size,
               lastModified: file.LastModified
             };
           });
 
-        console.log(`[M3 Templates API] ✅ 返回 ${templates.length} 个情侣模板`);
+        console.log(`[M3 Templates API] return ${templates.length} templates`);
         res.json({
           success: true,
           count: templates.length,
@@ -2383,35 +2733,90 @@ app.get('/api/m3-templates', async (req, res) => {
     );
 
   } catch (error) {
-    console.error('[M3 Templates API] ❌ 异常:', error.message);
+    console.error('[M3 Templates API] 鉂?寮傚父:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
 
-// 添加下载路由
+// 媒体代理：解决 HTTPS 页面播放 HTTP 视频、跨域/Range 等兼容问题
+app.get('/api/media/proxy', async (req, res) => {
+  try {
+    const rawUrl = String(req.query.url || '').trim();
+    if (!rawUrl) {
+      return res.status(400).json({ error: 'url is required' });
+    }
+
+    const target = new URL(rawUrl);
+    if (!['http:', 'https:'].includes(target.protocol)) {
+      return res.status(400).json({ error: 'invalid media url protocol' });
+    }
+
+    const range = req.headers.range ? String(req.headers.range) : undefined;
+    const upstreamResp = await fetch(rawUrl, {
+      method: 'GET',
+      headers: {
+        ...(range ? { Range: range } : {}),
+        'User-Agent': 'Mozilla/5.0',
+        'Accept': req.headers.accept ? String(req.headers.accept) : '*/*'
+      },
+      redirect: 'follow',
+      signal: AbortSignal.timeout(90000)
+    });
+
+    res.status(upstreamResp.status);
+    const passthroughHeaders = [
+      'content-type',
+      'content-length',
+      'accept-ranges',
+      'content-range',
+      'cache-control',
+      'etag',
+      'last-modified'
+    ];
+    passthroughHeaders.forEach((headerName) => {
+      const headerValue = upstreamResp.headers.get(headerName);
+      if (headerValue) {
+        res.setHeader(headerName, headerValue);
+      }
+    });
+
+    if (!upstreamResp.body) {
+      return res.end();
+    }
+
+    Readable.fromWeb(upstreamResp.body).pipe(res);
+  } catch (error) {
+    console.error('[media proxy] error:', error?.message || error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'media proxy failed' });
+    }
+  }
+});
+
+// 娣诲姞涓嬭浇璺敱
 app.use('/downloads', express.static(path.join(__dirname, 'downloads')));
 
-// 添加临时处理目录的静态资源映射
+// 娣诲姞涓存椂澶勭悊鐩綍鐨勯潤鎬佽祫婧愭槧灏?
 app.use('/temp_processing', express.static(path.join(__dirname, 'temp_processing')));
 
-// ========== 支付系统 API ==========
+// ========== 鏀粯绯荤粺 API ==========
 
-// 订单存储（生产环境应使用数据库）
+// 璁㈠崟瀛樺偍锛堢敓浜х幆澧冨簲浣跨敤鏁版嵁搴擄級
 const ordersFilePath = path.join(__dirname, 'data', 'orders.json');
 
-// 确保数据目录存在
+// 纭繚鏁版嵁鐩綍瀛樺湪
 const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-// 初始化订单文件
+// 鍒濆鍖栬鍗曟枃浠?
 if (!fs.existsSync(ordersFilePath)) {
   fs.writeFileSync(ordersFilePath, JSON.stringify({ orders: [] }, null, 2));
 }
 
 /**
- * 读取订单数据
+ * 璇诲彇璁㈠崟鏁版嵁
  */
 function readOrders() {
   try {
@@ -2424,7 +2829,7 @@ function readOrders() {
 }
 
 /**
- * 保存订单数据
+ * 淇濆瓨璁㈠崟鏁版嵁
  */
 function saveOrders(orders) {
   try {
@@ -2437,7 +2842,7 @@ function saveOrders(orders) {
 }
 
 /**
- * 生成订单ID
+ * 鐢熸垚璁㈠崟ID
  */
 function generateOrderId() {
   return `ord_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
@@ -2453,14 +2858,14 @@ const MANUAL_COMPLETE_TOKEN = process.env.MANUAL_COMPLETE_TOKEN || '';
 // Server-side package catalog (authoritative source in production)
 const PAYMENT_PACKAGES = {
   // Canonical ids used by frontend RechargePage
-  basic: { packageName: '小试牛刀', amount: 9.9, credits: 600 },
-  value: { packageName: '超值畅玩', amount: 29.9, credits: 2300 },
-  premium: { packageName: '春节豪礼', amount: 59.9, credits: 6000 },
+  basic: { packageName: '灏忚瘯鐗涘垁', amount: 9.9, credits: 600 },
+  value: { packageName: 'Value Pack', amount: 29.9, credits: 2300 },
+  premium: { packageName: '鏄ヨ妭璞ぜ', amount: 59.9, credits: 6000 },
 
   // Backward-compatible aliases
-  starter: { packageName: '小试牛刀', amount: 9.9, credits: 600 },
-  standard: { packageName: '超值畅玩', amount: 29.9, credits: 2300 },
-  pro: { packageName: '春节豪礼', amount: 59.9, credits: 6000 },
+  starter: { packageName: '灏忚瘯鐗涘垁', amount: 9.9, credits: 600 },
+  standard: { packageName: 'Value Pack', amount: 29.9, credits: 2300 },
+  pro: { packageName: '鏄ヨ妭璞ぜ', amount: 59.9, credits: 6000 },
 };
 
 function resolveOrderPricing(payload) {
@@ -2482,7 +2887,7 @@ function resolveOrderPricing(payload) {
     const parsedAmount = Number(amount);
     const parsedCredits = Number(credits);
     if (!packageId || !Number.isFinite(parsedAmount) || parsedAmount <= 0 || !Number.isFinite(parsedCredits) || parsedCredits <= 0) {
-      throw new Error('缺少必要参数');
+      throw new Error('缂哄皯蹇呰鍙傛暟');
     }
     return {
       packageId,
@@ -2492,7 +2897,7 @@ function resolveOrderPricing(payload) {
     };
   }
 
-  throw new Error('无效套餐ID，请使用后端配置的套餐');
+  throw new Error('Invalid package id, please use backend configured package');
 }
 
 function isCallbackAmountMatch(orderAmount, callbackTotalFee) {
@@ -2507,10 +2912,10 @@ function isCallbackAmountMatch(orderAmount, callbackTotalFee) {
 }
 
 /**
- * 生成虎皮椒签名
+ * 鐢熸垚铏庣毊妞掔鍚?
  */
 function generateHupijiaoSign(params, appSecret) {
-  // 1. 过滤空值
+  // 1. 杩囨护绌哄€?
   const filteredParams = {};
   Object.keys(params).forEach(key => {
     if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
@@ -2518,33 +2923,33 @@ function generateHupijiaoSign(params, appSecret) {
     }
   });
 
-  // 2. 按key排序
+  // 2. 鎸塳ey鎺掑簭
   const sortedKeys = Object.keys(filteredParams).sort();
 
-  // 3. 拼接字符串
+  // 3. 鎷兼帴瀛楃涓?
   const signStr = sortedKeys.map(key => `${key}=${filteredParams[key]}`).join('&') + appSecret;
 
-  // 4. MD5加密
+  // 4. MD5鍔犲瘑
   return crypto.createHash('md5').update(signStr).digest('hex');
 }
 
 /**
- * 创建充值订单
+ * 鍒涘缓鍏呭€艰鍗?
  */
 app.post('/api/payment/create-order', express.json(), async (req, res) => {
   try {
     const { visitorId } = req.body;
 
     if (!visitorId) {
-      return res.status(400).json({ error: '缺少必要参数' });
+      return res.status(400).json({ error: '缂哄皯蹇呰鍙傛暟' });
     }
 
     const pricing = resolveOrderPricing(req.body);
 
-    // 生成订单ID
+    // 鐢熸垚璁㈠崟ID
     const orderId = generateOrderId();
 
-    // 创建订单
+    // 鍒涘缓璁㈠崟
     const order = {
       orderId,
       visitorId,
@@ -2554,61 +2959,61 @@ app.post('/api/payment/create-order', express.json(), async (req, res) => {
       credits: pricing.credits,
       status: 'pending',
       createdAt: Date.now(),
-      expiredAt: Date.now() + 30 * 60 * 1000, // 30分钟后过期
+      expiredAt: Date.now() + 30 * 60 * 1000, // 30鍒嗛挓鍚庤繃鏈?
     };
 
-    // 保存订单
+    // 淇濆瓨璁㈠崟
     const orders = readOrders();
     orders.push(order);
     saveOrders(orders);
 
-    // 虎皮椒配置（正式环境，必须配置环境变量）
+    // 铏庣毊妞掗厤缃紙姝ｅ紡鐜锛屽繀椤婚厤缃幆澧冨彉閲忥級
     const hupijiaoAppId = process.env.HUPIJIAO_APP_ID;
     const hupijiaoAppSecret = process.env.HUPIJIAO_APP_SECRET;
     const notifyUrl = process.env.HUPIJIAO_NOTIFY_URL;
     const paymentGateway = process.env.HUPIJIAO_PAYMENT_GATEWAY || 'https://api.xunhupay.com/payment/do.html';
 
-    // 验证必需的配置
+    // 楠岃瘉蹇呴渶鐨勯厤缃?
     if (!hupijiaoAppId || !hupijiaoAppSecret) {
-      console.error('🚨 [配置错误] 缺少虎皮椒配置，请检查.env文件');
-      return res.status(500).json({ error: '支付配置错误，请联系管理员' });
+      console.error('馃毃 [閰嶇疆閿欒] 缂哄皯铏庣毊妞掗厤缃紝璇锋鏌?env鏂囦欢');
+      return res.status(500).json({ error: 'Payment config error, please contact admin' });
     }
 
     if (!notifyUrl || notifyUrl.includes('your-domain')) {
-      console.warn('⚠️ [配置警告] 回调URL未正确配置，支付后积分可能无法自动到账');
+      console.warn('[Config Warning] notify URL is not configured correctly, credits may not auto-arrive');
     }
 
-    // 虎皮椒支付参数
+    // 铏庣毊妞掓敮浠樺弬鏁?
     const paymentParams = {
       version: '1.1',
       lang: 'zh-CN',
       plugins: 'festival-ai',
       appid: hupijiaoAppId,
       trade_order_id: orderId,
-      total_fee: Number(pricing.amount).toFixed(2), // 虎皮椒使用元
-      title: `${pricing.packageName} - ${pricing.credits}积分`,
+      total_fee: Number(pricing.amount).toFixed(2), // 铏庣毊妞掍娇鐢ㄥ厓
+      title: `${pricing.packageName} - ${pricing.credits}绉垎`,
       time: Math.floor(Date.now() / 1000).toString(),
       notify_url: notifyUrl,
       return_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment-success?orderId=${orderId}`,
       callback_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment-success?orderId=${orderId}`,
     };
 
-    // 生成签名
+    // 鐢熸垚绛惧悕
     const sign = generateHupijiaoSign(paymentParams, hupijiaoAppSecret);
     paymentParams.hash = sign;
 
-    console.log(`💰 [支付信息]`);
+    console.log(`馃挵 [鏀粯淇℃伅]`);
     console.log(`   AppID: ${hupijiaoAppId}`);
-    console.log(`   订单号: ${orderId}`);
-    console.log(`   金额: ¥${pricing.amount}`);
-    console.log(`   回调URL: ${notifyUrl}`);
+    console.log(`   璁㈠崟鍙? ${orderId}`);
+    console.log(`   閲戦: 楼${pricing.amount}`);
+    console.log(`   鍥炶皟URL: ${notifyUrl}`);
 
-    // 调用虎皮椒API创建支付订单
+    // 璋冪敤铏庣毊妞扐PI鍒涘缓鏀粯璁㈠崟
     const paymentRequestUrl = `${paymentGateway}?${Object.keys(paymentParams).map(key => `${key}=${encodeURIComponent(paymentParams[key])}`).join('&')}`;
 
-    console.log(`🔗 [请求虎皮椒] ${paymentRequestUrl}`);
+    console.log(`馃敆 [璇锋眰铏庣毊妞抅 ${paymentRequestUrl}`);
 
-    // 使用https模块调用虎皮椒API
+    // 浣跨敤https妯″潡璋冪敤铏庣毊妞扐PI
     const httpsModule = paymentGateway.startsWith('https') ? https : http;
 
     httpsModule.get(paymentRequestUrl, (apiRes) => {
@@ -2622,43 +3027,43 @@ app.post('/api/payment/create-order', express.json(), async (req, res) => {
         try {
           const hupijiaoResponse = JSON.parse(data);
 
-          console.log(`✅ [虎皮椒响应]`, hupijiaoResponse);
+          console.log(`鉁?[铏庣毊妞掑搷搴擼`, hupijiaoResponse);
 
           if (hupijiaoResponse.errcode === 0) {
-            // 成功，返回支付URL
-            console.log(`💰 [订单创建] ${orderId} - ${pricing.packageName} - ¥${pricing.amount} - ${pricing.credits}积分`);
+            // 鎴愬姛锛岃繑鍥炴敮浠楿RL
+            console.log(`馃挵 [璁㈠崟鍒涘缓] ${orderId} - ${pricing.packageName} - 楼${pricing.amount} - ${pricing.credits}绉垎`);
 
             res.json({
               ...order,
-              paymentUrl: hupijiaoResponse.url, // 使用虎皮椒返回的URL
-              qrcodeUrl: hupijiaoResponse.url_qrcode, // 二维码URL
-              hupijiaoOrderId: hupijiaoResponse.openid, // 虎皮椒订单ID
+              paymentUrl: hupijiaoResponse.url, // 浣跨敤铏庣毊妞掕繑鍥炵殑URL
+              qrcodeUrl: hupijiaoResponse.url_qrcode, // 浜岀淮鐮乁RL
+              hupijiaoOrderId: hupijiaoResponse.openid, // 铏庣毊妞掕鍗旾D
             });
           } else {
-            console.error(`❌ [虎皮椒错误] ${hupijiaoResponse.errmsg}`);
-            res.status(500).json({ error: `支付平台错误: ${hupijiaoResponse.errmsg}` });
+            console.error(`鉂?[铏庣毊妞掗敊璇痌 ${hupijiaoResponse.errmsg}`);
+            res.status(500).json({ error: `鏀粯骞冲彴閿欒: ${hupijiaoResponse.errmsg}` });
           }
         } catch (parseError) {
-          console.error(`❌ [解析错误]`, parseError);
-          console.error(`   响应数据: ${data}`);
-          res.status(500).json({ error: '支付平台响应异常' });
+          console.error(`鉂?[瑙ｆ瀽閿欒]`, parseError);
+          console.error(`   鍝嶅簲鏁版嵁: ${data}`);
+          res.status(500).json({ error: '鏀粯骞冲彴鍝嶅簲寮傚父' });
         }
       });
     }).on('error', (err) => {
-      console.error(`❌ [请求失败]`, err);
-      res.status(500).json({ error: '无法连接支付平台' });
+      console.error(`鉂?[璇锋眰澶辫触]`, err);
+      res.status(500).json({ error: '鏃犳硶杩炴帴鏀粯骞冲彴' });
     });
   } catch (error) {
-    console.error('创建订单失败:', error);
-    if (error && (error.message === '缺少必要参数' || error.message.includes('无效套餐ID'))) {
+    console.error('鍒涘缓璁㈠崟澶辫触:', error);
+    if (error && (error.message === '缂哄皯蹇呰鍙傛暟' || error.message.includes('鏃犳晥濂楅ID'))) {
       return res.status(400).json({ error: error.message });
     }
-    res.status(500).json({ error: '创建订单失败' });
+    res.status(500).json({ error: '鍒涘缓璁㈠崟澶辫触' });
   }
 });
 
 /**
- * 查询订单状态
+ * 鏌ヨ璁㈠崟鐘舵€?
  */
 app.get('/api/payment/order-status/:orderId', (req, res) => {
   try {
@@ -2668,10 +3073,10 @@ app.get('/api/payment/order-status/:orderId', (req, res) => {
     const order = orders.find(o => o.orderId === orderId);
 
     if (!order) {
-      return res.status(404).json({ error: '订单不存在' });
+      return res.status(404).json({ error: 'Order not found' });
     }
 
-    // 检查订单是否过期
+    // 妫€鏌ヨ鍗曟槸鍚﹁繃鏈?
     if (order.status === 'pending' && Date.now() > order.expiredAt) {
       order.status = 'expired';
       saveOrders(orders);
@@ -2679,17 +3084,17 @@ app.get('/api/payment/order-status/:orderId', (req, res) => {
 
     res.json(order);
   } catch (error) {
-    console.error('查询订单失败:', error);
-    res.status(500).json({ error: '查询订单失败' });
+    console.error('鏌ヨ璁㈠崟澶辫触:', error);
+    res.status(500).json({ error: '鏌ヨ璁㈠崟澶辫触' });
   }
 });
 
 /**
- * 虎皮椒支付回调
+ * 铏庣毊妞掓敮浠樺洖璋?
  */
 app.post('/api/payment/notify', express.urlencoded({ extended: true }), (req, res) => {
   try {
-    console.log('🔔 [支付回调] 收到虎皮椒回调:', req.body);
+    console.log('馃敂 [鏀粯鍥炶皟] 鏀跺埌铏庣毊妞掑洖璋?', req.body);
 
     const {
       trade_order_id,
@@ -2700,10 +3105,10 @@ app.post('/api/payment/notify', express.urlencoded({ extended: true }), (req, re
       hash,
     } = req.body;
 
-    // 验证签名
+    // 楠岃瘉绛惧悕
     const hupijiaoAppSecret = process.env.HUPIJIAO_APP_SECRET;
     if (!hupijiaoAppSecret) {
-      console.error('🚨 [支付回调] 缺少支付密钥配置');
+      console.error('馃毃 [鏀粯鍥炶皟] 缂哄皯鏀粯瀵嗛挜閰嶇疆');
       return res.send('fail');
     }
 
@@ -2712,35 +3117,35 @@ app.post('/api/payment/notify', express.urlencoded({ extended: true }), (req, re
     const expectedSign = generateHupijiaoSign(verifyParams, hupijiaoAppSecret);
 
     if (hash !== expectedSign) {
-      console.error('🚨 [支付回调] 签名验证失败');
-      console.error(`   收到签名: ${hash}`);
-      console.error(`   期望签名: ${expectedSign}`);
+      console.error('馃毃 [鏀粯鍥炶皟] 绛惧悕楠岃瘉澶辫触');
+      console.error(`   鏀跺埌绛惧悕: ${hash}`);
+      console.error(`   鏈熸湜绛惧悕: ${expectedSign}`);
       return res.send('fail');
     }
 
-    // 查找订单
+    // 鏌ユ壘璁㈠崟
     const orders = readOrders();
     const orderIndex = orders.findIndex(o => o.orderId === trade_order_id);
 
     if (orderIndex === -1) {
-      console.error('🚨 [支付回调] 订单不存在:', trade_order_id);
+      console.error('馃毃 [鏀粯鍥炶皟] 璁㈠崟涓嶅瓨鍦?', trade_order_id);
       return res.send('fail');
     }
 
     const order = orders[orderIndex];
 
-    // 防止重复回调
+    // 闃叉閲嶅鍥炶皟
     if (order.status === 'paid') {
-      console.log('✅ [支付回调] 订单已处理，忽略重复回调');
+      console.log('鉁?[鏀粯鍥炶皟] 璁㈠崟宸插鐞嗭紝蹇界暐閲嶅鍥炶皟');
       return res.send('success');
     }
 
-    // 更新订单状态
+    // 鏇存柊璁㈠崟鐘舵€?
     if (status === 'OD') {
       if (!isCallbackAmountMatch(order.amount, total_fee)) {
-        console.error('🚨 [支付回调] 金额校验失败');
-        console.error(`   订单金额: ${order.amount}`);
-        console.error(`   回调金额: ${total_fee}`);
+        console.error('馃毃 [鏀粯鍥炶皟] 閲戦鏍￠獙澶辫触');
+        console.error(`   璁㈠崟閲戦: ${order.amount}`);
+        console.error(`   鍥炶皟閲戦: ${total_fee}`);
         return res.send('fail');
       }
 
@@ -2749,52 +3154,61 @@ app.post('/api/payment/notify', express.urlencoded({ extended: true }), (req, re
       order.paymentId = transaction_id || order_id;
       saveOrders(orders);
 
-      console.log(`✅ [支付成功] ${trade_order_id} - ¥${total_fee / 100} - ${order.credits}积分`);
+      console.log(`鉁?[鏀粯鎴愬姛] ${trade_order_id} - 楼${total_fee / 100} - ${order.credits}绉垎`);
 
-      // TODO: 这里可以触发发放积分的逻辑，或者由前端轮询后处理
+      // 鍙戞斁绉垎鍒版湇鍔＄绉垎绯荤粺
+      if (order.visitorId && order.credits > 0) {
+        const creditResult = DataService.addServerCredits(
+          order.visitorId,
+          order.credits,
+          order.orderId,
+          `Payment settled: ${order.packageName || 'recharge'} ¥${order.amount}`
+        );
+        console.log(`馃挵 [绉垎鍙戞斁] ${order.visitorId} +${order.credits}绉垎, 浣欓: ${creditResult.newBalance}`);
+      }
 
       return res.send('success');
     } else {
       order.status = 'failed';
       saveOrders(orders);
 
-      console.log(`❌ [支付失败] ${trade_order_id}`);
+      console.log(`鉂?[鏀粯澶辫触] ${trade_order_id}`);
       return res.send('success');
     }
   } catch (error) {
-    console.error('🚨 [支付回调] 处理失败:', error);
+    console.error('馃毃 [鏀粯鍥炶皟] 澶勭悊澶辫触:', error);
     return res.send('fail');
   }
 });
 
 /**
- * 手动完成订单（测试用，无需支付回调）
- * 用于本地测试，无法接收支付回调时使用
+ * 鎵嬪姩瀹屾垚璁㈠崟锛堟祴璇曠敤锛屾棤闇€鏀粯鍥炶皟锛?
+ * 鐢ㄤ簬鏈湴娴嬭瘯锛屾棤娉曟帴鏀舵敮浠樺洖璋冩椂浣跨敤
  */
 app.post('/api/payment/manual-complete', express.json(), (req, res) => {
   try {
     if (!ALLOW_MANUAL_COMPLETE) {
-      return res.status(403).json({ error: '生产环境已禁用手动完成订单' });
+      return res.status(403).json({ error: 'Manual complete is disabled in production' });
     }
 
     if (MANUAL_COMPLETE_TOKEN) {
       const token = req.headers['x-admin-token'];
       if (token !== MANUAL_COMPLETE_TOKEN) {
-        return res.status(403).json({ error: '管理员令牌无效' });
+        return res.status(403).json({ error: 'Invalid admin token' });
       }
     }
 
     const { orderId } = req.body;
 
     if (!orderId) {
-      return res.status(400).json({ error: '缺少订单ID' });
+      return res.status(400).json({ error: '缂哄皯璁㈠崟ID' });
     }
 
     const orders = readOrders();
     const orderIndex = orders.findIndex(o => o.orderId === orderId);
 
     if (orderIndex === -1) {
-      return res.status(404).json({ error: '订单不存在' });
+      return res.status(404).json({ error: 'Order not found' });
     }
 
     const order = orders[orderIndex];
@@ -2802,37 +3216,42 @@ app.post('/api/payment/manual-complete', express.json(), (req, res) => {
     if (order.status === 'paid') {
       return res.json({
         success: true,
-        message: '订单已完成',
+        message: 'Order already completed',
         order
       });
     }
 
-    // 手动标记为已支付
+    // 鎵嬪姩鏍囪涓哄凡鏀粯
     order.status = 'paid';
     order.paidAt = Date.now();
     order.paymentId = 'manual_test_' + Date.now();
     orders[orderIndex] = order;
     saveOrders(orders);
 
-    console.log(`✅ [手动完成] ${orderId} - ${order.credits}积分`);
+    console.log(`鉁?[鎵嬪姩瀹屾垚] ${orderId} - ${order.credits}绉垎`);
+
+    // 鍙戞斁绉垎
+    if (order.visitorId && order.credits > 0) {
+      DataService.addServerCredits(order.visitorId, order.credits, order.orderId, `Manual complete: ${order.packageName || 'recharge'}`);
+    }
 
     res.json({
       success: true,
-      message: '订单已手动完成',
+      message: 'Order manually completed',
       order
     });
   } catch (error) {
-    console.error('手动完成订单失败:', error);
-    res.status(500).json({ error: '操作失败' });
+    console.error('鎵嬪姩瀹屾垚璁㈠崟澶辫触:', error);
+    res.status(500).json({ error: '鎿嶄綔澶辫触' });
   }
 });
 
-// 🔒 加载API代理端点 (安全地代理第三方API调用)
-// ⚠️ 必须在catch-all中间件之前加载，否则会被拦截
+// 馃敀 鍔犺浇API浠ｇ悊绔偣 (瀹夊叏鍦颁唬鐞嗙涓夋柟API璋冪敤)
+// 鈿狅笍 蹇呴』鍦╟atch-all涓棿浠朵箣鍓嶅姞杞斤紝鍚﹀垯浼氳鎷︽埅
 const apiProxyRoutes = require('./api-proxy-endpoints');
 apiProxyRoutes(app);
 
-// 处理所有其他请求，返回前端应用（必须放在最后）
+// 澶勭悊鎵€鏈夊叾浠栬姹傦紝杩斿洖鍓嶇搴旂敤锛堝繀椤绘斁鍦ㄦ渶鍚庯級
 app.use((req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
   res.setHeader('Pragma', 'no-cache');
@@ -2840,13 +3259,13 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-// 添加全局错误处理中间件 - 捕获所有中间件的错误
+// 娣诲姞鍏ㄥ眬閿欒澶勭悊涓棿浠?- 鎹曡幏鎵€鏈変腑闂翠欢鐨勯敊璇?
 app.use((err, req, res, next) => {
-  console.error('🚨 [SERVER CRITICAL ERROR]:', err.stack);
+  console.error('馃毃 [SERVER CRITICAL ERROR]:', err.stack);
   const payload = {
     error: IS_PRODUCTION ? 'Internal Server Error' : err.message,
     status: 'error',
-    message: '服务器内部错误'
+    message: 'Server internal error'
   };
   if (!IS_PRODUCTION) {
     payload.stack = err.stack;
@@ -2854,14 +3273,93 @@ app.use((err, req, res, next) => {
   res.status(500).json(payload);
 });
 
-// 启动服务器 - 强制持久运行
+// 鍚姩鏈嶅姟鍣?- 寮哄埗鎸佷箙杩愯
+
+// ==================== 用户反馈系统 ====================
+const feedbackFilePath = path.join(__dirname, 'data', 'feedback.json');
+
+function loadFeedback() {
+  try {
+    if (fs.existsSync(feedbackFilePath)) {
+      return JSON.parse(fs.readFileSync(feedbackFilePath, 'utf8'));
+    }
+  } catch (e) { /* ignore */ }
+  return [];
+}
+
+function saveFeedback(data) {
+  const dir = path.dirname(feedbackFilePath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(feedbackFilePath, JSON.stringify(data, null, 2), 'utf8');
+}
+
+// POST /api/feedback — 用户提交反馈
+app.post('/api/feedback', express.json(), (req, res) => {
+  try {
+    const { message, contact, visitorId } = req.body;
+    if (!message || !message.trim()) {
+      return res.status(400).json({ error: '请输入反馈内容' });
+    }
+    if (message.trim().length > 2000) {
+      return res.status(400).json({ error: '反馈内容不能超过2000字' });
+    }
+    const feedback = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      message: message.trim(),
+      contact: (contact || '').trim().slice(0, 200),
+      visitorId: visitorId || 'unknown',
+      createdAt: Date.now(),
+      status: 'pending',
+      reply: ''
+    };
+    const feedbacks = loadFeedback();
+    feedbacks.unshift(feedback);
+    saveFeedback(feedbacks);
+    console.log('[Feedback] New feedback from', feedback.visitorId, ':', feedback.message.substring(0, 50));
+    return res.json({ success: true, id: feedback.id });
+  } catch (err) {
+    console.error('[Feedback] Error:', err.message);
+    return res.status(500).json({ error: '提交失败，请稍后重试' });
+  }
+});
+
+// GET /api/admin/feedback — 管理员查看反馈列表
+app.get('/api/admin/feedback', (req, res) => {
+  try {
+    const token = req.headers.authorization;
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+    const feedbacks = loadFeedback();
+    return res.json({ feedbacks, total: feedbacks.length });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/admin/feedback/:id/reply — 管理员回复
+app.post('/api/admin/feedback/:id/reply', express.json(), (req, res) => {
+  try {
+    const token = req.headers.authorization;
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+    const { reply } = req.body;
+    const feedbacks = loadFeedback();
+    const idx = feedbacks.findIndex(f => f.id === req.params.id);
+    if (idx === -1) return res.status(404).json({ error: '反馈不存在' });
+    feedbacks[idx] = { ...feedbacks[idx], reply: (reply || '').trim(), status: 'replied', repliedAt: Date.now() };
+    saveFeedback(feedbacks);
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+// ==================== 用户反馈系统 END ====================
+
 const server = app.listen(PORT, '0.0.0.0', () => {
-  // 打印物理进程信息
-  console.log(`🔥 [核心监听启动] 后端心脏已跳动，端口: ${PORT}`);
-  console.log('🔥 物理进程已开启，PID:', process.pid);
+  // 鎵撳嵃鐗╃悊杩涚▼淇℃伅
+  console.log(`馃敟 [鏍稿績鐩戝惉鍚姩] 鍚庣蹇冭剰宸茶烦鍔紝绔彛: ${PORT}`);
+  console.log('馃敟 鐗╃悊杩涚▼宸插紑鍚紝PID:', process.pid);
   console.log(`
-🚀 Server is running on http://localhost:${PORT}`);
-  console.log(`📡 API endpoints available at:`);
+馃殌 Server is running on http://localhost:${PORT}`);
+  console.log(`馃摗 API endpoints available at:`);
   console.log(`   - Health check: http://localhost:${PORT}/api/health`);
   console.log(`   - FFmpeg check: http://localhost:${PORT}/api/ffmpeg-check`);
   console.log(`   - Audio separate: http://localhost:${PORT}/api/audio/separate`);
@@ -2869,27 +3367,27 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`   - Traditional Split: http://localhost:${PORT}/api/audio/split-traditional`);
   console.log(`   - Video Compose: http://localhost:${PORT}/api/video/compose`);
   console.log(`
-🎯 Frontend available at: http://localhost:${PORT}`);
-  console.log(`🚀 后端服务已在 ${PORT} 端口就绪，准备调用 FFmpeg`);
-  console.log(`🔑 DashScope API Key: ${readDashscopeApiKey() ? '已加载' : '未加载'}`);
+馃幆 Frontend available at: http://localhost:${PORT}`);
+  console.log(`馃殌 鍚庣鏈嶅姟宸插湪 ${PORT} 绔彛灏辩华锛屽噯澶囪皟鐢?FFmpeg`);
+  console.log('DashScope API Key: ' + (readDashscopeApiKey() ? 'loaded' : 'missing'));
   console.log(`
-🔍 Checking FFmpeg installation...`);
+馃攳 Checking FFmpeg installation...`);
   
-  // 启动时检查 FFmpeg 是否在系统路径中
+  // 鍚姩鏃舵鏌?FFmpeg 鏄惁鍦ㄧ郴缁熻矾寰勪腑
   checkFfmpegInPath((found, path) => {
     if (!found) {
       console.log(`
-⚠️  FFmpeg NOT FOUND in PATH:`);
+鈿狅笍  FFmpeg NOT FOUND in PATH:`);
       console.log(`   Please install FFmpeg and add it to your PATH.`);
       console.log(`   Installation guide: https://ffmpeg.org/download.html`);
       console.log(`   Simulating FFmpeg availability for frontend...`);
       console.log(`   FFmpeg service is now simulated and reachable`);
     } else {
-      // 执行 FFmpeg 版本命令
+      // 鎵ц FFmpeg 鐗堟湰鍛戒护
       exec('ffmpeg -version', (error, stdout, stderr) => {
         if (error) {
           console.log(`
-⚠️  FFmpeg PATH found but command failed:`);
+鈿狅笍  FFmpeg PATH found but command failed:`);
           console.log(`   Path: ${path}`);
           console.log(`   Error: ${error.message}`);
           console.log(`   Simulating FFmpeg availability for frontend...`);
@@ -2898,7 +3396,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
           const versionMatch = stdout.match(/ffmpeg version (.+?) /);
           const version = versionMatch ? versionMatch[1] : 'unknown';
           console.log(`
-✅ FFmpeg FOUND:`);
+鉁?FFmpeg FOUND:`);
           console.log(`   Path: ${path}`);
           console.log(`   Version: ${version}`);
           console.log(`   FFmpeg service is now active and reachable`);
@@ -2908,13 +3406,14 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   });
 });
 
-// 增加自保逻辑
+// 澧炲姞鑷繚閫昏緫
 server.on('error', (e) => {
-  console.error(`🚨 [监听失败] 检查 ${PORT} 是否被占用！`, e);
+  console.error(`馃毃 [鐩戝惉澶辫触] 妫€鏌?${PORT} 鏄惁琚崰鐢紒`, e);
 });
 
-// 全局异常捕获，防止程序因细微错误闪退
+// 鍏ㄥ眬寮傚父鎹曡幏锛岄槻姝㈢▼搴忓洜缁嗗井閿欒闂€€
 process.on('uncaughtException', (error) => {
-  console.error('🔴 [全局异常捕获] 程序遇到致命错误，但已被捕获，不会闪退:', error.message);
-  console.error('🔴 错误堆栈:', error.stack);
+  console.error('馃敶 [鍏ㄥ眬寮傚父鎹曡幏] 绋嬪簭閬囧埌鑷村懡閿欒锛屼絾宸茶鎹曡幏锛屼笉浼氶棯閫€:', error.message);
+  console.error('馃敶 閿欒鍫嗘爤:', error.stack);
 });
+

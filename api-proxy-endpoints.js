@@ -9,6 +9,7 @@ module.exports = function(app) {
   const crypto = require('crypto');
   const express = require('express');
   const { URL } = require('url');
+  const DataService = require('./server/DataService');
 
   function normalizeEnvValue(raw) {
     return String(raw || '').trim().replace(/^['"]|['"]$/g, '');
@@ -45,6 +46,19 @@ module.exports = function(app) {
 
   function readDeepseekApiKey() {
     return normalizeEnvValue(process.env.DEEPSEEK_API_KEY) || normalizeEnvValue(process.env.VITE_DEEPSEEK_API_KEY);
+  }
+
+  function isCreditEnforced() {
+    const defaultValue = process.env.NODE_ENV === 'production' ? 'on' : 'off';
+    const raw = normalizeEnvValue(process.env.VITE_CREDIT_ENFORCE || defaultValue).toLowerCase();
+    return !['off', 'false', '0'].includes(raw);
+  }
+
+  function readVisitorId(req) {
+    return (
+      String(req.body?.visitorId || '').trim() ||
+      String(req.headers['x-visitor-id'] || '').trim()
+    );
   }
 
   async function forwardDashscopeRequest({ endpoint, method = 'POST', body = {}, headers = {} }) {
@@ -298,168 +312,6 @@ module.exports = function(app) {
     });
   }
 
-  app.post('/api/companion/generate', express.json({ limit: '20mb' }), async (req, res) => {
-    try {
-      const n1nBaseUrl = process.env.N1N_BASE_URL || 'https://api.n1n.ai/v1';
-      const n1nApiKey = process.env.N1N_API_KEY;
-      const analysisModel = process.env.N1N_COMPANION_ANALYSIS_MODEL || 'gpt-4.1-mini';
-      const imageModel = process.env.N1N_COMPANION_IMAGE_MODEL || 'gpt-image-1';
-
-      if (!n1nApiKey) {
-        return res.status(500).json({
-          success: false,
-          error: 'N1N_API_KEY not configured'
-        });
-      }
-
-      const { imageDataUrl } = req.body || {};
-      const parsed = parseDataUrl(imageDataUrl);
-      if (!parsed || !parsed.buffer || parsed.buffer.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: 'Missing valid imageDataUrl'
-        });
-      }
-
-      const analysisPrompt = [
-        'You are a strict photo analysis model. Return JSON only.',
-        'Fields: user_gender(male/female/unknown), gender_confidence(0-1), estimated_age(number),',
-        'user_age_range, user_clothing, user_position(left/center/right), user_facing(facing_left/facing_right/facing_camera),',
-        'user_visible_range(head_only/upper_body/full_body), lighting_direction(left/right/front/back), color_temperature(warm/neutral/cool),',
-        'brightness(bright/normal/dim), background_description, partner_prompt, partner_negative_prompt.',
-        'Do not guess male by default. If uncertain, use unknown.'
-      ].join(' ');
-
-      const analysisResp = await n1nJsonRequest(
-        n1nBaseUrl,
-        n1nApiKey,
-        '/chat/completions',
-        {
-          model: analysisModel,
-          stream: false,
-          temperature: 0.25,
-          max_tokens: 700,
-          messages: [
-            { role: 'system', content: analysisPrompt },
-            {
-              role: 'user',
-              content: [
-                { type: 'text', text: 'Analyze this portrait and return strict JSON only.' },
-                { type: 'image_url', image_url: { url: imageDataUrl } }
-              ]
-            }
-          ]
-        },
-        120000
-      );
-
-      if (analysisResp.statusCode < 200 || analysisResp.statusCode >= 300) {
-        return res.status(analysisResp.statusCode).json({
-          success: false,
-          error: analysisResp.body?.error?.message || 'N1N analysis failed',
-          details: analysisResp.body
-        });
-      }
-
-      const content = analysisResp.body?.choices?.[0]?.message?.content || '';
-      const parsedAnalysis = safeJsonExtract(
-        Array.isArray(content) ? content.map((x) => x?.text || '').join('\n') : content
-      );
-      const analysis = normalizeAnalysis(parsedAnalysis || {});
-
-      const partnerGender =
-        analysis.user_gender === 'female'
-          ? 'male'
-          : analysis.user_gender === 'male'
-            ? 'female'
-            : 'unknown';
-
-      const partnerVariants = [
-        'natural smile, elegant posture',
-        'clean look, warm expression',
-        'soft cinematic portrait lighting'
-      ];
-      const variant = partnerVariants[Math.floor(Math.random() * partnerVariants.length)];
-
-      const generationPrompt = [
-        'Create a realistic two-person portrait from the source photo.',
-        'Keep the original person identity unchanged. Do not alter facial proportions or skin tone.',
-        'Do not make the original person darker or uglier. Mild flattering beautification only.',
-        partnerGender === 'unknown'
-          ? 'Add one compatible partner with natural pose and matching age.'
-          : `Add one ${partnerGender} partner with matching age and harmonious style.`,
-        `Keep lighting ${analysis.lighting_direction || 'front'} and color temperature ${analysis.color_temperature || 'warm'}.`,
-        `Background style: ${analysis.background_description || 'warm festive portrait scene'}.`,
-        `Outfit coordination: ${analysis.user_clothing || 'style-coordinated traditional festive clothing'}.`,
-        variant,
-        analysis.partner_prompt || ''
-      ]
-        .filter(Boolean)
-        .join(' ');
-
-      const negativePrompt =
-        analysis.partner_negative_prompt ||
-        'deformed, ugly, blurry, low quality, bad anatomy, dark skin shift, duplicated person';
-
-      const imageResp = await n1nMultipartRequest(
-        n1nBaseUrl,
-        n1nApiKey,
-        '/images/edits',
-        [
-          { type: 'field', name: 'model', value: imageModel },
-          { type: 'field', name: 'prompt', value: generationPrompt },
-          { type: 'field', name: 'n', value: '1' },
-          {
-            type: 'file',
-            name: 'image',
-            filename: 'source.jpg',
-            contentType: parsed.mime,
-            data: parsed.buffer
-          }
-        ],
-        200000
-      );
-
-      if (imageResp.statusCode < 200 || imageResp.statusCode >= 300) {
-        return res.status(imageResp.statusCode).json({
-          success: false,
-          error: imageResp.body?.error?.message || 'N1N image edit failed',
-          details: imageResp.body
-        });
-      }
-
-      const first = imageResp.body?.data?.[0];
-      const imageUrl = first?.url
-        ? first.url
-        : first?.b64_json
-          ? `data:image/png;base64,${first.b64_json}`
-          : '';
-
-      if (!imageUrl) {
-        return res.status(500).json({
-          success: false,
-          error: 'No image returned from N1N'
-        });
-      }
-
-      return res.json({
-        success: true,
-        imageUrl,
-        analysis,
-        model: {
-          analysis: analysisModel,
-          image: imageModel
-        }
-      });
-    } catch (error) {
-      console.error('[Companion Generate] error:', error);
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Companion generation failed'
-      });
-    }
-  });
-
   app.post('/api/companion/generate-simple', express.json({ limit: '40mb' }), async (req, res) => {
     const sendCompanionError = (statusCode, error, errorCode, details) => {
       return res.status(statusCode).json({
@@ -484,13 +336,13 @@ module.exports = function(app) {
         text.includes('connection reset')
       );
     };
+    const companionCost = 100;
+    let chargedVisitorId = '';
 
     try {
       const n1nBaseUrl = process.env.N1N_BASE_URL || 'https://api.n1n.ai/v1';
       const n1nApiKey = process.env.N1N_API_KEY;
-      const primaryImageModel = String(process.env.N1N_COMPANION_PRIMARY_IMAGE_MODEL || 'gpt-image-1.5').trim();
-      // 不再降级到 flux（flux 导致西方化面孔），只用 gpt-image-1.5
-      const modelCandidates = [primaryImageModel];
+      const imageModel = String(process.env.N1N_COMPANION_PRIMARY_IMAGE_MODEL || 'gpt-image-1.5').trim() || 'gpt-image-1.5';
 
       if (!n1nApiKey) {
         return sendCompanionError(500, 'N1N_API_KEY not configured', 'CONFIG_ERROR');
@@ -502,123 +354,158 @@ module.exports = function(app) {
         return sendCompanionError(400, 'Missing valid imageDataUrl', 'INVALID_INPUT');
       }
 
-      // 压缩图片以加速上传，避免Cloudflare 524超时
-      let compressedBuffer = parsed.buffer;
-      let compressedMime = parsed.mime;
-      try {
-        const sharp = require('sharp');
-        const originalSize = parsed.buffer.length;
-        compressedBuffer = await sharp(parsed.buffer)
-          .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
-          .jpeg({ quality: 85 })
-          .toBuffer();
-        compressedMime = 'image/jpeg';
-        console.log(`[Companion] 图片压缩: ${(originalSize/1024).toFixed(0)}KB -> ${(compressedBuffer.length/1024).toFixed(0)}KB`);
-      } catch (compressErr) {
-        console.warn('[Companion] 图片压缩失败，使用原图:', compressErr.message);
-      }
-
-      // 提示词遵循官方指南：先说改什么，再列锁定项，最后强调不许改其他
-      const gptImagePrompt =
+      const officialPromptDefault =
         'Add one companion person standing next to the original person in the photo. ' +
         'The companion should be a natural, realistic partner of similar age and matching ethnicity/skin tone. ' +
         'Place both people in a natural, casual couple photo setting with warm lighting. ' +
-        'Only two people in the final image. ' +
-        'DO NOT change the original person\'s face, facial features, skin tone, hair, body shape, pose, expression, or identity in any way. ' +
-        'The original person must remain 100% identical to the uploaded photo. ' +
-        'Do not modify, beautify, or alter the original person at all. Keep their exact likeness.';
+        'Only two people in the final image. DO NOT change the original person\'s face, facial features, skin tone, hair, body shape, pose, expression, or identity in any way. ' +
+        'The original person must remain 100% identical to the uploaded photo. Do not modify, beautify, or alter the original person at all. Keep their exact likeness.';
 
-      const customPrompt = String(req.body?.prompt || '').trim();
+      const prompt = String(req.body?.prompt || officialPromptDefault).trim();
+      if (!prompt) {
+        return sendCompanionError(400, 'prompt is required', 'INVALID_INPUT');
+      }
 
       const requestedSize = String(req.body?.size || '').trim();
       const allowedSizes = new Set(['1024x1024', '1024x1536', '1536x1024', 'auto']);
-      const outputSize = allowedSizes.has(requestedSize) ? requestedSize : '1024x1536';
+      const outputSize = allowedSizes.has(requestedSize) ? requestedSize : '1024x1024';
       const outputQuality = 'auto';
       const outputFormat = 'jpeg';
 
-      let lastError = 'N1N image edit failed in simple mode';
-      let lastStatusCode = 500;
-      let lastDetails = null;
-
-      for (const imageModel of modelCandidates) {
-        const prompt = customPrompt || gptImagePrompt;
-        let imageResp = null;
-        try {
-          imageResp = await n1nMultipartRequest(
-            n1nBaseUrl,
-            n1nApiKey,
-            '/images/edits',
-            [
-              { type: 'field', name: 'model', value: imageModel },
-              { type: 'field', name: 'prompt', value: prompt },
-              { type: 'field', name: 'size', value: outputSize },
-              { type: 'field', name: 'quality', value: outputQuality },
-              { type: 'field', name: 'output_format', value: outputFormat },
-              { type: 'field', name: 'input_fidelity', value: 'high' },
-              { type: 'field', name: 'n', value: '1' },
-              {
-                type: 'file',
-                name: 'image',
-                filename: 'source.jpg',
-                contentType: compressedMime,
-                data: compressedBuffer
-              }
-            ],
-            180000
-          );
-        } catch (requestError) {
-          const message = requestError?.message || 'N1N image edit request failed';
-          lastError = message;
-          lastStatusCode = message.includes('timeout') ? 504 : 500;
-          lastDetails = { message, model: imageModel };
-          continue;
+      // 压缩输入图，降低上游超时和失败概率（Cloudflare 524）及不必要成本
+      let sourceBuffer = parsed.buffer;
+      let sourceMime = parsed.mime;
+      try {
+        const sharp = require('sharp');
+        const compressed = await sharp(parsed.buffer)
+          .rotate()
+          .resize(1280, 1280, { fit: 'inside', withoutEnlargement: true })
+          .jpeg({ quality: 86, mozjpeg: true })
+          .toBuffer();
+        if (compressed?.length > 0) {
+          sourceBuffer = compressed;
+          sourceMime = 'image/jpeg';
         }
-
-        if (!imageResp) {
-          lastError = `N1N image edit empty response (${imageModel})`;
-          lastStatusCode = 500;
-          lastDetails = { model: imageModel };
-          continue;
-        }
-
-        if (imageResp.statusCode >= 200 && imageResp.statusCode < 300) {
-          const first = imageResp.body?.data?.[0];
-          const imageUrl = first?.url
-            ? first.url
-            : first?.b64_json
-              ? `data:image/png;base64,${first.b64_json}`
-              : '';
-
-          if (imageUrl) {
-            return res.json({
-              success: true,
-              imageUrl,
-              prompt,
-              model_used: imageModel,
-              model: {
-                image: imageModel
-              },
-              size: outputSize,
-              quality: outputQuality,
-              outputFormat
-            });
-          }
-
-          lastError = 'No image returned from N1N in simple mode';
-          lastStatusCode = 500;
-          lastDetails = imageResp.body;
-          continue;
-        }
-
-        lastError =
-          imageResp.body?.error?.message ||
-          imageResp.body?.message ||
-          `N1N image edit failed in simple mode (${imageResp.statusCode})`;
-        lastStatusCode = imageResp.statusCode || 500;
-        lastDetails = imageResp.body;
+      } catch (compressErr) {
+        console.warn('[Companion] image compression failed, fallback original:', compressErr?.message || compressErr);
       }
 
+      if (isCreditEnforced()) {
+        const visitorId = readVisitorId(req);
+        if (!visitorId) {
+          return sendCompanionError(400, 'visitorId is required', 'MISSING_VISITOR_ID');
+        }
+        const consumeResult = DataService.consumeServerCredits(visitorId, companionCost, 'companion', '未来伴侣生成');
+        if (!consumeResult?.success) {
+          return sendCompanionError(402, 'Insufficient credits', 'INSUFFICIENT_CREDITS', {
+            balance: consumeResult?.balance ?? 0,
+            required: companionCost
+          });
+        }
+        chargedVisitorId = visitorId;
+      }
+
+      let imageResp = null;
+      try {
+        imageResp = await n1nMultipartRequest(
+          n1nBaseUrl,
+          n1nApiKey,
+          '/images/edits',
+          [
+            { type: 'field', name: 'model', value: imageModel },
+            { type: 'field', name: 'prompt', value: prompt },
+            { type: 'field', name: 'size', value: outputSize },
+            { type: 'field', name: 'quality', value: outputQuality },
+            { type: 'field', name: 'output_format', value: outputFormat },
+            { type: 'field', name: 'n', value: '1' },
+            {
+              type: 'file',
+              name: 'image',
+              filename: 'source.jpg',
+              contentType: sourceMime,
+              data: sourceBuffer
+            }
+          ],
+          240000
+        );
+      } catch (requestError) {
+        const message = requestError?.message || 'N1N image edit request failed';
+        const statusCode = message.includes('timeout') ? 504 : 500;
+        const details = { message, model: imageModel };
+
+        if (isCompanionUnavailable(statusCode, message)) {
+          if (chargedVisitorId) {
+            DataService.refundServerCredits(chargedVisitorId, companionCost, '未来伴侣生成失败自动退回');
+          }
+          return sendCompanionError(503, 'Companion service temporarily unavailable', 'COMPANION_UNAVAILABLE', {
+            upstreamStatus: statusCode,
+            upstreamError: message,
+            upstreamDetails: details
+          });
+        }
+
+        if (chargedVisitorId) {
+          DataService.refundServerCredits(chargedVisitorId, companionCost, '未来伴侣生成失败自动退回');
+        }
+        return sendCompanionError(statusCode, message, 'UPSTREAM_REQUEST_ERROR', details);
+      }
+
+      if (!imageResp) {
+        if (chargedVisitorId) {
+          DataService.refundServerCredits(chargedVisitorId, companionCost, '未来伴侣生成失败自动退回');
+        }
+        return sendCompanionError(500, 'N1N image edit empty response', 'UPSTREAM_REQUEST_ERROR', { model: imageModel });
+      }
+
+      if (imageResp.statusCode >= 200 && imageResp.statusCode < 300) {
+        const first = imageResp.body?.data?.[0];
+        const imageUrl =
+          first?.url ||
+          first?.image_url ||
+          first?.output_url ||
+          imageResp.body?.url ||
+          imageResp.body?.image_url ||
+          imageResp.body?.output?.url ||
+          imageResp.body?.output?.image_url ||
+          (first?.b64_json ? `data:image/png;base64,${first.b64_json}` : '');
+
+        if (imageUrl) {
+          chargedVisitorId = '';
+          return res.json({
+            success: true,
+            imageUrl,
+            prompt,
+            model_used: imageModel,
+            model: {
+              image: imageModel
+            },
+            size: outputSize,
+            quality: outputQuality,
+            outputFormat
+          });
+        }
+
+        if (chargedVisitorId) {
+          DataService.refundServerCredits(chargedVisitorId, companionCost, '未来伴侣生成失败自动退回');
+        }
+        return sendCompanionError(500, 'No image returned from N1N in simple mode', 'UPSTREAM_REQUEST_ERROR', {
+          message: 'Upstream returned 2xx but no image field',
+          model: imageModel,
+          upstreamBodyPreview: JSON.stringify(imageResp.body || {}).slice(0, 1200)
+        });
+      }
+
+      const lastError =
+        imageResp.body?.error?.message ||
+        imageResp.body?.message ||
+        `N1N image edit failed in simple mode (${imageResp.statusCode})`;
+      const lastStatusCode = imageResp.statusCode || 500;
+      const lastDetails = imageResp.body;
+
       if (isCompanionUnavailable(lastStatusCode, lastError)) {
+        if (chargedVisitorId) {
+          DataService.refundServerCredits(chargedVisitorId, companionCost, '未来伴侣生成失败自动退回');
+        }
         return sendCompanionError(
           503,
           'Companion service temporarily unavailable',
@@ -631,535 +518,22 @@ module.exports = function(app) {
         );
       }
 
+      if (chargedVisitorId) {
+        DataService.refundServerCredits(chargedVisitorId, companionCost, '未来伴侣生成失败自动退回');
+      }
       return sendCompanionError(lastStatusCode, lastError, 'UPSTREAM_REQUEST_ERROR', lastDetails);
     } catch (error) {
       console.error('[Companion Generate Simple] error:', error);
       const message = error?.message || 'Companion generation simple failed';
+      if (chargedVisitorId) {
+        DataService.refundServerCredits(chargedVisitorId, companionCost, '未来伴侣生成异常自动退回');
+      }
       if (isCompanionUnavailable(500, message)) {
         return sendCompanionError(503, 'Companion service temporarily unavailable', 'COMPANION_UNAVAILABLE', {
           message
         });
       }
       return sendCompanionError(500, message, 'INTERNAL_ERROR');
-    }
-  });
-
-  function toImageUrlFromN1NItem(item) {
-    if (item?.url) return item.url;
-    if (item?.b64_json) return `data:image/png;base64,${item.b64_json}`;
-    return '';
-  }
-
-  function clampNumber(value, min, max, fallback) {
-    const n = Number(value);
-    if (!Number.isFinite(n)) return fallback;
-    return Math.max(min, Math.min(max, n));
-  }
-
-  function normalizeIdentityJudge(raw) {
-    const scoreRaw = raw?.identity_score ?? raw?.identityScore ?? raw?.score;
-    const score = clampNumber(scoreRaw, 0, 100, 0);
-    return {
-      identity_score: score,
-      reason: String(raw?.reason || '')
-    };
-  }
-
-  async function judgeIdentitySimilarity({
-    n1nBaseUrl,
-    n1nApiKey,
-    analysisModel,
-    referenceImageUrl,
-    candidateImageUrl
-  }) {
-    const judgePrompt = [
-      'You are a strict portrait identity judge. Return JSON only.',
-      'Compare IMAGE_A (reference) and IMAGE_B (candidate).',
-      'Only score the original person identity similarity from 0 to 100.',
-      'Focus on facial geometry, eye shape, nose, lips, skin tone, age impression, hairline and hairstyle.',
-      'Ignore background, clothing, and the newly added partner.',
-      'Output JSON schema: {"identity_score": number, "reason": string}.'
-    ].join(' ');
-
-    const resp = await n1nJsonRequest(
-      n1nBaseUrl,
-      n1nApiKey,
-      '/chat/completions',
-      {
-        model: analysisModel,
-        stream: false,
-        temperature: 0,
-        max_tokens: 280,
-        messages: [
-          { role: 'system', content: judgePrompt },
-          {
-            role: 'user',
-            content: [
-              { type: 'text', text: 'IMAGE_A is reference. IMAGE_B is candidate.' },
-              { type: 'image_url', image_url: { url: referenceImageUrl } },
-              { type: 'image_url', image_url: { url: candidateImageUrl } }
-            ]
-          }
-        ]
-      },
-      120000
-    );
-
-    if (resp.statusCode < 200 || resp.statusCode >= 300) {
-      return {
-        identity_score: 0,
-        reason: `judge_failed_${resp.statusCode}`
-      };
-    }
-
-    const content = resp.body?.choices?.[0]?.message?.content || '';
-    const parsed = safeJsonExtract(
-      Array.isArray(content) ? content.map((x) => x?.text || '').join('\n') : content
-    );
-    return normalizeIdentityJudge(parsed || {});
-  }
-
-  app.post('/api/companion/generate-v2', express.json({ limit: '25mb' }), async (req, res) => {
-    try {
-      const n1nBaseUrl = process.env.N1N_BASE_URL || 'https://api.n1n.ai/v1';
-      const n1nApiKey = process.env.N1N_API_KEY;
-      const analysisModel = process.env.N1N_COMPANION_ANALYSIS_MODEL || 'gpt-4.1-mini';
-      const imageModel = process.env.N1N_COMPANION_IMAGE_MODEL || 'gpt-image-1';
-
-      if (!n1nApiKey) {
-        return res.status(500).json({
-          success: false,
-          error: 'N1N_API_KEY not configured'
-        });
-      }
-
-      const { imageDataUrl } = req.body || {};
-      const candidateCount = clampNumber(req.body?.candidateCount, 1, 2, 1);
-      const passScore = clampNumber(req.body?.passScore, 60, 95, 78);
-      const enableRetry = req.body?.enableRetry === true;
-
-      const parsed = parseDataUrl(imageDataUrl);
-      if (!parsed || !parsed.buffer || parsed.buffer.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: 'Missing valid imageDataUrl'
-        });
-      }
-
-      const analysisPrompt = [
-        'You are a strict portrait analyzer. Return JSON only.',
-        'Fields: user_gender(male/female/unknown), estimated_age(number), user_age_range, user_clothing,',
-        'user_position(left/center/right), user_visible_range(head_only/upper_body/full_body),',
-        'lighting_direction(left/right/front/back), color_temperature(warm/neutral/cool), background_description.'
-      ].join(' ');
-
-      const analysisResp = await n1nJsonRequest(
-        n1nBaseUrl,
-        n1nApiKey,
-        '/chat/completions',
-        {
-          model: analysisModel,
-          stream: false,
-          temperature: 0.1,
-          max_tokens: 500,
-          messages: [
-            { role: 'system', content: analysisPrompt },
-            {
-              role: 'user',
-              content: [
-                { type: 'text', text: 'Analyze this portrait and return strict JSON only.' },
-                { type: 'image_url', image_url: { url: imageDataUrl } }
-              ]
-            }
-          ]
-        },
-        120000
-      );
-
-      if (analysisResp.statusCode < 200 || analysisResp.statusCode >= 300) {
-        return res.status(analysisResp.statusCode).json({
-          success: false,
-          error: analysisResp.body?.error?.message || 'N1N analysis failed',
-          details: analysisResp.body
-        });
-      }
-
-      const analysisContent = analysisResp.body?.choices?.[0]?.message?.content || '';
-      const parsedAnalysis = safeJsonExtract(
-        Array.isArray(analysisContent) ? analysisContent.map((x) => x?.text || '').join('\n') : analysisContent
-      );
-      const analysis = normalizeAnalysis(parsedAnalysis || {});
-
-      const partnerGender =
-        analysis.user_gender === 'female'
-          ? 'male'
-          : analysis.user_gender === 'male'
-            ? 'female'
-            : 'unknown';
-
-      const promptBase = [
-        'Create a realistic two-person portrait by editing the source photo.',
-        'Identity lock for original person: keep exact face identity unchanged.',
-        'Do not change facial geometry, eye shape, nose, lips, skin tone, hairline, hairstyle, or age impression.',
-        'Do not beautify, de-age, reshape, retouch, or face-swap the original person.',
-        'Keep the original person position and framing as close as possible.',
-        partnerGender === 'unknown'
-          ? 'Add exactly one compatible partner with natural pose and matching age.'
-          : `Add exactly one ${partnerGender} partner with matching age and harmonious style.`,
-        `Keep lighting direction ${analysis.lighting_direction || 'front'} and color temperature ${analysis.color_temperature || 'neutral'}.`,
-        `Background style: ${analysis.background_description || 'natural portrait background'}.`,
-        `Outfit coordination only for the new partner. Original clothing remains: ${analysis.user_clothing || 'unchanged'}.`,
-        'Forbidden: identity drift, skin tone shift, duplicate original person, anatomy deformation, blur, low quality.'
-      ].join(' ');
-
-      const stricterPrompt = [
-        promptBase,
-        'Hard lock: if identity cannot be preserved exactly, leave the original person untouched and only add the partner.'
-      ].join(' ');
-
-      const rounds = [{ prompt: promptBase, count: candidateCount }];
-      if (enableRetry) {
-        rounds.push({ prompt: stricterPrompt, count: 1 });
-      }
-
-      const candidates = [];
-      let best = null;
-
-      for (let roundIndex = 0; roundIndex < rounds.length; roundIndex += 1) {
-        const round = rounds[roundIndex];
-        const imageResp = await n1nMultipartRequest(
-          n1nBaseUrl,
-          n1nApiKey,
-          '/images/edits',
-          [
-            { type: 'field', name: 'model', value: imageModel },
-            { type: 'field', name: 'prompt', value: round.prompt },
-            { type: 'field', name: 'n', value: String(round.count) },
-            {
-              type: 'file',
-              name: 'image',
-              filename: 'source.jpg',
-              contentType: parsed.mime,
-              data: parsed.buffer
-            }
-          ],
-          240000
-        );
-
-        if (imageResp.statusCode < 200 || imageResp.statusCode >= 300) {
-          if (roundIndex === rounds.length - 1 && candidates.length === 0) {
-            return res.status(imageResp.statusCode).json({
-              success: false,
-              error: imageResp.body?.error?.message || 'N1N image edit failed',
-              details: imageResp.body
-            });
-          }
-          continue;
-        }
-
-        const rawItems = Array.isArray(imageResp.body?.data) ? imageResp.body.data : [];
-        const roundCandidates = rawItems
-          .map((item, idx) => ({
-            id: `r${roundIndex + 1}_${idx + 1}`,
-            round: roundIndex + 1,
-            imageUrl: toImageUrlFromN1NItem(item)
-          }))
-          .filter((item) => Boolean(item.imageUrl));
-
-        if (roundCandidates.length === 0) {
-          continue;
-        }
-
-        const judged = await Promise.all(
-          roundCandidates.map(async (item) => {
-            try {
-              const judge = await judgeIdentitySimilarity({
-                n1nBaseUrl,
-                n1nApiKey,
-                analysisModel,
-                referenceImageUrl: imageDataUrl,
-                candidateImageUrl: item.imageUrl
-              });
-              return {
-                ...item,
-                identityScore: judge.identity_score,
-                reason: judge.reason
-              };
-            } catch (err) {
-              return {
-                ...item,
-                identityScore: 0,
-                reason: `judge_exception_${err?.message || 'unknown'}`
-              };
-            }
-          })
-        );
-
-        candidates.push(...judged);
-        best = candidates.reduce((acc, cur) => {
-          if (!acc) return cur;
-          return cur.identityScore > acc.identityScore ? cur : acc;
-        }, best);
-
-        if (best && best.identityScore >= passScore) {
-          break;
-        }
-      }
-
-      if (!best || !best.imageUrl) {
-        return res.status(500).json({
-          success: false,
-          error: 'No valid candidate generated in v2'
-        });
-      }
-
-      const sortedCandidates = [...candidates].sort((a, b) => b.identityScore - a.identityScore);
-
-      return res.json({
-        success: true,
-        imageUrl: best.imageUrl,
-        passed: best.identityScore >= passScore,
-        passScore,
-        bestCandidate: best,
-        candidates: sortedCandidates,
-        analysis,
-        model: {
-          analysis: analysisModel,
-          image: imageModel
-        }
-      });
-    } catch (error) {
-      console.error('[Companion Generate V2] error:', error);
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Companion generation v2 failed'
-      });
-    }
-  });
-
-  app.post('/api/companion/generate-v3', express.json({ limit: '30mb' }), async (req, res) => {
-    try {
-      const n1nBaseUrl = process.env.N1N_BASE_URL || 'https://api.n1n.ai/v1';
-      const n1nApiKey = process.env.N1N_API_KEY;
-      const analysisModel = process.env.N1N_COMPANION_ANALYSIS_MODEL || 'gpt-4.1-mini';
-      const imageModel = process.env.N1N_COMPANION_IMAGE_MODEL || 'gpt-image-1';
-
-      if (!n1nApiKey) {
-        return res.status(500).json({
-          success: false,
-          error: 'N1N_API_KEY not configured'
-        });
-      }
-
-      const { imageDataUrl, maskDataUrl } = req.body || {};
-      const analysisImageDataUrl = req.body?.analysisImageDataUrl || imageDataUrl;
-      const referenceImageDataUrl = req.body?.referenceImageDataUrl || analysisImageDataUrl;
-      const stylePrompt = String(req.body?.stylePrompt || '').trim();
-      const candidateCount = clampNumber(req.body?.candidateCount, 1, 2, 1);
-      const passScore = clampNumber(req.body?.passScore, 60, 95, 82);
-
-      const parsed = parseDataUrl(imageDataUrl);
-      const parsedMask = parseDataUrl(maskDataUrl);
-      if (!parsed || !parsed.buffer || parsed.buffer.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: 'Missing valid imageDataUrl'
-        });
-      }
-      if (!parsedMask || !parsedMask.buffer || parsedMask.buffer.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: 'Missing valid maskDataUrl'
-        });
-      }
-
-      let analysis = normalizeAnalysis({});
-      let partnerGender = 'unknown';
-      if (!stylePrompt) {
-        const analysisPrompt = [
-          'You are a strict portrait analyzer. Return JSON only.',
-          'Fields: user_gender(male/female/unknown), estimated_age(number), user_clothing,',
-          'lighting_direction(left/right/front/back), color_temperature(warm/neutral/cool), background_description.'
-        ].join(' ');
-
-        const analysisResp = await n1nJsonRequest(
-          n1nBaseUrl,
-          n1nApiKey,
-          '/chat/completions',
-          {
-            model: analysisModel,
-            stream: false,
-            temperature: 0.1,
-            max_tokens: 320,
-            messages: [
-              { role: 'system', content: analysisPrompt },
-              {
-                role: 'user',
-                content: [
-                  { type: 'text', text: 'Analyze this portrait and return strict JSON only.' },
-                  { type: 'image_url', image_url: { url: analysisImageDataUrl } }
-                ]
-              }
-            ]
-          },
-          120000
-        );
-
-        if (analysisResp.statusCode < 200 || analysisResp.statusCode >= 300) {
-          return res.status(analysisResp.statusCode).json({
-            success: false,
-            error: analysisResp.body?.error?.message || 'N1N analysis failed in v3',
-            details: analysisResp.body
-          });
-        }
-
-        const analysisContent = analysisResp.body?.choices?.[0]?.message?.content || '';
-        const parsedAnalysis = safeJsonExtract(
-          Array.isArray(analysisContent) ? analysisContent.map((x) => x?.text || '').join('\n') : analysisContent
-        );
-        analysis = normalizeAnalysis(parsedAnalysis || {});
-        partnerGender =
-          analysis.user_gender === 'female'
-            ? 'male'
-            : analysis.user_gender === 'male'
-              ? 'female'
-              : 'unknown';
-      }
-
-      const generationPrompt = stylePrompt
-        ? [
-            'Edit image with strict mask lock.',
-            'Only paint in transparent mask area.',
-            'Do not modify any non-transparent area.',
-            'Keep original person identity exactly unchanged outside editable area.',
-            stylePrompt
-          ].join(' ')
-        : [
-            'Edit image with strict mask lock.',
-            'Only paint in transparent mask area.',
-            'Do not modify any non-transparent area.',
-            'Keep original person identity exactly unchanged outside editable area.',
-            'No beautify, no face reshaping, no skin retouch on existing person.',
-            'The existing person in the non-editable region must remain exactly unchanged.',
-            partnerGender === 'unknown'
-              ? 'Add exactly one compatible partner in editable area.'
-              : `Add exactly one ${partnerGender} partner in editable area.`,
-            `Match lighting ${analysis.lighting_direction || 'front'} and color temperature ${analysis.color_temperature || 'neutral'}.`,
-            `Background style: ${analysis.background_description || 'natural portrait background'}.`,
-            'Result must be realistic and harmonious.'
-          ].join(' ');
-
-      const imageResp = await n1nMultipartRequest(
-        n1nBaseUrl,
-        n1nApiKey,
-        '/images/edits',
-        [
-          { type: 'field', name: 'model', value: imageModel },
-          { type: 'field', name: 'prompt', value: generationPrompt },
-          { type: 'field', name: 'n', value: String(candidateCount) },
-          {
-            type: 'file',
-            name: 'image',
-            filename: 'source.jpg',
-            contentType: parsed.mime,
-            data: parsed.buffer
-          },
-          {
-            type: 'file',
-            name: 'mask',
-            filename: 'mask.png',
-            contentType: parsedMask.mime || 'image/png',
-            data: parsedMask.buffer
-          }
-        ],
-        240000
-      );
-
-      if (imageResp.statusCode < 200 || imageResp.statusCode >= 300) {
-        return res.status(imageResp.statusCode).json({
-          success: false,
-          error: imageResp.body?.error?.message || 'N1N image edit (v3) failed',
-          details: imageResp.body
-        });
-      }
-
-      const rawItems = Array.isArray(imageResp.body?.data) ? imageResp.body.data : [];
-      const roundCandidates = rawItems
-        .map((item, idx) => ({
-          id: `v3_${idx + 1}`,
-          round: 1,
-          imageUrl: toImageUrlFromN1NItem(item)
-        }))
-        .filter((item) => Boolean(item.imageUrl));
-
-      if (roundCandidates.length === 0) {
-        return res.status(500).json({
-          success: false,
-          error: 'No candidate generated in v3'
-        });
-      }
-
-      if (stylePrompt) {
-        const simpleCandidates = roundCandidates.map((item) => ({
-          ...item,
-          identityScore: 0,
-          reason: 'official_prompt_mode'
-        }));
-        const best = simpleCandidates[0];
-        return res.json({
-          success: true,
-          imageUrl: best.imageUrl,
-          passed: true,
-          passScore: 0,
-          bestCandidate: best,
-          candidates: simpleCandidates,
-          analysis,
-          model: {
-            analysis: analysisModel,
-            image: imageModel
-          }
-        });
-      }
-
-      const judged = await Promise.all(
-        roundCandidates.map(async (item) => {
-          const judge = await judgeIdentitySimilarity({
-            n1nBaseUrl,
-            n1nApiKey,
-            analysisModel,
-            referenceImageUrl: referenceImageDataUrl,
-            candidateImageUrl: item.imageUrl
-          });
-          return {
-            ...item,
-            identityScore: judge.identity_score,
-            reason: judge.reason
-          };
-        })
-      );
-
-      const sortedCandidates = [...judged].sort((a, b) => b.identityScore - a.identityScore);
-      const best = sortedCandidates[0];
-
-      return res.json({
-        success: true,
-        imageUrl: best.imageUrl,
-        passed: best.identityScore >= passScore,
-        passScore,
-        bestCandidate: best,
-        candidates: sortedCandidates,
-        analysis,
-        model: {
-          analysis: analysisModel,
-          image: imageModel
-        }
-      });
-    } catch (error) {
-      console.error('[Companion Generate V3] error:', error);
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Companion generation v3 failed'
-      });
     }
   });
 
@@ -1601,12 +975,41 @@ module.exports = function(app) {
    * POST /api/dashscope/proxy
    */
   app.post('/api/dashscope/proxy', express.json({ limit: '50mb' }), async (req, res) => {
+    let chargedVisitorId = '';
+    const videoCost = 200;
     try {
       const { endpoint, method, body: reqBody, customHeaders, headers } = req.body;
       const passthroughHeaders = {
         ...(customHeaders || {}),
         ...(headers || {})
       };
+      const normalizedMethod = String(method || 'POST').toUpperCase();
+      const isVideoCreateRequest =
+        endpoint === '/api/v1/services/aigc/image2video/video-synthesis' &&
+        normalizedMethod === 'POST';
+
+      if (isVideoCreateRequest && isCreditEnforced()) {
+        const visitorId = readVisitorId(req);
+        if (!visitorId) {
+          return res.status(400).json({
+            error: 'visitorId is required',
+            error_code: 'MISSING_VISITOR_ID'
+          });
+        }
+
+        const consumeResult = DataService.consumeServerCredits(visitorId, videoCost, 'video-wan', '视频生成');
+        if (!consumeResult?.success) {
+          return res.status(402).json({
+            error: 'Insufficient credits',
+            error_code: 'INSUFFICIENT_CREDITS',
+            details: {
+              balance: consumeResult?.balance ?? 0,
+              required: videoCost
+            }
+          });
+        }
+        chargedVisitorId = visitorId;
+      }
 
       console.log('[Dashscope浠ｇ悊] 璇锋眰:', { endpoint, method, customHeaders: passthroughHeaders });
       const response = await forwardDashscopeRequest({
@@ -1615,10 +1018,20 @@ module.exports = function(app) {
         body: reqBody,
         headers: passthroughHeaders
       });
+
+      if (isVideoCreateRequest && chargedVisitorId) {
+        const taskId = response?.body?.output?.task_id;
+        if (response.statusCode >= 400 || !taskId) {
+          DataService.refundServerCredits(chargedVisitorId, videoCost, '视频任务创建失败自动退回');
+        }
+      }
       res.status(response.statusCode).json(response.body);
 
     } catch (error) {
       console.error('[Dashscope浠ｇ悊] 閿欒:', error);
+      if (chargedVisitorId) {
+        DataService.refundServerCredits(chargedVisitorId, videoCost, '视频任务异常自动退回');
+      }
       res.status(500).json({ error: error.message });
     }
   });

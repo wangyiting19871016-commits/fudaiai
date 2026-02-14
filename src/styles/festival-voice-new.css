@@ -913,12 +913,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-lg);
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
 }
 
 .waveform {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   height: 48px;
 }
@@ -941,6 +944,7 @@
   font-weight: 600;
   color: var(--gray-900);
   margin: 0;
+  text-align: center;
 }
 
 /* ========== 结果卡片 - 底部弹出 ========== */

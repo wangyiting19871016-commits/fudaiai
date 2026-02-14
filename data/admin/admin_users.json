@@ -5,6 +5,7 @@
     "password": "$2a$10$8K1p/a0dL3.2N5Q8LZrZ8.YhZ9W5LQx5K0Z5K0Z5K0Z5K0Z5K0Z5K0",
     "role": "super_admin",
     "createdAt": 1707638400000,
-    "lastLogin": 1770800432096
+    "lastLogin": 1771008783231,
+    "customPassword": "Wang865355"
   }
 ]

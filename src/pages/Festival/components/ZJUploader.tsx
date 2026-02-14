@@ -32,7 +32,10 @@ const ZJUploader: React.FC<ZJUploaderProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      processFile(file);
+      processFile(file).finally(() => {
+        // Allow selecting another file with the same filename on mobile clients.
+        e.target.value = '';
+      });
     }
   };
 

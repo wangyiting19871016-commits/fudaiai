@@ -23,15 +23,13 @@ import { TEMPLATE_CACHE } from '../configs/festival/templateCache';
 import { getEnabledWorkflows, LiblibWorkflowConfig } from '../configs/festival/liblibWorkflows';
 import { FortuneTemplateService } from './FortuneTemplateService';
 import { getFeatureById } from '../configs/festival/features';
-import { useCreditStore } from '../stores/creditStore';
+import { useCreditStore, consumeCreditsServer, refundCreditsServer } from '../stores/creditStore';
+import { getBackendBaseUrl } from '../utils/backendBase';
 
 const CREDIT_ENFORCE_RAW = String(import.meta.env.VITE_CREDIT_ENFORCE || 'off').toLowerCase();
 const ENABLE_CREDIT_ENFORCE =
   CREDIT_ENFORCE_RAW === 'on' || CREDIT_ENFORCE_RAW === 'true' || CREDIT_ENFORCE_RAW === '1';
-const CREDIT_LOCAL_FALLBACK_RAW = String(import.meta.env.VITE_CREDIT_LOCAL_FALLBACK || 'on').toLowerCase();
-const ENABLE_CREDIT_LOCAL_FALLBACK =
-  CREDIT_LOCAL_FALLBACK_RAW === 'on' || CREDIT_LOCAL_FALLBACK_RAW === 'true' || CREDIT_LOCAL_FALLBACK_RAW === '1';
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+const API_BASE = getBackendBaseUrl();
 
 export interface MissionConfig {
   missionId: string;
@@ -198,84 +196,21 @@ export class MissionExecutor {
       throw new Error(`Unknown mission: ${missionId}`);
     }
 
-    console.log(`[MissionExecutor] 开始执行任务: ${config.name}`);
-
-    // ===== 积分扣除逻辑（临时关闭，方便测试）=====
-    // const feature = getFeatureById(missionId);
-    // const creditsRequired = feature?.access.credits || 0;
-    // if (creditsRequired > 0) {
-    //   const { consumeCredits } = useCreditStore.getState();
-    //   const success = consumeCredits(
-    //     creditsRequired,
-    //     missionId,
-    //     `使用功能: ${config.name}`
-    //   );
-    //   if (!success) {
-    //     throw new Error('积分不足，请先充值');
-    //   }
-    //   console.log(`[MissionExecutor] 扣除积分: ${creditsRequired}，功能: ${config.name}`);
-    // }
-
+    // ===== 积分扣除（本地 localStorage）=====
     const feature = getFeatureById(missionId);
     const creditsRequired = Math.max(0, Number(feature?.access?.credits || 0));
     let creditsConsumed = false;
-    let creditsConsumedLocally = false;
 
-    if (creditsRequired > 0) {
-      if (ENABLE_CREDIT_ENFORCE) {
-        const { creditData, consumeCredits } = useCreditStore.getState();
-        const visitorId = creditData.visitorId;
-        const requestId = `consume_${missionId}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-
-        let consumedByServer = false;
-        try {
-          const response = await fetch(`${API_BASE}/api/credits/consume`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              visitorId,
-              featureId: missionId,
-              amount: creditsRequired,
-              requestId
-            })
-          });
-
-          if (response.status === 402) {
-            throw new Error('积分不足，请先充值');
-          }
-
-          if (response.ok) {
-            const serverResult = await response.json();
-            if (serverResult?.success) {
-              consumedByServer = true;
-              creditsConsumed = true;
-              console.log(`[MissionExecutor] 后端扣减积分: ${creditsRequired}，功能: ${config.name}`);
-            }
-          }
-        } catch (e) {
-          console.warn('[MissionExecutor] 后端扣分失败，回退本地扣分:', e);
-        }
-
-        // 兜底：后端不可用时可选使用本地扣分
-        if (!consumedByServer) {
-          if (!ENABLE_CREDIT_LOCAL_FALLBACK) {
-            throw new Error('积分服务暂不可用，请稍后重试');
-          }
-          const success = consumeCredits(
-            creditsRequired,
-            missionId,
-            `使用功能: ${config.name}`
-          );
-          if (!success) {
-            throw new Error('积分不足，请先充值');
-          }
-          creditsConsumed = true;
-          creditsConsumedLocally = true;
-          console.log(`[MissionExecutor] 本地扣减积分(兜底): ${creditsRequired}，功能: ${config.name}`);
-        }
-      } else {
-        console.log(`[MissionExecutor] 扣减预览(未启用): ${creditsRequired}，功能: ${config.name}`);
+    if (creditsRequired > 0 && ENABLE_CREDIT_ENFORCE) {
+      const success = await consumeCreditsServer(
+        creditsRequired,
+        missionId,
+        `使用功能: ${config.name}`
+      );
+      if (!success) {
+        throw new Error('积分不足，请先充值');
       }
+      creditsConsumed = true;
     }
 
     try {
@@ -398,14 +333,11 @@ export class MissionExecutor {
 
       return result;
     } catch (error) {
-      if (creditsConsumedLocally && creditsRequired > 0) {
-        const { refundCredits } = useCreditStore.getState();
-        refundCredits(
+      if (creditsConsumed && creditsRequired > 0) {
+        refundCreditsServer(
           creditsRequired,
-          `mission_${missionId}_${Date.now()}`,
           `任务失败退回积分: ${config.name}`
         );
-        console.warn(`[MissionExecutor] 任务失败，已退回积分: ${creditsRequired}，功能: ${config.name}`);
       }
       console.error('[MissionExecutor] 执行失败:', error);
       this.updateProgress({
@@ -426,7 +358,7 @@ export class MissionExecutor {
 
     try {
       // 使用后端代理，密钥由后端管理
-      const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+      const proxyBaseUrl = API_BASE;
 
       const requestBody = {
         model: 'qwen-vl-plus',
@@ -847,7 +779,7 @@ export class MissionExecutor {
       let response;
       try {
         console.log('[MissionExecutor] 调用LiblibAI API...');
-        const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+        const proxyBaseUrl = API_BASE;
         response = await sendRequest(
           {
             method: 'POST',
@@ -1672,7 +1604,7 @@ export class MissionExecutor {
         const liblibKey = 'PROXY\nMODE';
         const { sendRequest } = await import('./secureApiService');
         
-        const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+        const proxyBaseUrl = API_BASE;
         const data = await sendRequest(
           {
             method: 'POST',
@@ -1888,7 +1820,7 @@ export class MissionExecutor {
 
     try {
       // 使用后端代理，密钥由后端管理
-      const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+      const proxyBaseUrl = API_BASE;
 
       const isCaishen = missionId === 'M2';
       const prompt = isCaishen

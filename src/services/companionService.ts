@@ -1,3 +1,5 @@
+import { getVisitorId } from '../utils/visitorId';
+
 export interface CompanionGenerateResponse {
   success: boolean;
   imageUrl?: string;
@@ -18,21 +20,6 @@ export interface CompanionGenerateResponse {
 
 type OutputSize = '1024x1024' | '1024x1536' | '1536x1024' | 'auto';
 
-function detectOutputSize(imageDataUrl: string): Promise<OutputSize> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      if (img.width === img.height) {
-        resolve('1024x1024');
-      } else {
-        resolve(img.width > img.height ? '1536x1024' : '1024x1536');
-      }
-    };
-    img.onerror = () => resolve('auto');
-    img.src = imageDataUrl;
-  });
-}
-
 function isHtmlResponse(raw: string, contentType: string): boolean {
   return contentType.includes('text/html') || raw.trim().startsWith('<!DOCTYPE html');
 }
@@ -45,21 +32,35 @@ export async function generateCompanionPhoto(
   imageDataUrl: string
 ): Promise<CompanionGenerateResponse> {
   const apiBase = getApiBase();
-  const size = await detectOutputSize(imageDataUrl);
+  const size: OutputSize = '1024x1024';
   const requestId = `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-  const payload = { imageDataUrl, size };
+  const payload = { imageDataUrl, size, visitorId: getVisitorId() };
   const endpoint = `/api/companion/generate-simple?_r=${requestId}`;
 
-  const resp = await fetch(`${apiBase}${endpoint}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache, no-store, max-age=0',
-      Pragma: 'no-cache'
-    },
-    body: JSON.stringify(payload),
-    cache: 'no-store'
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 150000);
+
+  let resp: Response;
+  try {
+    resp = await fetch(`${apiBase}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, max-age=0',
+        Pragma: 'no-cache'
+      },
+      body: JSON.stringify(payload),
+      cache: 'no-store',
+      signal: controller.signal
+    });
+  } catch (err: unknown) {
+    clearTimeout(timeoutId);
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new Error('生成超时（150秒），请稍后重试');
+    }
+    throw err;
+  }
+  clearTimeout(timeoutId);
 
   const raw = await resp.text();
   const contentType = resp.headers.get('content-type') || '';

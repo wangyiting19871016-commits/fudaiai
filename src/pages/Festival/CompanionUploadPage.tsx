@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
 import { BottomNav } from '../../components/BottomNav';
+import CreditBalance from '../../components/CreditBalance';
 import ZJUploader from './components/ZJUploader';
+import { useCreditStore } from '../../stores/creditStore';
+import { message } from 'antd';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-result-glass.css';
 import '../../styles/festival-companion.css';
@@ -39,11 +42,12 @@ function safeSessionGet(key: string): string {
   }
 }
 
-function safeSessionSet(key: string, value: string): void {
+function safeSessionSet(key: string, value: string): boolean {
   try {
     sessionStorage.setItem(key, value);
+    return true;
   } catch {
-    // keep runtime-only fallback
+    return false;
   }
 }
 
@@ -56,13 +60,22 @@ function safeSessionRemove(key: string): void {
 }
 
 function readInputImage(): string {
-  return safeSessionGet(STORAGE_KEY) || getRuntimeState().inputImage || '';
+  return getRuntimeState().inputImage || safeSessionGet(STORAGE_KEY) || '';
 }
 
 function storeInputImage(imageDataUrl: string): void {
   const runtime = getRuntimeState();
   runtime.inputImage = imageDataUrl;
-  safeSessionSet(STORAGE_KEY, imageDataUrl);
+  // Only write runtime state; skip sessionStorage for large base64 images
+  // to avoid blocking the main thread for 3-5 seconds.
+  // CompanionGeneratingPage reads runtime state first, so this is safe.
+  safeSessionRemove(STORAGE_KEY);
+}
+
+function clearInputImage(): void {
+  safeSessionRemove(STORAGE_KEY);
+  const runtime = getRuntimeState();
+  delete runtime.inputImage;
 }
 
 function clearCompanionResult(): void {
@@ -78,6 +91,7 @@ function clearCompanionRunLock(): void {
 const CompanionUploadPage: React.FC = () => {
   const navigate = useNavigate();
   const [imageDataUrl, setImageDataUrl] = useState('');
+  const [isStarting, setIsStarting] = useState(false);
 
   useEffect(() => {
     const cachedImage = readInputImage();
@@ -88,10 +102,27 @@ const CompanionUploadPage: React.FC = () => {
 
   const handleUploadComplete = (base64: string) => {
     setImageDataUrl(base64);
+    storeInputImage(base64);
   };
 
-  const handleStart = () => {
-    if (!imageDataUrl) return;
+  const COMPANION_CREDITS_COST = 100; // 未来伴侣 100积分/次
+
+  const handleStart = async () => {
+    if (!imageDataUrl || isStarting) return;
+    setIsStarting(true);
+
+    // 积分检查
+    const enforceCredits = String(import.meta.env.VITE_CREDIT_ENFORCE ?? 'on').toLowerCase();
+    const shouldEnforce = !['off', 'false', '0'].includes(enforceCredits);
+    if (shouldEnforce) {
+      const { creditData } = useCreditStore.getState();
+      if (creditData.credits < COMPANION_CREDITS_COST) {
+        message.error(`积分不足，未来伴侣需要 ${COMPANION_CREDITS_COST} 积分（当前 ${creditData.credits}）`);
+        setIsStarting(false);
+        return;
+      }
+    }
+
     clearCompanionResult();
     clearCompanionRunLock();
     storeInputImage(imageDataUrl);
@@ -105,6 +136,9 @@ const CompanionUploadPage: React.FC = () => {
           <BackButton />
           <h1>我的未来伴侣是何模样？</h1>
           <HomeButton />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+          <CreditBalance position="inline" size="small" />
         </div>
 
         <div className="festival-companion-card">
@@ -127,11 +161,22 @@ const CompanionUploadPage: React.FC = () => {
                 <img src={imageDataUrl} alt="upload-preview" />
               </div>
               <div className="festival-companion-actions">
-                <button className="festival-companion-btn festival-companion-btn-secondary" onClick={() => setImageDataUrl('')}>
+                <button
+                  className="festival-companion-btn festival-companion-btn-secondary"
+                  onClick={() => {
+                    clearInputImage();
+                    setImageDataUrl('');
+                  }}
+                >
                   重新上传
                 </button>
-                <button className="festival-companion-btn festival-companion-btn-primary" onClick={handleStart}>
-                  开始生成
+                <button
+                  className="festival-companion-btn festival-companion-btn-primary"
+                  onClick={handleStart}
+                  disabled={isStarting}
+                  style={isStarting ? { opacity: 0.6, pointerEvents: 'none' } : undefined}
+                >
+                  {isStarting ? '正在跳转...' : '开始生成'}
                 </button>
               </div>
             </>

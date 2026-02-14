@@ -6,9 +6,15 @@ import './index.css';
 import './styles/p4Theme.css';
 import './styles/monochromeOverrides.css';
 
-console.log('[LOGIC_TRACE] App booted: MVP_Stable_Base');
-
 const CHUNK_RELOAD_KEY = 'festival_chunk_reload_once';
+const STORAGE_SCHEMA_KEY = 'festival_temp_storage_schema';
+const STORAGE_SCHEMA_VERSION = '2026-02-13-v3';
+const TEMP_STORAGE_KEYS = [
+  'festival_companion_input_image',
+  'festival_companion_result',
+  'festival_companion_generating_lock',
+  'festival_session_materials'
+];
 
 function isChunkLoadingError(message: string): boolean {
   const msg = String(message || '').toLowerCase();
@@ -34,6 +40,22 @@ function reloadOnceForChunkError(): void {
   url.searchParams.set('_reload', Date.now().toString());
   window.location.replace(url.toString());
 }
+
+function cleanupTempStorageBySchema(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const currentVersion = localStorage.getItem(STORAGE_SCHEMA_KEY) || '';
+    if (currentVersion === STORAGE_SCHEMA_VERSION) return;
+    for (const key of TEMP_STORAGE_KEYS) {
+      sessionStorage.removeItem(key);
+    }
+    localStorage.setItem(STORAGE_SCHEMA_KEY, STORAGE_SCHEMA_VERSION);
+  } catch {
+    // ignore storage access errors
+  }
+}
+
+cleanupTempStorageBySchema();
 
 window.addEventListener('error', (event) => {
   const e = event as ErrorEvent;

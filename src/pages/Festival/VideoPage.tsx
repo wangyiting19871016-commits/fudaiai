@@ -18,6 +18,8 @@ import { sendRequest } from '../../services/apiService';
 import { useAPISlotStore } from '../../stores/APISlotStore';
 import { getAllVoices } from '../../configs/festival/voicePresets';
 import { uploadImage, uploadAudio } from '../../services/imageHosting';
+import { getVisitorId } from '../../utils/visitorId';
+import { refundCreditsServer, useCreditStore } from '../../stores/creditStore';
 import { getNavigationState, createNavigationState, type NavigationState } from '../../types/navigationState';
 import { SessionMaterialManager } from '../../services/SessionMaterialManager';
 import { ImageGeneratorSelector } from '../../components/ImageGeneratorSelector';
@@ -168,7 +170,9 @@ const FestivalVideoPage: React.FC = () => {
     message: ''
   });
   const [wanVideoUrl, setWanVideoUrl] = useState<string | null>(null);
+  const [persistedVideoUrl, setPersistedVideoUrl] = useState<string>('');
   const [subtitleUrl, setSubtitleUrl] = useState<string | null>(null);
+  const [generatedAudioUrl, setGeneratedAudioUrl] = useState<string>('');
   const [isSaved, setIsSaved] = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
 
@@ -415,6 +419,19 @@ const FestivalVideoPage: React.FC = () => {
       return;
     }
 
+    const VIDEO_CREDITS_COST = 200;
+    const enforceCredits = String(import.meta.env.VITE_CREDIT_ENFORCE ?? 'on').toLowerCase();
+    if (!['off', 'false', '0'].includes(enforceCredits)) {
+      if (!useCreditStore.getState().checkCredits(VIDEO_CREDITS_COST)) {
+        message.error(`积分不足，视频生成需要 ${VIDEO_CREDITS_COST} 积分`);
+        return;
+      }
+    }
+
+    setIsSaved(false);
+    setGeneratedAudioUrl('');
+    setPersistedVideoUrl('');
+
     setGenerationState({
       stage: 'uploading',
       progress: 0,
@@ -537,6 +554,7 @@ const FestivalVideoPage: React.FC = () => {
           throw new Error('音频上传URL异常，请重试');
         }
         audioUploadResult.url = safeAudioUrl;
+        setGeneratedAudioUrl(safeAudioUrl);
 
         setGenerationState({
           stage: 'tts',
@@ -544,25 +562,33 @@ const FestivalVideoPage: React.FC = () => {
           message: '音频上传完成'
         });
 
+        const parseEnvInt = (raw: unknown, fallback: number): number => {
+          const n = Number(String(raw ?? '').trim());
+          return Number.isFinite(n) && n > 0 ? n : fallback;
+        };
+
+        const maxWaitMs = parseEnvInt(import.meta.env.VITE_WAN_MAX_WAIT_MS, 8 * 60 * 1000);
+        const maxStatusErrors = Math.max(3, parseEnvInt(import.meta.env.VITE_WAN_MAX_STATUS_ERRORS, 8));
+
         // WAN数字人视频生成
         setGenerationState({
           stage: 'wan',
           progress: 13,
-          message: '生成数字人视频中，预计需要90秒'
+          message: `生成数字人视频中，最长约${Math.max(1, Math.round(maxWaitMs / 60000))}分钟`
         });
 
         // 启动进度模拟定时器
         const startTime = Date.now();
-        const estimatedTime = 90000; // 90秒
+        const estimatedTime = maxWaitMs;
         const progressTimer = setInterval(() => {
           const elapsed = Date.now() - startTime;
           const simulatedProgress = Math.min(90, 13 + (elapsed / estimatedTime) * 77);
-          const remainingSeconds = Math.ceil((estimatedTime - elapsed) / 1000);
+          const remainingSeconds = Math.max(0, Math.ceil((estimatedTime - elapsed) / 1000));
 
           setGenerationState({
             stage: 'wan',
             progress: Math.floor(simulatedProgress),
-            message: `生成数字人视频中，预计还需${remainingSeconds}秒`
+            message: `生成数字人视频中，最长还需${remainingSeconds}秒`
           });
         }, 1000);
 
@@ -584,6 +610,7 @@ const FestivalVideoPage: React.FC = () => {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
+                visitorId: getVisitorId(),
                 endpoint: '/api/v1/services/aigc/image2video/video-synthesis',
                 method: 'POST',
                 customHeaders: {
@@ -631,11 +658,11 @@ const FestivalVideoPage: React.FC = () => {
           // 轮询任务状态 - 渐进式间隔
           let taskStatus = 'PENDING';
           let videoUrl = '';
-          const maxPolls = 36; // fail fast: avoid long fake-progress stalls
           let pollCount = 0;
+          const pollStartTime = Date.now();
 
           let consecutiveStatusErrors = 0;
-          while (taskStatus !== 'SUCCEEDED' && taskStatus !== 'FAILED' && pollCount < maxPolls) {
+          while (taskStatus !== 'SUCCEEDED' && taskStatus !== 'FAILED' && (Date.now() - pollStartTime) < maxWaitMs) {
             // 渐进式轮询：前10次每3秒，之后每5秒
             const pollInterval = pollCount < 10 ? 3000 : 5000;
             await new Promise(resolve => setTimeout(resolve, pollInterval));
@@ -666,7 +693,7 @@ const FestivalVideoPage: React.FC = () => {
               if ([400, 401, 403, 404].includes(statusResponse.status)) {
                 throw new Error(statusErrorMessage);
               }
-              if (consecutiveStatusErrors >= 3) {
+              if (consecutiveStatusErrors >= maxStatusErrors) {
                 throw new Error(statusErrorMessage);
               }
               continue;
@@ -685,7 +712,8 @@ const FestivalVideoPage: React.FC = () => {
           }
 
           if (!videoUrl) {
-            throw new Error('视频生成超时或失败');
+            refundCreditsServer(200, '视频生成超时自动退回');
+            throw new Error('视频生成超时，积分已自动退回，请重试');
           }
 
           wanResult = { output: { results: { video_url: videoUrl } } };
@@ -718,10 +746,7 @@ const FestivalVideoPage: React.FC = () => {
             },
             body: JSON.stringify({
               videoUrl: remoteVideoUrl,
-              audioUrl: audioUploadResult.url, // 用于ASR生成实时字幕
-              subtitle: text.trim(), // 静态字幕（fallback）
-              decorations: [], // TODO: 后续添加装饰元素模板
-              enableRealtimeSubtitle: true // 启用实时字幕
+              subtitle: text.trim()
             })
           });
 
@@ -745,6 +770,7 @@ const FestivalVideoPage: React.FC = () => {
 
       // Try blob URL first for better download behavior; fallback to remote URL if fetch is blocked.
       const safeRemoteVideoUrl = sanitizeRemoteMediaUrl(String(remoteVideoUrl || '')) || String(remoteVideoUrl || '').trim();
+      setPersistedVideoUrl(safeRemoteVideoUrl);
       if (!safeRemoteVideoUrl) {
         throw new Error('瑙嗛URL寮傚父锛岃閲嶈瘯');
       }
@@ -781,36 +807,45 @@ const FestivalVideoPage: React.FC = () => {
 
   // ========== 保存视频（长按保存）==========
   const handleDownload = () => {
-    if (!wanVideoUrl) return;
-
-    // 直接显示长按保存引导
-    setShowDownloadModal(true);
-  };
-
-  // ========== 下载视频到文件 ==========
-  const handleSave = () => {
-    if (!wanVideoUrl) return;
-    if (isSaved) {
-      message.info('视频已下载');
-      setShowDownloadModal(true);
+    if (!wanVideoUrl) {
+      message.error('视频链接无效，请重新生成');
       return;
     }
 
-    // 下载视频到文件
-    const a = document.createElement('a');
-    a.href = wanVideoUrl;
-    a.download = `春节视频_${Date.now()}.mp4`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // 直接显示长按保存引导
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '');
+    if (!isMobile) {
+      const a = document.createElement('a');
+      a.href = wanVideoUrl;
+      a.download = `春节视频_${Date.now()}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      message.success('下载已开始');
+      return;
+    }
 
-    // 保存到素材库（保留原有功能）
-    const material: MaterialAtom = {
-      id: `material_video_${Date.now()}`,
+    setShowDownloadModal(true);
+  };
+
+  // ========== 保存到我的作品 ==========
+  const handleSave = () => {
+    if (!wanVideoUrl) {
+      message.error('视频链接无效，请重新生成');
+      return;
+    }
+    if (isSaved) {
+      message.info('已保存到【我的作品】');
+      return;
+    }
+
+    const now = Date.now();
+    const videoMaterial: MaterialAtom = {
+      id: `material_video_${now}`,
       type: 'video',
-      data: { url: wanVideoUrl },
+      data: { url: persistedVideoUrl || wanVideoUrl },
       metadata: {
-        createdAt: Date.now(),
+        createdAt: now,
         featureId: 'M11',
         featureName: '数字人拜年',
         greetingText: text
@@ -820,12 +855,34 @@ const FestivalVideoPage: React.FC = () => {
         canCombineWith: []
       }
     };
-    MaterialService.saveMaterial(material);
+    MaterialService.saveMaterial(videoMaterial);
 
-    // 立即显示下载引导Modal
+    // 同步保存一份音频素材，保证“我的作品”可预览音频
+    const audioForSave = sanitizeRemoteMediaUrl(generatedAudioUrl || audio || '');
+    if (audioForSave) {
+      const audioMaterial: MaterialAtom = {
+        id: `material_video_audio_${now}`,
+        type: 'audio',
+        data: {
+          url: audioForSave,
+          text: text.trim() || undefined,
+        },
+        metadata: {
+          createdAt: now,
+          featureId: 'M11',
+          featureName: '数字人拜年配音',
+          greetingText: text,
+        },
+        connectors: {
+          roles: ['videoAudio'],
+          canCombineWith: ['image', 'text', 'video'],
+        },
+      };
+      MaterialService.saveMaterial(audioMaterial);
+    }
+
     setIsSaved(true);
-    setShowDownloadModal(true);
-    message.success('视频开始下载，请查看引导');
+    message.success('已保存到【我的作品】');
   };
 
   // ========== 清除素材 ==========
@@ -836,6 +893,7 @@ const FestivalVideoPage: React.FC = () => {
 
   const handleClearAudio = () => {
     setAudio('');
+    setGeneratedAudioUrl('');
     setTtsMode(false);
     SessionMaterialManager.clearTempMaterial('audio');
   };
@@ -879,17 +937,7 @@ const FestivalVideoPage: React.FC = () => {
                 playsInline
                 className="result-video"
                 poster={image}
-              >
-                {subtitleUrl && (
-                  <track
-                    kind="captions"
-                    src={subtitleUrl}
-                    srcLang="zh"
-                    label="中文字幕"
-                    default
-                  />
-                )}
-              </video>
+              />
             </div>
           ) : (
             <div className="template-preview-large">
@@ -1109,19 +1157,22 @@ const FestivalVideoPage: React.FC = () => {
                   className="action-btn action-btn-primary"
                   onClick={handleDownload}
                 >
-                  保存视频
+                  下载视频
                 </button>
                 <button
                   className={`action-btn ${isSaved ? 'action-btn-secondary is-saved' : 'action-btn-primary'}`}
                   onClick={handleSave}
                 >
-                  {isSaved ? '已下载' : '下载视频'}
+                  {isSaved ? '已保存到我的作品' : '保存到我的作品'}
                 </button>
                 <button
                   className="action-btn action-btn-primary"
                   onClick={() => {
                     setWanVideoUrl(null);
                     setSubtitleUrl(null);
+                    setGeneratedAudioUrl('');
+                    setPersistedVideoUrl('');
+                    setIsSaved(false);
                     setGenerationState({
                       stage: 'idle',
                       progress: 0,
@@ -1164,7 +1215,7 @@ const FestivalVideoPage: React.FC = () => {
               currentMaterial={{
                 id: `video_${Date.now()}`,
                 type: 'video',
-                data: { url: wanVideoUrl },
+                data: { url: persistedVideoUrl || wanVideoUrl },
                 metadata: {
                   createdAt: Date.now(),
                   featureId: 'M11',

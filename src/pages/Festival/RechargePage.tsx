@@ -5,8 +5,9 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCredits } from '../../stores/creditStore';
+import { useCredits, useCreditStore } from '../../stores/creditStore';
 import { createRechargeOrder } from '../../services/paymentService';
+import { getVisitorId } from '../../utils/visitorId';
 import './RechargePage.css';
 
 export interface RechargePackage {
@@ -75,6 +76,9 @@ const RechargePage: React.FC = () => {
   const currentCredits = useCredits();
   const [loading, setLoading] = useState(false);
   const [selectedId, setSelectedId] = useState<string>('basic');
+  const [showRedeem, setShowRedeem] = useState(false);
+  const [redeemCode, setRedeemCode] = useState('');
+  const [redeemLoading, setRedeemLoading] = useState(false);
 
   const handleRecharge = async () => {
     const selected = PACKAGES.find(p => p.id === selectedId);
@@ -166,6 +170,132 @@ const RechargePage: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* 礼品码兑换入口 */}
+      <div style={{ padding: '0 20px', marginBottom: '100px' }}>
+        <button
+          onClick={() => setShowRedeem(true)}
+          style={{
+            width: '100%',
+            padding: '14px',
+            background: 'transparent',
+            border: '2px dashed rgba(102, 126, 234, 0.4)',
+            borderRadius: '12px',
+            color: '#667eea',
+            fontSize: '15px',
+            fontWeight: 500,
+            cursor: 'pointer'
+          }}
+        >
+          有礼品码？点击兑换
+        </button>
+      </div>
+
+      {/* 礼品码兑换弹窗 */}
+      {showRedeem && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '28px',
+            width: '100%',
+            maxWidth: '360px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+          }}>
+            <h3 style={{ margin: '0 0 20px', fontSize: '18px', textAlign: 'center', color: '#1a1a1a' }}>
+              兑换礼品码
+            </h3>
+            <input
+              type="text"
+              value={redeemCode}
+              onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
+              placeholder="请输入礼品码"
+              style={{
+                width: '100%',
+                padding: '14px',
+                border: '2px solid #e0e0e0',
+                borderRadius: '10px',
+                fontSize: '16px',
+                textAlign: 'center',
+                fontFamily: 'monospace',
+                letterSpacing: '2px',
+                boxSizing: 'border-box',
+                marginBottom: '16px'
+              }}
+              autoFocus
+            />
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => { setShowRedeem(false); setRedeemCode(''); }}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: '#f5f5f5',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '15px',
+                  cursor: 'pointer',
+                  color: '#666'
+                }}
+              >
+                取消
+              </button>
+              <button
+                disabled={redeemLoading || !redeemCode.trim()}
+                onClick={async () => {
+                  setRedeemLoading(true);
+                  try {
+                    const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+                    const visitorId = getVisitorId();
+                    const response = await fetch(`${API_BASE}/api/credits/redeem`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ code: redeemCode.trim(), visitorId })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                      alert(data.error || '兑换失败');
+                      return;
+                    }
+                    // 服务端已在 redeem 接口中写入积分，这里同步服务端余额到本地
+                    const { syncCreditsFromServer } = await import('../../stores/creditStore');
+                    await syncCreditsFromServer();
+                    alert(`兑换成功！获得 ${data.credits} 积分`);
+                    setShowRedeem(false);
+                    setRedeemCode('');
+                  } catch (error) {
+                    alert('兑换失败，请检查网络');
+                  } finally {
+                    setRedeemLoading(false);
+                  }
+                }}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: redeemLoading || !redeemCode.trim() ? '#ccc' : '#667eea',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  cursor: redeemLoading || !redeemCode.trim() ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {redeemLoading ? '兑换中...' : '立即兑换'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 底部支付按钮 */}
       <div className="pay-footer-pro">

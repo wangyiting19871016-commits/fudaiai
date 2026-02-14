@@ -359,9 +359,27 @@ class DataService {
   // ========== 管理员账号 ==========
 
   /**
+   * 确保 admin_users.json 存在，不存在则创建默认管理员
+   */
+  ensureAdminUsers() {
+    const filePath = path.join(this.dataDir, 'admin_users.json');
+    if (!fs.existsSync(filePath)) {
+      const defaultAdmin = [{
+        id: 'admin_001',
+        username: 'admin',
+        role: 'superadmin',
+        createdAt: Date.now()
+      }];
+      this.writeJSON('admin_users.json', defaultAdmin);
+      console.log('[DataService] 已创建默认管理员账号 (密码使用 ADMIN_PASSWORD 环境变量或默认值)');
+    }
+  }
+
+  /**
    * 验证管理员登录
    */
   validateAdmin(username, password) {
+    this.ensureAdminUsers();
     const admins = this.readJSON('admin_users.json');
     const admin = admins.find(a => a.username === username);
 
@@ -369,11 +387,12 @@ class DataService {
       return null;
     }
 
-    // 从环境变量读取管理员密码（生产环境必须配置）
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+    // 优先使用自定义密码（后台修改的），然后 env，最后默认值
+    const validPassword = admin.customPassword
+      || process.env.ADMIN_PASSWORD
+      || 'admin123';
 
-    if (password === ADMIN_PASSWORD) {
-      // 更新最后登录时间
+    if (password === validPassword) {
       admin.lastLogin = Date.now();
       this.writeJSON('admin_users.json', admins);
 
@@ -385,6 +404,276 @@ class DataService {
     }
 
     return null;
+  }
+
+  /**
+   * 修改管理员密码
+   */
+  changeAdminPassword(username, oldPassword, newPassword) {
+    this.ensureAdminUsers();
+    const admins = this.readJSON('admin_users.json');
+    const admin = admins.find(a => a.username === username);
+
+    if (!admin) {
+      return { success: false, error: '管理员不存在' };
+    }
+
+    const currentPassword = admin.customPassword
+      || process.env.ADMIN_PASSWORD
+      || 'admin123';
+
+    if (oldPassword !== currentPassword) {
+      return { success: false, error: '原密码不正确' };
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      return { success: false, error: '新密码至少6位' };
+    }
+
+    admin.customPassword = newPassword;
+    this.writeJSON('admin_users.json', admins);
+    return { success: true };
+  }
+
+  // ========== 服务端积分管理 ==========
+
+  /**
+   * 读取积分数据（对象格式）
+   */
+  _readCreditsData() {
+    const raw = this.readJSON('user_credits.json');
+    return (Array.isArray(raw) || !raw) ? {} : raw;
+  }
+
+  /**
+   * 获取或初始化用户积分
+   */
+  getOrInitCredits(visitorId) {
+    const data = this._readCreditsData();
+    if (!data[visitorId]) {
+      data[visitorId] = {
+        credits: 100,
+        totalRecharged: 0,
+        totalConsumed: 0,
+        createdAt: Date.now(),
+        transactions: [{
+          id: `txn_welcome_${Date.now()}`,
+          type: 'gift',
+          amount: 100,
+          balance: 100,
+          description: '新用户礼包：赠送100积分',
+          createdAt: Date.now()
+        }]
+      };
+      this.writeJSON('user_credits.json', data);
+    }
+    const user = data[visitorId];
+    return {
+      credits: user.credits,
+      totalRecharged: user.totalRecharged || 0,
+      totalConsumed: user.totalConsumed || 0
+    };
+  }
+
+  /**
+   * 增加积分（充值/赠送）
+   */
+  addServerCredits(visitorId, amount, orderId, description) {
+    const data = this._readCreditsData();
+    if (!data[visitorId]) {
+      this.getOrInitCredits(visitorId);
+      Object.assign(data, this._readCreditsData());
+    }
+    const user = data[visitorId];
+    user.credits += amount;
+    user.totalRecharged = (user.totalRecharged || 0) + amount;
+    const txn = {
+      id: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      type: 'recharge',
+      amount,
+      balance: user.credits,
+      description: description || `充值 ${amount} 积分`,
+      orderId: orderId || null,
+      createdAt: Date.now()
+    };
+    user.transactions = (user.transactions || []).concat(txn).slice(-100);
+    this.writeJSON('user_credits.json', data);
+    return { success: true, newBalance: user.credits, transactionId: txn.id };
+  }
+
+  /**
+   * 消耗积分
+   */
+  consumeServerCredits(visitorId, amount, featureId, description) {
+    const data = this._readCreditsData();
+    if (!data[visitorId]) {
+      this.getOrInitCredits(visitorId);
+      Object.assign(data, this._readCreditsData());
+    }
+    const user = data[visitorId];
+    if (user.credits < amount) {
+      return { success: false, error: '积分不足', balance: user.credits };
+    }
+    user.credits -= amount;
+    user.totalConsumed = (user.totalConsumed || 0) + amount;
+    const txn = {
+      id: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      type: 'consume',
+      amount: -amount,
+      balance: user.credits,
+      description,
+      featureId: featureId || null,
+      createdAt: Date.now()
+    };
+    user.transactions = (user.transactions || []).concat(txn).slice(-100);
+    this.writeJSON('user_credits.json', data);
+    return { success: true, newBalance: user.credits, transactionId: txn.id };
+  }
+
+  /**
+   * 退款积分
+   */
+  refundServerCredits(visitorId, amount, description) {
+    const data = this._readCreditsData();
+    if (!data[visitorId]) {
+      return { success: false, error: '用户不存在' };
+    }
+    const user = data[visitorId];
+    user.credits += amount;
+    user.totalConsumed = Math.max(0, (user.totalConsumed || 0) - amount);
+    const txn = {
+      id: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      type: 'refund',
+      amount,
+      balance: user.credits,
+      description,
+      createdAt: Date.now()
+    };
+    user.transactions = (user.transactions || []).concat(txn).slice(-100);
+    this.writeJSON('user_credits.json', data);
+    return { success: true, newBalance: user.credits, transactionId: txn.id };
+  }
+
+  /**
+   * 迁移前端本地积分到服务端（一次性）
+   */
+  migrateCredits(visitorId, localCredits) {
+    const data = this._readCreditsData();
+    if (data[visitorId]) {
+      return { success: true, balance: data[visitorId].credits, migrated: false };
+    }
+    const credits = Math.max(0, Number(localCredits) || 100);
+    data[visitorId] = {
+      credits,
+      totalRecharged: 0,
+      totalConsumed: 0,
+      createdAt: Date.now(),
+      transactions: [{
+        id: `txn_migrate_${Date.now()}`,
+        type: 'gift',
+        amount: credits,
+        balance: credits,
+        description: '积分迁移',
+        createdAt: Date.now()
+      }]
+    };
+    this.writeJSON('user_credits.json', data);
+    return { success: true, balance: credits, migrated: true };
+  }
+
+  /**
+   * 获取用户交易记录
+   */
+  getCreditTransactions(visitorId, limit) {
+    const data = this._readCreditsData();
+    if (!data[visitorId]) return [];
+    const txns = data[visitorId].transactions || [];
+    const sorted = [...txns].sort((a, b) => b.createdAt - a.createdAt);
+    return limit ? sorted.slice(0, limit) : sorted;
+  }
+
+  // ========== 积分礼品码管理 ==========
+
+  /**
+   * 创建礼品码
+   */
+  createGiftCode(codeData) {
+    const codes = this.readJSON('gift_codes.json');
+    const code = {
+      id: `gc_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      code: codeData.code,
+      credits: codeData.credits,
+      maxUses: codeData.maxUses || 1,
+      usedCount: 0,
+      usedBy: [],
+      description: codeData.description || '',
+      expiresAt: codeData.expiresAt || null,
+      createdAt: Date.now(),
+      createdBy: codeData.createdBy || 'admin',
+      active: true
+    };
+
+    codes.push(code);
+    this.writeJSON('gift_codes.json', codes);
+    return code;
+  }
+
+  /**
+   * 获取所有礼品码
+   */
+  getGiftCodes() {
+    return this.readJSON('gift_codes.json');
+  }
+
+  /**
+   * 删除礼品码
+   */
+  deleteGiftCode(codeId) {
+    const codes = this.readJSON('gift_codes.json');
+    const index = codes.findIndex(c => c.id === codeId);
+    if (index === -1) return false;
+    codes.splice(index, 1);
+    this.writeJSON('gift_codes.json', codes);
+    return true;
+  }
+
+  /**
+   * 兑换礼品码
+   */
+  redeemGiftCode(code, visitorId) {
+    const codes = this.readJSON('gift_codes.json');
+    const giftCode = codes.find(c => c.code === code && c.active);
+
+    if (!giftCode) {
+      return { success: false, error: '礼品码不存在或已失效' };
+    }
+
+    if (giftCode.expiresAt && Date.now() > giftCode.expiresAt) {
+      return { success: false, error: '礼品码已过期' };
+    }
+
+    if (giftCode.usedCount >= giftCode.maxUses) {
+      return { success: false, error: '礼品码已被使用完毕' };
+    }
+
+    if (giftCode.usedBy.includes(visitorId)) {
+      return { success: false, error: '您已使用过此礼品码' };
+    }
+
+    giftCode.usedCount += 1;
+    giftCode.usedBy.push(visitorId);
+
+    if (giftCode.usedCount >= giftCode.maxUses) {
+      giftCode.active = false;
+    }
+
+    this.writeJSON('gift_codes.json', codes);
+
+    return {
+      success: true,
+      credits: giftCode.credits,
+      description: giftCode.description || `礼品码兑换 ${giftCode.credits} 积分`
+    };
   }
 }
 

@@ -38,11 +38,12 @@ function safeSessionGet(key: string): string {
   }
 }
 
-function safeSessionSet(key: string, value: string): void {
+function safeSessionSet(key: string, value: string): boolean {
   try {
     sessionStorage.setItem(key, value);
+    return true;
   } catch {
-    // keep runtime-only fallback
+    return false;
   }
 }
 
@@ -55,7 +56,7 @@ function safeSessionRemove(key: string): void {
 }
 
 function readInputImage(): string {
-  return safeSessionGet(STORAGE_KEY) || getRuntimeState().inputImage || '';
+  return getRuntimeState().inputImage || safeSessionGet(STORAGE_KEY) || '';
 }
 
 function isRunLocked(): boolean {
@@ -78,7 +79,10 @@ function storeResult(result: any): void {
   };
   const json = JSON.stringify(slimResult);
   runtime.resultJson = json;
-  safeSessionSet(RESULT_KEY, json);
+  const ok = safeSessionSet(RESULT_KEY, json);
+  if (!ok) {
+    safeSessionRemove(RESULT_KEY);
+  }
 }
 
 const CompanionGeneratingPage: React.FC = () => {
@@ -117,7 +121,10 @@ const CompanionGeneratingPage: React.FC = () => {
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
-    if (isRunLocked()) return;
+    if (isRunLocked()) {
+      // 锁存在说明上一次生成被中断（刷新/网络断开），清锁后重新执行
+      clearRunLock();
+    }
     setRunLock();
     run();
   }, []);
@@ -125,12 +132,13 @@ const CompanionGeneratingPage: React.FC = () => {
   useEffect(() => {
     if (error) return;
 
+    const startTime = Date.now();
     const progressTimer = window.setInterval(() => {
-      setProgress((prev) => {
-        const next = prev + (prev < 55 ? 7 : prev < 78 ? 4 : prev < 92 ? 2 : 1);
-        return Math.min(next, 96);
-      });
-    }, 900);
+      const elapsed = (Date.now() - startTime) / 1000;
+      // 对数减速：前期快后期慢，上限80%，全程有动感
+      const target = 80 * (1 - Math.exp(-elapsed / 12));
+      setProgress(Math.min(Math.floor(target), 80));
+    }, 800);
 
     const etaTimer = window.setInterval(() => {
       setEtaSec((prev) => Math.max(prev - 1, 1));

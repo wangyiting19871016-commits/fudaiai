@@ -26,6 +26,7 @@ const MaterialLibraryPage: React.FC = () => {
   const [selectedMaterials, setSelectedMaterials] = useState<MaterialAtom[]>([]);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [downloadMaterial, setDownloadMaterial] = useState<MaterialAtom | null>(null);
+  const [previewVideo, setPreviewVideo] = useState<MaterialAtom | null>(null);
 
   useEffect(() => {
     loadMaterials();
@@ -281,6 +282,21 @@ const MaterialLibraryPage: React.FC = () => {
                   {/* 下拉菜单 */}
                   {activeMenuId === material.id && (
                     <div className="material-menu-dropdown" onClick={(e) => e.stopPropagation()}>
+                      {(material.type === 'video' || material.type === 'image') && (
+                        <button
+                          className="material-menu-item"
+                          onClick={() => {
+                            setActiveMenuId(null);
+                            if (material.type === 'video') {
+                              setPreviewVideo(material);
+                            } else {
+                              setDownloadMaterial(material);
+                            }
+                          }}
+                        >
+                          预览
+                        </button>
+                      )}
                       <button
                         className="material-menu-item"
                         onClick={() => handleDownloadMaterial(material)}
@@ -393,26 +409,7 @@ const MaterialLibraryPage: React.FC = () => {
               已选择 {selectedMaterials.length} 个素材
             </div>
 
-            {/* 组合选项 */}
-            {combinationOptions.length > 0 ? (
-              <FestivalButtonGroup direction="horizontal" gap={8}>
-                {combinationOptions.map((option) => (
-                  <FestivalButton
-                    key={option.id}
-                    variant="primary"
-                    size="small"
-                    icon={option.icon}
-                    onClick={() => handleCombine(option.id)}
-                  >
-                    {option.name}
-                  </FestivalButton>
-                ))}
-              </FestivalButtonGroup>
-            ) : (
-              <div className="tip-no-combination">
-                💡 这些素材不能组合，试试选择其他的吧
-              </div>
-            )}
+            {/* 组合功能暂时下线 */}
 
             <FestivalButton
               variant="ghost"
@@ -422,6 +419,52 @@ const MaterialLibraryPage: React.FC = () => {
             >
               取消选择
             </FestivalButton>
+          </div>
+        )}
+
+        {/* 视频预览弹窗 */}
+        {previewVideo && previewVideo.data.url && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0, left: 0, right: 0, bottom: 0,
+              background: 'rgba(0, 0, 0, 0.9)',
+              zIndex: 9999,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '20px'
+            }}
+            onClick={() => setPreviewVideo(null)}
+          >
+            <video
+              src={previewVideo.data.url}
+              controls
+              autoPlay
+              playsInline
+              style={{
+                maxWidth: '100%',
+                maxHeight: '80vh',
+                borderRadius: '12px'
+              }}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              onClick={() => setPreviewVideo(null)}
+              style={{
+                marginTop: '16px',
+                padding: '10px 32px',
+                borderRadius: '20px',
+                border: 'none',
+                background: 'rgba(255,255,255,0.2)',
+                color: 'white',
+                fontSize: '16px',
+                cursor: 'pointer'
+              }}
+            >
+              关闭
+            </button>
           </div>
         )}
 

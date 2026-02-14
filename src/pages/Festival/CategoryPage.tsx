@@ -46,13 +46,12 @@ const FestivalCategoryPage: React.FC = () => {
 
   // 点击功能进入功能页
   const handleFeatureClick = (feature: Feature) => {
-    // 临时关闭积分检查，方便测试
-    // const creditsRequired = feature.access.credits || 0;
-    // if (creditsRequired > 0 && !checkCredits(creditsRequired)) {
-    //   setRequiredCredits(creditsRequired);
-    //   setShowInsufficientModal(true);
-    //   return;
-    // }
+    const creditsRequired = feature.access.credits || 0;
+    if (creditsRequired > 0 && !checkCredits(creditsRequired)) {
+      setRequiredCredits(creditsRequired);
+      setShowInsufficientModal(true);
+      return;
+    }
 
     const processType = feature.process.type;
 
@@ -123,18 +122,24 @@ const FestivalCategoryPage: React.FC = () => {
     }
   };
 
-  // 获取功能的免费次数显示
+  // 显示功能所需积分
   const renderFreeQuota = (feature: Feature) => {
-    const { access } = feature;
-    const creditsRequired = access.credits || 0;
-
-    // 不显示积分，保持原有布局
-    return null;
-
-    // 如果需要显示，使用小标签在右下角
-    // return creditsRequired > 0 ? (
-    //   <span className="feature-credits-small">{creditsRequired}</span>
-    // ) : null;
+    const creditsRequired = feature.access.credits || 0;
+    if (creditsRequired <= 0) return null;
+    return (
+      <span style={{
+        display: 'inline-block',
+        background: 'rgba(0,0,0,0.55)',
+        color: '#ffd700',
+        fontSize: '11px',
+        fontWeight: 600,
+        padding: '2px 8px',
+        borderRadius: '10px',
+        marginTop: '4px'
+      }}>
+        {creditsRequired}积分/次
+      </span>
+    );
   };
 
   return (

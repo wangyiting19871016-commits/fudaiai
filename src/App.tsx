@@ -45,6 +45,10 @@ const AdminLoginPage = lazy(() => import('./pages/Admin/LoginPage'));
 const AdminDashboardPage = lazy(() => import('./pages/Admin/DashboardPage'));
 const AdminUsersPage = lazy(() => import('./pages/Admin/UsersPage'));
 const AdminAPILogsPage = lazy(() => import('./pages/Admin/APILogsPage'));
+const AdminCreditsPage = lazy(() => import('./pages/Admin/CreditsPage'));
+const AdminQRCodePage = lazy(() => import('./pages/Admin/QRCodePage'));
+const AdminFeedbackPage = lazy(() => import('./pages/Admin/FeedbackPage'));
+const FeedbackPage = lazy(() => import('./pages/Festival/FeedbackPage'));
 
 // ⚠️ 已废弃页面（已移除）
 // - DigitalHumanPage.tsx → 合并到VideoPage.tsx (2026-02-06)
@@ -77,6 +81,9 @@ const AppLayout: React.FC = () => {
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/api-logs" element={<AdminAPILogsPage />} />
+          <Route path="/admin/credits" element={<AdminCreditsPage />} />
+          <Route path="/admin/qrcode" element={<AdminQRCodePage />} />
+          <Route path="/admin/feedback" element={<AdminFeedbackPage />} />
           <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
 
           {/* 现有页面（内部测试，通过具体路径访问） */}
@@ -118,7 +125,8 @@ const AppLayout: React.FC = () => {
             <Route path="m2-template-select" element={<M2TemplateSelectionPage />} />
             <Route path="m3-template-select" element={<M3TemplateSelectionPage />} />
             <Route path="companion/test-v2" element={<Navigate to="/festival/companion" replace />} />
-            <Route path="contact" element={<Navigate to="/festival/home" replace />} />
+            <Route path="contact" element={<FeedbackPage />} />
+            <Route path="feedback" element={<FeedbackPage />} />
             <Route path="companion" element={<CompanionUploadPage />} />
             <Route path="companion/generating" element={<CompanionGeneratingPage />} />
             <Route path="companion/result" element={<CompanionResultPage />} />
@@ -136,11 +144,14 @@ const App: React.FC = () => {
   const initVisitor = useCreditStore((state) => state.initVisitor);
   const creditData = useCreditStore((state) => state.creditData);
 
-  // 初始化访客ID和积分
+  // 初始化访客ID和积分，同步服务端
   useEffect(() => {
     initVisitor();
-    // 初始化数据分析拦截器
     initAnalyticsInterceptor();
+    // 迁移本地积分到服务端 + 同步余额
+    import('./stores/creditStore').then(({ migrateLocalCreditsToServer, syncCreditsFromServer }) => {
+      migrateLocalCreditsToServer().then(() => syncCreditsFromServer());
+    });
   }, [initVisitor]);
 
   // 新用户欢迎提示（仅首次）
@@ -155,7 +166,6 @@ const App: React.FC = () => {
       const hasShownWelcome = sessionStorage.getItem('festival_welcome_shown');
       if (!hasShownWelcome) {
         setTimeout(() => {
-          console.log('🎁 新春礼包：赠送100积分体验');
           sessionStorage.setItem('festival_welcome_shown', 'true');
         }, 1000);
       }

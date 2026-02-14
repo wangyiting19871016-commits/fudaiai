@@ -174,7 +174,7 @@ export const FEATURES: Feature[] = [
       },
       caption: { enabled: true, promptKey: 'caption_3d_avatar' }
     },
-    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥19.9', credits: 50 },
+    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥19.9', credits: 20 },
     useLegacyExecutor: true
   },
 
@@ -209,7 +209,7 @@ export const FEATURES: Feature[] = [
       },
       caption: { enabled: true, promptKey: 'caption_caishen' }
     },
-    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥29.9', credits: 50 },
+    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥29.9', credits: 20 },
     useLegacyExecutor: true
   },
 
@@ -249,7 +249,7 @@ export const FEATURES: Feature[] = [
         }
       }
     },
-    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, price: '¥29.9', credits: 350 },
+    access: { freePerDay: -1, freeWatermark: false, vipOnly: false, price: '¥29.9', credits: 200 },
     useLegacyExecutor: true
   },
 
@@ -291,7 +291,7 @@ export const FEATURES: Feature[] = [
         }
       }
     },
-    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥29.9', credits: 60 },
+    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥29.9', credits: 20 },
     useLegacyExecutor: false
   },
 
@@ -332,7 +332,7 @@ export const FEATURES: Feature[] = [
         }
       }
     },
-    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥29.9', credits: 60 },
+    access: { freePerDay: -1, freeWatermark: true, vipOnly: false, price: '¥29.9', credits: 20 },
     useLegacyExecutor: false
   },
 
@@ -378,7 +378,7 @@ export const FEATURES: Feature[] = [
       freeWatermark: false,  // 无水印
       vipOnly: false,        // 不限VIP
       price: '¥8.8',         // 单次付费价格
-      credits: 300           // 老照片修复成本高 (¥2.5成本，确保盈利)
+      credits: 200           // 老照片修复成本¥2.3，200积分=¥3.3，利润率30%
     },
     useLegacyExecutor: false
   },

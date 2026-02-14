@@ -12,7 +12,10 @@ module.exports = {
     instances: 1,
     exec_mode: 'fork',
 
-    // 环境变量
+    // 环境变量（默认 production，服务器只跑生产）
+    env: {
+      NODE_ENV: 'production',
+    },
     env_production: {
       NODE_ENV: 'production',
     },

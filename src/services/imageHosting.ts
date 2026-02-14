@@ -9,26 +9,21 @@ export interface UploadResult {
 
 function sanitizeCosUrl(raw: unknown): string {
   if (typeof raw !== 'string') return '';
+  const value = raw.trim().replace(/[\r\n\t]/g, '');
+  if (!value) return '';
 
-  let value = raw.trim().replace(/[\r\n\t]/g, '');
-  const firstProto = value.search(/https?:\/\//i);
-  if (firstProto === -1) return '';
-  if (firstProto > 0) value = value.slice(firstProto);
+  // Nuclear fix: if https:// appears more than once, cut at the second occurrence
+  const secondIdx = value.indexOf('https://', 8);
+  const clean = secondIdx > 0 ? value.substring(0, secondIdx) : value;
 
-  const mediaUrlMatch = value.match(/https?:\/\/[^\s"'<>]+?\.(jpg|jpeg|png|webp|mp3|wav|m4a|ogg|mp4)(\?[^\s"'<>]*)?/i);
-  if (mediaUrlMatch?.[0]) {
-    return mediaUrlMatch[0];
+  // Validate it starts with https://
+  if (!clean.startsWith('https://')) {
+    const start = clean.indexOf('https://');
+    if (start < 0) return '';
+    return clean.substring(start);
   }
 
-  const protoMatches = [...value.matchAll(/https?:\/\//gi)];
-  if (protoMatches.length > 1) {
-    const cutAt = protoMatches[1].index ?? -1;
-    if (cutAt > 0) {
-      value = value.slice(0, cutAt);
-    }
-  }
-
-  return value;
+  return clean;
 }
 
 /**
@@ -79,19 +74,31 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
       throw new Error(`上传失败: status=${response.status} ${errorText}${hint}`);
     }
 
-    // 🔧 直接用response.json()避免文本处理bug
-    console.log('[COS] 🔍 准备读取JSON响应...');
-    const data = await response.json();
-    console.log('[COS] 📦 收到响应数据:', JSON.stringify(data));
+    // 🔧 零依赖URL提取：只用indexOf+substring，不用regex/JSON.parse
+    // Vite代理会复制响应体（见CONTEXT_HANDOFF.md），任何高级方法都不可靠
+    const rawText = await response.text();
+    console.log('[COS] 📦 原始文本长度:', rawText.length, '内容:', rawText.substring(0, 120));
 
-    // 🔧 直接从data中提取，不做任何处理
-    if (!data.url) {
-      throw new Error('后端返回的数据中没有url字段');
+    // 找到第一个 https:// 的位置
+    const firstHttps = rawText.indexOf('https://');
+    if (firstHttps < 0) {
+      throw new Error('响应中没有找到URL');
     }
 
-    const finalUrl = sanitizeCosUrl(data.url);
-    if (!finalUrl) {
-      throw new Error('后端返回的COS URL无效');
+    // 找第二个 https:// （如果存在就是重复）
+    const secondHttps = rawText.indexOf('https://', firstHttps + 10);
+
+    let finalUrl: string;
+    if (secondHttps > firstHttps) {
+      // 有重复：截取第一个URL（从firstHttps到secondHttps之前）
+      finalUrl = rawText.substring(firstHttps, secondHttps);
+      console.warn('[COS] ⚠️ URL重复已修复，截断位置:', secondHttps);
+    } else {
+      // 无重复：截取到下一个引号
+      const quoteAfter = rawText.indexOf('"', firstHttps);
+      finalUrl = quoteAfter > firstHttps
+        ? rawText.substring(firstHttps, quoteAfter)
+        : rawText.substring(firstHttps).trim();
     }
 
     console.log('[COS] ✅ 最终URL:', finalUrl);
@@ -252,16 +259,25 @@ export async function uploadAudioToTencentCOS(blob: Blob, format: string = 'mp3'
       throw new Error(`上传失败: status=${response.status} ${errorText}${hint}`);
     }
 
-    // 🔧 直接用response.json()
-    const data = await response.json();
+    // 🔧 零依赖URL提取（同图片路径）
+    const rawText = await response.text();
+    console.log('[COS] 📦 音频原始文本长度:', rawText.length);
 
-    if (!data.url) {
-      throw new Error('后端返回的数据中没有url字段');
+    const firstHttps = rawText.indexOf('https://');
+    if (firstHttps < 0) {
+      throw new Error('音频响应中没有找到URL');
     }
 
-    const finalUrl = sanitizeCosUrl(data.url);
-    if (!finalUrl) {
-      throw new Error('无效的音频URL');
+    const secondHttps = rawText.indexOf('https://', firstHttps + 10);
+    let finalUrl: string;
+    if (secondHttps > firstHttps) {
+      finalUrl = rawText.substring(firstHttps, secondHttps);
+      console.warn('[COS] ⚠️ 音频URL重复已修复');
+    } else {
+      const quoteAfter = rawText.indexOf('"', firstHttps);
+      finalUrl = quoteAfter > firstHttps
+        ? rawText.substring(firstHttps, quoteAfter)
+        : rawText.substring(firstHttps).trim();
     }
 
     console.log('[COS] ✅ 音频最终URL:', finalUrl);

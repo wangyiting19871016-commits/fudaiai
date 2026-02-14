@@ -276,4 +276,147 @@ router.post('/cache/refresh', authMiddleware, async (req, res) => {
   }
 });
 
+// ========== 积分礼品码管理 ==========
+
+/**
+ * 创建礼品码
+ */
+router.post('/credits/create-code', authMiddleware, express.json(), (req, res) => {
+  try {
+    const { code, credits, maxUses, description, expiresAt } = req.body;
+
+    if (!code || !credits) {
+      return res.status(400).json({ error: '缺少礼品码或积分数量' });
+    }
+
+    if (credits <= 0 || credits > 1000000) {
+      return res.status(400).json({ error: '积分数量必须在 1-1000000 之间' });
+    }
+
+    const existing = DataService.getGiftCodes().find(c => c.code === code);
+    if (existing) {
+      return res.status(400).json({ error: '礼品码已存在' });
+    }
+
+    const giftCode = DataService.createGiftCode({
+      code: code.trim().toUpperCase(),
+      credits: parseInt(credits),
+      maxUses: parseInt(maxUses) || 1,
+      description: description || '',
+      expiresAt: expiresAt ? new Date(expiresAt).getTime() : null,
+      createdBy: req.admin.username
+    });
+
+    res.json({ success: true, giftCode });
+  } catch (error) {
+    console.error('[Admin] 创建礼品码失败:', error);
+    res.status(500).json({ error: '创建失败' });
+  }
+});
+
+/**
+ * 获取所有礼品码
+ */
+router.get('/credits/codes', authMiddleware, (req, res) => {
+  try {
+    const codes = DataService.getGiftCodes();
+    res.json({ success: true, codes });
+  } catch (error) {
+    console.error('[Admin] 获取礼品码列表失败:', error);
+    res.status(500).json({ error: '获取失败' });
+  }
+});
+
+/**
+ * 删除礼品码
+ */
+router.delete('/credits/codes/:codeId', authMiddleware, (req, res) => {
+  try {
+    const { codeId } = req.params;
+    const success = DataService.deleteGiftCode(codeId);
+
+    if (!success) {
+      return res.status(404).json({ error: '礼品码不存在' });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[Admin] 删除礼品码失败:', error);
+    res.status(500).json({ error: '删除失败' });
+  }
+});
+
+// ========== 直接发放积分 ==========
+
+/**
+ * 管理员直接给用户发放积分
+ */
+router.post('/credits/add-to-user', authMiddleware, express.json(), (req, res) => {
+  try {
+    const { visitorId, amount, description } = req.body;
+
+    if (!visitorId || !amount) {
+      return res.status(400).json({ error: '缺少访客ID或积分数量' });
+    }
+
+    const credits = parseInt(amount);
+    if (credits <= 0 || credits > 1000000) {
+      return res.status(400).json({ error: '积分数量必须在 1-1000000 之间' });
+    }
+
+    const result = DataService.addServerCredits(
+      visitorId.trim(),
+      credits,
+      null,
+      description || `管理员${req.admin.username}手动发放`
+    );
+
+    res.json({ success: true, ...result });
+  } catch (error) {
+    console.error('[Admin] 发放积分失败:', error);
+    res.status(500).json({ error: '发放积分失败' });
+  }
+});
+
+/**
+ * 查询用户积分余额
+ */
+router.get('/credits/user/:visitorId', authMiddleware, (req, res) => {
+  try {
+    const { visitorId } = req.params;
+    const credits = DataService.getOrInitCredits(visitorId);
+    const transactions = DataService.getCreditTransactions(visitorId, 20);
+    res.json({ success: true, ...credits, transactions });
+  } catch (error) {
+    console.error('[Admin] 查询积分失败:', error);
+    res.status(500).json({ error: '查询失败' });
+  }
+});
+
+// ========== 密码管理 ==========
+
+/**
+ * 修改管理员密码
+ */
+router.post('/change-password', authMiddleware, express.json(), (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ error: '缺少旧密码或新密码' });
+    }
+
+    const result = DataService.changeAdminPassword(req.admin.username, oldPassword, newPassword);
+
+    if (!result.success) {
+      return res.status(400).json({ error: result.error });
+    }
+
+    res.json({ success: true, message: '密码修改成功' });
+  } catch (error) {
+    console.error('[Admin] 修改密码失败:', error);
+    res.status(500).json({ error: '修改密码失败' });
+  }
+});
+
 module.exports = router;

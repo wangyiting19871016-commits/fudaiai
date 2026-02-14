@@ -7,10 +7,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 const VISITOR_ID_KEY = 'festival_visitor_id';
 const VISITOR_DATA_KEY = 'festival_visitor_data';
+const CHANNEL_KEY = 'fudai_channel';
 
 export interface VisitorData {
   id: string;
   createdAt: number;
+  channel?: string;
   deviceInfo: {
     userAgent: string;
     screenResolution: string;
@@ -18,6 +20,31 @@ export interface VisitorData {
     language: string;
     platform: string;
   };
+}
+
+/**
+ * 捕获URL中的渠道参数 ?ch=xxx
+ * 首次访问时存入localStorage，后续复用
+ */
+function captureChannel(): string {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const ch = params.get('ch');
+    if (ch) {
+      localStorage.setItem(CHANNEL_KEY, ch);
+      return ch;
+    }
+    return localStorage.getItem(CHANNEL_KEY) || 'direct';
+  } catch {
+    return 'direct';
+  }
+}
+
+/**
+ * 获取当前渠道标识
+ */
+export function getChannel(): string {
+  return localStorage.getItem(CHANNEL_KEY) || 'direct';
 }
 
 /**
@@ -58,6 +85,7 @@ export function initVisitor(): VisitorData {
   const visitorData: VisitorData = {
     id: uuidv4(),
     createdAt: Date.now(),
+    channel: captureChannel(),
     deviceInfo: getDeviceFingerprint(),
   };
 

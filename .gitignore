@@ -16,9 +16,11 @@ yarn-error.log*
 # OS
 .DS_Store
 
-# env
+# env（.env.production 保留在 git 中，部署依赖此文件）
 .env
 .env.local
+.env.server
+.env.*.backup
 
 # 安全隔离文件夹
 _ARCHIVE_*/

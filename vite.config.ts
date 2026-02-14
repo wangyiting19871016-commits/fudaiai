@@ -353,6 +353,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false
         },
+        '/api/downloads': {
+          target: 'http://127.0.0.1:3002',
+          changeOrigin: true,
+          secure: false
+        },
         '/downloads': {
           target: 'http://127.0.0.1:3002',
           changeOrigin: true,

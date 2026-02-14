@@ -26,6 +26,7 @@ const FestivalVoicePage = lazy(() => import('./pages/Festival/VoicePageNew'));
 const FestivalTextPage = lazy(() => import('./pages/Festival/TextPage'));
 const FestivalCategoryPage = lazy(() => import('./pages/Festival/CategoryPage'));
 const FestivalVideoPage = lazy(() => import('./pages/Festival/VideoPage'));
+const VideoResultPage = lazy(() => import('./pages/Festival/VideoResultPage'));
 const VideoCategoryPage = lazy(() => import('./pages/Festival/VideoCategoryPage'));
 const TemplateSelectionPage = lazy(() => import('./pages/Festival/TemplateSelectionPage'));
 const FortunePage = lazy(() => import('./pages/Festival/FortunePage'));
@@ -113,6 +114,7 @@ const AppLayout: React.FC = () => {
             <Route path="text/:featureId" element={<FestivalTextPage />} />
             <Route path="video/:taskId" element={<FestivalVideoPage />} />
             <Route path="video" element={<FestivalVideoPage />} />
+            <Route path="video-result/:filename" element={<VideoResultPage />} />
             <Route path="materials" element={<MaterialLibraryPage />} />
             <Route path="fortune-card" element={<FortuneCardPage />} />
             <Route path="smart-reply" element={<SmartReplyPage />} />

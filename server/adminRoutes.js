@@ -9,6 +9,15 @@ const DataService = require('./DataService');
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
+// ========== 禁止缓存中间件 ==========
+
+router.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
 // ========== 认证中间件 ==========
 
 function authMiddleware(req, res, next) {

@@ -125,7 +125,8 @@ const AdminCreditsPage: React.FC = () => {
           visitorId: directVisitorId.trim(),
           amount: directAmount,
           description: directDesc || undefined
-        })
+        }),
+        cache: 'no-store'
       });
       const data = await res.json();
       if (res.ok) {
@@ -164,7 +165,8 @@ const AdminCreditsPage: React.FC = () => {
           maxUses: newMaxUses,
           description: newDescription,
           expiresAt: newExpiresAt || null
-        })
+        }),
+        cache: 'no-store'
       });
 
       const data = await response.json();
@@ -192,7 +194,8 @@ const AdminCreditsPage: React.FC = () => {
       const token = getToken();
       const response = await fetch(`${API_BASE}/api/admin/credits/codes/${codeId}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store'
       });
 
       if (!response.ok) {

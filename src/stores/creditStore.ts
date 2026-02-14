@@ -358,7 +358,7 @@ export async function syncCreditsFromServer(): Promise<void> {
   const visitorId = getVisitorId();
   if (!visitorId) return;
   try {
-    const res = await fetch(`${API_BASE}/api/credits/balance/${visitorId}`);
+    const res = await fetch(`${API_BASE}/api/credits/balance/${visitorId}`, { cache: 'no-store' });
     if (!res.ok) return;
     const data = await res.json();
     if (data.success && typeof data.balance === 'number') {
@@ -388,6 +388,7 @@ export async function migrateLocalCreditsToServer(): Promise<void> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ visitorId, localCredits: credits }),
+      cache: 'no-store',
     });
     if (!res.ok) return;
     const data = await res.json();
@@ -417,6 +418,7 @@ export async function consumeCreditsServer(
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ visitorId, amount, featureId, description }),
+      cache: 'no-store',
     });
     const data = await res.json();
     if (data.success) {

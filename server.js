@@ -267,7 +267,10 @@ app.use('/api/admin', adminRoutes);
 const DataService = require('./server/DataService');
 
 // 鑾峰彇鐢ㄦ埛绉垎浣欓
-app.get('/api/credits/balance/:visitorId', (req, res) => {
+// 积分API禁缓存
+function noCacheHeaders(req, res, next) { res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate'); res.setHeader('Pragma', 'no-cache'); next(); }
+
+app.get('/api/credits/balance/:visitorId', noCacheHeaders, (req, res) => {
   try {
     const { visitorId } = req.params;
     if (!visitorId) return res.status(400).json({ error: '缂哄皯璁垮ID' });
@@ -280,7 +283,7 @@ app.get('/api/credits/balance/:visitorId', (req, res) => {
 });
 
 // 娑堣€楃Н鍒?
-app.post('/api/credits/consume', express.json(), (req, res) => {
+app.post('/api/credits/consume', noCacheHeaders, express.json(), (req, res) => {
   try {
     const { visitorId, amount, featureId, description } = req.body;
     if (!visitorId || !amount) return res.status(400).json({ error: '缂哄皯鍙傛暟' });
@@ -297,7 +300,7 @@ app.post('/api/credits/consume', express.json(), (req, res) => {
 // /api/credits/add removed - use /api/admin/credits/add-to-user (protected) instead
 
 // 閫€娆剧Н鍒?
-app.post('/api/credits/refund', express.json(), (req, res) => {
+app.post('/api/credits/refund', noCacheHeaders, express.json(), (req, res) => {
   try {
     const { visitorId, amount, description } = req.body;
     if (!visitorId || !amount) return res.status(400).json({ error: '缂哄皯鍙傛暟' });
@@ -310,7 +313,7 @@ app.post('/api/credits/refund', express.json(), (req, res) => {
 });
 
 // 杩佺Щ鏈湴绉垎鍒版湇鍔＄
-app.post('/api/credits/migrate', express.json(), (req, res) => {
+app.post('/api/credits/migrate', noCacheHeaders, express.json(), (req, res) => {
   try {
     const { visitorId, localCredits } = req.body;
     if (!visitorId) return res.status(400).json({ error: '缂哄皯璁垮ID' });
@@ -323,7 +326,7 @@ app.post('/api/credits/migrate', express.json(), (req, res) => {
 });
 
 // 馃巵 绀煎搧鐮佸厬鎹紙鍏戞崲鍚庡悓鏃跺啓鍏ユ湇鍔＄绉垎锛?
-app.post('/api/credits/redeem', express.json(), (req, res) => {
+app.post('/api/credits/redeem', noCacheHeaders, express.json(), (req, res) => {
   try {
     const { code, visitorId } = req.body;
 

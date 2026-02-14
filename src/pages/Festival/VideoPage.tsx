@@ -813,7 +813,7 @@ const FestivalVideoPage: React.FC = () => {
   };
 
   // ========== 保存视频 ==========
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!wanVideoUrl) {
       message.error('视频链接无效，请重新生成');
       return;
@@ -854,11 +854,28 @@ const FestivalVideoPage: React.FC = () => {
       }
     }
 
-    // iOS非微信：新标签打开mp4直链 → Safari原生播放器 → 分享 → 存储视频
+    // iOS非微信：fetch下载到文件App → 引导用户从文件App保存到相册
     if (isIOS && !isWeChat) {
-      window.open(videoDirectUrl, '_blank');
       setDownloadPlatform('ios-safari');
       setShowDownloadModal(true);
+      try {
+        message.loading({ content: '正在准备视频下载...', key: 'ios-download', duration: 0 });
+        const response = await fetch(videoDirectUrl);
+        if (!response.ok) throw new Error('fetch failed');
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `春节视频_${Date.now()}.mp4`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+        message.success({ content: '视频已开始下载到「文件」App', key: 'ios-download' });
+      } catch {
+        message.destroy('ios-download');
+        message.info('自动下载失败，请点击下方「复制视频链接」手动保存');
+      }
       return;
     }
 
@@ -1361,7 +1378,7 @@ const FestivalVideoPage: React.FC = () => {
               </button>
             </div>
 
-            {/* iOS Safari：已在新标签打开 */}
+            {/* iOS Safari：下载到文件App引导 */}
             {downloadPlatform === 'ios-safari' && (
               <div style={{ padding: '4px 0' }}>
                 <div style={{
@@ -1371,9 +1388,12 @@ const FestivalVideoPage: React.FC = () => {
                   marginBottom: '16px',
                   textAlign: 'center'
                 }}>
-                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>&#x2705;</div>
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>&#x1F4E5;</div>
                   <div style={{ fontSize: '15px', fontWeight: '600', color: '#2E7D32' }}>
-                    视频已在新页面打开
+                    视频正在下载到「文件」App
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#388E3C', marginTop: '4px' }}>
+                    下载完成后，按以下步骤保存到相册
                   </div>
                 </div>
                 <div style={{
@@ -1387,16 +1407,29 @@ const FestivalVideoPage: React.FC = () => {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                     <div style={{ background: '#FFD700', color: '#000', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '13px', marginRight: '10px', flexShrink: 0 }}>1</div>
-                    <div style={{ fontSize: '14px', color: '#333' }}>切换到刚打开的新页面</div>
+                    <div style={{ fontSize: '14px', color: '#333' }}>打开iPhone「文件」App</div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                     <div style={{ background: '#FFD700', color: '#000', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '13px', marginRight: '10px', flexShrink: 0 }}>2</div>
-                    <div style={{ fontSize: '14px', color: '#333' }}>点击左下角 <span style={{ fontSize: '18px' }}>&#x2B06;&#xFE0F;</span> 分享按钮</div>
+                    <div style={{ fontSize: '14px', color: '#333' }}>在「下载」文件夹中找到视频</div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ background: '#FFD700', color: '#000', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '13px', marginRight: '10px', flexShrink: 0 }}>3</div>
+                    <div style={{ fontSize: '14px', color: '#333' }}>长按视频文件 → 点击「分享」</div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div style={{ background: '#FFD700', color: '#000', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '13px', marginRight: '10px', flexShrink: 0 }}>3</div>
-                    <div style={{ fontSize: '14px', color: '#333' }}>选择「存储视频」保存到相册</div>
+                    <div style={{ background: '#FFD700', color: '#000', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '13px', marginRight: '10px', flexShrink: 0 }}>4</div>
+                    <div style={{ fontSize: '14px', color: '#333' }}>选择「存储视频」即可保存到相册</div>
                   </div>
+                </div>
+                <div style={{
+                  fontSize: '12px',
+                  color: '#666',
+                  textAlign: 'center',
+                  padding: '0 8px',
+                  lineHeight: '1.5'
+                }}>
+                  如果未自动下载，请点击下方「复制视频链接」，<br/>粘贴到Safari地址栏打开后长按视频保存
                 </div>
               </div>
             )}

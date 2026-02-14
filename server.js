@@ -3251,30 +3251,6 @@ app.post('/api/payment/manual-complete', express.json(), (req, res) => {
 const apiProxyRoutes = require('./api-proxy-endpoints');
 apiProxyRoutes(app);
 
-// 澶勭悊鎵€鏈夊叾浠栬姹傦紝杩斿洖鍓嶇搴旂敤锛堝繀椤绘斁鍦ㄦ渶鍚庯級
-app.use((req, res) => {
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
-
-// 娣诲姞鍏ㄥ眬閿欒澶勭悊涓棿浠?- 鎹曡幏鎵€鏈変腑闂翠欢鐨勯敊璇?
-app.use((err, req, res, next) => {
-  console.error('馃毃 [SERVER CRITICAL ERROR]:', err.stack);
-  const payload = {
-    error: IS_PRODUCTION ? 'Internal Server Error' : err.message,
-    status: 'error',
-    message: 'Server internal error'
-  };
-  if (!IS_PRODUCTION) {
-    payload.stack = err.stack;
-  }
-  res.status(500).json(payload);
-});
-
-// 鍚姩鏈嶅姟鍣?- 寮哄埗鎸佷箙杩愯
-
 // ==================== 用户反馈系统 ====================
 const feedbackFilePath = path.join(__dirname, 'data', 'feedback.json');
 
@@ -3352,6 +3328,31 @@ app.post('/api/admin/feedback/:id/reply', express.json(), (req, res) => {
   }
 });
 // ==================== 用户反馈系统 END ====================
+
+
+// 澶勭悊鎵€鏈夊叾浠栬姹傦紝杩斿洖鍓嶇搴旂敤锛堝繀椤绘斁鍦ㄦ渶鍚庯級
+app.use((req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+// 娣诲姞鍏ㄥ眬閿欒澶勭悊涓棿浠?- 鎹曡幏鎵€鏈変腑闂翠欢鐨勯敊璇?
+app.use((err, req, res, next) => {
+  console.error('馃毃 [SERVER CRITICAL ERROR]:', err.stack);
+  const payload = {
+    error: IS_PRODUCTION ? 'Internal Server Error' : err.message,
+    status: 'error',
+    message: 'Server internal error'
+  };
+  if (!IS_PRODUCTION) {
+    payload.stack = err.stack;
+  }
+  res.status(500).json(payload);
+});
+
+// 鍚姩鏈嶅姟鍣?- 寮哄埗鎸佷箙杩愯
 
 const server = app.listen(PORT, '0.0.0.0', () => {
   // 鎵撳嵃鐗╃悊杩涚▼淇℃伅

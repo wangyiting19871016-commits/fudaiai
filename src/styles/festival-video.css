@@ -257,7 +257,7 @@
 
 .char-count {
   font-size: 12px;
-  color: var(--cny-gray-500);
+  color: var(--cny-gray-900);
 }
 
 .char-count.warning {
@@ -267,7 +267,7 @@
 
 .duration-estimate {
   font-size: 11px;
-  color: var(--cny-gray-400);
+  color: var(--cny-gray-900);
   font-style: italic;
 }
 
@@ -401,13 +401,13 @@
 /* ========== 提示信息 ========== */
 .tips-section {
   padding: 16px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .tips-section .tip {
-  color: var(--cny-gray-600);
+  color: var(--cny-gray-900);
   font-size: 13px;
   margin: 0 0 8px 0;
   line-height: 1.5;

@@ -358,7 +358,7 @@ export async function syncCreditsFromServer(): Promise<void> {
   const visitorId = getVisitorId();
   if (!visitorId) return;
   try {
-    const res = await fetch(`${API_BASE}/api/credits/balance/${visitorId}`, { cache: 'no-store' });
+    const res = await fetch(`${API_BASE}/api/credits/balance/${visitorId}?_t=${Date.now()}`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
     if (!res.ok) return;
     const data = await res.json();
     if (data.success && typeof data.balance === 'number') {

@@ -36,6 +36,9 @@ ENV/
 *.py[cod]
 *$py.class
 
+# 运行时数据（生产环境由应用生成，不能被git覆盖）
+data/
+
 # 临时处理文件
 temp_processing/
 downloads/

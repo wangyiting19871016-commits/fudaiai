@@ -64,8 +64,8 @@ const AdminCreditsPage: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`${API_BASE}/api/admin/credits/codes`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+      const response = await fetch(`${API_BASE}/api/admin/credits/codes?_t=${Date.now()}`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'Cache-Control': 'no-cache' },
         cache: 'no-store'
       });
 
@@ -77,8 +77,8 @@ const AdminCreditsPage: React.FC = () => {
 
       const data = await response.json();
       setCodes(data.codes || []);
-    } catch (error) {
-      message.error('加载礼品码失败');
+    } catch (error: any) {
+      message.error('加载礼品码失败: ' + (error.message || ''));
     } finally {
       setLoading(false);
     }
@@ -95,8 +95,8 @@ const AdminCreditsPage: React.FC = () => {
     }
     try {
       const token = getToken();
-      const res = await fetch(`${API_BASE}/api/admin/credits/user/${encodeURIComponent(directVisitorId.trim())}`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+      const res = await fetch(`${API_BASE}/api/admin/credits/user/${encodeURIComponent(directVisitorId.trim())}?_t=${Date.now()}`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'Cache-Control': 'no-cache' },
         cache: 'no-store'
       });
       const data = await res.json();
@@ -157,7 +157,8 @@ const AdminCreditsPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
         },
         body: JSON.stringify({
           code: newCode,
@@ -172,14 +173,14 @@ const AdminCreditsPage: React.FC = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || '创建失败');
+        throw new Error(data.error || `创建失败(${response.status})`);
       }
 
       message.success(`礼品码 ${newCode} 创建成功`);
       setNewCode(generateRandomCode());
       setNewDescription('');
       setNewExpiresAt('');
-      fetchCodes();
+      await fetchCodes();
     } catch (error: any) {
       message.error(error.message || '创建失败');
     } finally {
@@ -194,16 +195,18 @@ const AdminCreditsPage: React.FC = () => {
       const token = getToken();
       const response = await fetch(`${API_BASE}/api/admin/credits/codes/${codeId}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { 'Authorization': `Bearer ${token}`, 'Cache-Control': 'no-cache' },
         cache: 'no-store'
       });
 
+      const data = await response.json().catch(() => ({}));
+
       if (!response.ok) {
-        throw new Error('删除失败');
+        throw new Error(data.error || `删除失败(${response.status})`);
       }
 
       message.success('已删除');
-      fetchCodes();
+      await fetchCodes();
     } catch (error: any) {
       message.error(error.message || '删除失败');
     }

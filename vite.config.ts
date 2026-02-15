@@ -358,6 +358,16 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false
         },
+        '/api/m2-templates': {
+          target: 'http://127.0.0.1:3002',
+          changeOrigin: true,
+          secure: false
+        },
+        '/api/m3-templates': {
+          target: 'http://127.0.0.1:3002',
+          changeOrigin: true,
+          secure: false
+        },
         '/downloads': {
           target: 'http://127.0.0.1:3002',
           changeOrigin: true,

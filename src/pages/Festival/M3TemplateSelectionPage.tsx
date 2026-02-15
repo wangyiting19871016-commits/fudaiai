@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
+import { compressImage } from '../../utils/compressImage';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-m2-template.css';
 
@@ -90,31 +91,18 @@ const M3TemplateSelectionPage: React.FC = () => {
     setCustomPreview('');
   };
 
-  const handleCustomUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCustomUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // 验证文件类型
-      if (!file.type.startsWith('image/')) {
-        alert('请上传图片文件');
-        return;
-      }
+    if (!file) return;
 
-      // 验证文件大小（最大5MB）
-      if (file.size > 5 * 1024 * 1024) {
-        alert('图片大小不能超过5MB');
-        return;
-      }
-
+    try {
+      const dataUrl = await compressImage(file);
       setCustomTemplate(file);
       setUseCustom(true);
       setSelectedTemplate(null);
-
-      // 生成预览
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setCustomPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      setCustomPreview(dataUrl);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '图片处理失败');
     }
   };
 

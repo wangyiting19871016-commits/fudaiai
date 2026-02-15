@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import { analyzeImageWithQwenVL } from '../../services/aliService';
 import { fillPrompt } from '../../configs/festival/prompts';
+import { compressImage } from '../../utils/compressImage';
 import { generateFortuneCard, FortuneCardData } from '../../utils/fortuneCardCanvas';
 import { MaterialService } from '../../services/MaterialService';
 import type { MaterialAtom } from '../../types/material';
@@ -61,26 +62,17 @@ const FortuneCardPage: React.FC = () => {
     '照片里啥也没有，您是在考验我吗'
   ];
 
-  // 处理图片上传
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // 处理图片上传（自动压缩，无大小限制）
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      message.error('请上传图片文件');
-      return;
+    try {
+      const dataUrl = await compressImage(file);
+      setUploadedImage(dataUrl);
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : '图片处理失败');
     }
-
-    if (file.size > 10 * 1024 * 1024) {
-      message.error('图片大小不能超过10MB');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setUploadedImage(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
   };
 
   // 实时扫脸

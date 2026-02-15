@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { message } from 'antd';
 import { getFeatureById, Feature, TextFieldConfig } from '../../configs/festival/features';
 import { fillPrompt } from '../../configs/festival/prompts';
+import { compressImage } from '../../utils/compressImage';
 import { parseCoupletText, drawCouplet, downloadCoupletImage } from '../../utils/coupletCanvas';
 import { generatePoster } from '../../utils/posterCanvas';
 import { CLASSIC_COUPLET_POSTER } from '../../configs/festival/posterTemplates';
@@ -68,31 +69,18 @@ const FestivalTextPage: React.FC = () => {
     setFormValues(prev => ({ ...prev, [key]: value }));
   };
 
-  // 🆕 处理图片上传
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // 处理图片上传（自动压缩，无大小限制）
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 检查文件类型
-    if (!file.type.startsWith('image/')) {
-      message.error('请上传图片文件');
-      return;
+    try {
+      const dataUrl = await compressImage(file);
+      setUploadedImageFile(file);
+      setUploadedImage(dataUrl);
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : '图片处理失败');
     }
-
-    // 检查文件大小（最大10MB）
-    if (file.size > 10 * 1024 * 1024) {
-      message.error('图片大小不能超过10MB');
-      return;
-    }
-
-    setUploadedImageFile(file);
-
-    // 预览
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setUploadedImage(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
   };
 
   // 🆕 生成海报

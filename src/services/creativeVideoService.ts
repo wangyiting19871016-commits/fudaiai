@@ -199,9 +199,11 @@ async function pollTaskStatus(
 
     if (taskStatus === 'SUCCEEDED') {
       // WAN2.6 返回 output.video_url（非 output.results.video_url）
-      videoUrl = statusData.output?.video_url
+      const rawUrl = statusData.output?.video_url
         || statusData.output?.results?.video_url
         || '';
+      // dashscope 可能返回 http://，HTTPS 页面会被浏览器拦截
+      videoUrl = rawUrl.replace(/^http:\/\//, 'https://');
       break;
     } else if (taskStatus === 'FAILED') {
       throw new Error('视频生成失败');

@@ -746,7 +746,8 @@ const FestivalVideoPage: React.FC = () => {
             taskStatus = statusData.output?.task_status || 'UNKNOWN';
 
             if (taskStatus === 'SUCCEEDED') {
-              videoUrl = statusData.output?.results?.video_url || '';
+              // dashscope 可能返回 http://，HTTPS 页面会被浏览器拦截
+              videoUrl = (statusData.output?.results?.video_url || '').replace(/^http:\/\//, 'https://');
               break;
             } else if (taskStatus === 'FAILED') {
               throw new Error('视频生成失败');

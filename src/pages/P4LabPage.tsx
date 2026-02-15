@@ -1736,7 +1736,7 @@ const P4LabPage: React.FC = () => {
 
                         {/* 4. 视频响应 (Video Player) - WAN 模型 */}
                         {(runResult.output?.results?.video_url || runResult.video_url) && (() => {
-                            const videoUrl = runResult.output?.results?.video_url || runResult.video_url;
+                            const videoUrl = (runResult.output?.results?.video_url || runResult.video_url || '').replace(/^http:\/\//, 'https://');
                             console.log('[视频预览] 视频URL:', videoUrl);
                             console.log('[视频预览] runResult完整数据:', runResult);
                             return (

@@ -74,31 +74,32 @@ export async function uploadToTencentCOS(file: File | string): Promise<UploadRes
       throw new Error(`上传失败: status=${response.status} ${errorText}${hint}`);
     }
 
-    // 🔧 零依赖URL提取：只用indexOf+substring，不用regex/JSON.parse
-    // Vite代理会复制响应体（见CONTEXT_HANDOFF.md），任何高级方法都不可靠
     const rawText = await response.text();
-    console.log('[COS] 📦 原始文本长度:', rawText.length, '内容:', rawText.substring(0, 120));
+    console.log('[COS] 📦 原始文本长度:', rawText.length, '内容:', rawText.substring(0, 200));
 
-    // 找到第一个 https:// 的位置
-    const firstHttps = rawText.indexOf('https://');
-    if (firstHttps < 0) {
-      throw new Error('响应中没有找到URL');
+    // 优先 JSON.parse 提取，最可靠
+    let finalUrl = '';
+    try {
+      const parsed = JSON.parse(rawText);
+      const raw = typeof parsed.url === 'string' ? parsed.url : '';
+      finalUrl = sanitizeCosUrl(raw);
+    } catch {
+      // JSON 解析失败，降级用 indexOf
     }
 
-    // 找第二个 https:// （如果存在就是重复）
-    const secondHttps = rawText.indexOf('https://', firstHttps + 10);
-
-    let finalUrl: string;
-    if (secondHttps > firstHttps) {
-      // 有重复：截取第一个URL（从firstHttps到secondHttps之前）
-      finalUrl = rawText.substring(firstHttps, secondHttps);
-      console.warn('[COS] ⚠️ URL重复已修复，截断位置:', secondHttps);
-    } else {
-      // 无重复：截取到下一个引号
-      const quoteAfter = rawText.indexOf('"', firstHttps);
-      finalUrl = quoteAfter > firstHttps
-        ? rawText.substring(firstHttps, quoteAfter)
-        : rawText.substring(firstHttps).trim();
+    // 降级：字符串提取
+    if (!finalUrl) {
+      const firstHttps = rawText.indexOf('https://');
+      if (firstHttps < 0) throw new Error('响应中没有找到URL');
+      const secondHttps = rawText.indexOf('https://', firstHttps + 10);
+      if (secondHttps > firstHttps) {
+        finalUrl = rawText.substring(firstHttps, secondHttps);
+      } else {
+        const quoteAfter = rawText.indexOf('"', firstHttps);
+        finalUrl = quoteAfter > firstHttps
+          ? rawText.substring(firstHttps, quoteAfter)
+          : rawText.substring(firstHttps).trim();
+      }
     }
 
     console.log('[COS] ✅ 最终URL:', finalUrl);

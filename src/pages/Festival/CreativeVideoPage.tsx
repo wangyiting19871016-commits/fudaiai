@@ -10,13 +10,20 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { message } from 'antd';
 import { uploadImage } from '../../services/imageHosting';
 import { getVisitorId } from '../../utils/visitorId';
 import { useCreditStore } from '../../stores/creditStore';
+import { getNavigationState, createNavigationState } from '../../types/navigationState';
+import { SessionMaterialManager } from '../../services/SessionMaterialManager';
+import { ImageGeneratorSelector } from '../../components/ImageGeneratorSelector';
+import { MaterialSelector } from '../../components/MaterialSelector';
+import type { MaterialAtom } from '../../types/material';
+import { MaterialService } from '../../services/MaterialService';
 import { BackButton } from '../../components/BackButton';
 import { HomeButton } from '../../components/HomeButton';
+import { ContinueCreationPanel } from '../../components/ContinueCreationPanel';
 import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import {
   CREATIVE_TEMPLATES,
@@ -84,6 +91,7 @@ function extractFilename(url: string): string {
 
 const CreativeVideoPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // ========== 模式切换 ==========
   const [mode, setMode] = useState<'template' | 'custom'>('template');
@@ -112,11 +120,35 @@ const CreativeVideoPage: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [wanVideoUrl, setWanVideoUrl] = useState<string | null>(null);
   const [persistedVideoUrl, setPersistedVideoUrl] = useState<string>('');
+  const [isSaved, setIsSaved] = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadPlatform, setDownloadPlatform] = useState<string>('');
 
+  // ========== 选择器状态（与 VideoPage 一致） ==========
+  const [imageSelectorVisible, setImageSelectorVisible] = useState(false);
+  const [materialSelectorVisible, setMaterialSelectorVisible] = useState(false);
+
   const abortControllerRef = useRef<AbortController | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // ========== 初始化：素材恢复（与 VideoPage 一致的流转逻辑） ==========
+  useEffect(() => {
+    // 优先级1: 从 NavigationState 接收素材（从AI生成页返回）
+    const navState = getNavigationState(location.state);
+    if (navState) {
+      if (navState.image) {
+        setImage(navState.image);
+        SessionMaterialManager.setTempImage(navState.image, undefined, 'creative-video');
+      }
+      return;
+    }
+
+    // 优先级2: 从临时会话恢复素材
+    const tempMaterials = SessionMaterialManager.getAllTempMaterials();
+    if (tempMaterials && Object.keys(tempMaterials).length > 0) {
+      if (tempMaterials.image) setImage(tempMaterials.image.url);
+    }
+  }, [location.state]);
 
   // ========== Blob URL 清理 ==========
   useEffect(() => {
@@ -149,7 +181,12 @@ const CreativeVideoPage: React.FC = () => {
       const needsResize = width > MAX_DIMENSION || height > MAX_DIMENSION || file.size > 5 * 1024 * 1024;
       if (!needsResize) {
         const reader = new FileReader();
-        reader.onload = () => setImage(reader.result as string);
+        reader.onload = () => {
+          const imageData = reader.result as string;
+          setImage(imageData);
+          SessionMaterialManager.setTempImage(imageData, undefined, 'creative-video');
+          message.success('图片已上传');
+        };
         reader.readAsDataURL(file);
         return;
       }
@@ -165,15 +202,48 @@ const CreativeVideoPage: React.FC = () => {
       if (!ctx) { message.error('浏览器不支持图片处理'); return; }
       ctx.drawImage(img, 0, 0, width, height);
       const dataUrl = canvas.toDataURL('image/jpeg', QUALITY);
-      const sizeMB = (dataUrl.length * 0.75 / 1024 / 1024).toFixed(1);
-      console.log(`[CreativeVideo] 图片已压缩: ${(file.size / 1024 / 1024).toFixed(1)}MB → ~${sizeMB}MB (${width}x${height})`);
       setImage(dataUrl);
+      SessionMaterialManager.setTempImage(dataUrl, undefined, 'creative-video');
+      message.success('图片已上传');
     };
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
       message.error('图片加载失败，请换一张试试');
     };
     img.src = objectUrl;
+  };
+
+  // ========== 素材库选择（与 VideoPage 一致） ==========
+  const handleImageFromLibrary = () => {
+    setMaterialSelectorVisible(true);
+  };
+
+  // ========== AI生成图片（与 VideoPage 一致的NavigationState流转） ==========
+  const handleImageGenerate = (option: any) => {
+    const navState = createNavigationState({
+      text: blessing || undefined,
+      sourcePagePath: '/festival/creative-video',
+      sourceFeatureId: 'creative-video'
+    });
+    navigate(option.path, { state: navState });
+    setImageSelectorVisible(false);
+  };
+
+  // ========== 素材库选择回调（与 VideoPage 一致） ==========
+  const handleMaterialSelect = (material: MaterialAtom) => {
+    if (material.type === 'image' && material.data.url) {
+      setImage(material.data.url);
+      SessionMaterialManager.setTempImage(material.data.url);
+      message.success('已选择素材库图片');
+    }
+    setMaterialSelectorVisible(false);
+  };
+
+  // ========== 清除图片 ==========
+  const handleClearImage = () => {
+    setImage('');
+    SessionMaterialManager.clearTempMaterial('image');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   // ========== 生成视频 ==========
@@ -395,6 +465,38 @@ const CreativeVideoPage: React.FC = () => {
     });
   };
 
+  // ========== 保存到我的作品（与 VideoPage 一致） ==========
+  const handleSave = () => {
+    if (!wanVideoUrl) {
+      message.error('视频链接无效，请重新生成');
+      return;
+    }
+    if (isSaved) {
+      message.info('已保存到【我的作品】');
+      return;
+    }
+
+    const now = Date.now();
+    const videoMaterial: MaterialAtom = {
+      id: `material_creative_video_${now}`,
+      type: 'video',
+      data: { url: persistedVideoUrl || wanVideoUrl },
+      metadata: {
+        createdAt: now,
+        featureId: 'M12',
+        featureName: '创意视频',
+        greetingText: blessing || selectedTemplate?.name || ''
+      },
+      connectors: {
+        roles: ['videoResult'],
+        canCombineWith: []
+      }
+    };
+    MaterialService.saveMaterial(videoMaterial);
+    setIsSaved(true);
+    message.success('已保存到【我的作品】');
+  };
+
   // ========== 当前分类下的模板 ==========
   const categoryTemplates = CREATIVE_TEMPLATES.filter(t => t.category === category);
 
@@ -467,38 +569,79 @@ const CreativeVideoPage: React.FC = () => {
 
         {/* 生成完成后的按钮 - 与 VideoPage 完全一致 */}
         {wanVideoUrl && (
-          <div className="result-actions">
-            <div className="video-result-button-grid">
-              <button
-                className="action-btn action-btn-primary"
-                onClick={handleDownload}
-              >
-                保存视频
-              </button>
-              <button
-                className="action-btn action-btn-primary"
-                onClick={handleCopyVideoLink}
-              >
-                复制链接
-              </button>
-              <button
-                className="action-btn action-btn-primary"
-                onClick={() => {
-                  setWanVideoUrl(null);
-                  setPersistedVideoUrl('');
-                  setGenerationState({ stage: 'uploading', progress: 0, message: '' });
-                }}
-              >
-                重新生成
-              </button>
-              <button
-                className="action-btn action-btn-primary"
-                onClick={() => navigate('/')}
-              >
-                返回首页
-              </button>
+          <>
+            <div className="result-actions">
+              <div className="video-result-button-grid">
+                <button
+                  className="action-btn action-btn-primary"
+                  onClick={handleDownload}
+                >
+                  保存视频
+                </button>
+                <button
+                  className={`action-btn ${isSaved ? 'action-btn-secondary is-saved' : 'action-btn-primary'}`}
+                  onClick={handleSave}
+                >
+                  {isSaved ? '已保存到我的作品' : '保存到我的作品'}
+                </button>
+                <button
+                  className="action-btn action-btn-primary"
+                  onClick={() => {
+                    setWanVideoUrl(null);
+                    setPersistedVideoUrl('');
+                    setIsSaved(false);
+                    setGenerationState({ stage: 'uploading', progress: 0, message: '' });
+                  }}
+                >
+                  重新生成
+                </button>
+                <button
+                  className="action-btn action-btn-primary"
+                  onClick={() => navigate('/')}
+                >
+                  返回首页
+                </button>
+              </div>
+
+              {/* 保存成功提示 */}
+              {isSaved && (
+                <div style={{
+                  padding: '16px',
+                  margin: '0 16px 16px',
+                  background: 'rgba(76, 175, 80, 0.1)',
+                  border: '1px solid rgba(76, 175, 80, 0.3)',
+                  borderRadius: '12px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '14px', color: '#4CAF50', marginBottom: '8px' }}>
+                    已保存到【我的作品】
+                  </div>
+                  <div style={{ fontSize: '13px', color: 'rgba(0, 0, 0, 0.6)' }}>
+                    可在【我的作品】中查看
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
+
+            {/* 继续创作面板 - 智能推荐（与 VideoPage 一致） */}
+            <ContinueCreationPanel
+              currentMaterial={{
+                id: `creative_video_${Date.now()}`,
+                type: 'video',
+                data: { url: persistedVideoUrl || wanVideoUrl },
+                metadata: {
+                  createdAt: Date.now(),
+                  featureId: 'M12',
+                  featureName: '创意视频',
+                  greetingText: blessing || selectedTemplate?.name || ''
+                },
+                connectors: {
+                  roles: ['videoResult'],
+                  canCombineWith: []
+                }
+              }}
+            />
+          </>
         )}
 
         {/* 主内容区（非生成中且无视频时显示） */}
@@ -714,10 +857,10 @@ const CreativeVideoPage: React.FC = () => {
               </div>
             )}
 
-            {/* 上传照片 */}
+            {/* 图片素材卡片（与 VideoPage 一致：上传/素材库/AI生成） */}
             <div className="material-card">
               <div className="material-card-header">
-                <span className="material-card-title">上传照片</span>
+                <span className="material-card-title">图片素材</span>
                 <span className={`material-status-badge ${image ? 'has-value' : 'no-value'}`}>
                   {image ? '已选择' : '未选择'}
                 </span>
@@ -731,21 +874,25 @@ const CreativeVideoPage: React.FC = () => {
                     <img src={image} alt="已选照片"
                       style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', borderRadius: '10px', background: 'rgba(0,0,0,0.03)' }}
                     />
-                    <button onClick={() => { setImage(''); if (fileInputRef.current) fileInputRef.current.value = ''; }}
-                      style={{
-                        position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px',
-                        borderRadius: '50%', border: 'none', background: 'rgba(0,0,0,0.5)',
-                        color: '#fff', fontSize: '14px', cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
-                      }}>×</button>
                   </div>
                 ) : null}
                 <div className="material-actions">
                   <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp"
                     onChange={handleImageUpload} style={{ display: 'none' }} id="creative-image-upload" />
                   <label htmlFor="creative-image-upload" className="action-btn-small">
-                    {image ? '更换图片' : '上传图片'}
+                    上传图片
                   </label>
+                  <button className="action-btn-small" onClick={handleImageFromLibrary}>
+                    素材库
+                  </button>
+                  <button className="action-btn-small action-btn-primary" onClick={() => setImageSelectorVisible(true)}>
+                    AI生成
+                  </button>
+                  {image && (
+                    <button className="action-btn-small action-btn-ghost" onClick={handleClearImage}>
+                      清除
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -876,6 +1023,20 @@ const CreativeVideoPage: React.FC = () => {
           </>
         )}
       </div>
+
+      {/* 选择器弹窗（与 VideoPage 一致） */}
+      <ImageGeneratorSelector
+        visible={imageSelectorVisible}
+        onSelect={handleImageGenerate}
+        onCancel={() => setImageSelectorVisible(false)}
+      />
+
+      <MaterialSelector
+        type="image"
+        visible={materialSelectorVisible}
+        onSelect={handleMaterialSelect}
+        onCancel={() => setMaterialSelectorVisible(false)}
+      />
 
       {/* 下载引导弹窗 - 与 VideoPage 完全一致 */}
       {showDownloadModal && wanVideoUrl && (

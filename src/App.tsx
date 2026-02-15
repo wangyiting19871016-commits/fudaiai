@@ -17,9 +17,14 @@ const LabPage = lazy(() => import('./pages/LabPage'));
 const EditorPage = lazy(() => import('./pages/EditorPage'));
 const P4LabPage = lazy(() => import('./pages/P4LabPage'));
 
-// 🧧 春节H5页面（Layout必须直接import，否则festival.css会变成lazy chunk导致样式丢失）
-import FestivalLayout from './pages/Festival/Layout';
-import HomePageGlass from './pages/Festival/HomePageGlass';
+// 🧧 春节H5 — CSS在此直接import（确保主包内立即加载，不闪屏）
+//    Layout/HomePageGlass 恢复lazy（减少主包JS体积，加快首屏可交互时间）
+import './styles/festival.css';
+import './styles/festival-lab-modern.css';
+import './styles/festival-uploader-modern.css';
+import './styles/festival-narrator-modern.css';
+const FestivalLayout = lazy(() => import('./pages/Festival/Layout'));
+const HomePageGlass = lazy(() => import('./pages/Festival/HomePageGlass'));
 const FestivalLabPage = lazy(() => import('./pages/Festival/LabPage'));
 const FestivalResultPage = lazy(() => import('./pages/Festival/ResultPage'));
 const FestivalVoicePage = lazy(() => import('./pages/Festival/VoicePageNew'));
@@ -57,6 +62,33 @@ const FeedbackPage = lazy(() => import('./pages/Festival/FeedbackPage'));
 // - KlingEffectsPage.tsx → 功能下线 (2026-02-08)
 // - VideoPageNew.tsx → 重命名为VideoPageMultiMode.tsx.backup备份 (2026-02-08)
 
+// 🦴 Suspense骨架屏（与festival风格一致，避免白屏/闪烁）
+const FestivalSkeleton: React.FC = () => (
+  <div style={{ minHeight: '100vh', background: '#FDFBF7' }}>
+    <div style={{ maxWidth: 400, margin: '0 auto', padding: '60px 20px 0' }}>
+      <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        <div style={{ fontSize: 22, fontWeight: 800, color: '#D32F2F', letterSpacing: 2 }}>福袋AI</div>
+      </div>
+      {[120, 70].map((h, i) => (
+        <div key={i} style={{
+          background: 'rgba(255,255,255,0.85)', borderRadius: 16,
+          padding: 20, marginBottom: 14,
+          border: '1px solid rgba(0,0,0,0.06)'
+        }}>
+          <div style={{
+            height: 14, width: i === 0 ? '40%' : '55%',
+            background: '#eee', borderRadius: 7
+          }} />
+          <div style={{
+            height: h, marginTop: 14,
+            background: '#eee', borderRadius: 12
+          }} />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 // 布局组件，用于处理路由相关的布局逻辑
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -67,13 +99,13 @@ const AppLayout: React.FC = () => {
   const showNav = location.pathname === '/p4-lab' || location.pathname === '/p4lab';
   
   return (
-    <div style={{ width: '100vw', minHeight: '100vh', background: '#222' }}>
+    <div style={{ width: '100%', minHeight: '100vh', background: '#222' }}>
       {/* 动态导航栏：仅在 P4LAB 显示 */}
       {showNav && <Navigation />}
-      
+
       {/* 内容区域：如果有导航栏，则添加 padding-top */}
       <div style={{ paddingTop: showNav ? '70px' : '0' }}>
-        <Suspense fallback={<div style={{ minHeight: '100vh', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>页面加载中...</div>}>
+        <Suspense fallback={<FestivalSkeleton />}>
           <Routes>
           {/* 🎯 默认跳转到春节H5 */}
           <Route path="/" element={<Navigate to="/festival/home" replace />} />
@@ -156,6 +188,11 @@ const App: React.FC = () => {
     import('./stores/creditStore').then(({ migrateLocalCreditsToServer, syncCreditsFromServer }) => {
       migrateLocalCreditsToServer().then(() => syncCreditsFromServer()).catch(() => {});
     });
+    // 🚀 预加载关键路由chunk（主包加载完毕后立即开始，不等用户点击）
+    requestIdleCallback(() => {
+      import('./pages/Festival/Layout');
+      import('./pages/Festival/HomePageGlass');
+    }, { timeout: 2000 });
   }, [initVisitor]);
 
   // 新用户欢迎提示（仅首次）

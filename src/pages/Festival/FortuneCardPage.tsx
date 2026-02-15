@@ -439,16 +439,16 @@ const FortuneCardPage: React.FC = () => {
             alignItems: 'center',
             minHeight: 'calc(100vh - 60px)'
           }}>
-            {/* 卡片 - 大幅增大显示 */}
+            {/* 卡片 - 全宽显示，手机端尽量大 */}
             <img
               src={fortuneCard}
               alt="命理卡片"
               style={{
-                width: '95%',
-                maxWidth: '750px',
-                borderRadius: '20px',
+                width: '100%',
+                maxWidth: '600px',
+                borderRadius: '16px',
                 boxShadow: '0 16px 48px rgba(0, 0, 0, 0.4)',
-                marginBottom: '24px'
+                marginBottom: '20px'
               }}
             />
 

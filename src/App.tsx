@@ -17,14 +17,11 @@ const LabPage = lazy(() => import('./pages/LabPage'));
 const EditorPage = lazy(() => import('./pages/EditorPage'));
 const P4LabPage = lazy(() => import('./pages/P4LabPage'));
 
-// 🧧 春节H5 — CSS在此直接import（确保主包内立即加载，不闪屏）
-//    Layout/HomePageGlass 恢复lazy（减少主包JS体积，加快首屏可交互时间）
-import './styles/festival.css';
-import './styles/festival-lab-modern.css';
-import './styles/festival-uploader-modern.css';
-import './styles/festival-narrator-modern.css';
-const FestivalLayout = lazy(() => import('./pages/Festival/Layout'));
-const HomePageGlass = lazy(() => import('./pages/Festival/HomePageGlass'));
+// 🧧 春节H5 — Layout/HomePageGlass 必须直接import（不能lazy）
+//    原因：lazy会导致festival-home-glass.css和festival-design-system.css被拆到单独chunk
+//    首屏依赖这些CSS变量和样式，拆分后会白屏
+import FestivalLayout from './pages/Festival/Layout';
+import HomePageGlass from './pages/Festival/HomePageGlass';
 const FestivalLabPage = lazy(() => import('./pages/Festival/LabPage'));
 const FestivalResultPage = lazy(() => import('./pages/Festival/ResultPage'));
 const FestivalVoicePage = lazy(() => import('./pages/Festival/VoicePageNew'));
@@ -188,11 +185,16 @@ const App: React.FC = () => {
     import('./stores/creditStore').then(({ migrateLocalCreditsToServer, syncCreditsFromServer }) => {
       migrateLocalCreditsToServer().then(() => syncCreditsFromServer()).catch(() => {});
     });
-    // 🚀 预加载关键路由chunk（主包加载完毕后立即开始，不等用户点击）
-    requestIdleCallback(() => {
-      import('./pages/Festival/Layout');
-      import('./pages/Festival/HomePageGlass');
-    }, { timeout: 2000 });
+    // 🚀 预加载次要路由chunk（主包加载完毕后开始，不等用户点击）
+    const preload = () => {
+      import('./pages/Festival/CategoryPage');
+      import('./pages/Festival/VideoPage');
+    };
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(preload, { timeout: 3000 });
+    } else {
+      setTimeout(preload, 2000);
+    }
   }, [initVisitor]);
 
   // 新用户欢迎提示（仅首次）

@@ -1,6 +1,9 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-// CSS已提升到App.tsx直接import（确保主包内，不随lazy chunk拆分）
+import '../../styles/festival.css';
+import '../../styles/festival-lab-modern.css';
+import '../../styles/festival-uploader-modern.css';
+import '../../styles/festival-narrator-modern.css';
 
 /**
  * 🧧 福袋AI·马年大吉 - 主布局容器

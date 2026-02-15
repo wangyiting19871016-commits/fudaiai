@@ -460,38 +460,7 @@ const FortuneCardPage: React.FC = () => {
               flexDirection: 'column',
               gap: '10px'
             }}>
-              {/* 生成春联海报按钮 - 主要操作 */}
-              {fortuneData && (
-                <button
-                  onClick={() => navigate('/festival/category/blessing', {
-                    state: { keyword: fortuneData.keyword }
-                  })}
-                  style={{
-                    padding: '14px',
-                    fontSize: '16px',
-                    fontWeight: '700',
-                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-                    color: '#000',
-                    border: 'none',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    boxShadow: '0 4px 12px rgba(255, 215, 0, 0.4)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 215, 0, 0.6)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.4)';
-                  }}
-                >
-                  用「{fortuneData.keyword}」生成春联海报
-                </button>
-              )}
-
-              {/* 次要操作 */}
+              {/* 操作按钮 */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <button
                   onClick={handleSaveToLibrary}

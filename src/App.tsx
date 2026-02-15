@@ -17,9 +17,9 @@ const LabPage = lazy(() => import('./pages/LabPage'));
 const EditorPage = lazy(() => import('./pages/EditorPage'));
 const P4LabPage = lazy(() => import('./pages/P4LabPage'));
 
-// 🧧 春节H5页面（全新独立，lazy-load减少首屏体积）
-const FestivalLayout = lazy(() => import('./pages/Festival/Layout'));
-const HomePageGlass = lazy(() => import('./pages/Festival/HomePageGlass'));
+// 🧧 春节H5页面（Layout必须直接import，否则festival.css会变成lazy chunk导致样式丢失）
+import FestivalLayout from './pages/Festival/Layout';
+import HomePageGlass from './pages/Festival/HomePageGlass';
 const FestivalLabPage = lazy(() => import('./pages/Festival/LabPage'));
 const FestivalResultPage = lazy(() => import('./pages/Festival/ResultPage'));
 const FestivalVoicePage = lazy(() => import('./pages/Festival/VoicePageNew'));

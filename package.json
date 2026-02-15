@@ -44,6 +44,7 @@
     "hls.js": "^1.6.15",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.562.0",
+    "msgpackr": "^1.11.8",
     "multer": "^2.0.2",
     "openai": "^6.15.0",
     "postcss": "^8.5.6",

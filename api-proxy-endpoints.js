@@ -1003,6 +1003,33 @@ module.exports = function(app) {
         textLength: text.trim().length
       });
 
+      // Fish Audio references only accept WAV/MP3/FLAC, browser records WebM
+      // Convert to WAV via ffmpeg if needed
+      let audioBuffer = req.file.buffer;
+      let audioMime = req.file.mimetype || 'audio/webm';
+      const needsConvert = !audioMime.includes('wav') && !audioMime.includes('mp3') && !audioMime.includes('flac');
+      if (needsConvert) {
+        console.log('[Fish Audio Clone] Converting', audioMime, '→ WAV via ffmpeg');
+        const { execFileSync } = require('child_process');
+        const fs = require('fs');
+        const os = require('os');
+        const path = require('path');
+        const tmpIn = path.join(os.tmpdir(), 'clone_in_' + Date.now() + '.webm');
+        const tmpOut = path.join(os.tmpdir(), 'clone_out_' + Date.now() + '.wav');
+        try {
+          fs.writeFileSync(tmpIn, audioBuffer);
+          execFileSync('ffmpeg', ['-y', '-i', tmpIn, '-ar', '44100', '-ac', '1', '-f', 'wav', tmpOut], { timeout: 15000 });
+          audioBuffer = fs.readFileSync(tmpOut);
+          audioMime = 'audio/wav';
+          console.log('[Fish Audio Clone] Converted to WAV:', audioBuffer.length, 'bytes');
+        } catch (convErr) {
+          console.error('[Fish Audio Clone] ffmpeg convert failed:', convErr.message);
+        } finally {
+          try { fs.unlinkSync(tmpIn); } catch (_) {}
+          try { fs.unlinkSync(tmpOut); } catch (_) {}
+        }
+      }
+
       const proxyUrlObj = new URL(proxyUrl);
 
       // Build multipart/form-data body
@@ -1012,10 +1039,10 @@ module.exports = function(app) {
       // reference_audio (录音文件，仅用于采集音色)
       parts.push(Buffer.from(
         `--${boundary}\r\n` +
-        `Content-Disposition: form-data; name="audio"; filename="recording.webm"\r\n` +
-        `Content-Type: ${req.file.mimetype || 'audio/webm'}\r\n\r\n`
+        `Content-Disposition: form-data; name="audio"; filename="recording.wav"\r\n` +
+        `Content-Type: ${audioMime}\r\n\r\n`
       ));
-      parts.push(req.file.buffer);
+      parts.push(audioBuffer);
       parts.push(Buffer.from('\r\n'));
 
       // text (最终输出内容)

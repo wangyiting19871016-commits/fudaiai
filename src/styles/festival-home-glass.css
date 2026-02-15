@@ -477,6 +477,21 @@
   text-align: center;
 }
 
+.showcase-gif-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 6px;
+  background: rgba(229, 57, 53, 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}
+
 /* ========================================
    VIP横幅
    ======================================== */

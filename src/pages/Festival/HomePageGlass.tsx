@@ -6,6 +6,14 @@ import { BottomNav } from '../../components/BottomNav';
 import '../../styles/festival-design-system.css';
 import '../../styles/festival-home-glass.css';
 
+// 🎬 展示区GIF列表（页面可交互后串行后台加载，不影响首屏）
+const SHOWCASE_GIF_URLS = [
+  '/assets/creative-previews/new-year-blessing.gif',
+  '/assets/creative-previews/ink-painting.gif',
+  '/assets/creative-previews/fortune-god-dj.gif',
+  '/assets/creative-previews/lion-dance-spring.gif',
+];
+
 /**
  * 福袋AI 首页 - Glassmorphism 版本
  * H5 移动端优先设计
@@ -54,13 +62,14 @@ const HomePageGlass: React.FC = () => {
     fun: '查看运势'
   };
 
-  const showcaseImages = [
-    { img: '/assets/showcase/gallery-1.jpg', label: '2D动漫' },
-    { img: '/assets/showcase/gallery-2.jpg', label: '水彩春意' },
+  // 展示区数据：gif字段的条目会在后台预加载GIF，加载完自动升级为动图
+  const showcaseItems = [
+    { img: '/assets/showcase/gallery-1.jpg', gif: '/assets/creative-previews/new-year-blessing.gif', label: '拜年祝福' },
+    { img: '/assets/showcase/gallery-2.jpg', gif: '/assets/creative-previews/ink-painting.gif', label: '水墨丹青' },
     { img: '/assets/showcase/gallery-3.jpg', label: '赛博新春' },
-    { img: '/assets/showcase/gallery-4.jpg', label: '国风厚涂' },
+    { img: '/assets/showcase/gallery-4.jpg', gif: '/assets/creative-previews/fortune-god-dj.gif', label: '财神蹦迪' },
     { img: '/assets/showcase/gallery-5.jpg', label: '古典人像' },
-    { img: '/assets/showcase/gallery-6.jpg', label: 'Q版娃娃' }
+    { img: '/assets/showcase/gallery-6.jpg', gif: '/assets/creative-previews/lion-dance-spring.gif', label: '醒狮迎春' },
   ];
 
   useEffect(() => {
@@ -86,6 +95,38 @@ const HomePageGlass: React.FC = () => {
     const timer = setTimeout(activateLazyAssets, 700);
     return () => clearTimeout(timer);
   }, []);
+
+  // 🎬 GIF后台串行预加载（allowLazyAssets后延迟2秒开始，完全不影响首屏）
+  const [loadedGifs, setLoadedGifs] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!allowLazyAssets) return;
+
+    let cancelled = false;
+
+    const loadNext = (index: number) => {
+      if (cancelled || index >= SHOWCASE_GIF_URLS.length) return;
+      const img = new Image();
+      img.onload = () => {
+        if (!cancelled) {
+          setLoadedGifs(prev => {
+            const next = new Set(prev);
+            next.add(SHOWCASE_GIF_URLS[index]);
+            return next;
+          });
+        }
+        loadNext(index + 1);
+      };
+      img.onerror = () => loadNext(index + 1);
+      img.src = SHOWCASE_GIF_URLS[index];
+    };
+
+    const timer = setTimeout(() => loadNext(0), 2000);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [allowLazyAssets]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -335,23 +376,29 @@ const HomePageGlass: React.FC = () => {
 
           <div className="showcase-scroll">
             <div className="showcase-scroll-inner">
-              {[...showcaseImages, ...showcaseImages, ...showcaseImages].map((item, idx) => (
-                <div key={idx} className="showcase-item">
-                  {allowLazyAssets ? (
-                    <img
-                      src={item.img}
-                      alt={item.label}
-                      className="showcase-placeholder"
-                      loading="lazy"
-                      decoding="async"
-                      style={{ objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div className="showcase-placeholder" />
-                  )}
-                  <div className="showcase-label">#{item.label}</div>
-                </div>
-              ))}
+              {[...showcaseItems, ...showcaseItems, ...showcaseItems].map((item, idx) => {
+                const gifReady = item.gif != null && loadedGifs.has(item.gif);
+                return (
+                  <div key={idx} className="showcase-item">
+                    {allowLazyAssets ? (
+                      <img
+                        src={gifReady ? item.gif! : item.img}
+                        alt={item.label}
+                        className="showcase-placeholder"
+                        loading="lazy"
+                        decoding="async"
+                        style={{ objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div className="showcase-placeholder" />
+                    )}
+                    {gifReady && (
+                      <div className="showcase-gif-badge">GIF</div>
+                    )}
+                    <div className="showcase-label">#{item.label}</div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>

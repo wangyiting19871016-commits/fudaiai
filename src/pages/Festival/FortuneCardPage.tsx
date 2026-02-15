@@ -23,6 +23,22 @@ import '../../components/FeatureCardBackgrounds.css';
 
 type Stage = 'upload' | 'analyzing' | 'result';
 
+// 算命风格池 — 每次随机抽取一种，注入 {fortune_style} 占位符
+const FORTUNE_STYLES = [
+  '【江湖老炮儿风】用江湖黑话混搭玄学术语，像一个在立交桥下摆摊三十年的老算命先生，经验丰富，说话带点市井智慧',
+  '【赛博朋克风】用未来科技术语混搭传统相术，像一个穿越到2077年的相面大师，把面相比作"生物数据扫描"',
+  '【脱口秀风】全程带梗，节奏紧凑，像李诞和周奇墨合体的算命先生，每句话都是包袱',
+  '【古风文言风】半文半白，引经据典，像从《易经》里走出来的老学究，之乎者也但句句戳中',
+  '【综艺导师风】像《奇葩说》导师点评，先肯定再分析，既有深度又有趣味，金句频出',
+  '【东北大碴子风】大碴子味的算命，用东北腔调说玄学，接地气又搞笑，整活儿不停',
+  '【温柔治愈风】像深夜电台主播，声音温柔，每句话都充满鼓励和善意，让人听了很暖心',
+  '【毒舌犀利风】说话一针见血但不恶意，像犀利但善良的朋友，吐槽中带着关心和真话',
+  '【国风诗词风】爱引用唐诗宋词、易经典故，把面相分析写成一首优美的散文诗',
+  '【网红种草风】像小红书博主安利好物一样推销运势，用"姐妹们""绝了""YYDS"等潮流用语',
+  '【武侠小说风】把面相比作武功路数，用金庸古龙风格来解读，"这眉骨如同张无忌的乾坤大挪移"',
+  '【学术研究风】像写论文一样算命，"根据实证数据分析，该面部特征与财运正相关（p<0.05）"，正经中透着荒诞',
+];
+
 const FortuneCardPage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -173,8 +189,12 @@ const FortuneCardPage: React.FC = () => {
       // Step 2: DeepSeek 命理生成
       setProgressMessage('算命大师解读中...');
 
+      // 每次随机抽取一种算命风格，避免千篇一律
+      const randomStyle = FORTUNE_STYLES[Math.floor(Math.random() * FORTUNE_STYLES.length)];
+
       const deepseekPrompt = fillPrompt('cyber_fortune', {
-        face_analysis: faceAnalysis
+        face_analysis: faceAnalysis,
+        fortune_style: randomStyle
       });
 
       // 获取后端URL
@@ -184,16 +204,15 @@ const FortuneCardPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-          // Authorization由后端处理
         },
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: [
             { role: 'system', content: deepseekPrompt },
-            { role: 'user', content: '请根据以上面相特征生成命理分析' }
+            { role: 'user', content: '请根据以上面相特征生成命理分析，要有新鲜感，不要套路化' }
           ],
-          temperature: 0.85,
-          max_tokens: 500,
+          temperature: 0.95,
+          max_tokens: 600,
           response_format: { type: 'json_object' }
         })
       });

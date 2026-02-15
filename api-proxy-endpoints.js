@@ -968,6 +968,202 @@ module.exports = function(app) {
     }
   });
 
+  /**
+   * Fish Audio 即时克隆 TTS
+   * POST /api/fish/tts-clone
+   *
+   * 前端发送 FormData: audio (录音blob) + text
+   * 后端转发 multipart/form-data 到 Fish Audio /v1/tts (reference_audio 即时克隆)
+   * 用户录音仅用于采集音色，text 才是最终输出内容
+   */
+  const multer = require('multer');
+  const cloneUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
+
+  app.post('/api/fish/tts-clone', cloneUpload.single('audio'), async (req, res) => {
+    try {
+      const proxyUrl = process.env.FISH_AUDIO_PROXY_URL || 'https://fish-audio-proxy.onrender.com';
+      const apiKey = process.env.FISH_AUDIO_API_KEY;
+
+      if (!apiKey) {
+        return res.status(500).json({ error: 'Fish Audio API key not configured' });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ error: 'No audio file provided' });
+      }
+
+      const text = req.body.text;
+      if (!text || !text.trim()) {
+        return res.status(400).json({ error: 'No text provided' });
+      }
+
+      console.log('[Fish Audio Clone] Starting instant clone TTS:', {
+        audioSize: req.file.size,
+        audioType: req.file.mimetype,
+        textLength: text.trim().length
+      });
+
+      const proxyUrlObj = new URL(proxyUrl);
+
+      // Build multipart/form-data body
+      const boundary = '----FishCloneBoundary' + Date.now();
+      const parts = [];
+
+      // reference_audio (录音文件，仅用于采集音色)
+      parts.push(Buffer.from(
+        `--${boundary}\r\n` +
+        `Content-Disposition: form-data; name="audio"; filename="recording.webm"\r\n` +
+        `Content-Type: ${req.file.mimetype || 'audio/webm'}\r\n\r\n`
+      ));
+      parts.push(req.file.buffer);
+      parts.push(Buffer.from('\r\n'));
+
+      // text (最终输出内容)
+      parts.push(Buffer.from(
+        `--${boundary}\r\n` +
+        `Content-Disposition: form-data; name="text"\r\n\r\n` +
+        text.trim() + '\r\n'
+      ));
+
+      // format
+      parts.push(Buffer.from(
+        `--${boundary}\r\n` +
+        `Content-Disposition: form-data; name="format"\r\n\r\n` +
+        (req.body.format || 'mp3') + '\r\n'
+      ));
+
+      // latency
+      parts.push(Buffer.from(
+        `--${boundary}\r\n` +
+        `Content-Disposition: form-data; name="latency"\r\n\r\n` +
+        (req.body.latency || 'normal') + '\r\n'
+      ));
+
+      // reference_text (transcript of the recording, improves clone quality)
+      const referenceText = req.body.reference_text || '';
+      parts.push(Buffer.from(
+        `--${boundary}\r\n` +
+        `Content-Disposition: form-data; name="reference_text"\r\n\r\n` +
+        referenceText + '\r\n'
+      ));
+
+      // end boundary
+      parts.push(Buffer.from(`--${boundary}--\r\n`));
+
+      const bodyBuffer = Buffer.concat(parts);
+
+      // Send to Fish Audio via Render proxy
+      const sendCloneRequest = (timeoutMs) => {
+        return new Promise((resolve, reject) => {
+          const chunks = [];
+          const options = {
+            hostname: proxyUrlObj.hostname,
+            path: '/v1/tts-clone',
+            method: 'POST',
+            headers: {
+              'Content-Type': `multipart/form-data; boundary=${boundary}`,
+              'Content-Length': bodyBuffer.length,
+            },
+            timeout: timeoutMs
+          };
+
+          const apiReq = https.request(options, (apiRes) => {
+            apiRes.on('data', (chunk) => chunks.push(chunk));
+            apiRes.on('end', () => {
+              resolve({
+                statusCode: apiRes.statusCode,
+                headers: apiRes.headers,
+                body: Buffer.concat(chunks)
+              });
+            });
+          });
+
+          apiReq.on('error', reject);
+          apiReq.on('timeout', () => {
+            apiReq.destroy();
+            reject(new Error('TIMEOUT'));
+          });
+
+          apiReq.write(bodyBuffer);
+          apiReq.end();
+        });
+      };
+
+      // Warm up Render proxy
+      const warmUpClone = () => {
+        return new Promise((resolve) => {
+          const pingReq = https.request({
+            hostname: proxyUrlObj.hostname,
+            path: '/',
+            method: 'GET',
+            timeout: 60000
+          }, (pingRes) => {
+            pingRes.on('data', () => {});
+            pingRes.on('end', () => resolve(true));
+          });
+          pingReq.on('error', () => resolve(false));
+          pingReq.on('timeout', () => { pingReq.destroy(); resolve(false); });
+          pingReq.end();
+        });
+      };
+
+      console.log('[Fish Audio Clone] Attempt 1 - proxy:', proxyUrl);
+
+      let fishResponse;
+      try {
+        fishResponse = await sendCloneRequest(120000);
+      } catch (err1) {
+        if (err1.message === 'TIMEOUT') {
+          console.log('[Fish Audio Clone] Attempt 1 timed out, warming up...');
+          await warmUpClone();
+          console.log('[Fish Audio Clone] Attempt 2 - retrying');
+          fishResponse = await sendCloneRequest(180000);
+        } else {
+          throw err1;
+        }
+      }
+
+      const contentType = fishResponse.headers['content-type'] || '';
+      const bodySize = fishResponse.body.length;
+
+      console.log('[Fish Audio Clone] Response:', {
+        status: fishResponse.statusCode,
+        contentType,
+        bodySize
+      });
+
+      if (fishResponse.statusCode >= 400) {
+        const errBody = fishResponse.body.toString().substring(0, 500);
+        console.error('[Fish Audio Clone] API error:', fishResponse.statusCode, errBody);
+        return res.status(500).json({ error: 'Voice clone failed: ' + errBody });
+      }
+
+      // 检查返回的是否是JSON错误而非音频
+      if (contentType.includes('application/json')) {
+        const errBody = fishResponse.body.toString().substring(0, 500);
+        console.error('[Fish Audio Clone] Got JSON instead of audio:', errBody);
+        return res.status(500).json({ error: 'Voice clone error: ' + errBody });
+      }
+
+      // 检查音频体积（正常音频至少几KB）
+      if (bodySize < 1000) {
+        console.error('[Fish Audio Clone] Audio too small:', bodySize);
+        return res.status(500).json({ error: 'Generated audio is empty, please record louder and longer' });
+      }
+
+      res.setHeader('Content-Type', contentType || 'audio/mpeg');
+      res.status(200).send(fishResponse.body);
+
+    } catch (error) {
+      console.error('[Fish Audio Clone] Error:', error.message || error);
+      const msg = error.message === 'TIMEOUT'
+        ? 'Fish Audio service temporarily unavailable, please retry'
+        : (error.message || 'Voice clone request failed');
+      res.status(500).json({ error: msg });
+    }
+  });
+
+
   // ========== Dashscope 浠ｇ悊绔偣锛堜繚鎸佷笉鍙橈級==========
 
   /**
@@ -976,7 +1172,9 @@ module.exports = function(app) {
    */
   app.post('/api/dashscope/proxy', express.json({ limit: '50mb' }), async (req, res) => {
     let chargedVisitorId = '';
-    const videoCost = 200;
+    // 根据模型区分积分：WAN2.6 系列 300 积分，其他 200 积分
+    const reqModel = String((req.body?.body?.model) || '').toLowerCase();
+    const videoCost = reqModel.startsWith('wan2.6') ? 300 : 200;
     try {
       const { endpoint, method, body: reqBody, customHeaders, headers } = req.body;
       const passthroughHeaders = {
@@ -985,7 +1183,8 @@ module.exports = function(app) {
       };
       const normalizedMethod = String(method || 'POST').toUpperCase();
       const isVideoCreateRequest =
-        endpoint === '/api/v1/services/aigc/image2video/video-synthesis' &&
+        (endpoint === '/api/v1/services/aigc/image2video/video-synthesis' ||
+         endpoint === '/api/v1/services/aigc/video-generation/video-synthesis') &&
         normalizedMethod === 'POST';
 
       if (isVideoCreateRequest && isCreditEnforced()) {
@@ -1188,6 +1387,7 @@ module.exports = function(app) {
   console.log('   - POST /api/liblib/api/generate/comfyui/app (LiblibAI ComfyUI鐢熸垚-M6涓撶敤)');
   console.log('   - POST /api/liblib/api/generate/comfy/status (LiblibAI ComfyUI鐘舵€佹煡璇?M6涓撶敤)');
   console.log('   - POST /api/fish/tts (Fish Audio璇煶鐢熸垚)');
+  console.log('   - POST /api/fish/tts-clone (Fish Audio即时克隆TTS)');
   console.log('   - POST /api/dashscope/proxy (Dashscope/Qwen-VL浠ｇ悊)');
   console.log('   - POST /api/deepseek/proxy (DeepSeek浠ｇ悊)');
   console.log('   - POST /api/deepseek/chat/completions (DeepSeek Chat绔偣)');

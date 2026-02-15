@@ -36,6 +36,9 @@ function pickSupportedAudioMimeType(): string | undefined {
   });
 }
 
+// 录音朗读参考文案（同时作为reference_text发送给Fish Audio提升克隆质量）
+const CLONE_REFERENCE_TEXT = '新春佳节到，祝您马年吉祥如意，心想事成！愿您在新的一年里身体健康，工作顺利，家庭幸福美满。祝福您财源广进，好运连连，事业蒸蒸日上，生活越来越美好！恭喜发财，大吉大利！';
+
 const VoicePageNew: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -308,14 +311,21 @@ const VoicePageNew: React.FC = () => {
           reference_id: selectedVoiceId,
           enhance_audio_quality: true
         });
+        if (!result.success || !result.audioUrl) {
+          throw new Error(result.error || '语音生成失败');
+        }
         audioUrl = result.audioUrl;
       } else if (activeTab === 'record' && recordMode === 'clone' && recordedBlob) {
         const result = await FishAudioService.cloneAndGenerate(
           recordedBlob,
           text.trim(),
           `克隆_${Date.now()}`,
-          true
+          true,
+          CLONE_REFERENCE_TEXT
         );
+        if (!result.success || !result.audioUrl) {
+          throw new Error(result.error || '声音克隆失败，请重试');
+        }
         audioUrl = result.audioUrl;
       } else if (activeTab === 'record' && recordMode === 'direct' && recordedBlob) {
         audioUrl = URL.createObjectURL(recordedBlob);
@@ -586,7 +596,7 @@ const VoicePageNew: React.FC = () => {
                 >
                   <span className="mode-name">克隆美化</span>
                   <span className="mode-badge">推荐</span>
-                  <p className="mode-desc">AI学习你的音色，自动添加合适的情绪、节奏和语调</p>
+                  <p className="mode-desc">录音采集你的音色，AI用你的声音朗读你写的文案</p>
                 </button>
                 <button
                   className={`mode-card ${recordMode === 'direct' ? 'mode-card--active' : ''}`}
@@ -598,6 +608,22 @@ const VoicePageNew: React.FC = () => {
                 </button>
               </div>
             </section>
+
+            {/* 流程说明 */}
+            {recordMode === 'clone' && (
+              <div style={{
+                padding: '10px 14px',
+                margin: '0 0 12px',
+                background: 'rgba(255, 152, 0, 0.08)',
+                border: '1px solid rgba(255, 152, 0, 0.25)',
+                borderRadius: '8px',
+                fontSize: '13px',
+                color: '#f57c00',
+                lineHeight: '1.5'
+              }}>
+                <strong>Step1</strong> 录音采集你的音色（说什么都行） → <strong>Step2</strong> 输入你想说的文案 → AI用你的声音朗读文案
+              </div>
+            )}
 
             {/* 录音要求说明 - 可折叠 */}
             <section className="record-tips-collapsible">
@@ -649,7 +675,7 @@ const VoicePageNew: React.FC = () => {
                     <div className="reading-text-card">
                       <h3 className="reading-text-title">朗读文案</h3>
                       <div className="reading-text-content">
-                        <p>新春佳节到，祝您马年吉祥如意，心想事成！愿您在新的一年里身体健康，工作顺利，家庭幸福美满。祝福您财源广进，好运连连，事业蒸蒸日上，生活越来越美好！恭喜发财，大吉大利！</p>
+                        <p>{CLONE_REFERENCE_TEXT}</p>
                       </div>
                       <div className="reading-text-meta">
                         <span className="text-length">约68字 · 预计朗读时长15-20秒</span>
@@ -685,6 +711,11 @@ const VoicePageNew: React.FC = () => {
                   <p className="record-label">
                     {isRecording ? '点击停止录音' : '点击开始录音'}
                   </p>
+                  {recordMode === 'clone' && !isRecording && (
+                    <p style={{ fontSize: '12px', color: '#999', marginTop: '4px', textAlign: 'center' }}>
+                      仅用于采集你的音色，说什么内容都可以
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="record-preview-card">
@@ -696,6 +727,11 @@ const VoicePageNew: React.FC = () => {
                     <span>录音完成 ({formatTime(recordTime)})</span>
                   </div>
                   <audio src={recordedUrl} controls className="preview-audio" />
+                  {recordMode === 'clone' && (
+                    <p style={{ fontSize: '12px', color: '#999', margin: '6px 0 0', textAlign: 'center' }}>
+                      音色采集完成，下方输入的文案才是最终输出内容
+                    </p>
+                  )}
                   <button className="rerecord-btn" onClick={handleReRecord}>
                     重新录音
                   </button>
@@ -705,10 +741,33 @@ const VoicePageNew: React.FC = () => {
 
             {/* 文案输入 */}
             <section className="text-input-card">
+              {recordMode === 'clone' && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginBottom: '8px',
+                  paddingLeft: '2px'
+                }}>
+                  <span style={{
+                    display: 'inline-block',
+                    width: '3px',
+                    height: '14px',
+                    borderRadius: '2px',
+                    background: '#ff6b00'
+                  }} />
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#ff6b00' }}>
+                    AI将用你的声音朗读以下文案（这才是最终输出）
+                  </span>
+                </div>
+              )}
               <div className="input-card__inner">
                 <textarea
                   className="text-input"
-                  placeholder="请输入您的祝福语（建议80字内，约15秒）..."
+                  placeholder={recordMode === 'clone'
+                    ? '输入你想让AI用你的声音说的话（建议80字内）...'
+                    : '请输入您的祝福语（建议80字内，约15秒）...'
+                  }
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   maxLength={200}

@@ -1481,34 +1481,56 @@ app.post('/api/video/compose', express.json({ limit: '50mb' }), async (req, res)
       }
 
       // 娣诲姞瀛楀箷婊ら暅锛堝鏋滄彁渚涳級
-      if (subtitle && subtitle.trim()) {
-        // 杞箟瀛楀箷鏂囨湰涓殑鐗规畩瀛楃
-        const escapedSubtitle = subtitle
-          .replace(/\\/g, '\\\\')
-          .replace(/'/g, "\\'")
-          .replace(/:/g, '\\:')
-          .replace(/,/g, '\\,');
+      
+      // --- Subtitle auto-wrap helper ---
+      function wrapSubtitle(text, maxChars) {
+        if (!text || text.length <= maxChars) return { lines: [text], lineCount: 1 };
+        var mid = Math.floor(text.length / 2);
+        var splitIdx = -1;
+        var puncts = '，。、！？ ,.!?';
+        for (var i = mid; i >= Math.max(0, mid - 5); i--) {
+          if (puncts.indexOf(text[i]) !== -1) { splitIdx = i + 1; break; }
+        }
+        if (splitIdx === -1) {
+          for (var i = mid + 1; i <= Math.min(text.length - 1, mid + 5); i++) {
+            if (puncts.indexOf(text[i]) !== -1) { splitIdx = i + 1; break; }
+          }
+        }
+        if (splitIdx === -1) splitIdx = mid;
+        return { lines: [text.substring(0, splitIdx).trim(), text.substring(splitIdx).trim()], lineCount: 2 };
+      }
+      function escDrawtext(t) {
+        return t.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/:/g, '\\:').replace(/,/g, '\\,');
+      }
+      function calcFontSize(lines, baseSingle, baseMulti) {
+        var maxLen = Math.max.apply(null, lines.map(function(l) { return l.length; }));
+        var fs = lines.length === 1 ? baseSingle : baseMulti;
+        var safeWidth = 660;
+        if (maxLen * fs * 0.95 > safeWidth) fs = Math.max(18, Math.floor(safeWidth / (maxLen * 0.95)));
+        return fs;
+      }
 
-        // 楂樿川閲忓瓧骞曟牱寮?- 浼樺寲鐗堟湰
+      if (subtitle && subtitle.trim()) {
+        var wrapped = wrapSubtitle(subtitle.trim(), 16);
+        var escapedSubtitle = wrapped.lines.map(escDrawtext).join('\\n');
+        var fontSize = calcFontSize(wrapped.lines, 36, 30);
+        var yPos = wrapped.lineCount > 1 ? 'h-th-40' : 'h-th-60';
+
         const subtitleFilter = `drawtext=` +
           `text='${escapedSubtitle}':` +
-          (process.platform === 'linux' ? '' : `fontfile='C\:/Windows/Fonts/msyh.ttc':`) +
-          `fontsize=80:` +         // 瀛楀彿80锛堝師48锛屾姌涓柟妗堬級
+          (process.platform === 'linux' ? '' : `fontfile='C\\:/Windows/Fonts/msyh.ttc':`) +
+          `fontsize=${fontSize}:` +
           `fontcolor=white:` +
-          `borderw=4:` +           // 鎻忚竟瀹藉害4锛堝師3锛?
-          `bordercolor=black:` +   // 鎻忚竟棰滆壊
-          `shadowcolor=black@0.7:` + // 闃村奖
-          `shadowx=2:` +           // 闃村奖X鍋忕Щ
-          `shadowy=2:` +           // 闃村奖Y鍋忕Щ
-          `box=1:` +               // 娣诲姞鑳屾櫙妗?
-          `boxcolor=black@0.5:` +  // 鍗婇€忔槑榛戣壊鑳屾櫙
-          `boxborderw=12:` +       // 鑳屾櫙妗嗗唴杈硅窛
-          `x=(w-text_w)/2:` +      // 姘村钩灞呬腑
-          `y=h-th-120:` +          // 璺濈搴曢儴120px锛堝師50px锛屾洿闈犱笂锛?
-          `enable='between(t,0.5,${type === 'image' ? duration - 0.5 : 'duration-0.5'})'`; // 娣″叆娣″嚭鏃堕棿
+          `borderw=2:bordercolor=black:` +
+          `shadowcolor=black@0.7:shadowx=1:shadowy=1:` +
+          `box=1:boxcolor=black@0.5:boxborderw=8:` +
+          `x='(w-text_w)/2':` +
+          `y=${yPos}:` +
+          `line_spacing=8:` +
+          `enable='between(t,0.5,${type === 'image' ? duration - 0.5 : 'duration-0.5'})'`;
 
         command = command.videoFilters(subtitleFilter);
-        console.log('馃摑 [瑙嗛鍚堟垚] 娣诲姞瀛楀箷婊ら暅');
+        console.log('[subtitle] lines=' + wrapped.lineCount + ' fontSize=' + fontSize + ' chars=' + subtitle.trim().length);
       }
 
       // 璁剧疆杈撳嚭璺緞
@@ -1805,32 +1827,26 @@ app.post(['/api/video/post-process', '/api/video/burn-subtitle'], express.json({
         currentInput = '[output]';
         console.log('馃幀 [瀛楀箷] 浣跨敤瀹炴椂瀛楀箷锛圫RT锛夛紝婊ら暅:', subtitleFilter.substring(0, 150) + '...');
       } else if (!isBurnSubtitleRoute && subtitle && subtitle.trim()) {
-        // fallback: 浣跨敤闈欐€佸瓧骞曪紙drawtext锛? 淇瀛楀彿鍜屼綅缃?
-        const escapedSubtitle = subtitle
-          .replace(/\\/g, '\\\\')
-          .replace(/'/g, "\\'")
-          .replace(/:/g, '\\:')
-          .replace(/,/g, '\\,');
+        var wrapped2 = wrapSubtitle(subtitle.trim(), 16);
+        var escapedSub2 = wrapped2.lines.map(escDrawtext).join('\\n');
+        var fs2 = calcFontSize(wrapped2.lines, 32, 26);
+        var yPos2 = wrapped2.lineCount > 1 ? 'h-th-30' : 'h-th-25';
 
         const subtitleFilter = `${currentInput}drawtext=` +
-          `text='${escapedSubtitle}':` +
+          `text='${escapedSub2}':` +
           (process.platform === 'linux' ? '' : `fontfile='C\\:/Windows/Fonts/msyh.ttc':`) +
-          `fontsize=60:` + // 淇锛?0 -> 60
+          `fontsize=${fs2}:` +
           `fontcolor=white:` +
-          `borderw=3:` +
-          `bordercolor=black:` +
-          `shadowcolor=black@0.7:` +
-          `shadowx=2:` +
-          `shadowy=2:` +
-          `box=1:` +
-          `boxcolor=black@0.5:` +
-          `boxborderw=10:` +
-          `x=(w-text_w)/2:` +
-          `y=h-th-30[output]`;
+          `borderw=2:bordercolor=black:` +
+          `shadowcolor=black@0.7:shadowx=1:shadowy=1:` +
+          `box=1:boxcolor=black@0.5:boxborderw=6:` +
+          `x='(w-text_w)/2':` +
+          `y=${yPos2}:` +
+          `line_spacing=6[output]`;
 
         filters.push(subtitleFilter);
         currentInput = '[output]';
-        console.log('[subtitle] using static subtitle fallback');
+        console.log('[subtitle] fallback lines=' + wrapped2.lineCount + ' fontSize=' + fs2);
       }
 
       // 搴旂敤婊ら暅閾?

@@ -40,6 +40,15 @@ const VideoCategoryPage: React.FC = () => {
       gradient: ['#4CAF50', '#66BB6A'],
       path: '/festival/video',
       previewImage: '/assets/showcase/digital-human-preview.gif'
+    },
+    {
+      id: 'creative-video',
+      title: '创意视频',
+      description: '模板一键生成动作视频',
+      detail: '多种模板可选，照片即可生成',
+      gradient: ['#667eea', '#764ba2'],
+      path: '/festival/creative-video',
+      previewImage: '/assets/creative-previews/fortune-god-dj.gif'
     }
   ];
 
@@ -234,9 +243,9 @@ const VideoCategoryPage: React.FC = () => {
               color: 'var(--cny-gray-700)',
               lineHeight: '1.8'
             }}>
-              <li>特效视频：自动生成5秒短视频，自带背景音乐</li>
               <li>数字人拜年：需要准备图片、音频和祝福文案</li>
-              <li>生成时间：特效视频约3-5分钟，数字人约1-2分钟</li>
+              <li>创意视频：选择模板，上传照片即可一键生成</li>
+              <li>生成时间：数字人约1-2分钟，创意视频约2-5分钟</li>
             </ul>
           </div>
         </section>

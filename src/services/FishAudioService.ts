@@ -207,52 +207,58 @@ export class FishAudioService {
   }
 
   /**
-   * 克隆音色 + TTS生成（一步到位）
+   * 即时克隆 TTS（一步到位）
+   *
+   * 录音仅用于采集音色，text 才是最终输出内容。
+   * 直接将录音作为 reference_audio 发送给 Fish Audio TTS，
+   * 无需先创建音色模型（省去训练等待）。
    */
   static async cloneAndGenerate(
     audioBlob: Blob,
     text: string,
-    title: string = '临时克隆音色',
-    enhance: boolean = true
+    _title: string = '临时克隆音色',
+    _enhance: boolean = true,
+    referenceText: string = ''
   ): Promise<TTSResult> {
     try {
-      console.log('[FishAudio] 开始克隆+生成流程');
-
-      // 1. 克隆声音
-      const cloneResult = await this.cloneVoice({
-        audio: audioBlob,
-        title,
-        enhance_audio_quality: enhance
+      console.log('[FishAudio] 开始即时克隆TTS:', {
+        audioSize: audioBlob.size,
+        textLength: text.length,
+        referenceTextLength: referenceText.length
       });
 
-      if (!cloneResult.success || !cloneResult.voice_id) {
-        return {
-          success: false,
-          error: cloneResult.error || '声音克隆失败'
-        };
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recording.webm');
+      formData.append('text', text.trim());
+      formData.append('format', 'mp3');
+      formData.append('latency', 'normal');
+      if (referenceText) {
+        formData.append('reference_text', referenceText);
       }
 
-      console.log('[FishAudio] 克隆完成，开始生成TTS...');
-
-      // 2. 使用克隆的音色生成TTS
-      const ttsResult = await this.generateTTS({
-        text,
-        reference_id: cloneResult.voice_id,
-        enhance_audio_quality: enhance
+      const response = await fetch(`${this.PROXY_BASE_URL}/api/fish/tts-clone`, {
+        method: 'POST',
+        body: formData
       });
 
-      if (!ttsResult.success) {
-        return {
-          success: false,
-          error: ttsResult.error || 'TTS生成失败'
-        };
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[FishAudio] 即时克隆API错误:', response.status, errorText);
+        throw new Error(`即时克隆失败: ${response.status}`);
       }
 
-      console.log('[FishAudio] ✅ 克隆+生成完整流程成功');
+      const blob = await response.blob();
+      const audioUrl = URL.createObjectURL(blob);
 
-      return ttsResult;
+      console.log('[FishAudio] ✅ 即时克隆TTS成功');
+
+      return {
+        success: true,
+        audioUrl,
+        blob
+      };
     } catch (error) {
-      console.error('[FishAudio] 克隆+生成流程异常:', error);
+      console.error('[FishAudio] 即时克隆异常:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : '未知错误'
@@ -335,9 +341,10 @@ export const generateVoice = async (
 export const cloneAndSpeak = async (
   audioBlob: Blob,
   text: string,
-  enhance: boolean = true
+  enhance: boolean = true,
+  referenceText: string = ''
 ): Promise<TTSResult> => {
-  return FishAudioService.cloneAndGenerate(audioBlob, text, `克隆_${Date.now()}`, enhance);
+  return FishAudioService.cloneAndGenerate(audioBlob, text, `克隆_${Date.now()}`, enhance, referenceText);
 };
 
 export default FishAudioService;

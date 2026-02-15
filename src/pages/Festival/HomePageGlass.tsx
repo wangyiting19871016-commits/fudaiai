@@ -22,9 +22,9 @@ const HomePageGlass: React.FC = () => {
       navLockRef.current = false;
     }, 700);
 
-    // 视频与未来伴侣走独立链路
+    // 视频走分类页（数字人 + 创意视频），未来伴侣走独立链路
     if (categoryId === 'video') {
-      navigate('/festival/video');
+      navigate('/festival/category/video');
       return;
     }
 

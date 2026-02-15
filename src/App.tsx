@@ -17,9 +17,9 @@ const LabPage = lazy(() => import('./pages/LabPage'));
 const EditorPage = lazy(() => import('./pages/EditorPage'));
 const P4LabPage = lazy(() => import('./pages/P4LabPage'));
 
-// 🧧 春节H5页面（全新独立）
-import FestivalLayout from './pages/Festival/Layout';
-import HomePageGlass from './pages/Festival/HomePageGlass';
+// 🧧 春节H5页面（全新独立，lazy-load减少首屏体积）
+const FestivalLayout = lazy(() => import('./pages/Festival/Layout'));
+const HomePageGlass = lazy(() => import('./pages/Festival/HomePageGlass'));
 const FestivalLabPage = lazy(() => import('./pages/Festival/LabPage'));
 const FestivalResultPage = lazy(() => import('./pages/Festival/ResultPage'));
 const FestivalVoicePage = lazy(() => import('./pages/Festival/VoicePageNew'));
@@ -28,6 +28,7 @@ const FestivalCategoryPage = lazy(() => import('./pages/Festival/CategoryPage'))
 const FestivalVideoPage = lazy(() => import('./pages/Festival/VideoPage'));
 const VideoResultPage = lazy(() => import('./pages/Festival/VideoResultPage'));
 const VideoCategoryPage = lazy(() => import('./pages/Festival/VideoCategoryPage'));
+const CreativeVideoPage = lazy(() => import('./pages/Festival/CreativeVideoPage'));
 const TemplateSelectionPage = lazy(() => import('./pages/Festival/TemplateSelectionPage'));
 const FortunePage = lazy(() => import('./pages/Festival/FortunePage'));
 const MaterialLibraryPage = lazy(() => import('./pages/Festival/MaterialLibraryPage'));
@@ -115,6 +116,7 @@ const AppLayout: React.FC = () => {
             <Route path="video/:taskId" element={<FestivalVideoPage />} />
             <Route path="video" element={<FestivalVideoPage />} />
             <Route path="video-result/:filename" element={<VideoResultPage />} />
+            <Route path="creative-video" element={<CreativeVideoPage />} />
             <Route path="materials" element={<MaterialLibraryPage />} />
             <Route path="fortune-card" element={<FortuneCardPage />} />
             <Route path="smart-reply" element={<SmartReplyPage />} />
@@ -146,13 +148,13 @@ const App: React.FC = () => {
   const initVisitor = useCreditStore((state) => state.initVisitor);
   const creditData = useCreditStore((state) => state.creditData);
 
-  // 初始化访客ID和积分，同步服务端
+  // 初始化访客ID和积分，同步服务端（并行化，不阻塞渲染）
   useEffect(() => {
     initVisitor();
     initAnalyticsInterceptor();
-    // 迁移本地积分到服务端 + 同步余额
+    // 先迁移本地积分到服务端，再同步余额（必须串行，否则积分数据不一致）
     import('./stores/creditStore').then(({ migrateLocalCreditsToServer, syncCreditsFromServer }) => {
-      migrateLocalCreditsToServer().then(() => syncCreditsFromServer());
+      migrateLocalCreditsToServer().then(() => syncCreditsFromServer()).catch(() => {});
     });
   }, [initVisitor]);
 

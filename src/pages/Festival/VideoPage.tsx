@@ -259,7 +259,7 @@ const FestivalVideoPage: React.FC = () => {
     };
   }, [audio, wanVideoUrl, subtitleUrl]);
 
-  // ========== 素材操作：图片 ==========
+  // ========== 素材操作：图片（自动压缩，兼容iPhone大图） ==========
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -270,20 +270,48 @@ const FestivalVideoPage: React.FC = () => {
       return;
     }
 
-    // ✅ 安全检查：文件大小（10MB）
-    if (file.size > 10 * 1024 * 1024) {
-      message.error('图片大小不能超过 10MB');
-      return;
-    }
+    const MAX_DIMENSION = 2048;
+    const QUALITY = 0.85;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imageData = reader.result as string;
-      setImage(imageData);
-      SessionMaterialManager.setTempImage(imageData, undefined, 'video-page');
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      let { width, height } = img;
+      const needsResize = width > MAX_DIMENSION || height > MAX_DIMENSION || file.size > 5 * 1024 * 1024;
+      if (!needsResize) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const imageData = reader.result as string;
+          setImage(imageData);
+          SessionMaterialManager.setTempImage(imageData, undefined, 'video-page');
+          message.success('图片已上传');
+        };
+        reader.readAsDataURL(file);
+        return;
+      }
+      if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+        const scale = Math.min(MAX_DIMENSION / width, MAX_DIMENSION / height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { message.error('浏览器不支持图片处理'); return; }
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL('image/jpeg', QUALITY);
+      console.log(`[VideoPage] 图片已压缩: ${(file.size / 1024 / 1024).toFixed(1)}MB → ~${(dataUrl.length * 0.75 / 1024 / 1024).toFixed(1)}MB (${width}x${height})`);
+      setImage(dataUrl);
+      SessionMaterialManager.setTempImage(dataUrl, undefined, 'video-page');
       message.success('图片已上传');
     };
-    reader.readAsDataURL(file);
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      message.error('图片加载失败，请换一张试试');
+    };
+    img.src = objectUrl;
   };
 
   const handleImageFromLibrary = () => {

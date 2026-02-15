@@ -58,7 +58,6 @@ app.post('/v1/tts', async (req, res) => {
     headers: {
       'Authorization': `Bearer ${fishAudioKey}`,
       'Content-Type': 'application/json',
-      'model': 's1',
       'Content-Length': Buffer.byteLength(postData)
     },
     timeout: 120000

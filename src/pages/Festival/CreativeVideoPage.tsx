@@ -28,8 +28,10 @@ import ZJFullscreenLoader from './components/ZJFullscreenLoader';
 import {
   CREATIVE_TEMPLATES,
   CATEGORY_LABELS,
+  VOICE_OPTIONS,
   buildPromptWithBlessing,
-  type CreativeTemplate
+  type CreativeTemplate,
+  type VoiceType
 } from '../../configs/festival/creativeTemplates';
 import {
   generateCreativeVideo,
@@ -103,6 +105,7 @@ const CreativeVideoPage: React.FC = () => {
   // ========== 共享状态 ==========
   const [image, setImage] = useState<string>('');
   const [blessing, setBlessing] = useState<string>('');
+  const [voiceType, setVoiceType] = useState<VoiceType>('auto');
   const [enableSubtitle, setEnableSubtitle] = useState(false);
   const [subtitleText, setSubtitleText] = useState<string>('');
 
@@ -310,7 +313,7 @@ const CreativeVideoPage: React.FC = () => {
 
       let prompt: string;
       if (mode === 'template' && selectedTemplate) {
-        prompt = buildPromptWithBlessing(selectedTemplate, blessing);
+        prompt = buildPromptWithBlessing(selectedTemplate, blessing, voiceType);
       } else {
         prompt = customPrompt.trim();
         if (blessing.trim()) {
@@ -668,7 +671,7 @@ const CreativeVideoPage: React.FC = () => {
                   {(['scene-greeting', 'style-transform', 'bring-alive'] as const).map(cat => (
                     <button
                       key={cat}
-                      onClick={() => { setCategory(cat); setSelectedTemplate(null); setBlessing(''); setEnableSubtitle(false); }}
+                      onClick={() => { setCategory(cat); setSelectedTemplate(null); setBlessing(''); setVoiceType('auto'); setEnableSubtitle(false); }}
                       className={`view-toggle-btn ${category === cat ? 'active' : ''}`}
                       style={{ fontSize: '13px', padding: '8px 4px' }}
                     >
@@ -778,6 +781,19 @@ const CreativeVideoPage: React.FC = () => {
                       </div>
                     );
                   })}
+                </div>
+
+                {/* 模板通用性提示 */}
+                <div style={{
+                  marginTop: '10px', padding: '8px 12px',
+                  background: 'linear-gradient(135deg, rgba(255,248,225,0.9), rgba(255,243,224,0.9))',
+                  borderRadius: '8px', fontSize: '11px',
+                  color: '#795548', lineHeight: '1.5',
+                  border: '1px solid rgba(255,183,77,0.25)',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                }}>
+                  <span style={{ fontSize: '14px', flexShrink: 0 }}>💡</span>
+                  <span>所有模板均适配<strong>男女老少</strong>，无论模板预览是什么形象，AI都会根据您上传的照片智能适配</span>
                 </div>
 
                 {/* 选中模板提示 */}
@@ -942,6 +958,58 @@ const CreativeVideoPage: React.FC = () => {
                       <p style={{ fontSize: '11px', color: 'var(--cny-gray-500)', margin: '6px 0 0' }}>
                         不填将使用默认：{selectedTemplate.defaultBlessing}
                       </p>
+                    )}
+
+                    {/* 🎙️ 声音选择器（仅recommended模式=角色开口说时显示） */}
+                    {isRecommended && (
+                      <div style={{ marginTop: '14px' }}>
+                        <p style={{
+                          fontSize: '13px', color: 'var(--cny-gray-700)',
+                          margin: '0 0 8px', fontWeight: '500'
+                        }}>
+                          说话声音
+                        </p>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                          {VOICE_OPTIONS.map(opt => (
+                            <button
+                              key={opt.value}
+                              onClick={() => setVoiceType(opt.value)}
+                              style={{
+                                flex: '1 1 0',
+                                minWidth: '70px',
+                                padding: '8px 4px',
+                                borderRadius: '8px',
+                                border: voiceType === opt.value
+                                  ? '1.5px solid #E53935'
+                                  : '1px solid rgba(0,0,0,0.1)',
+                                background: voiceType === opt.value
+                                  ? 'rgba(229,57,53,0.08)'
+                                  : 'rgba(255,255,255,0.8)',
+                                cursor: 'pointer',
+                                textAlign: 'center',
+                                transition: 'all 0.15s',
+                              }}
+                            >
+                              <span style={{
+                                display: 'block',
+                                fontSize: '13px',
+                                fontWeight: voiceType === opt.value ? '700' : '500',
+                                color: voiceType === opt.value ? '#E53935' : 'var(--cny-gray-800)',
+                              }}>
+                                {opt.label}
+                              </span>
+                              <span style={{
+                                display: 'block',
+                                fontSize: '10px',
+                                color: 'var(--cny-gray-500)',
+                                marginTop: '2px',
+                              }}>
+                                {opt.desc}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>

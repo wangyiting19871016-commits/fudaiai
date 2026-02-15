@@ -33,6 +33,23 @@ export interface CreativeTemplate {
   subtitleDefault?: boolean;
 }
 
+// 🎙️ 声音类型（注入提示词控制WAN2.6生成的说话声音）
+export type VoiceType = 'auto' | 'male' | 'female' | 'child';
+
+export const VOICE_OPTIONS: Array<{ value: VoiceType; label: string; desc: string }> = [
+  { value: 'auto', label: 'AI自动', desc: '模型自动匹配' },
+  { value: 'child', label: '童声', desc: '适合小朋友照片' },
+  { value: 'female', label: '女声', desc: '温柔女性声音' },
+  { value: 'male', label: '男声', desc: '浑厚男性声音' },
+];
+
+const VOICE_DESCRIPTORS: Record<VoiceType, string> = {
+  auto: '',
+  male: ' The person speaks with a deep resonant adult male voice, warm and confident tone.',
+  female: ' The person speaks with a gentle soft adult female voice, warm and melodious tone.',
+  child: ' The person speaks with a cute innocent child\'s voice, high-pitched, adorable and cheerful tone.',
+};
+
 export const CATEGORY_LABELS: Record<string, string> = {
   'scene-greeting': '场景祝福',
   'style-transform': '风格大片',
@@ -215,7 +232,11 @@ export const getTemplateById = (id: string): CreativeTemplate | undefined => {
 // 全局后缀：强制中文输出 + 禁止英文
 const CHINESE_SUFFIX = ' IMPORTANT: Any visible text, captions, watermarks, or spoken words in the video must be in Chinese characters only. Never generate English text or letters anywhere in the frame. Photorealistic quality, no cartoon or animation style.';
 
-export const buildPromptWithBlessing = (template: CreativeTemplate, blessing?: string): string => {
+export const buildPromptWithBlessing = (
+  template: CreativeTemplate,
+  blessing?: string,
+  voiceType?: VoiceType
+): string => {
   let prompt = template.prompt;
 
   if (template.blessingMode === 'none') {
@@ -228,7 +249,9 @@ export const buildPromptWithBlessing = (template: CreativeTemplate, blessing?: s
   if (template.blessingMode === 'recommended') {
     const finalText = userText || template.defaultBlessing || '';
     prompt = prompt.replace('{blessing}', finalText);
-    return prompt + CHINESE_SUFFIX;
+    // 声音描述：仅在有说话内容时注入（recommended = 角色开口说）
+    const voiceDesc = voiceType ? VOICE_DESCRIPTORS[voiceType] : '';
+    return prompt + voiceDesc + CHINESE_SUFFIX;
   }
 
   // optional模式：有则注入，无则清除占位符

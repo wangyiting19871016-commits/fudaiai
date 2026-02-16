@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 import './index.css';
+import './styles/festival-design-system.css';  // 全局加载CSS变量，保证生产构建时变量在所有页面之前可用
+import './styles/festival.css';                // 全局加载festival基础样式
 import './styles/p4Theme.css';
 import './styles/monochromeOverrides.css';
 

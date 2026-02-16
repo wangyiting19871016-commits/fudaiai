@@ -22,7 +22,8 @@ const crypto = require('crypto'); // 馃攽 鐢ㄤ簬LiblibAI绛惧悕鍜屾敮�
 const COS = require('cos-nodejs-sdk-v5'); // 鑵捐浜慍OS SDK
 const jwt = require('jsonwebtoken'); // JWT鐢ㄤ簬鍙伒API閴存潈
 const rateLimit = require('express-rate-limit'); // 閫熺巼闄愬埗
-const adminRoutes = require('./server/adminRoutes'); // 绠＄悊鍚庡彴璺敱
+const adminRoutes = require('./server/adminRoutes');
+const { visitorTrackingMiddleware, apiTrackingMiddleware } = require('./server/analyticsMiddleware'); // 绠＄悊鍚庡彴璺敱
 // crypto宸插湪涓婃柟寮曞叆锛屾棤闇€閲嶅澹版槑
 // const db = require('./src/backend/db');  // 鈿狅笍 Zhenji椤圭洰妯″潡锛屾殏鏃舵敞閲?
 // const { executeTask } = require('./src/backend/executor');  // 鈿狅笍 Zhenji椤圭洰妯″潡锛屾殏鏃舵敞閲?
@@ -261,10 +262,57 @@ if (ENABLE_REQUEST_LOG) {
 }
 
 // 馃攼 Admin Routes (绠＄悊鍚庡彴璺敱)
+// 访客追踪 & API调用追踪中间件
+app.use(visitorTrackingMiddleware);
+app.use(apiTrackingMiddleware);
+
 app.use('/api/admin', adminRoutes);
 
 // ========== 绉垎 API ==========
 const DataService = require('./server/DataService');
+
+// ========== 页面访问 & 功能追踪路由 ==========
+app.get('/api/track/pageview', (req, res) => {
+  try {
+    const { visitorId, path: pagePath } = req.query;
+    if (visitorId && pagePath) {
+      DataService.recordPageView({
+        visitorId: String(visitorId),
+        path: decodeURIComponent(String(pagePath)),
+        referer: req.headers.referer || '',
+        userAgent: req.headers['user-agent'] || ''
+      });
+    }
+    res.setHeader('Content-Type', 'image/gif');
+    res.setHeader('Cache-Control', 'no-store');
+    res.end(Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64'));
+  } catch (error) {
+    res.status(204).end();
+  }
+});
+
+app.get('/api/track/feature', (req, res) => {
+  try {
+    const { visitorId, featureId, featureName } = req.query;
+    if (visitorId && featureId) {
+      DataService.logAPICall({
+        visitorId: String(visitorId),
+        featureId: String(featureId),
+        featureName: featureName ? decodeURIComponent(String(featureName)) : String(featureId),
+        success: true,
+        duration: 0,
+        path: '/api/track/feature',
+        method: 'GET'
+      });
+    }
+    res.setHeader('Content-Type', 'image/gif');
+    res.setHeader('Cache-Control', 'no-store');
+    res.end(Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64'));
+  } catch (error) {
+    res.status(204).end();
+  }
+});
+
 
 // 鑾峰彇鐢ㄦ埛绉垎浣欓
 // 积分API禁缓存

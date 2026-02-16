@@ -71,6 +71,9 @@ class DataService {
     } else {
       existing.lastVisit = Date.now();
       existing.totalVisits = (existing.totalVisits || 1) + 1;
+      // 回填渠道和设备信息（老数据可能缺失这些字段）
+      if (visitorData.channel) existing.channel = visitorData.channel;
+      if (visitorData.deviceInfo) existing.deviceInfo = visitorData.deviceInfo;
     }
 
     this.writeJSON('visitors.json', visitors);
@@ -99,11 +102,19 @@ class DataService {
   }
 
   /**
-   * 获取独立访客数（UV）
+   * 获取活跃访客数（UV）- 在时间范围内有访问的独立访客
    */
   getUniqueVisitorsCount(startTime = 0) {
     const visitors = this.readJSON('visitors.json');
-    return visitors.filter(v => v.firstVisit >= startTime).length;
+    return visitors.filter(v => v.lastVisit >= startTime).length;
+  }
+
+  /**
+   * 获取指定时间区间内的活跃访客数
+   */
+  getActiveVisitorsInRange(startTime, endTime) {
+    const visitors = this.readJSON('visitors.json');
+    return visitors.filter(v => v.lastVisit >= startTime && v.lastVisit < endTime).length;
   }
 
   // ========== API调用日志 ==========
@@ -239,6 +250,14 @@ class DataService {
     };
   }
 
+  /**
+   * 获取指定时间区间内的页面访问数
+   */
+  getPageViewsInRange(startTime, endTime) {
+    const pageViews = this.readJSON('page_views.json');
+    return pageViews.filter(pv => pv.timestamp >= startTime && pv.timestamp < endTime).length;
+  }
+
   // ========== 综合统计 ==========
 
   /**
@@ -285,13 +304,13 @@ class DataService {
     const yesterdayStart = todayStart - 24 * 60 * 60 * 1000;
 
     // 今日数据
-    const todayUV = this.getUniqueVisitorsCount(todayStart);
-    const todayPV = this.getPageViewStats(todayStart).totalPV;
+    const todayUV = this.getActiveVisitorsInRange(todayStart, Date.now());
+    const todayPV = this.getPageViewsInRange(todayStart, Date.now());
     const todayAPI = this.getAPIStats(todayStart);
 
-    // 昨日数据（用于对比）
-    const yesterdayUV = this.getUniqueVisitorsCount(yesterdayStart) - todayUV;
-    const yesterdayPV = this.getPageViewStats(yesterdayStart).totalPV - todayPV;
+    // 昨日数据（精确区间，不再用减法）
+    const yesterdayUV = this.getActiveVisitorsInRange(yesterdayStart, todayStart);
+    const yesterdayPV = this.getPageViewsInRange(yesterdayStart, todayStart);
 
     // 总数据
     const totalStats = this.getTotalStats();

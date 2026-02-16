@@ -149,9 +149,9 @@ const AdminQRCodePage: React.FC = () => {
               <div style={{ marginBottom: '16px' }}>
                 <input
                   type="text"
-                  placeholder="或输入自定义渠道名（英文，如 mall_east）"
+                  placeholder="输入自定义渠道名（支持中英文，如 商场东区、mall_east）"
                   value={customChannel}
-                  onChange={(e) => setCustomChannel(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
+                  onChange={(e) => setCustomChannel(e.target.value.replace(/[^a-zA-Z0-9_\u4e00-\u9fff-]/g, ''))}
                   style={{
                     width: '100%',
                     padding: '10px 14px',

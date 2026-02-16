@@ -189,8 +189,8 @@ const FortuneCardPage: React.FC = () => {
         fortune_style: randomStyle
       });
 
-      // 获取后端URL
-      const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+      // 开发模式用相对路径走Vite代理，生产模式用VITE_API_BASE_URL
+      const backendUrl = import.meta.env.VITE_API_BASE_URL || '';
 
       const response = await fetch(`${backendUrl}/api/deepseek/chat/completions`, {
         method: 'POST',

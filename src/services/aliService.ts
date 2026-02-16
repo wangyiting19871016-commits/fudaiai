@@ -141,7 +141,7 @@ export const callAliVision = async (request: VisionAnalysisRequest): Promise<Ali
   const { images, prompt, maxTokens = 1024, temperature = 0.7, model = ALI_VISION_MODEL } = request;
 
   // 使用后端代理，密钥由后端管理
-  const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002';
+  const proxyBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
   const apiEndpoint = `${proxyBaseUrl}/api/dashscope/proxy`;
 
   const startTime = Date.now();

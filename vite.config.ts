@@ -280,10 +280,9 @@ export default defineConfig(({ mode }) => {
           }
         },
         '/api/deepseek': {
-          target: 'https://api.deepseek.com',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/deepseek/, ''),
-          secure: true
+          secure: false
         },
         '/api/volc': {
           target: 'https://openspeech.bytedance.com',

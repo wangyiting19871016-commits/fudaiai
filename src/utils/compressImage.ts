@@ -51,10 +51,6 @@ export function compressImage(file: File): Promise<string> {
       ctx.drawImage(img, 0, 0, width, height);
       const dataUrl = canvas.toDataURL('image/jpeg', QUALITY);
 
-      const before = (file.size / 1024 / 1024).toFixed(1);
-      const after  = (dataUrl.length * 0.75 / 1024 / 1024).toFixed(1);
-      console.log(`[compressImage] ${before}MB → ~${after}MB (${width}×${height})`);
-
       resolve(dataUrl);
     };
 
